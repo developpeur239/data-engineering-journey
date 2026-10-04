@@ -154,7 +154,8 @@ function lancerBoucle(dessiner) {
   let dernierTemps = performance.now();
 
   const image = (maintenant) => {
-    const dt = Math.min(64, maintenant - dernierTemps) / (1000 / 60);
+    // L'horodatage de rAF peut précéder performance.now() : écart borné à [0, 64] ms
+    const dt = borner(maintenant - dernierTemps, 0, 64) / (1000 / 60);
     dernierTemps = maintenant;
     courant = interpoler(courant, cible, 1 - Math.pow(1 - LISSAGE, dt));
     if (Math.abs(cible - courant) < 0.0004) courant = cible;
@@ -201,7 +202,7 @@ function demarrerSequence(urls) {
 
   // Dessin en mode « cover » : l'image remplit le canvas sans déformation
   const dessiner = (p) => {
-    let index = Math.round(p * (images.length - 1));
+    let index = Math.round(borner(p) * (images.length - 1));
     // Si l'image voulue n'est pas encore chargée, on affiche la plus proche déjà prête
     while (index > 0 && !images[index].complete) index--;
     const img = images[index];
@@ -723,8 +724,12 @@ function initialiserBonhomme() {
   const [teteX, teteY] = regard.tete || [0.5, 0.22];
   const seuil = config.apparition ?? 0.78;
   const ips = config.ips || 24;
-  const img = el.querySelector(".bonhomme__image");
   const reel = salut.length > 0 || grille.length > 0;
+  // L'image n'est créée que si des médias réels existent (sinon : cadre provisoire)
+  const img = document.createElement("img");
+  img.className = "bonhomme__image";
+  img.alt = "";
+  img.decoding = "async";
 
   // Préchargement (une fois le bonhomme proche d'apparaître)
   let precharge = false;
@@ -733,7 +738,11 @@ function initialiserBonhomme() {
     precharge = true;
     [...salut, ...grille].forEach((url) => { const i = new Image(); i.decoding = "async"; i.src = url; });
   };
-  if (reel) { el.classList.add("bonhomme--reel"); img.hidden = false; img.src = grille[Math.floor(grille.length / 2)] || salut[0]; }
+  if (reel) {
+    img.src = grille[Math.floor(grille.length / 2)] || salut[0];
+    el.querySelector(".bonhomme__cadre").prepend(img);
+    el.classList.add("bonhomme--reel");
+  }
 
   let etat = "absent"; // absent → salut → regard
   let minuteurBulle = 0;
@@ -773,7 +782,7 @@ function initialiserBonhomme() {
 
   let dernierRegard = 0;
   const etapeRegard = (maintenant) => {
-    const dt = dernierRegard ? Math.min(64, maintenant - dernierRegard) / (1000 / 60) : 1;
+    const dt = dernierRegard ? borner(maintenant - dernierRegard, 0, 64) / (1000 / 60) : 1;
     dernierRegard = maintenant;
     const k = 1 - Math.pow(1 - 0.2, dt);
     // Sans mouvement depuis 3 s, il revient doucement regarder le visiteur
