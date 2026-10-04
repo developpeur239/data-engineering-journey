@@ -29,7 +29,9 @@ const FRAME_URLS = [];
 const LISSAGE = 0.08;            // part de l'écart rattrapée à chaque image (60 i/s)
 // Three.js (version réduite aux classes utilisées), chargé à la demande.
 // Le chemin est résolu à partir de script.js, où que la page soit intégrée.
-const CHEMIN_THREE = new URL("vendor/three.min.js", document.currentScript.src).href;
+// (Dans l'aperçu autonome, le script est intégré à la page : on se rabat sur l'URL de la page.)
+const BASE_SCRIPT = (document.currentScript && document.currentScript.src) || location.href;
+const CHEMIN_THREE = new URL("vendor/three.min.js", BASE_SCRIPT).href;
 
 const racine = document.documentElement;
 racine.classList.add("module-ok"); // signale au <head> que le script s'exécute bien
@@ -39,9 +41,9 @@ const ecranLeger = window.matchMedia("(max-width: 767px)").matches
 
 /* Aperçu en double-clic (file://) : polices déclarées depuis un script,
    car Chrome bloque les fichiers de police lus sur le disque */
-if (location.protocol === "file:") {
+if (location.protocol === "file:" && !document.documentElement.hasAttribute("data-autonome")) {
   const balise = document.createElement("script");
-  balise.src = new URL("vendor/polices-hors-ligne.js", document.currentScript.src).href;
+  balise.src = new URL("vendor/polices-hors-ligne.js", BASE_SCRIPT).href;
   document.head.appendChild(balise);
 }
 
