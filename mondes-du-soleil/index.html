@@ -7,6 +7,8 @@
   <meta name="description" content="Installation de panneaux solaires pour particuliers et professionnels, dépannage toutes marques et bornes de recharge en Gironde. Installateur photovoltaïque depuis 2012, certifié RGE QualiPV, basé à Mérignac.">
   <link rel="canonical" href="https://www.mondesdusoleil.com/">
   <meta name="theme-color" content="#0B0D10">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
@@ -45,6 +47,10 @@
       "addressRegion": "Nouvelle-Aquitaine",
       "addressCountry": "FR"
     },
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=61561008622331",
+      "https://www.instagram.com/mondesdusoleil"
+    ],
     "openingHoursSpecification": [{
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -111,7 +117,7 @@
         <canvas class="hero__canvas" aria-hidden="true"></canvas>
         <picture class="hero__fixe">
           <source type="image/webp" srcset="assets/img/IMG_4736-480.webp 480w, assets/img/IMG_4736-683.webp 683w" sizes="(min-width: 960px) 34vw, 90vw">
-          <img src="assets/img/IMG_4736-683.webp" width="683" height="911" fetchpriority="high"
+          <img src="assets/img/IMG_4736-683.webp" width="683" height="911" loading="lazy" fetchpriority="high"
                alt="Maison de plain-pied avec piscine, toiture en tuiles équipée de panneaux solaires noirs">
         </picture>
         <div class="hero__voile" aria-hidden="true"></div>
@@ -207,7 +213,7 @@
             <p>Nous étudions votre toiture, son exposition et votre consommation en kWh pour dimensionner une installation adaptée à votre foyer. Devis détaillé, démarches administratives, pose et mise en service : nous nous occupons de tout.</p>
             <ul class="liste-coches">
               <li>Visite et étude technique sur place</li>
-              <li>Devis détaillé, poste par poste</li>
+              <li>Devis détaillé et démarches en mairie gérées</li>
               <li>Entretien et SAV après la mise en service</li>
             </ul>
             <a class="lien-fleche" href="/pour-particuliers/">L'installation pour les particuliers</a>
@@ -289,8 +295,8 @@
           </ul>
 
           <div class="depannage__sinistre">
-            <h3>Grêle, tempête : expertise sinistre</h3>
-            <p>Après un sinistre, nous réalisons l'expertise de votre installation pour votre assurance.</p>
+            <h3>Grêle et sinistres : expertise pour votre assurance</h3>
+            <p>Après un épisode de grêle ou un sinistre, nous réalisons l'expertise de votre installation photovoltaïque pour votre compagnie d'assurance.</p>
           </div>
 
           <div class="groupe-boutons">
@@ -307,7 +313,7 @@
           <picture>
             <source type="image/webp" srcset="assets/img/depannage-sinitre-panneaux-solaire-480.webp 480w, assets/img/depannage-sinitre-panneaux-solaire-683.webp 683w" sizes="(min-width: 960px) 36vw, 90vw">
             <img src="assets/img/depannage-sinitre-panneaux-solaire-683.webp" width="683" height="1214" loading="lazy" decoding="async"
-                 alt="Toiture sinistrée : tuiles retirées, charpente à nu et panneaux solaires déposés en attente de remise en état">
+                 alt="Toiture sinistrée : tuiles retirées, charpente à nu et panneaux solaires déposés">
           </picture>
           <figcaption>Intervention après sinistre, <span class="a-completer">[VILLE À COMPLÉTER]</span></figcaption>
         </figure>
@@ -558,17 +564,16 @@
         <h2 class="pied__titre">Suivez-nous</h2>
         <ul class="pied__reseaux">
           <li>
-            <a href="#" aria-label="Facebook de Mondes du Soleil (lien à compléter)">
+            <a href="https://www.facebook.com/profile.php?id=61561008622331" rel="noopener" aria-label="Facebook de Mondes du Soleil">
               <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H8v4h2v7h4v-7h3l1-4h-4V8.5c0-.3.2-.5.5-.5Z"/></svg>
             </a>
           </li>
           <li>
-            <a href="#" aria-label="Instagram de Mondes du Soleil (lien à compléter)">
+            <a href="https://www.instagram.com/mondesdusoleil" rel="noopener" aria-label="Instagram de Mondes du Soleil">
               <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3Zm4 3.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm0 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM17 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
             </a>
           </li>
         </ul>
-        <p class="a-completer">[LIENS RÉSEAUX À COMPLÉTER]</p>
       </div>
 
       <nav class="pied__colonne" aria-label="Navigation du pied de page">
@@ -586,7 +591,7 @@
 
     <div class="pied__bas conteneur">
       <p>© 2026 Mondes du Soleil</p>
-      <p><a href="#">Mentions légales</a> <span class="a-completer">[LIEN À COMPLÉTER]</span></p>
+      <p><a href="/mentions-legales/">Mentions légales</a></p>
     </div>
   </footer>
 

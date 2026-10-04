@@ -207,8 +207,12 @@ function webglDisponible() {
   }
 }
 
+/* Rend la main au navigateur entre deux étapes d'initialisation (pas de tâche longue) */
+const pause = () => new Promise((r) => (window.requestIdleCallback ? requestIdleCallback(() => r(), { timeout: 120 }) : setTimeout(r, 16)));
+
 async function demarrer3D() {
   const THREE = await import(CHEMIN_THREE);
+  await pause();
   const leger = ecranLeger;
 
   /* --- Rendu --- */
@@ -220,6 +224,7 @@ async function demarrer3D() {
   if (!leger) {
     rendu.shadowMap.enabled = true;
     rendu.shadowMap.type = THREE.PCFSoftShadowMap;
+    rendu.shadowMap.autoUpdate = false; // ombres recalculées seulement quand le soleil est levé
   }
 
   const monde = new THREE.Scene();
@@ -281,7 +286,9 @@ async function demarrer3D() {
   sceneReflets.add(new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), materiauCiel));
   let cibleReflets = null;
   let paletteReflets = -1;
+  let refletsActifs = false; // activés après le premier rendu, pour ne pas bloquer le démarrage
   const majReflets = (t) => {
+    if (!refletsActifs) return;
     const palier = Math.round(t * (leger ? 6 : 16));
     if (palier === paletteReflets) return;
     paletteReflets = palier;
@@ -290,6 +297,8 @@ async function demarrer3D() {
     cibleReflets?.dispose();
     cibleReflets = nouvelle;
   };
+
+  await pause();
 
   /* --- Étoiles --- */
   const nbEtoiles = leger ? 160 : 420;
@@ -381,6 +390,8 @@ async function demarrer3D() {
       }
     }
   });
+
+  await pause();
 
   /* --- Matériaux --- */
   const M = (options) => new THREE.MeshStandardMaterial(options);
@@ -514,6 +525,8 @@ async function demarrer3D() {
     maison.add(m);
   }
 
+  await pause();
+
   /* --- Panneaux solaires : 2 rangs de 5 sur le pan avant --- */
   const repereToit = new THREE.Group();
   repereToit.position.copy(pans[0].position);
@@ -603,6 +616,7 @@ async function demarrer3D() {
     // La lumière principale vient du même côté que le soleil, un peu plus haut
     soleil.position.set(dirSoleil.x * 40, Math.max(dirSoleil.y, 0.12) * 40 + 4, dirSoleil.z * 40 + 18);
     soleil.intensity = 3.0 * jour;
+    if (!leger && jour > 0) rendu.shadowMap.needsUpdate = true;
     soleil.color.setHSL(0.07 + 0.04 * jour, 0.9, 0.62 + 0.12 * jour);
     hemi.intensity = interpoler(0.28, 1.05, jour);
     hemi.color.setHSL(interpoler(0.6, 0.1, jour), 0.45, interpoler(0.55, 0.78, jour));
@@ -626,9 +640,19 @@ async function demarrer3D() {
   };
 
   dimensionner();
+  // Les panneaux sont rendus visibles le temps de la compilation pour que tous
+  // les shaders soient préparés en parallèle (sans bloquer la page)
+  panneaux.forEach((panneau) => { panneau.visible = true; });
+  await rendu.compileAsync(monde, camera);
+  await pause();
   const boucle = lancerBoucle(dessiner);
   new ResizeObserver(() => { dimensionner(); boucle.redessiner(); }).observe(scene);
   canvas.classList.add("est-pret");
+
+  // Reflets du ciel sur les panneaux : générés une fois la page au repos
+  await pause();
+  refletsActifs = true;
+  boucle.redessiner();
 
   // Contexte WebGL perdu : on bascule sur l'image fixe
   canvas.addEventListener("webglcontextlost", () => racine.classList.add("mode-fixe"));
@@ -648,10 +672,23 @@ if (hero && scene && canvas && !racine.classList.contains("mode-fixe")) {
   } else {
     // Three.js n'est chargé qu'une fois la page affichée, pour ne pas
     // retarder le premier rendu (le titre reste l'élément principal).
-    const lancer = () => demarrer3D().catch(() => racine.classList.add("mode-fixe"));
-    const auRepos = window.requestIdleCallback || ((f) => setTimeout(f, 200));
-    if (document.readyState === "complete") auRepos(lancer);
-    else window.addEventListener("load", () => auRepos(lancer), { once: true });
+    // Ordinateur : dès que la page est au repos. Mobile et appareils
+    // modestes : à la première interaction (défilement, toucher, clavier).
+    let lance = false;
+    const lancer = () => {
+      if (lance) return;
+      lance = true;
+      demarrer3D().catch(() => racine.classList.add("mode-fixe"));
+    };
+    if (ecranLeger) {
+      for (const type of ["scroll", "touchstart", "pointerdown", "keydown", "wheel"]) {
+        window.addEventListener(type, lancer, { once: true, passive: true });
+      }
+    } else {
+      const auRepos = window.requestIdleCallback || ((f) => setTimeout(f, 200));
+      if (document.readyState === "complete") auRepos(lancer);
+      else window.addEventListener("load", () => auRepos(lancer), { once: true });
+    }
   }
 }
 

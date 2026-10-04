@@ -14,7 +14,7 @@ Choix retenus : hero sombre plein écran (réf. 1) · titres gras avec un mot en
 | `--nuit-2` | `#16191E` | estimation | footer, surfaces sombres |
 | `--encre` | `#14161A` | choix | texte sur fond clair (18,1:1) ; **texte des boutons orange** (7,22:1) |
 | `--gris` | `#4D535B` | choix | texte secondaire sur fond clair (7,77:1 sur blanc) |
-| `--gris-nuit` | `#A3A9B1` | choix | texte secondaire sur fond sombre (8,22:1) |
+| `--gris-nuit` | `#A3A9B1` | choix | texte secondaire sur fond sombre uni (8,22:1) ; **jamais sur la scène 3D** : le ciel final s'éclaircit (mesuré à 3,27:1), on y utilise `--blanc-chaud` |
 | `--blanc-chaud` | `#F5F3EF` | choix | texte principal sur fond sombre (17,56:1) |
 | `--sable-pale` | `#FAF4EC` | estimation | une section claire sur deux |
 
@@ -38,7 +38,7 @@ Choix retenus : hero sombre plein écran (réf. 1) · titres gras avec un mot en
 - Boutons : en pilule (`border-radius: 999px`, observé sur les réf. 1 et 3) · hauteur 48 px min. · padding 0 24 px · Inter 600 · 1rem.
   - Principal : fond `--orange`, texte `--encre`. Secondaire : contour de 1,5 px, texte de la couleur du fond opposé.
 - Cartes et tuiles : rayon de 16 px. Photos : rayon de 12 px. Pastilles et badges : 999 px. (estimation)
-- Focus clavier : contour de 3 px en `--orange` avec un décalage de 3 px, sur tous les éléments interactifs.
+- Focus clavier : contour de 3 px avec un décalage de 3 px, en `--orange-texte` sur fond clair et en `--orange` sur fond sombre (contraste ≥ 3:1 dans les deux cas).
 - Ombres : une seule, `0 12px 32px rgb(11 13 16 / .12)`, pour les visuels superposés. (estimation)
 
 ## Mouvement

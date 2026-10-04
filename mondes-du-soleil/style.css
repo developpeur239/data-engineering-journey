@@ -465,7 +465,7 @@ a { color: inherit; }
 .hero__intro {
   margin-block: 20px 32px;
   max-width: 32rem;
-  color: var(--gris-nuit);
+  color: var(--blanc-chaud);
 }
 .hero__temps--2 .hero__intro,
 .hero__temps--3 .hero__intro { margin-bottom: 0; }
@@ -737,7 +737,7 @@ html:not(.js) .hero__fixe img,
   font-size: .9375rem;
   font-weight: 600;
 }
-.marques li:last-child { border-style: dashed; color: var(--gris-nuit); font-family: var(--police-texte); font-weight: 500; }
+.marques li:last-child { border-style: dashed; color: var(--blanc-chaud); font-family: var(--police-texte); font-weight: 500; }
 
 .depannage__sinistre {
   margin-block: 36px 40px;
