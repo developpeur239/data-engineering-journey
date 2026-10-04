@@ -22,7 +22,7 @@ Choix retenus : hero sombre plein écran (réf. 1) · titres gras avec un mot en
 
 ## Typographie
 - Titres : **Poppins** (linéale géométrique, estimation d'après la réf. 3). Corps : **Inter**. Les deux en `font-display: swap`, fichiers WOFF2 hébergés sur le site.
-- H1 hero : `clamp(2.5rem, 6vw, 5rem)` · 700 · interligne 1.05 · approche −0,02em. Un seul mot en couleur.
+- H1 hero : `clamp(2.5rem, 5.2vw, 4.5rem)` · 700 · interligne 1.05 · approche −0,02em. Un seul mot en couleur.
 - H2 : `clamp(2rem, 4vw, 3.25rem)` · 700 · interligne 1.1. H3 : `1.375rem` · 600 · interligne 1.3.
 - Corps : `1.0625rem` (17 px) · 400 · interligne 1.6 · mesure max. 65ch. Petit texte : `0.875rem` · 400 (jamais en dessous).
 - Surtitre : `0.8125rem` · 600 · majuscules · espacement +0,12em, en `--orange-texte` sur fond clair ou `--orange` sur fond sombre.
