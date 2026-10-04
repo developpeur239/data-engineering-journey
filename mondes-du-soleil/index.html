@@ -21,6 +21,10 @@
   <script>
     document.documentElement.classList.add("js");
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("mode-fixe");
+    // Si script.js n'a pas pu s'exécuter (fichier ouvert en file://, erreur réseau) : image fixe
+    window.addEventListener("load", function () {
+      if (!document.documentElement.classList.contains("module-ok")) document.documentElement.classList.add("mode-fixe");
+    });
   </script>
   <link rel="preload" href="assets/fonts/poppins-latin-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>

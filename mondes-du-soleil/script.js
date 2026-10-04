@@ -24,6 +24,7 @@ const LISSAGE = 0.08;            // part de l'écart rattrapée à chaque image 
 const CHEMIN_THREE = "./vendor/three.min.js";
 
 const racine = document.documentElement;
+racine.classList.add("module-ok"); // signale au <head> que le script s'exécute bien
 const reduireMouvement = window.matchMedia("(prefers-reduced-motion: reduce)");
 const ecranLeger = window.matchMedia("(max-width: 767px)").matches
   || (navigator.hardwareConcurrency || 8) <= 4;

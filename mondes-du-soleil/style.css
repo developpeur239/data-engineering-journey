@@ -445,8 +445,8 @@ a { color: inherit; }
   .hero__temps { inset: 50% auto auto 0; max-width: min(40rem, 44vw); transform: translateY(-50%); }
 }
 /* Avec JS : seuls les temps 2 et 3 démarrent masqués (pilotés par script.js) */
-.js .hero__temps--2,
-.js .hero__temps--3 { opacity: 0; visibility: hidden; }
+.module-ok .hero__temps--2,
+.module-ok .hero__temps--3 { opacity: 0; visibility: hidden; }
 
 .hero__titre {
   font-size: clamp(2.5rem, 5.2vw, 4.5rem);
@@ -1085,12 +1085,12 @@ html:not(.js) .hero__fixe img,
 /* ==================================================================
    ANIMATIONS D'APPARITION (activées seulement avec JS)
    ================================================================== */
-.js .apparition {
+.module-ok .apparition {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .5s var(--courbe), transform .5s var(--courbe);
 }
-.js .apparition.est-visible { opacity: 1; transform: none; }
+.module-ok .apparition.est-visible { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1098,5 +1098,5 @@ html:not(.js) .hero__fixe img,
     animation-duration: .01ms !important;
     scroll-behavior: auto !important;
   }
-  .js .apparition { opacity: 1; transform: none; }
+  .module-ok .apparition { opacity: 1; transform: none; }
 }
