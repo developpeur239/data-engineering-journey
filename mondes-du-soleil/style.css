@@ -1,0 +1,1102 @@
+/* ==================================================================
+   Mondes du Soleil · page d'accueil
+   Valeurs issues de DESIGN.md. Découpage par section, dans l'ordre
+   de la page (même numérotation que dans index.html).
+   ================================================================== */
+
+/* ------------------------------------------------------------------
+   0. POLICES (hébergées localement, font-display: swap)
+   ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/poppins-latin-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/poppins-latin-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("assets/fonts/inter-latin-var.woff2") format("woff2");
+}
+
+/* ------------------------------------------------------------------
+   0. JETONS
+   ------------------------------------------------------------------ */
+:root {
+  /* Marque (extraites du logo) */
+  --orange: #F18A01;
+  --sable: #D8A975;
+  --soleil: #FEDD2C;
+  /* Dérivées et neutres (contrastes vérifiés, voir DESIGN.md) */
+  --orange-texte: #A35D01;
+  --nuit: #0B0D10;
+  --nuit-2: #16191E;
+  --encre: #14161A;
+  --gris: #4D535B;
+  --gris-nuit: #A3A9B1;
+  --blanc: #FFFFFF;
+  --blanc-chaud: #F5F3EF;
+  --sable-pale: #FAF4EC;
+
+  /* Couleur de l'anneau de focus : foncée sur fond clair */
+  --focus: var(--orange-texte);
+
+  /* Typographie */
+  --police-titre: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --police-texte: "Inter", "Segoe UI", system-ui, sans-serif;
+
+  /* Espacements */
+  --gouttiere: 16px;
+  --section: clamp(64px, 10vw, 128px);
+  --h-entete: 64px;
+
+  /* Formes */
+  --rayon-carte: 16px;
+  --rayon-photo: 12px;
+  --ombre: 0 12px 32px rgb(11 13 16 / .12);
+  --courbe: cubic-bezier(.2, .7, .2, 1);
+}
+
+@media (min-width: 481px)  { :root { --gouttiere: 24px; } }
+@media (min-width: 1024px) { :root { --gouttiere: 32px; --h-entete: 80px; } }
+
+/* ------------------------------------------------------------------
+   0. BASE
+   ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--h-entete) + 16px);
+}
+
+body {
+  margin: 0;
+  background: var(--blanc);
+  color: var(--encre);
+  font-family: var(--police-texte);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, canvas { display: block; max-width: 100%; }
+img { height: auto; }
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-weight: 700;
+  text-wrap: balance;
+}
+h2 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.1; letter-spacing: -.02em; }
+h3 { font-size: 1.375rem; font-weight: 600; line-height: 1.3; }
+p  { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+figure, blockquote { margin: 0; }
+address { font-style: normal; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.icone { width: 1.25em; height: 1.25em; fill: currentColor; flex: none; }
+
+.conteneur {
+  width: min(100% - 2 * var(--gouttiere), 1200px);
+  margin-inline: auto;
+}
+
+.section { padding-block: var(--section); }
+
+.section__entete { max-width: 46rem; margin-bottom: clamp(40px, 6vw, 72px); }
+.section__entete h2 + p { margin-top: 16px; }
+.section__entete--centre { margin-inline: auto; text-align: center; }
+.section__entete--ligne {
+  max-width: none;
+  display: grid;
+  gap: 16px 48px;
+  align-items: end;
+}
+.section__entete--ligne > p { color: var(--gris); max-width: 32rem; }
+@media (min-width: 960px) {
+  .section__entete--ligne { grid-template-columns: 1fr minmax(0, 26rem); }
+}
+
+/* Mot mis en valeur dans un titre */
+.accent { color: var(--orange-texte); }
+
+.surtitre {
+  margin-bottom: 12px;
+  color: var(--orange-texte);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* Contexte sombre : couleurs d'accent claires */
+.hero, .depannage, .final, .pied, .tuile--bornes {
+  --focus: var(--orange);
+  color: var(--blanc-chaud);
+}
+.hero .accent, .depannage .accent, .final .accent { color: var(--orange); }
+.surtitre--clair { color: var(--orange); }
+
+/* Placeholder visible : information à fournir par le client */
+.a-completer {
+  display: inline-block;
+  padding: 0 .4em;
+  border: 1px dashed var(--orange-texte);
+  border-radius: 4px;
+  background: #FFE9B0;
+  color: var(--encre);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: .8125rem;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Lien d'évitement */
+.lien-evitement {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--encre);
+  color: var(--blanc);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+.lien-evitement:focus { transform: none; }
+
+/* ------------------------------------------------------------------
+   0. BOUTONS ET LIENS
+   ------------------------------------------------------------------ */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--police-texte);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .2s, border-color .2s, transform .2s var(--courbe);
+}
+.bouton:hover { transform: translateY(-1px); }
+.bouton--principal { background: var(--orange); color: var(--encre); }
+.bouton--principal:hover { background: #FF9C24; }
+.bouton--contour-clair { border-color: rgb(245 243 239 / .55); color: var(--blanc-chaud); }
+.bouton--contour-clair:hover { border-color: var(--blanc-chaud); background: rgb(255 255 255 / .08); }
+.bouton--grand { min-height: 56px; padding-inline: 28px; font-size: 1.0625rem; }
+
+.groupe-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.lien-fleche {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--orange-texte);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.lien-fleche::after {
+  content: "→";
+  transition: transform .2s var(--courbe);
+}
+.lien-fleche:hover::after { transform: translateX(4px); }
+.lien-fleche--clair { color: var(--orange); }
+
+/* ==================================================================
+   1. EN-TÊTE
+   ================================================================== */
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--h-entete);
+  background: rgb(255 255 255 / .96);
+  border-bottom: 1px solid rgb(20 22 26 / .08);
+  backdrop-filter: saturate(1.4) blur(10px);
+}
+.entete__barre {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+}
+.entete__logo { flex: none; margin-right: auto; }
+.entete__logo img { width: auto; height: 44px; }
+
+.entete__actions { display: flex; align-items: center; gap: 12px; }
+
+.entete__tel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--encre);
+  color: var(--blanc);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.entete__tel-texte { display: none; }
+.entete__devis { display: none; }
+
+/* Burger (mobile et tablette) */
+.burger {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1.5px solid rgb(20 22 26 / .2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--encre);
+  cursor: pointer;
+}
+.burger__barres,
+.burger__barres::before,
+.burger__barres::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform .25s var(--courbe), opacity .2s;
+}
+.burger__barres { position: relative; }
+.burger__barres::before,
+.burger__barres::after { content: ""; position: absolute; left: 0; }
+.burger__barres::before { top: -6px; }
+.burger__barres::after { top: 6px; }
+.burger[aria-expanded="true"] .burger__barres { background: transparent; }
+.burger[aria-expanded="true"] .burger__barres::before { transform: translateY(6px) rotate(45deg); }
+.burger[aria-expanded="true"] .burger__barres::after { transform: translateY(-6px) rotate(-45deg); }
+
+/* Panneau de navigation mobile */
+.nav {
+  position: fixed;
+  inset: var(--h-entete) 0 auto 0;
+  max-height: calc(100dvh - var(--h-entete));
+  overflow-y: auto;
+  padding: 8px var(--gouttiere) 32px;
+  background: var(--blanc);
+  border-bottom: 1px solid rgb(20 22 26 / .08);
+  box-shadow: var(--ombre);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity .2s, transform .25s var(--courbe), visibility 0s .25s;
+}
+.nav--ouverte {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .2s, transform .25s var(--courbe);
+}
+.nav__liste a {
+  display: block;
+  padding: 16px 0;
+  border-bottom: 1px solid rgb(20 22 26 / .08);
+  font-family: var(--police-titre);
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nav__devis { width: 100%; margin-top: 24px; }
+
+@media (min-width: 640px) {
+  .entete__devis { display: inline-flex; }
+  .nav__devis { display: none; }
+}
+
+@media (min-width: 1100px) {
+  .entete__logo { margin-right: 0; }
+  .entete__logo img { height: 52px; }
+  .burger { display: none; }
+  .nav {
+    position: static;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: none;
+  }
+  .nav__liste { display: flex; gap: 4px; }
+  .nav__liste a {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 999px;
+    font-family: var(--police-texte);
+    font-size: .9375rem;
+    font-weight: 500;
+  }
+  .nav__liste a:hover { background: var(--sable-pale); }
+}
+
+@media (min-width: 1280px) {
+  .entete__tel { padding: 0 18px 0 14px; }
+  .entete__tel-texte { display: inline; }
+}
+
+/* ==================================================================
+   2. HERO SCROLL 3D
+   ================================================================== */
+.hero {
+  position: relative;
+  height: 450vh;
+  background: var(--nuit);
+}
+.hero__scene {
+  position: sticky;
+  top: var(--h-entete);
+  height: calc(100vh - var(--h-entete));
+  height: calc(100svh - var(--h-entete));
+  overflow: hidden;
+  /* Fond affiché avant le chargement de la 3D : la nuit, l'aube à l'horizon */
+  background:
+    radial-gradient(120% 60% at 70% 100%, rgb(241 138 1 / .16), transparent 60%),
+    linear-gradient(#0B0D10, #12161E);
+}
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .8s ease;
+}
+.hero__canvas.est-pret { opacity: 1; }
+
+/* Voile pour garantir le contraste du texte sur la scène */
+.hero__voile {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(11 13 16 / .92) 0%, rgb(11 13 16 / .7) 38%, rgb(11 13 16 / 0) 62%);
+}
+@media (min-width: 960px) {
+  .hero__voile {
+    background: linear-gradient(to right, rgb(11 13 16 / .92) 0%, rgb(11 13 16 / .82) 36%, rgb(11 13 16 / .4) 54%, rgb(11 13 16 / 0) 70%);
+  }
+}
+
+.hero__textes {
+  position: relative;
+  height: 100%;
+}
+.hero__temps {
+  position: absolute;
+  inset: auto 0 clamp(32px, 7vh, 72px) 0;
+  max-width: 36rem;
+}
+@media (min-width: 960px) {
+  .hero__temps { inset: 50% auto auto 0; max-width: min(40rem, 44vw); transform: translateY(-50%); }
+}
+/* Avec JS : seuls les temps 2 et 3 démarrent masqués (pilotés par script.js) */
+.js .hero__temps--2,
+.js .hero__temps--3 { opacity: 0; visibility: hidden; }
+
+.hero__titre {
+  font-size: clamp(2.5rem, 5.2vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  color: var(--blanc-chaud);
+}
+.hero__titre-secondaire {
+  font-family: var(--police-titre);
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.hero__intro {
+  margin-block: 20px 32px;
+  max-width: 32rem;
+  color: var(--gris-nuit);
+}
+.hero__temps--2 .hero__intro,
+.hero__temps--3 .hero__intro { margin-bottom: 0; }
+
+.hero__indice {
+  position: absolute;
+  right: var(--gouttiere);
+  bottom: 24px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--gris-nuit);
+  font-size: .875rem;
+}
+@media (min-width: 960px) { .hero__indice { display: flex; } }
+
+/* Image fixe : visible sans JS, sans WebGL ou avec prefers-reduced-motion */
+.hero__fixe { display: none; }
+
+html:not(.js) .hero,
+.mode-fixe .hero { height: auto; }
+html:not(.js) .hero__scene,
+.mode-fixe .hero__scene {
+  position: relative;
+  top: 0;
+  height: auto;
+  min-height: calc(100svh - var(--h-entete));
+  display: grid;
+  align-content: center;
+  padding-block: 48px;
+}
+html:not(.js) .hero__canvas,
+html:not(.js) .hero__voile,
+html:not(.js) .hero__indice,
+html:not(.js) .hero__temps--2,
+html:not(.js) .hero__temps--3,
+.mode-fixe .hero__canvas,
+.mode-fixe .hero__voile,
+.mode-fixe .hero__indice,
+.mode-fixe .hero__temps--2,
+.mode-fixe .hero__temps--3 { display: none; }
+html:not(.js) .hero__textes,
+.mode-fixe .hero__textes { height: auto; }
+html:not(.js) .hero__temps--1,
+.mode-fixe .hero__temps--1 { position: static; transform: none; }
+html:not(.js) .hero__fixe,
+.mode-fixe .hero__fixe {
+  display: block;
+  order: 2;
+  width: min(100% - 2 * var(--gouttiere), 420px);
+  margin: 40px auto 0;
+}
+html:not(.js) .hero__fixe img,
+.mode-fixe .hero__fixe img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--rayon-photo);
+}
+@media (min-width: 960px) {
+  html:not(.js) .hero__fixe,
+  .mode-fixe .hero__fixe {
+    position: absolute;
+    top: 50%;
+    right: max(var(--gouttiere), (100% - 1200px) / 2);
+    width: min(34vw, 440px);
+    margin: 0;
+    transform: translateY(-50%);
+  }
+  html:not(.js) .hero__temps--1,
+  .mode-fixe .hero__temps--1 { max-width: calc(100% - min(34vw, 440px) - 48px); }
+}
+
+/* Séquence d'images (FRAME_URLS) : même canvas, même voile */
+
+/* ==================================================================
+   3. BANDEAU DE CONFIANCE
+   ================================================================== */
+.confiance {
+  position: relative;
+  z-index: 1;
+  background: var(--blanc);
+  border-bottom: 1px solid rgb(20 22 26 / .08);
+}
+.confiance__liste {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 24px 32px;
+  padding-block: 32px;
+}
+.confiance__element { display: flex; justify-content: center; }
+.confiance__element img { width: auto; height: 52px; }
+.confiance__element:nth-child(2) img { height: 36px; }
+.confiance__element--texte {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 1.3;
+}
+.confiance__element--texte strong {
+  font-family: var(--police-titre);
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+.confiance__element--texte span { color: var(--gris); font-size: .875rem; }
+.confiance__element--texte .a-completer { font-size: .8125rem; color: var(--encre); }
+@media (min-width: 800px) {
+  .confiance__liste { grid-template-columns: repeat(4, auto); justify-content: space-between; }
+  .confiance__element img { height: 60px; }
+}
+
+/* ==================================================================
+   4. SERVICES
+   ================================================================== */
+.metier {
+  display: grid;
+  gap: 48px;
+  align-items: center;
+}
+.metier + .metier { margin-top: clamp(80px, 12vw, 160px); }
+.services { padding-bottom: 0; }
+
+.metier__visuel {
+  position: relative;
+  padding: 0 12% 14% 0;
+}
+.metier__photo img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--rayon-photo);
+}
+.metier__photo--principale img { aspect-ratio: 4 / 5; }
+.metier__photo--secondaire {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+}
+.metier__photo--secondaire img {
+  aspect-ratio: 3 / 4;
+  border: 6px solid var(--blanc);
+  box-shadow: var(--ombre);
+}
+.metier__pastille {
+  position: absolute;
+  top: 8%;
+  left: -8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 15rem;
+  padding: 12px 16px;
+  border-radius: var(--rayon-carte);
+  background: var(--blanc);
+  box-shadow: var(--ombre);
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.metier__pastille .icone { color: var(--orange-texte); }
+
+.metier__texte h3 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.metier__texte > p:not(.surtitre) { margin-top: 20px; color: var(--gris); max-width: 65ch; }
+.metier__texte .lien-fleche { margin-top: 32px; }
+
+.liste-coches { display: grid; gap: 10px; margin-top: 24px; }
+.liste-coches li { position: relative; padding-left: 24px; }
+.liste-coches li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.etiquettes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.etiquettes li {
+  padding: 6px 14px;
+  border: 1.5px solid var(--sable);
+  border-radius: 999px;
+  font-size: .9375rem;
+  font-weight: 600;
+}
+
+@media (min-width: 960px) {
+  .metier { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+  .metier__visuel { grid-column: 1 / 7; }
+  .metier__texte { grid-column: 8 / 13; }
+  .metier--inverse .metier__visuel { grid-column: 7 / 13; order: 2; }
+  .metier--inverse .metier__texte { grid-column: 1 / 6; }
+  /* Miroir : la petite photo passe à gauche */
+  .metier--inverse .metier__visuel { padding: 0 0 14% 12%; }
+  .metier--inverse .metier__photo--secondaire { right: auto; left: 0; }
+  .metier__pastille { left: -24px; }
+}
+
+/* 4c. Tuiles des services complémentaires */
+.tuiles-fond {
+  margin-top: var(--section);
+  padding-block: var(--section);
+  background: var(--sable-pale);
+}
+.tuiles { display: grid; gap: 16px; }
+.tuile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 32px;
+  border-radius: var(--rayon-carte);
+  background: var(--blanc);
+  text-decoration: none;
+  transition: transform .3s var(--courbe), box-shadow .3s;
+}
+.tuile:hover { transform: translateY(-4px); box-shadow: var(--ombre); }
+.tuile__icone {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+  color: var(--orange-texte);
+}
+.tuile .surtitre { margin-bottom: 0; }
+.tuile h3 { font-size: 1.5rem; line-height: 1.2; }
+.tuile p:not(.surtitre) { color: var(--gris); }
+.tuile .lien-fleche { margin-top: auto; padding-top: 16px; }
+
+.tuile--bornes {
+  overflow: hidden;
+  background:
+    radial-gradient(90% 70% at 100% 0%, rgb(241 138 1 / .28), transparent 60%),
+    var(--nuit-2);
+}
+.tuile--bornes .tuile__icone { color: var(--orange); }
+.tuile--bornes h3 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.12; max-width: 18ch; }
+.tuile--bornes p:not(.surtitre) { color: var(--gris-nuit); max-width: 40ch; }
+
+@media (min-width: 800px) {
+  .tuiles { grid-template-columns: 7fr 5fr; grid-template-rows: auto auto; gap: 24px; }
+  .tuile--bornes { grid-row: 1 / 3; padding: 48px; }
+}
+
+/* ==================================================================
+   5. DÉPANNAGE URGENT
+   ================================================================== */
+.depannage {
+  padding-block: var(--section);
+  background:
+    radial-gradient(60% 50% at 0% 100%, rgb(241 138 1 / .14), transparent 70%),
+    var(--nuit-2);
+}
+.depannage__grille { display: grid; gap: 56px; align-items: center; }
+.depannage__texte > p { margin-top: 20px; color: var(--gris-nuit); max-width: 34rem; }
+
+.marques { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.marques li {
+  padding: 8px 16px;
+  border: 1px solid rgb(245 243 239 / .22);
+  border-radius: 999px;
+  font-family: var(--police-titre);
+  font-size: .9375rem;
+  font-weight: 600;
+}
+.marques li:last-child { border-style: dashed; color: var(--gris-nuit); font-family: var(--police-texte); font-weight: 500; }
+
+.depannage__sinistre {
+  margin-block: 36px 40px;
+  padding-left: 20px;
+  border-left: 3px solid var(--orange);
+}
+.depannage__sinistre p { margin-top: 8px; color: var(--gris-nuit); }
+.depannage__horaires { margin-top: 20px; color: var(--gris-nuit); font-size: .9375rem; }
+
+.depannage__photo img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--rayon-photo);
+}
+.depannage__photo figcaption { margin-top: 12px; color: var(--gris-nuit); font-size: .875rem; }
+
+@media (min-width: 960px) {
+  .depannage__grille { grid-template-columns: 7fr 5fr; gap: 80px; }
+}
+
+/* ==================================================================
+   6. LA MÉTHODE
+   ================================================================== */
+.etapes {
+  counter-reset: etape;
+  display: grid;
+  gap: 32px;
+  position: relative;
+}
+.etape { position: relative; padding-left: 72px; }
+.etape__numero {
+  position: absolute;
+  left: 0;
+  top: -4px;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--sable-pale);
+  border: 1.5px solid var(--sable);
+  color: var(--orange-texte);
+  font-family: var(--police-titre);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.etape h3 { font-size: 1.25rem; }
+.etape p { margin-top: 8px; color: var(--gris); }
+
+/* Fil qui relie les étapes : vertical sur mobile */
+.etapes::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 26px;
+  bottom: 26px;
+  width: 1.5px;
+  background: linear-gradient(var(--sable), var(--orange));
+}
+
+@media (min-width: 960px) {
+  .etapes { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 32px; }
+  .etape { padding: 80px 0 0; }
+  .etape__numero { top: 0; }
+  .etapes::before {
+    left: 26px;
+    right: 0;
+    top: 26px;
+    bottom: auto;
+    width: auto;
+    height: 1.5px;
+    background: linear-gradient(to right, var(--sable), var(--orange));
+  }
+}
+
+.methode__suite {
+  margin-top: clamp(48px, 6vw, 72px);
+  padding: 24px 28px;
+  border-radius: var(--rayon-carte);
+  background: var(--sable-pale);
+  max-width: 46rem;
+}
+
+/* ==================================================================
+   7. RÉALISATIONS
+   ================================================================== */
+.realisations { background: var(--sable-pale); }
+
+.galerie {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 16px;
+}
+.galerie__item { display: flex; flex-direction: column; min-width: 0; }
+.galerie__item picture {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--rayon-photo);
+  aspect-ratio: 3 / 4;
+}
+.galerie__item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--courbe);
+}
+.galerie__item:hover img { transform: scale(1.03); }
+.galerie__item figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 12px;
+  color: var(--gris);
+  font-size: .875rem;
+  line-height: 1.4;
+}
+.galerie__num {
+  color: var(--orange-texte);
+  font-family: var(--police-titre);
+  font-weight: 700;
+}
+.galerie__item--a,
+.galerie__item--d { grid-column: 1 / -1; }
+.galerie__item--a picture { aspect-ratio: 4 / 5; }
+.galerie__item--d picture { aspect-ratio: 4 / 3; }
+
+@media (min-width: 720px) {
+  .galerie { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+  .galerie__item--a { grid-column: 1 / 8; grid-row: 1 / 3; }
+  .galerie__item--b { grid-column: 8 / 13; grid-row: 1; }
+  .galerie__item--c { grid-column: 8 / 13; grid-row: 2; }
+  .galerie__item--d { grid-column: 1 / 5; }
+  .galerie__item--e { grid-column: 5 / 9; margin-top: 64px; }
+  .galerie__item--f { grid-column: 9 / 13; }
+  .galerie__item--a picture { aspect-ratio: auto; flex: 1; min-height: 0; }
+  .galerie__item--b picture,
+  .galerie__item--c picture { aspect-ratio: 16 / 10; }
+  .galerie__item--d picture { aspect-ratio: 3 / 4; }
+}
+
+/* ==================================================================
+   8. AVIS CLIENTS
+   ================================================================== */
+.avis__liste { display: grid; gap: 56px; }
+.citation { position: relative; max-width: 40rem; }
+.citation blockquote p {
+  font-family: var(--police-titre);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.01em;
+}
+.citation blockquote::before {
+  content: "«" / "";
+  display: block;
+  height: .6em;
+  color: var(--sable);
+  font-family: var(--police-titre);
+  font-size: 5rem;
+  line-height: 1;
+}
+.citation figcaption {
+  margin-top: 16px;
+  color: var(--gris);
+  font-weight: 500;
+}
+.citation figcaption::before { content: "— "; }
+
+.avis__lien {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 56px;
+}
+
+@media (min-width: 960px) {
+  .avis__liste { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 72px 24px; }
+  .citation:nth-child(1) { grid-column: 1 / 8; }
+  .citation:nth-child(2) { grid-column: 6 / 13; }
+  .citation:nth-child(3) { grid-column: 2 / 9; }
+}
+
+/* ==================================================================
+   9. ZONES D'INTERVENTION
+   ================================================================== */
+.zones { background: var(--sable-pale); }
+.zones__grille { display: grid; gap: 40px; }
+.zones__entete h2 { font-size: clamp(2rem, 3.4vw, 2.75rem); }
+.zones__secteurs { display: grid; gap: 32px; }
+.secteur { padding-top: 20px; border-top: 3px solid var(--orange); }
+.secteur h3 { font-size: 1.125rem; }
+.secteur__villes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin-top: 12px;
+  color: var(--gris);
+  font-size: .9375rem;
+}
+.secteur__villes li:not(:last-child)::after {
+  content: "·";
+  margin-inline: 10px;
+  color: var(--orange-texte);
+}
+
+@media (min-width: 720px) {
+  .zones__secteurs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+}
+@media (min-width: 1100px) {
+  .zones__grille { grid-template-columns: 4fr 8fr; gap: 48px; align-items: end; }
+}
+
+/* ==================================================================
+   10. APPEL À L'ACTION FINAL
+   ================================================================== */
+.final {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--section) calc(var(--section) + 48px);
+  background: var(--nuit);
+}
+/* Lever de soleil sur l'horizon, en écho au hero */
+.final__horizon {
+  position: absolute;
+  inset: auto -20% -1px;
+  height: 70%;
+  pointer-events: none;
+  background:
+    radial-gradient(28% 22% at 50% 100%, rgb(255 214 150 / .55), transparent 75%),
+    radial-gradient(60% 70% at 50% 100%, rgb(241 138 1 / .42), rgb(241 138 1 / .12) 55%, transparent 80%);
+}
+.final__horizon::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgb(255 214 150 / .95), transparent);
+}
+.final .conteneur { position: relative; }
+
+.parcours { display: grid; gap: 16px; max-width: 960px; margin-inline: auto; }
+.parcours__carte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 32px;
+  border: 1px solid rgb(245 243 239 / .14);
+  border-radius: var(--rayon-carte);
+  background: rgb(22 25 30 / .9);
+  backdrop-filter: blur(6px);
+}
+.parcours__carte .surtitre { margin-bottom: 0; }
+.parcours__carte h3 { font-size: 1.5rem; }
+.parcours__carte p:not(.surtitre) { color: var(--gris-nuit); }
+.parcours__carte .bouton { margin-top: auto; }
+.parcours__carte p + .bouton { margin-top: 16px; }
+
+@media (min-width: 800px) {
+  .parcours { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .parcours__carte { padding: 40px; }
+}
+
+/* ==================================================================
+   11. PIED DE PAGE
+   ================================================================== */
+.pied {
+  padding-top: 72px;
+  background: var(--nuit-2);
+  color: var(--gris-nuit);
+  font-size: .9375rem;
+}
+.pied a { color: var(--blanc-chaud); text-decoration: none; }
+.pied a:hover { color: var(--orange); }
+
+.pied__grille { display: grid; gap: 40px; padding-bottom: 56px; }
+.pied__logo {
+  display: inline-block;
+  padding: 12px 16px;
+  border-radius: var(--rayon-photo);
+  background: var(--blanc-chaud);
+}
+.pied__logo img { width: auto; height: 64px; }
+.pied__marque > p { margin-top: 16px; max-width: 22rem; }
+.pied__certifs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.pied__certifs li {
+  display: grid;
+  place-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--blanc);
+}
+.pied__certifs img { width: auto; height: 40px; }
+.pied__certifs li:nth-child(2) img { height: 28px; }
+
+.pied__titre {
+  margin: 0 0 12px;
+  color: var(--blanc-chaud);
+  font-family: var(--police-texte);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.pied__colonne p + .pied__titre { margin-top: 28px; }
+.pied__colonne address { line-height: 1.9; }
+.pied__liens { display: grid; gap: 8px; }
+
+.pied__reseaux { display: flex; gap: 8px; margin-bottom: 8px; }
+.pied__reseaux a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(245 243 239 / .2);
+  border-radius: 50%;
+}
+
+.pied__bas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-block: 24px;
+  border-top: 1px solid rgb(245 243 239 / .1);
+  font-size: .875rem;
+}
+.pied__bas a { text-decoration: underline; text-underline-offset: 3px; }
+
+@media (min-width: 720px) {
+  .pied__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .pied__grille { grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 48px; }
+}
+
+/* ==================================================================
+   ANIMATIONS D'APPARITION (activées seulement avec JS)
+   ================================================================== */
+.js .apparition {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .5s var(--courbe), transform .5s var(--courbe);
+}
+.js .apparition.est-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js .apparition { opacity: 1; transform: none; }
+}
