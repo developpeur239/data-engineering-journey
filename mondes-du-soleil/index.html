@@ -21,7 +21,7 @@
   <script>
     document.documentElement.classList.add("js");
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("mode-fixe");
-    // Si script.js n'a pas pu s'exécuter (fichier ouvert en file://, erreur réseau) : image fixe
+    // Si script.js n'a pas pu s'exécuter (fichier manquant, erreur) : image fixe
     window.addEventListener("load", function () {
       if (!document.documentElement.classList.contains("module-ok")) document.documentElement.classList.add("mode-fixe");
     });
@@ -599,6 +599,6 @@
     </div>
   </footer>
 
-  <script type="module" src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

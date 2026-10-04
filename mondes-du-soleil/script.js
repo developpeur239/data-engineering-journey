@@ -1,6 +1,9 @@
 /* ==================================================================
    Mondes du Soleil · page d'accueil
-   Script unique, chargé en module (type="module", donc différé).
+   Script unique, classique et différé (defer) : fonctionne aussi quand
+   la page est ouverte directement depuis le disque (file://).
+   Tout est enveloppé dans une fonction pour ne rien exposer en global
+   (pas de conflit avec les scripts de WordPress).
    Sommaire :
      0. Configuration (FRAME_URLS)
      1. En-tête : menu burger
@@ -18,16 +21,29 @@
    Exemple : Array.from({ length: 120 }, (_, i) =>
      `assets/sequence/frame-${String(i + 1).padStart(3, "0")}.webp`)
    ------------------------------------------------------------------ */
+(() => {
+"use strict";
+
 const FRAME_URLS = [];
 
 const LISSAGE = 0.08;            // part de l'écart rattrapée à chaque image (60 i/s)
-const CHEMIN_THREE = "./vendor/three.min.js";
+// Three.js (version réduite aux classes utilisées), chargé à la demande.
+// Le chemin est résolu à partir de script.js, où que la page soit intégrée.
+const CHEMIN_THREE = new URL("vendor/three.min.js", document.currentScript.src).href;
 
 const racine = document.documentElement;
 racine.classList.add("module-ok"); // signale au <head> que le script s'exécute bien
 const reduireMouvement = window.matchMedia("(prefers-reduced-motion: reduce)");
 const ecranLeger = window.matchMedia("(max-width: 767px)").matches
   || (navigator.hardwareConcurrency || 8) <= 4;
+
+/* Aperçu en double-clic (file://) : polices déclarées depuis un script,
+   car Chrome bloque les fichiers de police lus sur le disque */
+if (location.protocol === "file:") {
+  const balise = document.createElement("script");
+  balise.src = new URL("vendor/polices-hors-ligne.js", document.currentScript.src).href;
+  document.head.appendChild(balise);
+}
 
 /* Petits outils mathématiques */
 const borner = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
@@ -211,8 +227,21 @@ function webglDisponible() {
 /* Rend la main au navigateur entre deux étapes d'initialisation (pas de tâche longue) */
 const pause = () => new Promise((r) => (window.requestIdleCallback ? requestIdleCallback(() => r(), { timeout: 120 }) : setTimeout(r, 16)));
 
+/* Charge Three.js par une balise <script> classique (compatible file://) */
+function chargerThree() {
+  if (window.THREE) return Promise.resolve(window.THREE);
+  return new Promise((resoudre, rejeter) => {
+    const balise = document.createElement("script");
+    balise.src = CHEMIN_THREE;
+    balise.async = true;
+    balise.onload = () => (window.THREE ? resoudre(window.THREE) : rejeter(new Error("Three.js indisponible")));
+    balise.onerror = rejeter;
+    document.head.appendChild(balise);
+  });
+}
+
 async function demarrer3D() {
-  const THREE = await import(CHEMIN_THREE);
+  const THREE = await chargerThree();
   await pause();
   const leger = ecranLeger;
 
@@ -695,3 +724,4 @@ if (hero && scene && canvas && !racine.classList.contains("mode-fixe")) {
 
 // Si la préférence de mouvement change en cours de visite, on fige le hero
 reduireMouvement.addEventListener("change", (e) => { if (e.matches) racine.classList.add("mode-fixe"); });
+})();
