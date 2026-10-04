@@ -11,20 +11,25 @@
      3. Hero : progression du scroll et textes
      4. Hero : séquence d'images (si FRAME_URLS est rempli)
      5. Hero : scène 3D Three.js
+     5b. Hero : bonhomme (salut au lever du soleil, regard qui suit le curseur)
      6. Démarrage
    ================================================================== */
 
 /* ------------------------------------------------------------------
    0. CONFIGURATION
-   Pour remplacer la 3D par une vidéo (Flow ou autre), exporter la
-   vidéo en images numérotées et lister leurs URL ici, dans l'ordre.
-   Exemple : Array.from({ length: 120 }, (_, i) =>
-     `assets/sequence/frame-${String(i + 1).padStart(3, "0")}.webp`)
+   La vidéo réaliste et le bonhomme sont décrits dans assets/medias.js,
+   généré par outils/preparer-medias.py (voir MEDIAS.md).
+   FRAME_URLS peut aussi être rempli à la main : s'il contient des
+   images, la séquence remplace la scène 3D.
    ------------------------------------------------------------------ */
 (() => {
 "use strict";
 
-const FRAME_URLS = [];
+const MEDIAS = window.MDS_MEDIAS || {};
+const SEQUENCE = MEDIAS.sequence || {};
+const FRAME_URLS = (window.matchMedia("(max-width: 767px)").matches && SEQUENCE.mobile?.length
+  ? SEQUENCE.mobile
+  : SEQUENCE.ordinateur) || [];
 
 const LISSAGE = 0.08;            // part de l'écart rattrapée à chaque image (60 i/s)
 // Three.js (version réduite aux classes utilisées), chargé à la demande.
@@ -134,6 +139,9 @@ function mettreAJourTextes(p) {
   });
 }
 
+/* Autres éléments qui suivent la progression lissée (le bonhomme) */
+const suiveursProgression = [];
+
 /**
  * Boucle de rendu commune : interpole la progression et n'appelle
  * `dessiner` que lorsque la valeur bouge et que le hero est à l'écran.
@@ -152,6 +160,7 @@ function lancerBoucle(dessiner) {
     if (Math.abs(cible - courant) < 0.0004) courant = cible;
 
     mettreAJourTextes(courant);
+    suiveursProgression.forEach((f) => f(courant));
     dessiner(courant);
 
     if (courant !== cible && visible) requestAnimationFrame(image);
@@ -170,6 +179,7 @@ function lancerBoucle(dessiner) {
 
   // Premier rendu immédiat
   mettreAJourTextes(courant);
+  suiveursProgression.forEach((f) => f(courant));
   dessiner(courant);
   return { redessiner: () => dessiner(courant) };
 }
@@ -691,10 +701,136 @@ async function demarrer3D() {
 }
 
 /* ------------------------------------------------------------------
+   5b. HERO : BONHOMME
+   - Au lever du soleil (progression ≥ apparition), il entre par la
+     droite, joue son animation de salut et la bulle « Bonjour ! »
+     apparaît. Il repart si l'on remonte avant le lever du soleil.
+   - Ensuite, son regard suit le curseur (ou le doigt sur mobile) :
+     on affiche, dans une grille d'images du même visage regardant
+     dans toutes les directions, celle qui pointe vers le curseur.
+   - Sans images (medias.js vide) : cadre provisoire dont les yeux
+     simplifiés suivent le curseur, pour valider le comportement.
+   ------------------------------------------------------------------ */
+function initialiserBonhomme() {
+  const el = hero?.querySelector(".bonhomme");
+  if (!el) return;
+  const config = MEDIAS.bonhomme || {};
+  const regard = config.regard || {};
+  const salut = config.salut || [];
+  const grille = regard.images || [];
+  const colonnes = regard.colonnes || 1;
+  const lignes = regard.lignes || 1;
+  const [teteX, teteY] = regard.tete || [0.5, 0.22];
+  const seuil = config.apparition ?? 0.78;
+  const ips = config.ips || 24;
+  const img = el.querySelector(".bonhomme__image");
+  const reel = salut.length > 0 || grille.length > 0;
+
+  // Préchargement (une fois le bonhomme proche d'apparaître)
+  let precharge = false;
+  const precharger = () => {
+    if (precharge || !reel) return;
+    precharge = true;
+    [...salut, ...grille].forEach((url) => { const i = new Image(); i.decoding = "async"; i.src = url; });
+  };
+  if (reel) { el.classList.add("bonhomme--reel"); img.hidden = false; img.src = grille[Math.floor(grille.length / 2)] || salut[0]; }
+
+  let etat = "absent"; // absent → salut → regard
+  let minuteurBulle = 0;
+  let animSalut = 0;
+
+  // --- Regard : direction lissée vers le pointeur, de -1 à 1 sur chaque axe
+  const pointeur = { x: 0, y: 0, actif: false };
+  const vue = { x: 0, y: 0 };
+  let dernierMouvement = 0;
+  let boucleRegard = 0;
+
+  const suivrePointeur = (x, y) => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width * teteX;
+    const cy = r.top + r.height * teteY;
+    // -1 / +1 = le bord de l'écran dans cette direction (amplitude pleine où que soit la tête)
+    const dx = x - cx, dy = y - cy;
+    pointeur.x = borner(dx / Math.max(80, dx < 0 ? cx : window.innerWidth - cx), -1, 1);
+    pointeur.y = borner(dy / Math.max(80, dy < 0 ? cy : window.innerHeight - cy), -1, 1);
+    pointeur.actif = true;
+    dernierMouvement = performance.now();
+    lancerRegard();
+  };
+  window.addEventListener("pointermove", (e) => suivrePointeur(e.clientX, e.clientY), { passive: true });
+  window.addEventListener("touchmove", (e) => { const t = e.touches[0]; if (t) suivrePointeur(t.clientX, t.clientY); }, { passive: true });
+
+  const afficherRegard = () => {
+    if (grille.length && etat === "regard") {
+      const c = Math.round(((vue.x + 1) / 2) * (colonnes - 1));
+      const l = Math.round(((vue.y + 1) / 2) * (lignes - 1));
+      const url = grille[l * colonnes + c];
+      if (url && img.getAttribute("src") !== url) img.src = url;
+    }
+    el.style.setProperty("--regard-x", vue.x.toFixed(3));
+    el.style.setProperty("--regard-y", vue.y.toFixed(3));
+  };
+
+  let dernierRegard = 0;
+  const etapeRegard = (maintenant) => {
+    const dt = dernierRegard ? Math.min(64, maintenant - dernierRegard) / (1000 / 60) : 1;
+    dernierRegard = maintenant;
+    const k = 1 - Math.pow(1 - 0.2, dt);
+    // Sans mouvement depuis 3 s, il revient doucement regarder le visiteur
+    const cibleX = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.x : 0;
+    const cibleY = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.y : 0;
+    vue.x = interpoler(vue.x, cibleX, k);
+    vue.y = interpoler(vue.y, cibleY, k);
+    afficherRegard();
+    const enMouvement = Math.abs(vue.x - cibleX) > 0.01 || Math.abs(vue.y - cibleY) > 0.01 || cibleX !== 0 || cibleY !== 0;
+    boucleRegard = enMouvement && etat !== "absent" ? requestAnimationFrame(etapeRegard) : 0;
+    if (!boucleRegard) dernierRegard = 0;
+  };
+  const lancerRegard = () => { if (!boucleRegard && etat !== "absent") boucleRegard = requestAnimationFrame(etapeRegard); };
+
+  // --- Animation de salut, jouée en temps réel (indépendante du scroll)
+  const jouerSalut = () => {
+    if (!salut.length || reduireMouvement.matches) { etat = "regard"; lancerRegard(); return; }
+    const debut = performance.now();
+    const image = (maintenant) => {
+      if (etat !== "salut") return;
+      const index = Math.floor(((maintenant - debut) / 1000) * ips);
+      if (index >= salut.length) { etat = "regard"; lancerRegard(); return; }
+      if (img.getAttribute("src") !== salut[index]) img.src = salut[index];
+      animSalut = requestAnimationFrame(image);
+    };
+    animSalut = requestAnimationFrame(image);
+  };
+
+  const arriver = () => {
+    etat = "salut";
+    el.classList.add("est-present");
+    if (salut.length) img.src = salut[0];
+    minuteurBulle = setTimeout(() => el.classList.add("dit-bonjour"), 500);
+    jouerSalut();
+  };
+  const partir = () => {
+    etat = "absent";
+    clearTimeout(minuteurBulle);
+    cancelAnimationFrame(animSalut);
+    cancelAnimationFrame(boucleRegard);
+    boucleRegard = 0;
+    el.classList.remove("est-present", "dit-bonjour");
+  };
+
+  suiveursProgression.push((p) => {
+    if (p > seuil - 0.15) precharger();
+    if (etat === "absent" && p >= seuil) arriver();
+    else if (etat !== "absent" && p < seuil - 0.04) partir();
+  });
+}
+
+/* ------------------------------------------------------------------
    6. DÉMARRAGE
    ------------------------------------------------------------------ */
 initialiserMenu();
 initialiserApparitions();
+if (!racine.classList.contains("mode-fixe")) initialiserBonhomme();
 
 if (hero && scene && canvas && !racine.classList.contains("mode-fixe")) {
   if (FRAME_URLS.length > 0) {

@@ -126,6 +126,19 @@
         </picture>
         <div class="hero__voile" aria-hidden="true"></div>
 
+        <!-- Bonhomme : apparaît au lever du soleil, salue, puis suit le curseur du regard.
+             Images fournies par assets/medias.js (voir MEDIAS.md). Sans images : cadre provisoire. -->
+        <div class="bonhomme" aria-hidden="true">
+          <p class="bonhomme__bulle">Bonjour&nbsp;!</p>
+          <div class="bonhomme__cadre">
+            <img class="bonhomme__image" alt="" decoding="async" hidden>
+            <div class="bonhomme__provisoire">
+              <div class="bonhomme__yeux"><span></span><span></span></div>
+              <p>Bonhomme réaliste<br>à générer<br><small>voir MEDIAS.md</small></p>
+            </div>
+          </div>
+        </div>
+
         <div class="hero__textes conteneur">
           <div class="hero__temps hero__temps--1">
             <p class="surtitre surtitre--clair">Installateur photovoltaïque en Gironde depuis 2012</p>
@@ -599,6 +612,7 @@
     </div>
   </footer>
 
+  <script src="assets/medias.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>

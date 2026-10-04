@@ -482,6 +482,105 @@ a { color: inherit; }
 }
 @media (min-width: 960px) { .hero__indice { display: flex; } }
 
+/* ------------------------------------------------------------------
+   2b. Bonhomme du lever de soleil
+   Hors champ par défaut ; .est-present (posée par script.js au lever
+   du soleil) le fait entrer par la droite, puis la bulle apparaît.
+   ------------------------------------------------------------------ */
+.bonhomme {
+  position: absolute;
+  right: max(var(--gouttiere), (100% - 1200px) / 2);
+  bottom: 0;
+  z-index: 1;
+  height: min(64%, 600px);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(40%);
+  transition: opacity .6s var(--courbe), transform .9s var(--courbe), visibility 0s .9s;
+}
+.bonhomme.est-present {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .6s var(--courbe), transform .9s var(--courbe);
+}
+.bonhomme__cadre { height: 100%; }
+.bonhomme__image {
+  display: block;
+  width: auto;
+  height: 100%;
+  filter: drop-shadow(0 18px 30px rgb(11 13 16 / .35));
+}
+.bonhomme__image[hidden] { display: none; }
+
+/* Bulle « Bonjour ! » */
+.bonhomme__bulle {
+  position: absolute;
+  top: 4%;
+  right: 88%;
+  padding: 10px 18px;
+  border-radius: 18px 18px 4px 18px;
+  background: var(--blanc);
+  color: var(--encre);
+  font-family: var(--police-titre);
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--ombre);
+  opacity: 0;
+  transform: translateY(8px) scale(.9);
+  transform-origin: bottom right;
+  transition: opacity .3s, transform .45s cubic-bezier(.3, 1.6, .5, 1);
+}
+.bonhomme.dit-bonjour .bonhomme__bulle { opacity: 1; transform: none; }
+
+/* Cadre provisoire, tant que les images réalistes ne sont pas générées */
+.bonhomme__provisoire {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  height: 100%;
+  aspect-ratio: 3 / 5;
+  border: 2px dashed rgb(245 243 239 / .55);
+  border-radius: var(--rayon-carte);
+  background: rgb(11 13 16 / .55);
+  color: var(--blanc-chaud);
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+.bonhomme__provisoire small { color: var(--gris-nuit); font-weight: 500; }
+.bonhomme--reel .bonhomme__provisoire { display: none; }
+.bonhomme__yeux { display: flex; gap: 14px; }
+.bonhomme__yeux span {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--blanc-chaud);
+}
+.bonhomme__yeux span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--encre);
+  transform: translate(calc(var(--regard-x, 0) * 9px), calc(var(--regard-y, 0) * 9px));
+}
+
+/* Mobile : plus petit, en haut à droite (le texte occupe le bas) */
+@media (max-width: 959px) {
+  .bonhomme { top: 16px; bottom: auto; height: min(40%, 320px); }
+  .bonhomme__bulle { top: 2%; font-size: 1rem; padding: 8px 14px; }
+}
+
 /* Image fixe : visible sans JS, sans WebGL ou avec prefers-reduced-motion */
 .hero__fixe { display: none; }
 
@@ -505,6 +604,8 @@ html:not(.js) .hero__temps--3,
 .mode-fixe .hero__canvas,
 .mode-fixe .hero__voile,
 .mode-fixe .hero__indice,
+html:not(.js) .bonhomme,
+.mode-fixe .bonhomme,
 .mode-fixe .hero__temps--2,
 .mode-fixe .hero__temps--3 { display: none; }
 html:not(.js) .hero__textes,

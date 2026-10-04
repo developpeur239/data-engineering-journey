@@ -29,6 +29,9 @@ html = (RACINE / "index.html").read_text(encoding="utf-8")
 css = (RACINE / "style.css").read_text(encoding="utf-8")
 js = (RACINE / "script.js").read_text(encoding="utf-8")
 three = (RACINE / "vendor/three.min.js").read_text(encoding="utf-8")
+# Médias du hero (vidéo découpée, bonhomme) : chaque image devient une data URI
+medias = (RACINE / "assets/medias.js").read_text(encoding="utf-8")
+medias = re.sub(r'"(assets/[^"]+\.webp)"', lambda m: f'"{data_uri(m.group(1))}"', medias)
 
 # Polices : url("assets/fonts/...") -> data URI
 css = re.sub(r'url\("(assets/fonts/[^"]+)"\)', lambda m: f'url("{data_uri(m.group(1))}")', css)
@@ -44,9 +47,10 @@ html = re.sub(r'\s*<link rel="(?:icon|apple-touch-icon)"[^>]*>', "", html)
 html = html.replace('<link rel="stylesheet" href="style.css">', f"<style>\n{css}\n</style>")
 
 # Scripts : Three.js puis script.js, intégrés en fin de page
+html = html.replace('<script src="assets/medias.js" defer></script>\n  ', "")
 html = html.replace(
     '<script src="script.js" defer></script>',
-    f"<script>\n{three}\n</script>\n  <script>\n{js}\n</script>",
+    f"<script>\n{three}\n</script>\n  <script>\n{medias}\n</script>\n  <script>\n{js}\n</script>",
 )
 
 # Marqueur : les polices sont déjà intégrées (pas de chargement hors ligne)
@@ -62,4 +66,7 @@ assert not reste, f"Références externes restantes : {reste}"
 
 sortie = RACINE / "apercu-autonome.html"
 sortie.write_text(html, encoding="utf-8")
-print(f"{sortie.name} : {sortie.stat().st_size / 1024 / 1024:.1f} Mo")
+taille = sortie.stat().st_size / 1024 / 1024
+print(f"{sortie.name} : {taille:.1f} Mo")
+if taille > 25:
+    print("Attention : fichier lourd. Réduire --images-sequence dans preparer-medias.py pour l'aperçu.")

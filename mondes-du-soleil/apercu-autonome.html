@@ -510,6 +510,105 @@ a { color: inherit; }
 }
 @media (min-width: 960px) { .hero__indice { display: flex; } }
 
+/* ------------------------------------------------------------------
+   2b. Bonhomme du lever de soleil
+   Hors champ par défaut ; .est-present (posée par script.js au lever
+   du soleil) le fait entrer par la droite, puis la bulle apparaît.
+   ------------------------------------------------------------------ */
+.bonhomme {
+  position: absolute;
+  right: max(var(--gouttiere), (100% - 1200px) / 2);
+  bottom: 0;
+  z-index: 1;
+  height: min(64%, 600px);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(40%);
+  transition: opacity .6s var(--courbe), transform .9s var(--courbe), visibility 0s .9s;
+}
+.bonhomme.est-present {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .6s var(--courbe), transform .9s var(--courbe);
+}
+.bonhomme__cadre { height: 100%; }
+.bonhomme__image {
+  display: block;
+  width: auto;
+  height: 100%;
+  filter: drop-shadow(0 18px 30px rgb(11 13 16 / .35));
+}
+.bonhomme__image[hidden] { display: none; }
+
+/* Bulle « Bonjour ! » */
+.bonhomme__bulle {
+  position: absolute;
+  top: 4%;
+  right: 88%;
+  padding: 10px 18px;
+  border-radius: 18px 18px 4px 18px;
+  background: var(--blanc);
+  color: var(--encre);
+  font-family: var(--police-titre);
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--ombre);
+  opacity: 0;
+  transform: translateY(8px) scale(.9);
+  transform-origin: bottom right;
+  transition: opacity .3s, transform .45s cubic-bezier(.3, 1.6, .5, 1);
+}
+.bonhomme.dit-bonjour .bonhomme__bulle { opacity: 1; transform: none; }
+
+/* Cadre provisoire, tant que les images réalistes ne sont pas générées */
+.bonhomme__provisoire {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  height: 100%;
+  aspect-ratio: 3 / 5;
+  border: 2px dashed rgb(245 243 239 / .55);
+  border-radius: var(--rayon-carte);
+  background: rgb(11 13 16 / .55);
+  color: var(--blanc-chaud);
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+.bonhomme__provisoire small { color: var(--gris-nuit); font-weight: 500; }
+.bonhomme--reel .bonhomme__provisoire { display: none; }
+.bonhomme__yeux { display: flex; gap: 14px; }
+.bonhomme__yeux span {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--blanc-chaud);
+}
+.bonhomme__yeux span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--encre);
+  transform: translate(calc(var(--regard-x, 0) * 9px), calc(var(--regard-y, 0) * 9px));
+}
+
+/* Mobile : plus petit, en haut à droite (le texte occupe le bas) */
+@media (max-width: 959px) {
+  .bonhomme { top: 16px; bottom: auto; height: min(40%, 320px); }
+  .bonhomme__bulle { top: 2%; font-size: 1rem; padding: 8px 14px; }
+}
+
 /* Image fixe : visible sans JS, sans WebGL ou avec prefers-reduced-motion */
 .hero__fixe { display: none; }
 
@@ -533,6 +632,8 @@ html:not(.js) .hero__temps--3,
 .mode-fixe .hero__canvas,
 .mode-fixe .hero__voile,
 .mode-fixe .hero__indice,
+html:not(.js) .bonhomme,
+.mode-fixe .bonhomme,
 .mode-fixe .hero__temps--2,
 .mode-fixe .hero__temps--3 { display: none; }
 html:not(.js) .hero__textes,
@@ -1225,6 +1326,19 @@ html:not(.js) .hero__fixe img,
                alt="Maison de plain-pied avec piscine, toiture en tuiles équipée de panneaux solaires noirs">
         </picture>
         <div class="hero__voile" aria-hidden="true"></div>
+
+        <!-- Bonhomme : apparaît au lever du soleil, salue, puis suit le curseur du regard.
+             Images fournies par assets/medias.js (voir MEDIAS.md). Sans images : cadre provisoire. -->
+        <div class="bonhomme" aria-hidden="true">
+          <p class="bonhomme__bulle">Bonjour&nbsp;!</p>
+          <div class="bonhomme__cadre">
+            <img class="bonhomme__image" alt="" decoding="async" hidden>
+            <div class="bonhomme__provisoire">
+              <div class="bonhomme__yeux"><span></span><span></span></div>
+              <p>Bonhomme réaliste<br>à générer<br><small>voir MEDIAS.md</small></p>
+            </div>
+          </div>
+        </div>
 
         <div class="hero__textes conteneur">
           <div class="hero__temps hero__temps--1">
@@ -5918,6 +6032,28 @@ void main() {
 </script>
   <script>
 /* ==================================================================
+   Médias du hero : fichier GÉNÉRÉ par outils/preparer-medias.py.
+   Ne pas modifier à la main (sauf pour tester) : voir MEDIAS.md.
+   Listes vides = la scène 3D et le bonhomme provisoire s'affichent.
+   ================================================================== */
+window.MDS_MEDIAS = {
+  // Vidéo réaliste découpée en images, lue au rythme du scroll
+  sequence: { ordinateur: [], mobile: [] },
+  bonhomme: {
+    apparition: 0.78,          // progression du hero à laquelle il arrive (lever du soleil)
+    ips: 24,                   // images par seconde de l'animation de salut
+    salut: [],                 // images détourées (fond transparent) du salut
+    regard: {
+      colonnes: 5, lignes: 5,  // grille des directions du regard
+      tete: [0.5, 0.22],       // position de la tête dans l'image (fractions largeur, hauteur)
+      images: [],              // ligne par ligne, de haut-gauche à bas-droite
+    },
+  },
+};
+
+</script>
+  <script>
+/* ==================================================================
    Mondes du Soleil · page d'accueil
    Script unique, classique et différé (defer) : fonctionne aussi quand
    la page est ouverte directement depuis le disque (file://).
@@ -5930,20 +6066,25 @@ void main() {
      3. Hero : progression du scroll et textes
      4. Hero : séquence d'images (si FRAME_URLS est rempli)
      5. Hero : scène 3D Three.js
+     5b. Hero : bonhomme (salut au lever du soleil, regard qui suit le curseur)
      6. Démarrage
    ================================================================== */
 
 /* ------------------------------------------------------------------
    0. CONFIGURATION
-   Pour remplacer la 3D par une vidéo (Flow ou autre), exporter la
-   vidéo en images numérotées et lister leurs URL ici, dans l'ordre.
-   Exemple : Array.from({ length: 120 }, (_, i) =>
-     `assets/sequence/frame-${String(i + 1).padStart(3, "0")}.webp`)
+   La vidéo réaliste et le bonhomme sont décrits dans assets/medias.js,
+   généré par outils/preparer-medias.py (voir MEDIAS.md).
+   FRAME_URLS peut aussi être rempli à la main : s'il contient des
+   images, la séquence remplace la scène 3D.
    ------------------------------------------------------------------ */
 (() => {
 "use strict";
 
-const FRAME_URLS = [];
+const MEDIAS = window.MDS_MEDIAS || {};
+const SEQUENCE = MEDIAS.sequence || {};
+const FRAME_URLS = (window.matchMedia("(max-width: 767px)").matches && SEQUENCE.mobile?.length
+  ? SEQUENCE.mobile
+  : SEQUENCE.ordinateur) || [];
 
 const LISSAGE = 0.08;            // part de l'écart rattrapée à chaque image (60 i/s)
 // Three.js (version réduite aux classes utilisées), chargé à la demande.
@@ -6053,6 +6194,9 @@ function mettreAJourTextes(p) {
   });
 }
 
+/* Autres éléments qui suivent la progression lissée (le bonhomme) */
+const suiveursProgression = [];
+
 /**
  * Boucle de rendu commune : interpole la progression et n'appelle
  * `dessiner` que lorsque la valeur bouge et que le hero est à l'écran.
@@ -6071,6 +6215,7 @@ function lancerBoucle(dessiner) {
     if (Math.abs(cible - courant) < 0.0004) courant = cible;
 
     mettreAJourTextes(courant);
+    suiveursProgression.forEach((f) => f(courant));
     dessiner(courant);
 
     if (courant !== cible && visible) requestAnimationFrame(image);
@@ -6089,6 +6234,7 @@ function lancerBoucle(dessiner) {
 
   // Premier rendu immédiat
   mettreAJourTextes(courant);
+  suiveursProgression.forEach((f) => f(courant));
   dessiner(courant);
   return { redessiner: () => dessiner(courant) };
 }
@@ -6610,10 +6756,136 @@ async function demarrer3D() {
 }
 
 /* ------------------------------------------------------------------
+   5b. HERO : BONHOMME
+   - Au lever du soleil (progression ≥ apparition), il entre par la
+     droite, joue son animation de salut et la bulle « Bonjour ! »
+     apparaît. Il repart si l'on remonte avant le lever du soleil.
+   - Ensuite, son regard suit le curseur (ou le doigt sur mobile) :
+     on affiche, dans une grille d'images du même visage regardant
+     dans toutes les directions, celle qui pointe vers le curseur.
+   - Sans images (medias.js vide) : cadre provisoire dont les yeux
+     simplifiés suivent le curseur, pour valider le comportement.
+   ------------------------------------------------------------------ */
+function initialiserBonhomme() {
+  const el = hero?.querySelector(".bonhomme");
+  if (!el) return;
+  const config = MEDIAS.bonhomme || {};
+  const regard = config.regard || {};
+  const salut = config.salut || [];
+  const grille = regard.images || [];
+  const colonnes = regard.colonnes || 1;
+  const lignes = regard.lignes || 1;
+  const [teteX, teteY] = regard.tete || [0.5, 0.22];
+  const seuil = config.apparition ?? 0.78;
+  const ips = config.ips || 24;
+  const img = el.querySelector(".bonhomme__image");
+  const reel = salut.length > 0 || grille.length > 0;
+
+  // Préchargement (une fois le bonhomme proche d'apparaître)
+  let precharge = false;
+  const precharger = () => {
+    if (precharge || !reel) return;
+    precharge = true;
+    [...salut, ...grille].forEach((url) => { const i = new Image(); i.decoding = "async"; i.src = url; });
+  };
+  if (reel) { el.classList.add("bonhomme--reel"); img.hidden = false; img.src = grille[Math.floor(grille.length / 2)] || salut[0]; }
+
+  let etat = "absent"; // absent → salut → regard
+  let minuteurBulle = 0;
+  let animSalut = 0;
+
+  // --- Regard : direction lissée vers le pointeur, de -1 à 1 sur chaque axe
+  const pointeur = { x: 0, y: 0, actif: false };
+  const vue = { x: 0, y: 0 };
+  let dernierMouvement = 0;
+  let boucleRegard = 0;
+
+  const suivrePointeur = (x, y) => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width * teteX;
+    const cy = r.top + r.height * teteY;
+    // -1 / +1 = le bord de l'écran dans cette direction (amplitude pleine où que soit la tête)
+    const dx = x - cx, dy = y - cy;
+    pointeur.x = borner(dx / Math.max(80, dx < 0 ? cx : window.innerWidth - cx), -1, 1);
+    pointeur.y = borner(dy / Math.max(80, dy < 0 ? cy : window.innerHeight - cy), -1, 1);
+    pointeur.actif = true;
+    dernierMouvement = performance.now();
+    lancerRegard();
+  };
+  window.addEventListener("pointermove", (e) => suivrePointeur(e.clientX, e.clientY), { passive: true });
+  window.addEventListener("touchmove", (e) => { const t = e.touches[0]; if (t) suivrePointeur(t.clientX, t.clientY); }, { passive: true });
+
+  const afficherRegard = () => {
+    if (grille.length && etat === "regard") {
+      const c = Math.round(((vue.x + 1) / 2) * (colonnes - 1));
+      const l = Math.round(((vue.y + 1) / 2) * (lignes - 1));
+      const url = grille[l * colonnes + c];
+      if (url && img.getAttribute("src") !== url) img.src = url;
+    }
+    el.style.setProperty("--regard-x", vue.x.toFixed(3));
+    el.style.setProperty("--regard-y", vue.y.toFixed(3));
+  };
+
+  let dernierRegard = 0;
+  const etapeRegard = (maintenant) => {
+    const dt = dernierRegard ? Math.min(64, maintenant - dernierRegard) / (1000 / 60) : 1;
+    dernierRegard = maintenant;
+    const k = 1 - Math.pow(1 - 0.2, dt);
+    // Sans mouvement depuis 3 s, il revient doucement regarder le visiteur
+    const cibleX = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.x : 0;
+    const cibleY = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.y : 0;
+    vue.x = interpoler(vue.x, cibleX, k);
+    vue.y = interpoler(vue.y, cibleY, k);
+    afficherRegard();
+    const enMouvement = Math.abs(vue.x - cibleX) > 0.01 || Math.abs(vue.y - cibleY) > 0.01 || cibleX !== 0 || cibleY !== 0;
+    boucleRegard = enMouvement && etat !== "absent" ? requestAnimationFrame(etapeRegard) : 0;
+    if (!boucleRegard) dernierRegard = 0;
+  };
+  const lancerRegard = () => { if (!boucleRegard && etat !== "absent") boucleRegard = requestAnimationFrame(etapeRegard); };
+
+  // --- Animation de salut, jouée en temps réel (indépendante du scroll)
+  const jouerSalut = () => {
+    if (!salut.length || reduireMouvement.matches) { etat = "regard"; lancerRegard(); return; }
+    const debut = performance.now();
+    const image = (maintenant) => {
+      if (etat !== "salut") return;
+      const index = Math.floor(((maintenant - debut) / 1000) * ips);
+      if (index >= salut.length) { etat = "regard"; lancerRegard(); return; }
+      if (img.getAttribute("src") !== salut[index]) img.src = salut[index];
+      animSalut = requestAnimationFrame(image);
+    };
+    animSalut = requestAnimationFrame(image);
+  };
+
+  const arriver = () => {
+    etat = "salut";
+    el.classList.add("est-present");
+    if (salut.length) img.src = salut[0];
+    minuteurBulle = setTimeout(() => el.classList.add("dit-bonjour"), 500);
+    jouerSalut();
+  };
+  const partir = () => {
+    etat = "absent";
+    clearTimeout(minuteurBulle);
+    cancelAnimationFrame(animSalut);
+    cancelAnimationFrame(boucleRegard);
+    boucleRegard = 0;
+    el.classList.remove("est-present", "dit-bonjour");
+  };
+
+  suiveursProgression.push((p) => {
+    if (p > seuil - 0.15) precharger();
+    if (etat === "absent" && p >= seuil) arriver();
+    else if (etat !== "absent" && p < seuil - 0.04) partir();
+  });
+}
+
+/* ------------------------------------------------------------------
    6. DÉMARRAGE
    ------------------------------------------------------------------ */
 initialiserMenu();
 initialiserApparitions();
+if (!racine.classList.contains("mode-fixe")) initialiserBonhomme();
 
 if (hero && scene && canvas && !racine.classList.contains("mode-fixe")) {
   if (FRAME_URLS.length > 0) {
