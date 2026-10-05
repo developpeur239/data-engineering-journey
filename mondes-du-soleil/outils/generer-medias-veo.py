@@ -104,8 +104,9 @@ def choisir_modele(mot: str, methode: str, impose: str | None) -> str:
                  if mot in m["name"] and methode in m.get("supportedGenerationMethods", [])]
     if not candidats:
         sys.exit(f"Aucun modèle « {mot} » disponible pour cette clé (méthode {methode}). Lancez --modeles.")
-    # Le plus récent en premier (les noms portent le numéro de version)
-    return sorted(candidats, reverse=True)[0]
+    # Le plus récent d'abord, en préférant la version standard (ni « fast » ni « lite »)
+    standards = [c for c in candidats if "fast" not in c and "lite" not in c]
+    return sorted(standards or candidats, reverse=True)[0]
 
 
 def image_en_ligne(chemin: Path) -> dict:
@@ -120,8 +121,11 @@ def generer_video(modele: str, prompt: str, sortie: Path, ratio: str, premiere=N
     if derniere:
         instance["lastFrame"] = image_en_ligne(derniere)
     print(f"  Veo ({modele}) → {sortie.name}…")
+    parametres = {"aspectRatio": ratio}
+    if ratio == "16:9":
+        parametres["resolution"] = "1080p"
     operation = requete("POST", f"{modele}:predictLongRunning",
-                        {"instances": [instance], "parameters": {"aspectRatio": ratio}})
+                        {"instances": [instance], "parameters": parametres})
     while not operation.get("done"):
         time.sleep(10)
         operation = requete("GET", operation["name"])
