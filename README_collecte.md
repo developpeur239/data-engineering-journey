@@ -100,7 +100,10 @@ az functionapp deployment source config-zip -g rg-datalake-velib -n func-datalak
 
 ## Coûts et surveillance
 
-- **Estimation :** environ 0,01 à 0,05 $ par jour (détail dans le compte rendu de déploiement). Le stockage représente environ 1 Go par semaine en gzip, et l'exécution reste dans l'offre gratuite Flex Consumption.
+- **Volume mesuré (gzip) :** Vélib' ≈ 34 Ko et PRIM ≈ 233 Ko par déclenchement, soit environ **77 Mo par jour**, **0,5 Go par semaine** et 2,3 Go par mois.
+- **Coût estimé** (calculé à partir des tarifs publics, **non mesuré** : à confirmer dans Cost analysis dans 24 à 48 h) : environ **0,01 à 0,05 $ par jour**.
+  - L'exécution (≈ 8 700 appels par mois, environ 1,5 s à 0,5 Go) reste dans l'offre gratuite de Flex Consumption.
+  - Le principal poste est le nombre d'écritures sur le stockage ADLS Gen2 (≈ 1 150 par jour).
 - **Où regarder :**
   - portail Azure → **Cost Management + Billing → Cost analysis**, avec un filtre sur le groupe de ressources `rg-datalake-velib` ;
   - **Budgets** : budget de 100 $ avec alertes à 20 %, 50 % et 80 % ;

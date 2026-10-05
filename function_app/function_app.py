@@ -43,7 +43,11 @@ def collecte_5min(timer: func.TimerRequest) -> None:
         resultats = [f.result() for f in (pool.submit(velib), pool.submit(prim))]
     if timer.past_due:
         logging.warning("collecte_5min en retard sur son horaire")
-    logging.info("collecte_5min terminée : %s", [r.get("statut") for r in resultats])
+    # Journalisé ici (thread principal) : les logs écrits depuis les threads du pool
+    # perdent le contexte d'invocation et ne remontent pas dans Application Insights.
+    for r in resultats:
+        logging.info("%s : statut=%s http=%s enregistrements=%s erreur=%s", r.get("source"), r.get("statut"),
+                     r.get("http_status"), r.get("nb_enregistrements"), r.get("erreur"))
 
 
 def _echec_sans_cle(prefixe: str, ts: str) -> dict:
@@ -97,5 +101,7 @@ def executer_quotidienne(maintenant: dt.datetime) -> list[dict]:
         params={"where": f'date >= "{debut:%Y-%m-%dT%H:%M:%S}Z" and date < "{fin:%Y-%m-%dT%H:%M:%S}Z"'},
         compresser=False, extra={"jour_paris": jour_cpt.isoformat(), "licence": "ODbL (Ville de Paris)"}))
 
-    logging.info("collecte_quotidienne terminée : %s", [(r["source"], r.get("statut")) for r in resultats])
+    for r in resultats:
+        logging.info("%s : statut=%s http=%s enregistrements=%s fichier=%s erreur=%s", r.get("source"), r.get("statut"),
+                     r.get("http_status"), r.get("nb_enregistrements"), r.get("fichier"), r.get("erreur"))
     return resultats
