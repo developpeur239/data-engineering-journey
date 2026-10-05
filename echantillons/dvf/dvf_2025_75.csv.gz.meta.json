@@ -1,0 +1,13 @@
+{
+  "url": "https://geo-dvf.s3.sbg.io.cloud.ovh.net:443/latest/csv/2025/departements/75.csv.gz",
+  "http_status": 200,
+  "temps_reponse_s": 2.081,
+  "content_type": "text/csv",
+  "last_modified": "Mon, 18 May 2026 13:14:14 GMT",
+  "taille_octets": 2056139,
+  "tronque_a_20Mo": false,
+  "essai": 1,
+  "fichier": "dvf_2025_75.csv.gz",
+  "collecte_utc": "20261005T084040Z",
+  "sha256": "b8110139f4f2c1c83fce33e6a5a7d7f17ab95ffccbc255292edc08f6781a8e51"
+}

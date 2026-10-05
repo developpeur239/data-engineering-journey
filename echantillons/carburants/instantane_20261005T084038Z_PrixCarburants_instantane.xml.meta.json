@@ -1,0 +1,14 @@
+{
+  "url": "https://donnees.roulez-eco.fr/opendata/instantane",
+  "http_status": 200,
+  "temps_reponse_s": 0.863,
+  "content_type": "application/zip",
+  "last_modified": "Mon, 05 Oct 2026 06:50:16 GMT",
+  "taille_octets": 12127351,
+  "tronque_a_20Mo": false,
+  "essai": 1,
+  "extrait_de": "instantane_20261005T084038Z.zip",
+  "fichier": "instantane_20261005T084038Z_PrixCarburants_instantane.xml",
+  "collecte_utc": "20261005T084038Z",
+  "sha256": "774071c36e756dc11a40d208b300818b74a7aa488bf7963c84cdabf25cc42850"
+}

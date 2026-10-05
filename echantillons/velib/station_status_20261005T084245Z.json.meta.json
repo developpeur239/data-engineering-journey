@@ -1,0 +1,13 @@
+{
+  "url": "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json",
+  "http_status": 200,
+  "temps_reponse_s": 0.999,
+  "content_type": "application/json",
+  "last_modified": null,
+  "taille_octets": 464248,
+  "tronque_a_20Mo": false,
+  "essai": 1,
+  "fichier": "station_status_20261005T084245Z.json",
+  "collecte_utc": "20261005T084245Z",
+  "sha256": "a928de54cee0754613caf7cb7861e1bf77c82eca890aa30f4585b7e5c63caaf8"
+}

@@ -1,0 +1,13 @@
+{
+  "url": "https://donnees.roulez-eco.fr/opendata/instantane",
+  "http_status": 200,
+  "temps_reponse_s": 0.863,
+  "content_type": "application/zip",
+  "last_modified": "Mon, 05 Oct 2026 06:50:16 GMT",
+  "taille_octets": 941031,
+  "tronque_a_20Mo": false,
+  "essai": 1,
+  "fichier": "instantane_20261005T084038Z.zip",
+  "collecte_utc": "20261005T084038Z",
+  "sha256": "7a87a1a4eb66787ceb20e709979a97d3bba3c69b2fbcafc937891b8d0652e12a"
+}

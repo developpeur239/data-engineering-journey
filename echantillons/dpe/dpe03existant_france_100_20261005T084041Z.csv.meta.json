@@ -1,0 +1,13 @@
+{
+  "url": "https://data.ademe.fr/data-fair/api/v1/datasets/dpe03existant/lines?size=100&format=csv",
+  "http_status": 200,
+  "temps_reponse_s": 1.134,
+  "content_type": "text/csv; charset=utf-8",
+  "last_modified": "Thu, 01 Oct 2026 08:20:07 GMT",
+  "taille_octets": 209885,
+  "tronque_a_20Mo": false,
+  "essai": 1,
+  "fichier": "dpe03existant_france_100_20261005T084041Z.csv",
+  "collecte_utc": "20261005T084041Z",
+  "sha256": "5a53522b8124b822edba3b94fdeb238d4b455dc058159b2b115ca77aa8ed5608"
+}

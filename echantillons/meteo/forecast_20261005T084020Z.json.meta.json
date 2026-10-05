@@ -1,0 +1,13 @@
+{
+  "url": "https://api.open-meteo.com/v1/forecast?latitude=48.85&longitude=2.35&hourly=temperature_2m%2Cprecipitation&timezone=Europe%2FParis",
+  "http_status": 200,
+  "temps_reponse_s": 0.652,
+  "content_type": "application/json; charset=utf-8",
+  "last_modified": null,
+  "taille_octets": 5175,
+  "tronque_a_20Mo": false,
+  "essai": 2,
+  "fichier": "forecast_20261005T084020Z.json",
+  "collecte_utc": "20261005T084020Z",
+  "sha256": "65e6589c1e51600f73d3504da880b52c293268255a651b10e2305f3e45210286"
+}

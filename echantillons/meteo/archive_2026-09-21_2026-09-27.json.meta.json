@@ -1,0 +1,13 @@
+{
+  "url": "https://archive-api.open-meteo.com/v1/archive?latitude=48.85&longitude=2.35&hourly=temperature_2m%2Cprecipitation&timezone=Europe%2FParis&start_date=2026-09-21&end_date=2026-09-27",
+  "http_status": 200,
+  "temps_reponse_s": 0.781,
+  "content_type": "application/json; charset=utf-8",
+  "last_modified": null,
+  "taille_octets": 5192,
+  "tronque_a_20Mo": false,
+  "essai": 4,
+  "fichier": "archive_2026-09-21_2026-09-27.json",
+  "collecte_utc": "20261005T084037Z",
+  "sha256": "4e60b73dcbbad4e9b4f35ba18b07155ec387107c4510c5e46107fb1ba3a6567f"
+}
