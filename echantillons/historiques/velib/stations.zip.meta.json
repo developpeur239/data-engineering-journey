@@ -1,0 +1,10 @@
+{
+  "url": "https://github.com/lovasoa/historique-velib-opendata/releases/download/new/stations.zip",
+  "http_status": 200,
+  "taille_annoncee_head": 236010999,
+  "note": "NON COMMITÉ (> 100 Mo, limite GitHub) ; relancer charger_historique_velib",
+  "fichier": "stations.zip",
+  "taille_octets": 236010999,
+  "sha256": "ccdb67732d0cd69f5611d9c070c03d7f5fb3b0e272fc9f31632cdaaab1e7a01c",
+  "telecharge_utc": "20261005T115653Z"
+}

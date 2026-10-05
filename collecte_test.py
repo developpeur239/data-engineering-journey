@@ -14,6 +14,8 @@ Usage :
     python collecte_test.py dpe --size 100 --code-postal 75011
     PRIM_API_KEY=... python collecte_test.py prim --polls 3 --interval 120
     python collecte_test.py idfm
+    python collecte_test.py hist-velib --debut 2021-03-01 --fin 2021-03-31
+    python collecte_test.py hist-ratpstatus --debut 2026-09-01 --fin 2026-09-03
 
 Dépendance : requests (pip install requests).
 Pour l'ingestion Bronze, il suffira de remplacer `sauver()` par un upload vers
@@ -24,12 +26,17 @@ ADLS Gen2 (azure-storage-file-datalake) en gardant le même chemin
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
+import gzip
 import hashlib
 import io
 import json
 import os
+import statistics
+import subprocess
 import sys
+import tarfile
 import time
 import zipfile
 from pathlib import Path
@@ -52,6 +59,11 @@ URLS = {
     "prim_disruptions": "https://prim.iledefrance-mobilites.fr/marketplace/disruptions_bulk/disruptions/v2",
     # IDFM open data — « Arrêts et lignes associées » (un arrêt x une ligne, avec coordonnées)
     "idfm_arrets_lignes": "https://data.iledefrance-mobilites.fr/api/explore/v2.1/catalog/datasets/arrets-lignes/exports/csv",
+    # Historiques communautaires (non officiels)
+    # NB : le README annonce le tag « latest », qui n'existe pas (404) ; l'asset est sous le tag « new ».
+    "hist_velib_zip": "https://github.com/lovasoa/historique-velib-opendata/releases/download/new/stations.zip",
+    "hist_ratpstatus_git": "https://github.com/wincelau/ratpstatus",
+    "hist_ratpstatus_raw": "https://raw.githubusercontent.com/wincelau/ratpstatus/main/datas/json/{jour}/{fichier}",
 }
 
 
@@ -234,11 +246,125 @@ def collecter_idfm() -> None:
     sauver("idfm", f"arrets_lignes_{horodatage()}.csv", contenu, meta)
 
 
+# --------------------------------------------------------------------------- historiques
+
+def _ecrire_meta(chemin: Path, meta: dict) -> None:
+    contenu = chemin.read_bytes()
+    meta = {**meta, "fichier": chemin.name, "taille_octets": len(contenu),
+            "sha256": hashlib.sha256(contenu).hexdigest(), "telecharge_utc": horodatage()}
+    chemin.with_name(chemin.name + ".meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    print(f"  -> {chemin} ({len(contenu):,} o)")
+
+
+def charger_historique_velib(date_debut: dt.date, date_fin: dt.date, dossier: Path,
+                             taille_max: int = 300 * 1024 * 1024, zip_existant: Path | None = None) -> Path:
+    """Historique Vélib' communautaire (lovasoa/historique-velib-opendata).
+
+    Le dépôt ne publie qu'un seul zip (un CSV sans en-tête ni identifiant de station :
+    date UTC, capacity, available_mechanical, available_electrical, station_name,
+    station_geo, operative). Mesuré le 05/10/2026 : 236 Mo, données du 26/11/2020 au
+    09/04/2021 seulement. La fonction télécharge le zip une fois (après un HEAD qui
+    vérifie la taille), puis extrait en streaming les lignes de [date_debut, date_fin]
+    vers un CSV gzip avec en-tête. Passer `zip_existant` pour ne pas re-télécharger
+    les 236 Mo quand le zip est déjà présent ailleurs.
+    """
+    print(f"[H1] Historique Vélib' {date_debut} -> {date_fin}")
+    dossier.mkdir(parents=True, exist_ok=True)
+    url = URLS["hist_velib_zip"]
+    zip_local = zip_existant or dossier / "stations.zip"
+    if zip_existant and not zip_existant.exists():
+        raise FileNotFoundError(zip_existant)
+    taille = int(requests.head(url, allow_redirects=True, timeout=60).headers.get("Content-Length", 0))
+    if taille > taille_max:
+        raise RuntimeError(f"stations.zip fait {taille:,} o > limite {taille_max:,} o")
+    if not zip_local.exists() or zip_local.stat().st_size != taille:
+        with requests.get(url, stream=True, timeout=600, headers={"User-Agent": USER_AGENT}) as r:
+            r.raise_for_status()
+            with open(zip_local, "wb") as out:
+                for bloc in r.iter_content(1024 * 1024):
+                    out.write(bloc)
+        _ecrire_meta(zip_local, {"url": url, "http_status": 200, "taille_annoncee_head": taille})
+    sortie = dossier / f"velib_historique_{date_debut:%Y%m%d}_{date_fin:%Y%m%d}.csv.gz"
+    deb, fin = date_debut.isoformat(), (date_fin + dt.timedelta(days=1)).isoformat()
+    n, premiere, derniere = 0, None, None
+    with zipfile.ZipFile(zip_local) as z, z.open(z.infolist()[0]) as brut, \
+            gzip.open(sortie, "wt", encoding="utf-8", newline="") as out:
+        w = csv.writer(out)
+        w.writerow(["date_utc", "capacity", "available_mechanical", "available_electrical",
+                    "station_name", "station_geo", "operative"])
+        for ligne in csv.reader(io.TextIOWrapper(brut, encoding="utf-8", newline="")):
+            if deb <= ligne[0] < fin:  # dates ISO « AAAA-MM-JJTHH:MMZ » : comparaison lexicale correcte
+                w.writerow(ligne); n += 1
+                premiere = premiere or ligne[0]; derniere = ligne[0]
+    if n == 0:
+        print("  ! aucune ligne : l'historique ne couvre que 2020-11-26 -> 2021-04-09")
+    _ecrire_meta(sortie, {"url": url, "extrait_de": zip_local.name, "periode_demandee": [str(date_debut), str(date_fin)],
+                          "nb_lignes": n, "premiere_date": premiere, "derniere_date": derniere})
+    return sortie
+
+
+def _git(depot: Path, *args: str) -> str:
+    return subprocess.run(["git", "-C", str(depot), *args], check=True, capture_output=True, text=True).stdout
+
+
+def charger_historique_ratpstatus(date_debut: dt.date, date_fin: dt.date, dossier: Path,
+                                  cache_git: Path | None = None) -> list[Path]:
+    """Historique RATPstatus (wincelau/ratpstatus) : un instantané PRIM toutes les 2 min.
+
+    Pas de clone complet (le dépôt a des centaines de milliers de fichiers) : clone
+    superficiel sans arbres ni blobs (--depth 1 --filter=tree:0), puis checkout
+    partiel d'un dossier jour à la fois. Mesuré : ~0,6 Mo transférés par jour grâce
+    aux deltas git, pour ~37 Mo de JSON. Un « jour » va de 03:00 à 02:58 le lendemain
+    (720 fichiers attendus). Chaque jour est archivé en AAAAMMJJ.tar.xz + .meta.json.
+    """
+    print(f"[H2] Historique RATPstatus {date_debut} -> {date_fin}")
+    dossier.mkdir(parents=True, exist_ok=True)
+    depot = cache_git or Path.home() / ".cache" / "ratpstatus_git"
+    if not (depot / ".git").exists():
+        depot.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "clone", "-q", "--depth", "1", "--filter=tree:0", "--no-checkout",
+                        URLS["hist_ratpstatus_git"], str(depot)], check=True)
+        _git(depot, "sparse-checkout", "init", "--no-cone")
+    commit = _git(depot, "rev-parse", "HEAD").strip()
+    sorties, jour = [], date_debut
+    while jour <= date_fin:
+        j = f"{jour:%Y%m%d}"
+        try:
+            noms = _git(depot, "ls-tree", "--name-only", f"HEAD:datas/json/{j}").split()
+        except subprocess.CalledProcessError:
+            noms = []
+        if not noms:
+            print(f"  ! {j} absent du dépôt")
+        else:
+            _git(depot, "sparse-checkout", "set", "--no-cone", f"/datas/json/{j}/")
+            _git(depot, "checkout", "-q", "HEAD")
+            src = depot / "datas" / "json" / j
+            archive = dossier / f"ratpstatus_{j}.tar.xz"
+            with tarfile.open(archive, "w:xz") as tar:
+                for nom in sorted(noms):
+                    tar.add(src / nom, arcname=f"{j}/{nom}")
+            heures = sorted(dt.datetime.strptime(n[:14], "%Y%m%d%H%M%S") for n in noms)
+            ecarts = [(b - a).total_seconds() / 60 for a, b in zip(heures, heures[1:])]
+            _ecrire_meta(archive, {
+                "url": URLS["hist_ratpstatus_raw"].format(jour=j, fichier="<AAAAMMJJHHMMSS>_disruptions.optimized.json"),
+                "depot_git": URLS["hist_ratpstatus_git"], "commit": commit,
+                "nb_fichiers": len(noms), "nb_attendus_2min": 720,
+                "premier": heures[0].isoformat(), "dernier": heures[-1].isoformat(),
+                "ecart_median_min": statistics.median(ecarts) if ecarts else None,
+                "trous_sup_1h": sum(1 for e in ecarts if e > 60),
+                "taille_json_brute_octets": sum((src / n).stat().st_size for n in noms),
+            })
+            sorties.append(archive)
+        jour += dt.timedelta(days=1)
+    return sorties
+
+
 # --------------------------------------------------------------------------- CLI
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("sources", nargs="+", choices=["all", "velib", "meteo", "carburants", "dvf", "dpe", "prim", "idfm"])
+    p.add_argument("sources", nargs="+", choices=["all", "velib", "meteo", "carburants", "dvf", "dpe", "prim", "idfm",
+                            "hist-velib", "hist-ratpstatus"])
     p.add_argument("--polls", type=int, default=3, help="nombre d'appels Vélib' / PRIM (défaut 3)")
     p.add_argument("--interval", type=int, default=None,
                    help="secondes entre deux appels (défaut : 60 pour Vélib', 120 pour PRIM)")
@@ -246,6 +372,8 @@ def main() -> None:
     p.add_argument("--annee", type=int, default=2025)
     p.add_argument("--size", type=int, default=100, help="lignes DPE (max 10000)")
     p.add_argument("--code-postal", default=None, help="filtre DPE optionnel, ex. 75011")
+    p.add_argument("--debut", type=dt.date.fromisoformat, help="historiques : date de début (AAAA-MM-JJ)")
+    p.add_argument("--fin", type=dt.date.fromisoformat, help="historiques : date de fin incluse (AAAA-MM-JJ)")
     a = p.parse_args()
 
     sources = {"velib", "meteo", "carburants", "dvf", "dpe", "idfm"} if "all" in a.sources else set(a.sources)
@@ -257,6 +385,9 @@ def main() -> None:
         ("idfm", collecter_idfm),
         ("velib", lambda: collecter_velib(a.polls, a.interval or 60)),  # longue : en fin de liste
         ("prim", lambda: collecter_prim(a.polls, a.interval or 120)),  # clé requise : hors "all"
+        # chargements historiques : jamais dans "all", période obligatoire
+        ("hist-velib", lambda: charger_historique_velib(a.debut, a.fin, RACINE / "historiques" / "velib")),
+        ("hist-ratpstatus", lambda: charger_historique_ratpstatus(a.debut, a.fin, RACINE / "historiques" / "ratpstatus")),
     ]
     erreurs = []
     for nom, f in taches:

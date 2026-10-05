@@ -1,0 +1,15 @@
+{
+  "url": "https://github.com/lovasoa/historique-velib-opendata/releases/download/new/stations.zip",
+  "extrait_de": "stations.zip",
+  "periode_demandee": [
+    "2021-03-01",
+    "2021-03-07"
+  ],
+  "nb_lignes": 611451,
+  "premiere_date": "2021-03-01T00:39Z",
+  "derniere_date": "2021-03-07T23:55Z",
+  "fichier": "velib_historique_20210301_20210307.csv.gz",
+  "taille_octets": 12944358,
+  "sha256": "023947b08256ca056a1bff71242a9c5add313e5c5468d47f74b8ab5c814abd23",
+  "telecharge_utc": "20261005T115716Z"
+}
