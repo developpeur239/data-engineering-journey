@@ -511,6 +511,14 @@ a { color: inherit; }
   width: auto;
   height: 100%;
   filter: drop-shadow(0 18px 30px rgb(11 13 16 / .35));
+  /* Mouvement continu vers le curseur, en plus du changement d'image :
+     léger déplacement, inclinaison latérale et hochement vers le bas */
+  transform-origin: 50% 100%;
+  transform:
+    perspective(1200px)
+    translate(calc(var(--regard-x, 0) * 12px), calc(var(--regard-y, 0) * 8px))
+    rotate(calc(var(--regard-x, 0) * 1.8deg))
+    rotateX(calc(var(--regard-y, 0) * -5deg));
 }
 
 /* Bulle « Bonjour ! » */

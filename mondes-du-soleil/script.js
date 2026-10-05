@@ -736,7 +736,8 @@ function initialiserBonhomme() {
   const precharger = () => {
     if (precharge || !reel) return;
     precharge = true;
-    [...salut, ...grille].forEach((url) => { const i = new Image(); i.decoding = "async"; i.src = url; });
+    salut.forEach((url) => { const i = new Image(); i.decoding = "async"; i.src = url; });
+    decoder();
   };
   if (reel) {
     img.src = grille[Math.floor(grille.length / 2)] || salut[0];
@@ -748,54 +749,67 @@ function initialiserBonhomme() {
   let minuteurBulle = 0;
   let animSalut = 0;
 
-  // --- Regard : direction lissée vers le pointeur, de -1 à 1 sur chaque axe
-  const pointeur = { x: 0, y: 0, actif: false };
+  // --- Regard : il regarde dans la DIRECTION du curseur (angle tête → curseur),
+  //     pas selon sa position dans l'écran : même un petit écart le fait tourner.
+  //     vue.x / vue.y : direction lissée, de -1 à 1 (gauche/droite, haut/bas).
+  const pointeur = { x: 0, y: 0 };
   const vue = { x: 0, y: 0 };
-  let dernierMouvement = 0;
   let boucleRegard = 0;
+  let dernierRegard = 0;
 
   const suivrePointeur = (x, y) => {
     const r = el.getBoundingClientRect();
-    const cx = r.left + r.width * teteX;
-    const cy = r.top + r.height * teteY;
-    // -1 / +1 = le bord de l'écran dans cette direction (amplitude pleine où que soit la tête)
-    const dx = x - cx, dy = y - cy;
-    pointeur.x = borner(dx / Math.max(80, dx < 0 ? cx : window.innerWidth - cx), -1, 1);
-    pointeur.y = borner(dy / Math.max(80, dy < 0 ? cy : window.innerHeight - cy), -1, 1);
-    pointeur.actif = true;
-    dernierMouvement = performance.now();
+    const dx = x - (r.left + r.width * teteX);
+    const dy = y - (r.top + r.height * teteY);
+    const distance = Math.hypot(dx, dy);
+    const zoneVisage = r.height * 0.07; // curseur sur son visage : il regarde droit devant
+    const force = borner((distance - zoneVisage) / 100); // pleine dès ~140 px de sa tête
+    pointeur.x = distance ? (dx / distance) * force : 0;
+    pointeur.y = distance ? (dy / distance) * force : 0;
     lancerRegard();
   };
+  const regarderDevant = () => { pointeur.x = 0; pointeur.y = 0; lancerRegard(); };
   window.addEventListener("pointermove", (e) => suivrePointeur(e.clientX, e.clientY), { passive: true });
   window.addEventListener("touchmove", (e) => { const t = e.touches[0]; if (t) suivrePointeur(t.clientX, t.clientY); }, { passive: true });
+  // Curseur sorti de la fenêtre : il revient vers le visiteur
+  document.documentElement.addEventListener("pointerleave", regarderDevant);
 
+  // Choix de l'image : la direction la plus proche dans la grille
+  // (seuil 0,4 : un angle de ~25° suffit pour tourner la tête)
+  const cellule = (v, n) => {
+    if (n < 2) return 0;
+    const t = borner(v * 1.25, -1, 1);
+    return Math.round(((t + 1) / 2) * (n - 1));
+  };
   const afficherRegard = () => {
     if (grille.length && etat === "regard") {
-      const c = Math.round(((vue.x + 1) / 2) * (colonnes - 1));
-      const l = Math.round(((vue.y + 1) / 2) * (lignes - 1));
-      const url = grille[l * colonnes + c];
+      const url = grille[cellule(vue.y, lignes) * colonnes + cellule(vue.x, colonnes)];
       if (url && img.getAttribute("src") !== url) img.src = url;
     }
+    // Mouvement continu (comme les yeux de la démo) : le corps s'incline légèrement
     el.style.setProperty("--regard-x", vue.x.toFixed(3));
     el.style.setProperty("--regard-y", vue.y.toFixed(3));
   };
 
-  let dernierRegard = 0;
   const etapeRegard = (maintenant) => {
     const dt = dernierRegard ? borner(maintenant - dernierRegard, 0, 64) / (1000 / 60) : 1;
     dernierRegard = maintenant;
-    const k = 1 - Math.pow(1 - 0.2, dt);
-    // Sans mouvement depuis 3 s, il revient doucement regarder le visiteur
-    const cibleX = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.x : 0;
-    const cibleY = pointeur.actif && performance.now() - dernierMouvement < 3000 ? pointeur.y : 0;
-    vue.x = interpoler(vue.x, cibleX, k);
-    vue.y = interpoler(vue.y, cibleY, k);
+    const k = 1 - Math.pow(1 - 0.45, dt); // réactif : ~90 % du chemin en 4 images
+    vue.x = interpoler(vue.x, pointeur.x, k);
+    vue.y = interpoler(vue.y, pointeur.y, k);
+    const arrive = Math.abs(vue.x - pointeur.x) < 0.005 && Math.abs(vue.y - pointeur.y) < 0.005;
+    if (arrive) { vue.x = pointeur.x; vue.y = pointeur.y; }
     afficherRegard();
-    const enMouvement = Math.abs(vue.x - cibleX) > 0.01 || Math.abs(vue.y - cibleY) > 0.01 || cibleX !== 0 || cibleY !== 0;
-    boucleRegard = enMouvement && etat !== "absent" ? requestAnimationFrame(etapeRegard) : 0;
+    boucleRegard = !arrive && etat !== "absent" ? requestAnimationFrame(etapeRegard) : 0;
     if (!boucleRegard) dernierRegard = 0;
   };
-  const lancerRegard = () => { if (!boucleRegard && etat !== "absent") boucleRegard = requestAnimationFrame(etapeRegard); };
+  const lancerRegard = () => {
+    if (etat === "absent") return;
+    if (etat === "salut") return; // le regard reprend après le salut
+    if (!boucleRegard) boucleRegard = requestAnimationFrame(etapeRegard);
+  };
+  // Préchargement décodé des images du regard : changement instantané
+  const decoder = () => grille.forEach((url) => { const i = new Image(); i.src = url; i.decode?.().catch(() => {}); });
 
   // --- Animation de salut, jouée en temps réel (indépendante du scroll)
   const jouerSalut = () => {
