@@ -1,0 +1,13 @@
+{
+  "url": "https://www.kaggle.com/api/v1/datasets/download/adrienmorel97/velib-data",
+  "ref": "adrienmorel97/velib-data",
+  "version": 13,
+  "derniere_maj": "2025-12-16T16:47:01.23Z",
+  "licence": "CC BY-SA 4.0",
+  "authentification": "HTTP Basic KAGGLE_USERNAME/KAGGLE_KEY (valeurs non enregistrées)",
+  "taille_annoncee": 13406856,
+  "fichier": "velib-data_v13.zip",
+  "taille_octets": 13406856,
+  "sha256": "93aa2e55101c4cabeb644616df6b0537a16cc6a510a42e87242b5b5dbbde2dcd",
+  "telecharge_utc": "20261005T122318Z"
+}

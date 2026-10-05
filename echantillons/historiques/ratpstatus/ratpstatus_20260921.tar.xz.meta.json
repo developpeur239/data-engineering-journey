@@ -1,0 +1,16 @@
+{
+  "url": "https://raw.githubusercontent.com/wincelau/ratpstatus/main/datas/json/20260921/<AAAAMMJJHHMMSS>_disruptions.optimized.json",
+  "depot_git": "https://github.com/wincelau/ratpstatus",
+  "commit": "4d69a1d4873e114d5ac4c5744491aa18dea28100",
+  "nb_fichiers": 720,
+  "nb_attendus_2min": 720,
+  "premier": "2026-09-21T03:00:01",
+  "dernier": "2026-09-22T02:58:01",
+  "ecart_median_min": 2.0,
+  "trous_sup_1h": 0,
+  "taille_json_brute_octets": 38688229,
+  "fichier": "ratpstatus_20260921.tar.xz",
+  "taille_octets": 419224,
+  "sha256": "83a2e6d3974966590e1205d984d4de2fa3ec5c605df013bd0b244a1a0a331b7d",
+  "telecharge_utc": "20261005T124033Z"
+}

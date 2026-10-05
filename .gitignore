@@ -215,3 +215,8 @@ secrets/
 *.key
 *.pem
 prim_api_key*
+
+# Historiques volumineux (> 50 Mo) : seul le .meta.json est commité
+echantillons/historiques/velib/stations.zip
+echantillons/historiques/kaggle/*.parquet
+!echantillons/historiques/kaggle/*.parquet.meta.json

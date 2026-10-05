@@ -1,0 +1,10 @@
+{
+  "url": "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-compteurs/exports/csv?delimiter=%3B",
+  "http_status": 200,
+  "periode_utc": null,
+  "licence": "ODbL (Ville de Paris)",
+  "fichier": "compteurs_liste_20261005.csv.gz",
+  "taille_octets": 36736,
+  "sha256": "624709ba221da35cac6eff9e53b92bca46e504c513b7224b803fc194c47a1cfe",
+  "telecharge_utc": "20261005T123629Z"
+}

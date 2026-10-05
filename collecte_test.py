@@ -16,6 +16,8 @@ Usage :
     python collecte_test.py idfm
     python collecte_test.py hist-velib --debut 2021-03-01 --fin 2021-03-31
     python collecte_test.py hist-ratpstatus --debut 2026-09-01 --fin 2026-09-03
+    KAGGLE_USERNAME=... KAGGLE_KEY=... python collecte_test.py hist-kaggle
+    python collecte_test.py compteurs --debut 2026-07-01 --fin 2026-09-30
 
 Dépendance : requests (pip install requests).
 Pour l'ingestion Bronze, il suffira de remplacer `sauver()` par un upload vers
@@ -64,6 +66,12 @@ URLS = {
     "hist_velib_zip": "https://github.com/lovasoa/historique-velib-opendata/releases/download/new/stations.zip",
     "hist_ratpstatus_git": "https://github.com/wincelau/ratpstatus",
     "hist_ratpstatus_raw": "https://raw.githubusercontent.com/wincelau/ratpstatus/main/datas/json/{jour}/{fichier}",
+    # Kaggle « velib-data » (adrienmorel97), jeu complet zippé ; authentification HTTP Basic (KAGGLE_USERNAME/KAGGLE_KEY)
+    "kaggle_velib": "https://www.kaggle.com/api/v1/datasets/download/{ref}",
+    "kaggle_meta": "https://www.kaggle.com/api/v1/datasets/view/{ref}",
+    # Paris Data (Opendatasoft v2.1) — comptages vélo horaires (13 mois glissants) et liste des compteurs
+    "compteurs_donnees": "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-donnees-compteurs/exports/{fmt}",
+    "compteurs_liste": "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-compteurs/exports/csv",
 }
 
 
@@ -303,6 +311,114 @@ def charger_historique_velib(date_debut: dt.date, date_fin: dt.date, dossier: Pa
     return sortie
 
 
+def charger_historique_kaggle(dossier: Path, ref: str = "adrienmorel97/velib-data",
+                              taille_max: int = 100 * 1024 * 1024) -> list[Path]:
+    """Jeu Kaggle Vélib' (relevés toutes les 5 min, décembre 2025 d'après la fiche).
+
+    Identifiants lus dans KAGGLE_USERNAME / KAGGLE_KEY (jamais écrits ni affichés).
+    Taille mesurée par une requête Range de 1 octet (le HEAD renvoie 404 chez Kaggle),
+    puis téléchargement du zip complet s'il n'est pas déjà présent avec la même taille,
+    et extraction des fichiers. Un .meta.json sans secret par fichier.
+    """
+    print(f"[H3] Kaggle {ref}")
+    user, cle = os.environ.get("KAGGLE_USERNAME", "").strip(), os.environ.get("KAGGLE_KEY", "").strip()
+    if not user or not cle:
+        raise RuntimeError("KAGGLE_USERNAME / KAGGLE_KEY vides : définir les variables d'environnement.")
+    dossier.mkdir(parents=True, exist_ok=True)
+    url = URLS["kaggle_velib"].format(ref=ref)
+    fiche = requests.get(URLS["kaggle_meta"].format(ref=ref), auth=(user, cle), timeout=60).json()
+    with requests.get(url, auth=(user, cle), headers={"Range": "bytes=0-0"}, timeout=60) as r:
+        r.raise_for_status()
+        taille = int(r.headers["Content-Range"].split("/")[-1])
+    if taille > taille_max:
+        raise RuntimeError(f"Jeu Kaggle de {taille:,} o > limite {taille_max:,} o")
+    zip_local = dossier / f"{ref.split('/')[-1]}_v{fiche.get('currentVersionNumber')}.zip"
+    meta_commune = {"url": url, "ref": ref, "version": fiche.get("currentVersionNumber"),
+                    "derniere_maj": fiche.get("lastUpdated"), "licence": fiche.get("licenseName"),
+                    "authentification": "HTTP Basic KAGGLE_USERNAME/KAGGLE_KEY (valeurs non enregistrées)"}
+    if zip_local.exists() and zip_local.stat().st_size == taille:
+        print(f"  = {zip_local} déjà présent ({taille:,} o), pas de nouveau téléchargement")
+    else:
+        with requests.get(url, auth=(user, cle), stream=True, timeout=600) as r:
+            r.raise_for_status()
+            with open(zip_local, "wb") as out:
+                for bloc in r.iter_content(1024 * 1024):
+                    out.write(bloc)
+        _ecrire_meta(zip_local, {**meta_commune, "taille_annoncee": taille})
+    sorties = [zip_local]
+    with zipfile.ZipFile(zip_local) as z:
+        for info in z.infolist():
+            cible = dossier / info.filename
+            if not (cible.exists() and cible.stat().st_size == info.file_size):
+                z.extract(info, dossier)
+                _ecrire_meta(cible, {**meta_commune, "extrait_de": zip_local.name})
+            sorties.append(cible)
+    for f in sorties:  # garde-fou : aucun secret dans les métadonnées
+        m = f.with_name(f.name + ".meta.json")
+        if m.exists() and (cle in m.read_text() or user in m.read_text()):
+            m.unlink()
+            raise RuntimeError(f"Identifiant Kaggle détecté dans {m} : fichier supprimé.")
+    return sorties
+
+
+def _telecharger_vers(url: str, params: dict, cible: Path, garder_gzip: bool, essais: int = 3) -> str:
+    """Téléchargement en flux vers cible.part puis renommage (jamais de fichier partiel), avec retries."""
+    tmp = cible.with_name(cible.name + ".part")
+    for essai in range(1, essais + 1):
+        try:
+            with requests.get(url, params=params, stream=True, timeout=600,
+                              headers={"User-Agent": USER_AGENT, "Accept-Encoding": "gzip"}) as r:
+                r.raise_for_status()
+                gz = r.headers.get("Content-Encoding") == "gzip"
+                with (gzip.open(tmp, "wb") if (garder_gzip and not gz) else open(tmp, "wb")) as out:
+                    for bloc in r.raw.stream(1024 * 1024, decode_content=not garder_gzip):
+                        out.write(bloc)
+                tmp.replace(cible)
+                return r.url
+        except (requests.RequestException, OSError, Exception) as e:  # coupure de flux (IncompleteRead...)
+            tmp.unlink(missing_ok=True)
+            print(f"  ! essai {essai}/{essais} : {str(e)[:120]}", file=sys.stderr)
+            if essai == essais:
+                raise
+            time.sleep(2 ** essai)
+
+
+def charger_compteurs_velo(date_debut: dt.date, date_fin: dt.date, dossier: Path | None = None,
+                           fmt: str = "parquet") -> list[Path]:
+    """Compteurs vélo de la Ville de Paris (comptages horaires, ODbL, 13 mois glissants).
+
+    Un fichier par mois calendaire (dates UTC) : comptages_AAAAMM[_partiel].parquet
+    (mesuré : ~131 Ko/jour toutes colonnes) ou .csv.gz (gzip conservé tel quel),
+    plus la liste des compteurs du jour (coordonnées). Un mois déjà présent n'est pas
+    retéléchargé. Les données de plus de 13 mois disparaissent du portail : archiver
+    en Bronze au moins une fois par mois.
+    """
+    print(f"[H4] Compteurs vélo Paris {date_debut} -> {date_fin} ({fmt})")
+    dossier = dossier or RACINE / "historiques" / "compteurs"
+    dossier.mkdir(parents=True, exist_ok=True)
+    taches, mois = [], date_debut.replace(day=1)
+    while mois <= date_fin:
+        suivant = (mois + dt.timedelta(days=32)).replace(day=1)
+        deb, fin = max(mois, date_debut), min(suivant - dt.timedelta(days=1), date_fin)
+        complet = deb == mois and fin == suivant - dt.timedelta(days=1)
+        nom = f"comptages_{mois:%Y%m}{'' if complet else f'_{deb:%d}-{fin:%d}'}.{fmt}" + (".gz" if fmt == "csv" else "")
+        filtre = f'date >= "{deb.isoformat()}" and date < "{(fin + dt.timedelta(days=1)).isoformat()}"'
+        taches.append((URLS["compteurs_donnees"].format(fmt=fmt),
+                       {"where": filtre, **({"delimiter": ";"} if fmt == "csv" else {})}, nom, fmt == "csv", [str(deb), str(fin)]))
+        mois = suivant
+    taches.append((URLS["compteurs_liste"], {"delimiter": ";"}, f"compteurs_liste_{horodatage()[:8]}.csv.gz", True, None))
+    sorties = []
+    for url, params, nom, garder_gzip, periode in taches:
+        cible = dossier / nom
+        if cible.exists() and cible.with_name(cible.name + ".meta.json").exists():
+            print(f"  = {cible} déjà présent, pas de nouveau téléchargement")
+        else:
+            url_finale = _telecharger_vers(url, params, cible, garder_gzip)
+            _ecrire_meta(cible, {"url": url_finale, "http_status": 200, "periode_utc": periode, "licence": "ODbL (Ville de Paris)"})
+        sorties.append(cible)
+    return sorties
+
+
 def _git(depot: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(depot), *args], check=True, capture_output=True, text=True).stdout
 
@@ -364,7 +480,7 @@ def charger_historique_ratpstatus(date_debut: dt.date, date_fin: dt.date, dossie
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("sources", nargs="+", choices=["all", "velib", "meteo", "carburants", "dvf", "dpe", "prim", "idfm",
-                            "hist-velib", "hist-ratpstatus"])
+                            "hist-velib", "hist-ratpstatus", "hist-kaggle", "compteurs"])
     p.add_argument("--polls", type=int, default=3, help="nombre d'appels Vélib' / PRIM (défaut 3)")
     p.add_argument("--interval", type=int, default=None,
                    help="secondes entre deux appels (défaut : 60 pour Vélib', 120 pour PRIM)")
@@ -388,6 +504,8 @@ def main() -> None:
         # chargements historiques : jamais dans "all", période obligatoire
         ("hist-velib", lambda: charger_historique_velib(a.debut, a.fin, RACINE / "historiques" / "velib")),
         ("hist-ratpstatus", lambda: charger_historique_ratpstatus(a.debut, a.fin, RACINE / "historiques" / "ratpstatus")),
+        ("hist-kaggle", lambda: charger_historique_kaggle(RACINE / "historiques" / "kaggle")),
+        ("compteurs", lambda: charger_compteurs_velo(a.debut, a.fin)),
     ]
     erreurs = []
     for nom, f in taches:

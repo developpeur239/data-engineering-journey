@@ -1,0 +1,10 @@
+{
+  "url": "https://archive-api.open-meteo.com/v1/archive?latitude=48.85&longitude=2.35&start_date=2025-12-02&end_date=2025-12-16&hourly=temperature_2m,precipitation&timezone=UTC",
+  "http_status": 200,
+  "temps_reponse_s": 0.782,
+  "licence": "CC BY 4.0 (Open-Meteo)",
+  "fichier": "meteo_archive_20251202_20251216.json",
+  "taille_octets": 10510,
+  "sha256": "0ad0ae0f35d4935acbc096603bf467e20f441681e2df5dadeefab92a991197f7",
+  "telecharge_utc": "20261005T124253Z"
+}

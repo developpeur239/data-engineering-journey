@@ -1,0 +1,13 @@
+{
+  "url": "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-donnees-compteurs/exports/parquet?where=date+%3E%3D+%222026-07-01%22+and+date+%3C+%222026-08-01%22",
+  "http_status": 200,
+  "periode_utc": [
+    "2026-07-01",
+    "2026-07-31"
+  ],
+  "licence": "ODbL (Ville de Paris)",
+  "fichier": "comptages_202607.parquet",
+  "taille_octets": 1383804,
+  "sha256": "e4832a970015830ca247af3a2cb0c1545c03bff875c352401fe2bb5b92f7afcd",
+  "telecharge_utc": "20261005T123539Z"
+}
