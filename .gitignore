@@ -205,3 +205,13 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Secrets du projet datalake (clé PRIM, etc.) — ne jamais commiter
+.env.*
+!.env.example
+*.secret
+*.secrets
+secrets/
+*.key
+*.pem
+prim_api_key*

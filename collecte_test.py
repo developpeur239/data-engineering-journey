@@ -12,6 +12,8 @@ Usage :
     python collecte_test.py meteo carburants
     python collecte_test.py dvf --departement 75 --annee 2025
     python collecte_test.py dpe --size 100 --code-postal 75011
+    PRIM_API_KEY=... python collecte_test.py prim --polls 3 --interval 120
+    python collecte_test.py idfm
 
 Dépendance : requests (pip install requests).
 Pour l'ingestion Bronze, il suffira de remplacer `sauver()` par un upload vers
@@ -26,6 +28,7 @@ import datetime as dt
 import hashlib
 import io
 import json
+import os
 import sys
 import time
 import zipfile
@@ -45,6 +48,10 @@ URLS = {
     "carburants": "https://donnees.roulez-eco.fr/opendata/instantane",
     "dvf": "https://files.data.gouv.fr/geo-dvf/latest/csv/{annee}/departements/{dep}.csv.gz",
     "dpe": "https://data.ademe.fr/data-fair/api/v1/datasets/dpe03existant/lines",
+    # PRIM (Île-de-France Mobilités) — Messages Info Trafic, requête globale. Clé obligatoire.
+    "prim_disruptions": "https://prim.iledefrance-mobilites.fr/marketplace/disruptions_bulk/disruptions/v2",
+    # IDFM open data — « Arrêts et lignes associées » (un arrêt x une ligne, avec coordonnées)
+    "idfm_arrets_lignes": "https://data.iledefrance-mobilites.fr/api/explore/v2.1/catalog/datasets/arrets-lignes/exports/csv",
 }
 
 
@@ -52,33 +59,37 @@ def horodatage() -> str:
     return dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
-def telecharger(url: str, params: dict | None = None, essais: int = 4) -> tuple[bytes, dict]:
-    """GET en streaming, coupé à TAILLE_MAX, avec retry/backoff (2, 4, 8 s).
+def telecharger(url: str, params: dict | None = None, essais: int = 4,
+                headers: dict | None = None, taille_max: int = TAILLE_MAX) -> tuple[bytes, dict]:
+    """GET en streaming, coupé à `taille_max`, avec retry/backoff (2, 4, 8 s).
 
     Renvoie (contenu, métadonnées). Les erreurs réseau et les 429/5xx sont
     retentés : l'API archive d'Open-Meteo et data.gouv.fr ont été instables
-    pendant les tests.
+    pendant les tests. Les autres 4xx (401 clé invalide...) ne le sont pas.
+    Les en-têtes de requête (`headers`, ex. une clé d'API) ne sont JAMAIS
+    recopiés dans les métadonnées.
     """
     derniere_erreur = None
     for essai in range(1, essais + 1):
         debut = time.monotonic()
         try:
             with requests.get(url, params=params, stream=True, timeout=60,
-                              headers={"User-Agent": USER_AGENT}) as r:
+                              headers={"User-Agent": USER_AGENT, **(headers or {})}) as r:
                 if r.status_code == 429 and "Daily API request limit" in r.text:
                     # quota journalier Open-Meteo (par IP) : retenter ne sert à rien
                     raise RuntimeError(f"Quota journalier épuisé : {r.text[:200]}")
                 if r.status_code == 429 or r.status_code >= 500:
                     raise requests.HTTPError(f"HTTP {r.status_code}", response=r)
-                r.raise_for_status()
+                if r.status_code >= 400:  # 401/403/404 : retenter ne sert à rien
+                    raise RuntimeError(f"HTTP {r.status_code} sur {url} : {r.text[:200]}")
                 buf = io.BytesIO()
                 tronque = False
                 for bloc in r.iter_content(64 * 1024):
                     buf.write(bloc)
-                    if buf.tell() >= TAILLE_MAX:
+                    if buf.tell() >= taille_max:
                         tronque = True
                         break
-                contenu = buf.getvalue()[:TAILLE_MAX]
+                contenu = buf.getvalue()[:taille_max]
                 meta = {
                     "url": r.url,
                     "http_status": r.status_code,
@@ -86,8 +97,12 @@ def telecharger(url: str, params: dict | None = None, essais: int = 4) -> tuple[
                     "content_type": r.headers.get("Content-Type"),
                     "last_modified": r.headers.get("Last-Modified"),
                     "taille_octets": len(contenu),
-                    "tronque_a_20Mo": tronque,
+                    "tronque": tronque,
                     "essai": essai,
+                    # en-têtes de RÉPONSE liés aux quotas (jamais ceux de la requête)
+                    "entetes_quota": {k: v for k, v in r.headers.items()
+                                      if any(m in k.lower() for m in ("limit", "quota", "retry"))},
+                    "entetes_reponse": sorted(r.headers.keys()),
                 }
                 return contenu, meta
         except requests.RequestException as e:
@@ -177,26 +192,71 @@ def collecter_dpe(size: int = 100, code_postal: str | None = None) -> None:
     sauver("dpe", f"dpe03existant_{suffixe}_{size}_{horodatage()}.csv", contenu, meta)
 
 
+def cle_prim() -> str:
+    """Lit la clé PRIM dans l'environnement. Elle n'est jamais affichée ni écrite."""
+    cle = os.environ.get("PRIM_API_KEY", "").strip()
+    if not cle:
+        raise RuntimeError("PRIM_API_KEY est vide : définir la variable d'environnement (jamais dans le code).")
+    return cle
+
+
+def collecter_prim(polls: int = 1, interval: int = 120) -> None:
+    """Messages Info Trafic PRIM, requête globale (toutes les perturbations en cours et à venir).
+
+    Authentification par l'en-tête HTTP `apiKey`. L'API ne fournit pas d'historique :
+    chaque appel est un instantané à archiver en Bronze.
+    """
+    print("[F] PRIM — Messages Info Trafic (requête globale)")
+    cle = cle_prim()
+    for i in range(polls):
+        contenu, meta = telecharger(URLS["prim_disruptions"], headers={"apiKey": cle})
+        try:
+            d = json.loads(contenu)
+            meta["nb_disruptions"] = len(d.get("disruptions", []))
+            meta["nb_lignes"] = len(d.get("lines", []))
+            meta["last_updated_date"] = d.get("lastUpdatedDate")
+        except ValueError:
+            meta["json_invalide"] = True
+        meta["authentification"] = "en-tête HTTP apiKey (valeur non enregistrée)"
+        if cle in json.dumps(meta):  # garde-fou : la clé ne doit jamais finir sur disque
+            raise RuntimeError("La clé PRIM apparaît dans les métadonnées : écriture annulée.")
+        sauver("prim", f"disruptions_v2_{horodatage()}.json", contenu, meta)
+        if i < polls - 1:
+            time.sleep(interval)
+
+
+def collecter_idfm() -> None:
+    """Référentiel IDFM « Arrêts et lignes associées » (CSV `;`, UTF-8, licence ODbL), plafonné à 50 Mo."""
+    print("[G] IDFM — Arrêts et lignes associées")
+    contenu, meta = telecharger(URLS["idfm_arrets_lignes"], params={"delimiter": ";"},
+                                taille_max=50 * 1024 * 1024)
+    meta["nb_lignes_csv"] = contenu.count(b"\n") - 1
+    sauver("idfm", f"arrets_lignes_{horodatage()}.csv", contenu, meta)
+
+
 # --------------------------------------------------------------------------- CLI
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("sources", nargs="+", choices=["all", "velib", "meteo", "carburants", "dvf", "dpe"])
-    p.add_argument("--polls", type=int, default=3, help="nombre d'appels station_status (défaut 3)")
-    p.add_argument("--interval", type=int, default=60, help="secondes entre deux appels Vélib' (défaut 60)")
+    p.add_argument("sources", nargs="+", choices=["all", "velib", "meteo", "carburants", "dvf", "dpe", "prim", "idfm"])
+    p.add_argument("--polls", type=int, default=3, help="nombre d'appels Vélib' / PRIM (défaut 3)")
+    p.add_argument("--interval", type=int, default=None,
+                   help="secondes entre deux appels (défaut : 60 pour Vélib', 120 pour PRIM)")
     p.add_argument("--departement", default="75")
     p.add_argument("--annee", type=int, default=2025)
     p.add_argument("--size", type=int, default=100, help="lignes DPE (max 10000)")
     p.add_argument("--code-postal", default=None, help="filtre DPE optionnel, ex. 75011")
     a = p.parse_args()
 
-    sources = {"velib", "meteo", "carburants", "dvf", "dpe"} if "all" in a.sources else set(a.sources)
+    sources = {"velib", "meteo", "carburants", "dvf", "dpe", "idfm"} if "all" in a.sources else set(a.sources)
     taches = [
         ("meteo", lambda: collecter_meteo()),
         ("carburants", collecter_carburants),
         ("dvf", lambda: collecter_dvf(a.departement, a.annee)),
         ("dpe", lambda: collecter_dpe(a.size, a.code_postal)),
-        ("velib", lambda: collecter_velib(a.polls, a.interval)),  # en dernier : la plus longue
+        ("idfm", collecter_idfm),
+        ("velib", lambda: collecter_velib(a.polls, a.interval or 60)),  # longue : en fin de liste
+        ("prim", lambda: collecter_prim(a.polls, a.interval or 120)),  # clé requise : hors "all"
     ]
     erreurs = []
     for nom, f in taches:

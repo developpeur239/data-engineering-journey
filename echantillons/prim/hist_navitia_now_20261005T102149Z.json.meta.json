@@ -1,0 +1,60 @@
+{
+  "url": "https://prim.iledefrance-mobilites.fr/marketplace/v2/navitia/line_reports/line_reports?count=1000",
+  "http_status": 200,
+  "temps_reponse_s": 1.043,
+  "content_type": "application/json",
+  "last_modified": null,
+  "taille_octets": 1930357,
+  "tronque": false,
+  "essai": 1,
+  "entetes_quota": {
+    "ratelimit-limit": "4000",
+    "ratelimit-remaining": "3999",
+    "ratelimit-reset": "49091",
+    "x-ratelimit-limit-day": "4000",
+    "x-ratelimit-remaining-day": "3999"
+  },
+  "entetes_reponse": [
+    "CF-RAY",
+    "Cache-Control",
+    "Connection",
+    "Content-Encoding",
+    "Content-Type",
+    "Date",
+    "Server",
+    "Transfer-Encoding",
+    "access-control-allow-origin",
+    "alt-svc",
+    "cf-cache-status",
+    "content-security-policy",
+    "navitia-request-id",
+    "ratelimit-limit",
+    "ratelimit-remaining",
+    "ratelimit-reset",
+    "set-cookie",
+    "strict-transport-security",
+    "vary",
+    "x-content-type-options",
+    "x-frame-options",
+    "x-ratelimit-limit-day",
+    "x-ratelimit-remaining-day",
+    "x-xss-protection"
+  ],
+  "nb_disruptions": 466,
+  "cles_racine": [
+    "pagination",
+    "feed_publishers",
+    "disruptions",
+    "context",
+    "line_reports",
+    "warnings",
+    "links"
+  ],
+  "params": {
+    "count": 1000
+  },
+  "authentification": "en-tête HTTP apiKey (valeur non enregistrée)",
+  "fichier": "hist_navitia_now_20261005T102149Z.json",
+  "collecte_utc": "20261005T102149Z",
+  "sha256": "82b7af03753d9a9f0999304c03197d3add3718f18e1d2528e28a24031907992f"
+}
