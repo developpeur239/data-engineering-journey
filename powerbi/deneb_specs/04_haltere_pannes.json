@@ -1,0 +1,438 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 30,
+    "left": 6,
+    "right": 90,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "fold": [
+        "Taux pénurie sans panne",
+        "Taux pénurie avec panne",
+        "Taux saturation sans panne",
+        "Taux saturation avec panne"
+      ],
+      "as": [
+        "cle",
+        "valeur"
+      ]
+    },
+    {
+      "calculate": "indexof(datum.cle, 'pénurie') >= 0 ? 'Pénurie' : 'Saturation'",
+      "as": "indicateur"
+    },
+    {
+      "calculate": "indexof(datum.cle, 'sans') >= 0 ? 'sans' : 'avec'",
+      "as": "etat"
+    },
+    {
+      "pivot": "etat",
+      "value": "valeur",
+      "groupby": [
+        "periode",
+        "indicateur"
+      ]
+    },
+    {
+      "calculate": "(datum.avec - datum.sans) * 100",
+      "as": "ecart"
+    },
+    {
+      "calculate": "datum.indicateur + ' · ' + datum.periode",
+      "as": "ligne"
+    },
+    {
+      "calculate": "(datum.periode === 'Heure de pointe' ? 0 : 2) + (datum.indicateur === 'Pénurie' ? 0 : 1)",
+      "as": "ordre"
+    },
+    {
+      "calculate": "max(datum.avec, datum.sans)",
+      "as": "borne"
+    },
+    {
+      "calculate": "(datum.ecart >= 0 ? '+' : '−') + replace(format(abs(datum.ecart), '.1f'), '.', ',') + ' pts'",
+      "as": "texte_ecart"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 4,
+        "strokeCap": "round",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "ligne",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 12,
+            "labelColor": "#EAF0FA",
+            "labelExpr": "split(datum.label, ' · ')",
+            "labelLineHeight": 16,
+            "labelLimit": 160
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "nice": true,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 5,
+            "grid": true
+          },
+          "field": "sans"
+        },
+        "x2": {
+          "field": "avec"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.ecart >= 0",
+            "value": "#D8478A"
+          },
+          "value": "#52D1B8"
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "opacity": 1,
+        "size": 190,
+        "fill": "#161E2E",
+        "stroke": "#9AA9C4",
+        "strokeWidth": 3,
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "ligne",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 12,
+            "labelColor": "#EAF0FA",
+            "labelExpr": "split(datum.label, ' · ')",
+            "labelLineHeight": 16,
+            "labelLimit": 160
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "nice": true,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 5,
+            "grid": true
+          },
+          "field": "sans"
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "ligne"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "opacity": 1,
+        "size": 190,
+        "color": "#D8478A",
+        "stroke": "#161E2E",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "y": {
+          "field": "ligne",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 12,
+            "labelColor": "#EAF0FA",
+            "labelExpr": "split(datum.label, ' · ')",
+            "labelLineHeight": 16,
+            "labelLimit": 160
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "nice": true,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 5,
+            "grid": true
+          },
+          "field": "avec"
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.35
+        },
+        "tooltip": [
+          {
+            "field": "ligne",
+            "type": "nominal",
+            "title": "Situation"
+          },
+          {
+            "field": "sans",
+            "type": "quantitative",
+            "title": "Sans panne",
+            "format": ".1%"
+          },
+          {
+            "field": "avec",
+            "type": "quantitative",
+            "title": "Avec panne",
+            "format": ".1%"
+          },
+          {
+            "field": "texte_ecart",
+            "type": "nominal",
+            "title": "Écart"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 16,
+        "fontSize": 14,
+        "fontWeight": 600,
+        "color": "#EAF0FA",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "ligne",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 12,
+            "labelColor": "#EAF0FA",
+            "labelExpr": "split(datum.label, ' · ')",
+            "labelLineHeight": 16,
+            "labelLimit": 160
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "nice": true,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 5,
+            "grid": true
+          },
+          "field": "borne"
+        },
+        "text": {
+          "field": "texte_ecart"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.ordre === 0"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "dy": -26,
+            "fontSize": 11,
+            "color": "#A9B6CE"
+          },
+          "encoding": {
+            "y": {
+              "field": "ligne",
+              "type": "nominal",
+              "sort": {
+                "field": "ordre"
+              },
+              "axis": {
+                "title": null,
+                "grid": true,
+                "gridDash": [
+                  2,
+                  5
+                ],
+                "gridOpacity": 0.9,
+                "labelFontSize": 12,
+                "labelColor": "#EAF0FA",
+                "labelExpr": "split(datum.label, ' · ')",
+                "labelLineHeight": 16,
+                "labelLimit": 160
+              }
+            },
+            "x": {
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0,
+                "nice": true,
+                "zero": true
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 5,
+                "grid": true
+              },
+              "field": "sans"
+            },
+            "text": {
+              "value": "sans panne"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "dy": -26,
+            "fontSize": 11,
+            "color": "#A9B6CE"
+          },
+          "encoding": {
+            "y": {
+              "field": "ligne",
+              "type": "nominal",
+              "sort": {
+                "field": "ordre"
+              },
+              "axis": {
+                "title": null,
+                "grid": true,
+                "gridDash": [
+                  2,
+                  5
+                ],
+                "gridOpacity": 0.9,
+                "labelFontSize": 12,
+                "labelColor": "#EAF0FA",
+                "labelExpr": "split(datum.label, ' · ')",
+                "labelLineHeight": 16,
+                "labelLimit": 160
+              }
+            },
+            "x": {
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0,
+                "nice": true,
+                "zero": true
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 5,
+                "grid": true
+              },
+              "field": "avec"
+            },
+            "text": {
+              "value": "avec panne"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

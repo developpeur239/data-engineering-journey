@@ -1,0 +1,93 @@
+{
+  "background": "transparent",
+  "font": "Segoe UI, Arial, Helvetica, sans-serif",
+  "padding": {
+    "left": 6,
+    "right": 14,
+    "top": 6,
+    "bottom": 6
+  },
+  "view": {
+    "stroke": null
+  },
+  "axis": {
+    "domain": false,
+    "ticks": false,
+    "grid": true,
+    "gridColor": "#2B3750",
+    "gridWidth": 1,
+    "gridOpacity": 0.6,
+    "labelFont": "Segoe UI, Arial, Helvetica, sans-serif",
+    "labelFontSize": 11,
+    "labelColor": "#A9B6CE",
+    "labelPadding": 8,
+    "labelFontWeight": "normal",
+    "titleFont": "Segoe UI, Arial, Helvetica, sans-serif",
+    "titleFontSize": 11,
+    "titleFontWeight": "normal",
+    "titleColor": "#8D9BB6",
+    "titlePadding": 10
+  },
+  "axisX": {
+    "grid": false
+  },
+  "legend": {
+    "labelFont": "Segoe UI, Arial, Helvetica, sans-serif",
+    "labelFontSize": 12,
+    "labelColor": "#A9B6CE",
+    "titleFont": "Segoe UI, Arial, Helvetica, sans-serif",
+    "titleFontSize": 11,
+    "titleFontWeight": "normal",
+    "titleColor": "#8D9BB6",
+    "symbolType": "circle",
+    "symbolSize": 90,
+    "padding": 0,
+    "offset": 8,
+    "orient": "top-left"
+  },
+  "text": {
+    "font": "Segoe UI, Arial, Helvetica, sans-serif",
+    "color": "#A9B6CE"
+  },
+  "mark": {
+    "font": "Segoe UI, Arial, Helvetica, sans-serif"
+  },
+  "title": {
+    "font": "Segoe UI, Arial, Helvetica, sans-serif",
+    "color": "#EAF0FA",
+    "fontSize": 16,
+    "fontWeight": 600,
+    "anchor": "start",
+    "subtitleFont": "Segoe UI, Arial, Helvetica, sans-serif",
+    "subtitleColor": "#A9B6CE",
+    "subtitleFontSize": 12
+  },
+  "range": {
+    "category": [
+      "#E26828",
+      "#2A9FD0",
+      "#D8478A",
+      "#7F6AE6",
+      "#9AA9C4"
+    ],
+    "ramp": [
+      "#362B27",
+      "#693926",
+      "#9E4A24",
+      "#CD642C",
+      "#EF844A",
+      "#FFA97B",
+      "#FFD4BC"
+    ],
+    "heatmap": [
+      "#362B27",
+      "#693926",
+      "#9E4A24",
+      "#CD642C",
+      "#EF844A",
+      "#FFA97B",
+      "#FFD4BC"
+    ]
+  },
+  "customFormatTypes": true
+}

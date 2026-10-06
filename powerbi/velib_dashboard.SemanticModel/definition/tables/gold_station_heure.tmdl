@@ -1,0 +1,529 @@
+table gold_station_heure
+	lineageTag: 1bb73172-641d-551e-bbbd-979b824a823c
+
+	measure 'Nb stations' = DISTINCTCOUNT(gold_station_heure[station_id])
+		formatString: #,0
+		displayFolder: Indicateurs
+		lineageTag: 9e80284e-3e92-5b73-b63b-d9ed34a2bcc7
+
+	measure 'Taux pénurie' = DIVIDE(SUM(gold_station_heure[nb_releves_penurie]), SUM(gold_station_heure[nb_releves_en_service]))
+		formatString: 0.0%
+		displayFolder: Indicateurs
+		lineageTag: ecb930b7-23ed-5e78-8684-3460137f5dad
+
+	measure 'Taux saturation' = DIVIDE(SUM(gold_station_heure[nb_releves_saturation]), SUM(gold_station_heure[nb_releves_en_service]))
+		formatString: 0.0%
+		displayFolder: Indicateurs
+		lineageTag: f09c4e98-c3c0-5b9f-830b-93966d2becd6
+
+	measure 'Dernière heure' = MAX(gold_station_heure[heure_paris])
+		formatString: dd/MM HH:mm
+		displayFolder: Indicateurs
+		lineageTag: 333d815a-9f9f-5ce5-a774-90db5d090deb
+
+	measure 'Taux pénurie avec panne' = CALCULATE([Taux pénurie], gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE())
+		formatString: 0.0%
+		displayFolder: Pannes
+		lineageTag: 07c419cd-116b-5eec-94c9-a86f31f4ed2a
+
+	measure 'Taux pénurie sans panne' = CALCULATE([Taux pénurie], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+		formatString: 0.0%
+		displayFolder: Pannes
+		lineageTag: b6a20b2b-bd87-53fa-bdbb-1a6eeccf8af9
+
+	measure 'Taux saturation avec panne' = CALCULATE([Taux saturation], gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE())
+		formatString: 0.0%
+		displayFolder: Pannes
+		lineageTag: eb2444eb-2d96-5a1d-93f8-4413c0bbe944
+
+	measure 'Taux saturation sans panne' = CALCULATE([Taux saturation], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+		formatString: 0.0%
+		displayFolder: Pannes
+		lineageTag: 72b93763-8b22-5c59-a869-56d75ff382c6
+
+	measure 'Écart pénurie (pts)' = ([Taux pénurie avec panne] - [Taux pénurie sans panne]) * 100
+		formatString: "+0.0"" pts"";-0.0"" pts"";0.0"" pts"""
+		displayFolder: Pannes
+		lineageTag: fb244750-7e99-504f-a533-f57058c398ed
+
+	measure 'Écart saturation (pts)' = ([Taux saturation avec panne] - [Taux saturation sans panne]) * 100
+		formatString: "+0.0"" pts"";-0.0"" pts"";0.0"" pts"""
+		displayFolder: Pannes
+		lineageTag: 1909b31c-bde2-5d1b-b08f-63cf160992c2
+
+	measure 'Part heures avec panne ferrée' = DIVIDE(CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE()), CALCULATE(COUNTROWS(gold_station_heure), REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE()))
+		formatString: 0.0%
+		displayFolder: Pannes
+		lineageTag: f06b3904-6a34-52d1-b86b-0bd718dcc294
+
+	measure n_service = SUM(gold_station_heure[nb_releves_en_service])
+		formatString: #,0
+		isHidden
+		displayFolder: Appui Deneb
+		lineageTag: afb0b414-37a9-5e6d-ac08-44a3ac4e46df
+
+	measure n_penurie = SUM(gold_station_heure[nb_releves_penurie])
+		formatString: #,0
+		isHidden
+		displayFolder: Appui Deneb
+		lineageTag: 97dae26e-2d6e-53cc-914e-a57de211f324
+
+	measure n_saturation = SUM(gold_station_heure[nb_releves_saturation])
+		formatString: #,0
+		isHidden
+		displayFolder: Appui Deneb
+		lineageTag: 10d18681-544b-5fd8-a85d-08a8fd48ef37
+
+	measure capacite_max = MAX(gold_station_heure[capacite])
+		formatString: 0
+		isHidden
+		displayFolder: Appui Deneb
+		lineageTag: 82ccb857-ab9c-5963-a16f-962b099d1296
+
+	measure lon_moy = AVERAGE(gold_station_heure[longitude])
+		formatString: 0.00000
+		isHidden
+		displayFolder: Appui natif
+		lineageTag: 4552a83e-c0a9-5146-9f05-3c9d07c5b5c9
+
+	measure lat_moy = AVERAGE(gold_station_heure[latitude])
+		formatString: 0.00000
+		isHidden
+		displayFolder: Appui natif
+		lineageTag: ca372db7-4662-5305-b3f4-437f28da4da4
+
+	measure temperature_moy = AVERAGE(gold_station_heure[temperature_c])
+		formatString: 0.0
+		isHidden
+		displayFolder: Appui natif
+		lineageTag: 144c8d6d-90f7-56ef-9aed-491fc723010b
+
+	measure 'Titre heatmap' =
+			VAR t = ADDCOLUMNS(
+			    SUMMARIZE(gold_station_heure, gold_station_heure[heure_du_jour], gold_station_heure[jour_semaine_ordre], gold_station_heure[jour_nom]),
+			    "@r", [Taux pénurie])
+			VAR m = TOPN(1, t, [@r], DESC)
+			VAR h = MAXX(m, gold_station_heure[heure_du_jour])
+			VAR j = MAXX(m, gold_station_heure[jour_nom])
+			RETURN IF(ISBLANK(h), "Où et quand manque-t-on de vélos ?", "Les pénuries culminent le " & j & " à " & h & " h")
+		isHidden
+		displayFolder: Titres
+		lineageTag: ff495395-c489-5d51-b33d-0373651fec7d
+
+	measure 'Titre rythme' =
+			VAR t = ADDCOLUMNS(VALUES(gold_station_heure[heure_du_jour]), "@r", [Taux pénurie])
+			VAR m = TOPN(1, t, [@r], DESC)
+			VAR h = MAXX(m, gold_station_heure[heure_du_jour])
+			RETURN IF(ISBLANK(h), "Les pénuries au fil de la journée", "Les pénuries explosent à " & h & " h")
+		isHidden
+		displayFolder: Titres
+		lineageTag: ad8d7acf-84c0-56ec-956b-58a41091be8d
+
+	measure 'Titre carte' =
+			VAR t = ADDCOLUMNS(VALUES(gold_station_heure[station_id]), "@r", [Taux pénurie])
+			VAR n = COUNTROWS(FILTER(t, [@r] > 0.2))
+			VAR total = COUNTROWS(t)
+			RETURN IF(total = 0, "Quelles stations manquent de vélos ?", n & " stations sur " & FORMAT(total, "#,0") & " sont vides plus d'un relevé sur cinq")
+		isHidden
+		displayFolder: Titres
+		lineageTag: 1e66d693-be3e-51e2-aa83-04f0dc402794
+
+	measure 'Titre pannes' =
+			VAR e = [Écart pénurie (pts)]
+			RETURN IF(ISBLANK(e), "Une panne ferrée à proximité change-t-elle la pénurie ?",
+			    "Une panne ferrée à moins de 300 m " & IF(e >= 0, "augmente", "réduit") & " la pénurie de " & FORMAT(ABS(e), "0.0") & " pts")
+		isHidden
+		displayFolder: Titres
+		lineageTag: 8e570b2f-a966-5172-8593-e68dedc532e1
+
+	measure 'Titre pluie' =
+			VAR a = CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = FALSE())
+			VAR b = CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = TRUE())
+			RETURN IF(ISBLANK(a) || ISBLANK(b), "Pénurie et saturation, avec et sans pluie",
+			    "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%") & " à " & FORMAT(b, "0.0%"))
+		isHidden
+		displayFolder: Titres
+		lineageTag: c6bfe188-0ae0-5169-90c8-b41bf7c8c692
+
+	column station_id
+		dataType: string
+		lineageTag: 3dede2e1-049b-5211-8633-4a6b2b34f1ad
+		summarizeBy: none
+		sourceColumn: station_id
+
+		annotation SummarizationSetBy = User
+
+	column station_nom
+		dataType: string
+		lineageTag: c88a6f43-e953-5b02-9a4c-c78a65e887b9
+		summarizeBy: none
+		sourceColumn: station_nom
+
+		annotation SummarizationSetBy = User
+
+	column station_code
+		dataType: string
+		lineageTag: c6a88370-cc0e-5959-8874-85e046f808d2
+		summarizeBy: none
+		sourceColumn: station_code
+
+		annotation SummarizationSetBy = User
+
+	column latitude
+		dataType: double
+		formatString: 0.00000
+		lineageTag: 9305fcc1-6e1f-5108-a1f2-c06f9a1f6d44
+		summarizeBy: none
+		sourceColumn: latitude
+		dataCategory: Latitude
+
+		annotation SummarizationSetBy = User
+
+	column longitude
+		dataType: double
+		formatString: 0.00000
+		lineageTag: 7d6a9aec-36c0-5653-95a1-b2dafcd910d2
+		summarizeBy: none
+		sourceColumn: longitude
+		dataCategory: Longitude
+
+		annotation SummarizationSetBy = User
+
+	column capacite
+		dataType: int64
+		formatString: 0
+		lineageTag: b47fc66c-4c30-52ae-9dfc-1030c87f7570
+		summarizeBy: none
+		sourceColumn: capacite
+
+		annotation SummarizationSetBy = User
+
+	column heure_utc
+		dataType: dateTime
+		formatString: dd/MM/yyyy HH:mm
+		lineageTag: 5abb84dc-0596-5e08-bad1-4f0f96f3cf9b
+		summarizeBy: none
+		sourceColumn: heure_utc
+
+		annotation SummarizationSetBy = User
+
+	column heure_paris
+		dataType: dateTime
+		formatString: dd/MM/yyyy HH:mm
+		lineageTag: e4a3756c-4437-5d85-a0a8-b967cc403d4a
+		summarizeBy: none
+		sourceColumn: heure_paris
+
+		annotation SummarizationSetBy = User
+
+	column date_paris
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 5b9f9200-0ebe-52a4-bb51-1327c773545a
+		summarizeBy: none
+		sourceColumn: date_paris
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column heure_du_jour
+		dataType: int64
+		formatString: 0
+		lineageTag: 64d47dec-3215-5b60-9fc3-ccf71014a9d9
+		summarizeBy: none
+		sourceColumn: heure_du_jour
+
+		annotation SummarizationSetBy = User
+
+	column jour_semaine
+		dataType: string
+		lineageTag: d8ad4ed6-2053-514d-95d8-3fa311423a6d
+		summarizeBy: none
+		sourceColumn: jour_semaine
+		sortByColumn: jour_semaine_ordre
+
+		annotation SummarizationSetBy = User
+
+	column est_weekend
+		dataType: boolean
+		lineageTag: cd2e4e2d-27f4-5f97-8cd5-7d31f88797e2
+		summarizeBy: none
+		sourceColumn: est_weekend
+
+		annotation SummarizationSetBy = User
+
+	column heure_de_pointe
+		dataType: boolean
+		lineageTag: 06c9bd68-3ceb-5a51-93a1-73bc66303ed7
+		summarizeBy: none
+		sourceColumn: heure_de_pointe
+
+		annotation SummarizationSetBy = User
+
+	column nb_releves
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8a377670-51af-55bc-93cd-c991b6d054f1
+		summarizeBy: none
+		sourceColumn: nb_releves
+
+		annotation SummarizationSetBy = User
+
+	column nb_releves_en_service
+		dataType: int64
+		formatString: #,0
+		lineageTag: 19f9cfa3-f6e8-513a-b3a5-f8b2c2afbcdd
+		summarizeBy: none
+		sourceColumn: nb_releves_en_service
+
+		annotation SummarizationSetBy = User
+
+	column nb_releves_penurie
+		dataType: int64
+		formatString: #,0
+		lineageTag: dbe2eb10-da7d-5153-b775-2ae6777b0503
+		summarizeBy: none
+		sourceColumn: nb_releves_penurie
+
+		annotation SummarizationSetBy = User
+
+	column nb_releves_saturation
+		dataType: int64
+		formatString: #,0
+		lineageTag: bd93c23a-71a3-51a1-8197-0686eadd730f
+		summarizeBy: none
+		sourceColumn: nb_releves_saturation
+
+		annotation SummarizationSetBy = User
+
+	column taux_penurie
+		dataType: double
+		formatString: 0.0%
+		lineageTag: c13dc1ec-9964-5727-ae28-71bc93803265
+		summarizeBy: none
+		sourceColumn: taux_penurie
+
+		annotation SummarizationSetBy = User
+
+	column taux_saturation
+		dataType: double
+		formatString: 0.0%
+		lineageTag: ef941390-460c-50b8-b228-075dee08e20e
+		summarizeBy: none
+		sourceColumn: taux_saturation
+
+		annotation SummarizationSetBy = User
+
+	column velos_moyens
+		dataType: double
+		formatString: 0.0
+		lineageTag: e7954045-985f-5457-a75c-1368bb233233
+		summarizeBy: none
+		sourceColumn: velos_moyens
+
+		annotation SummarizationSetBy = User
+
+	column velos_electriques_moyens
+		dataType: double
+		formatString: 0.0
+		lineageTag: 51a45be4-c0fc-5cb8-b8fc-216657030d87
+		summarizeBy: none
+		sourceColumn: velos_electriques_moyens
+
+		annotation SummarizationSetBy = User
+
+	column places_libres_moyennes
+		dataType: double
+		formatString: 0.0
+		lineageTag: 66cfce08-a82e-5fbe-a467-c734b6265fe9
+		summarizeBy: none
+		sourceColumn: places_libres_moyennes
+
+		annotation SummarizationSetBy = User
+
+	column temperature_c
+		dataType: double
+		formatString: 0.0
+		lineageTag: 6d10e16b-acc3-5cff-a154-f99d39bd7c06
+		summarizeBy: none
+		sourceColumn: temperature_c
+
+		annotation SummarizationSetBy = User
+
+	column precipitation_mm
+		dataType: double
+		formatString: 0.0
+		lineageTag: 2baeaf32-249d-5f3b-a0a7-69559217b5d3
+		summarizeBy: none
+		sourceColumn: precipitation_mm
+
+		annotation SummarizationSetBy = User
+
+	column il_pleut
+		dataType: boolean
+		lineageTag: 0aeebd22-7cee-5e04-9ad7-eb390d522e13
+		summarizeBy: none
+		sourceColumn: il_pleut
+
+		annotation SummarizationSetBy = User
+
+	column station_proche_ferre_300m
+		dataType: boolean
+		lineageTag: 82399a49-c91a-5b93-8fa6-0a178d0a9ef7
+		summarizeBy: none
+		sourceColumn: station_proche_ferre_300m
+
+		annotation SummarizationSetBy = User
+
+	column panne_ferree_300m
+		dataType: boolean
+		lineageTag: 0a17de03-ce99-53b0-815f-789fc2c41615
+		summarizeBy: none
+		sourceColumn: panne_ferree_300m
+
+		annotation SummarizationSetBy = User
+
+	column panne_ferree_500m
+		dataType: boolean
+		lineageTag: 1419e3b0-aec8-5483-bf14-a4eebbc5df08
+		summarizeBy: none
+		sourceColumn: panne_ferree_500m
+
+		annotation SummarizationSetBy = User
+
+	column panne_ferree_bloquante_300m
+		dataType: boolean
+		lineageTag: 7a318bf1-2f9a-520f-b394-38833e2be3f0
+		summarizeBy: none
+		sourceColumn: panne_ferree_bloquante_300m
+
+		annotation SummarizationSetBy = User
+
+	column panne_ferree_imprevue_300m
+		dataType: boolean
+		lineageTag: 1c71b6ed-eae2-5b72-be02-70754f2ae725
+		summarizeBy: none
+		sourceColumn: panne_ferree_imprevue_300m
+
+		annotation SummarizationSetBy = User
+
+	column panne_bus_300m
+		dataType: boolean
+		lineageTag: 7594872e-427a-5071-9ccb-2b2ef1c4af88
+		summarizeBy: none
+		sourceColumn: panne_bus_300m
+
+		annotation SummarizationSetBy = User
+
+	column nb_pannes_ferrees_300m
+		dataType: int64
+		formatString: 0
+		lineageTag: 5621c027-3f98-54b1-8c83-66ce54da2e7d
+		summarizeBy: none
+		sourceColumn: nb_pannes_ferrees_300m
+
+		annotation SummarizationSetBy = User
+
+	column distance_min_panne_ferree_m
+		dataType: double
+		formatString: 0
+		lineageTag: d18c95a8-24dc-5f96-9cbd-d44d4446edf9
+		summarizeBy: none
+		sourceColumn: distance_min_panne_ferree_m
+
+		annotation SummarizationSetBy = User
+
+	column jour_semaine_ordre
+		dataType: int64
+		formatString: 0
+		lineageTag: f014129e-4585-5621-be8b-c2d6a44076a9
+		summarizeBy: none
+		sourceColumn: jour_semaine_ordre
+
+		annotation SummarizationSetBy = User
+
+	column jour_nom
+		dataType: string
+		lineageTag: 8f3cd802-198e-5f38-933b-6cade4c77bb7
+		summarizeBy: none
+		sourceColumn: jour_nom
+		sortByColumn: jour_semaine_ordre
+
+		annotation SummarizationSetBy = User
+
+	column periode
+		dataType: string
+		lineageTag: 98a423ec-fa92-55e5-ada0-a3a93b4dad88
+		summarizeBy: none
+		sourceColumn: periode
+
+		annotation SummarizationSetBy = User
+
+	column pluie_libelle
+		dataType: string
+		lineageTag: 8d6de83d-9bf0-542f-a766-4279be26d9f7
+		summarizeBy: none
+		sourceColumn: pluie_libelle
+
+		annotation SummarizationSetBy = User
+
+	partition gold_station_heure = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Hote, CheminHTTP, [Catalog = null, Database = null, EnableAutomaticProxyDiscovery = null]),
+				    Catalogue_ = Source{[Name = Catalogue, Kind = "Database"]}[Data],
+				    Schema_ = Catalogue_{[Name = "velib", Kind = "Schema"]}[Data],
+				    Table_ = Schema_{[Name = "gold_station_heure", Kind = "Table"]}[Data],
+				    SansFuseau = Table.TransformColumns(Table_, {
+				            {"heure_utc", each if _ is datetimezone then DateTimeZone.RemoveZone(_) else _, type datetime},
+				            {"heure_paris", each if _ is datetimezone then DateTimeZone.RemoveZone(_) else _, type datetime}
+				        }),
+				    Types = Table.TransformColumnTypes(SansFuseau, {
+				            {"station_id", type text},
+				            {"station_nom", type text},
+				            {"station_code", type text},
+				            {"latitude", type number},
+				            {"longitude", type number},
+				            {"capacite", Int64.Type},
+				            {"heure_utc", type datetime},
+				            {"heure_paris", type datetime},
+				            {"date_paris", type date},
+				            {"heure_du_jour", Int64.Type},
+				            {"jour_semaine", type text},
+				            {"est_weekend", type logical},
+				            {"heure_de_pointe", type logical},
+				            {"nb_releves", Int64.Type},
+				            {"nb_releves_en_service", Int64.Type},
+				            {"nb_releves_penurie", Int64.Type},
+				            {"nb_releves_saturation", Int64.Type},
+				            {"taux_penurie", type number},
+				            {"taux_saturation", type number},
+				            {"velos_moyens", type number},
+				            {"velos_electriques_moyens", type number},
+				            {"places_libres_moyennes", type number},
+				            {"temperature_c", type number},
+				            {"precipitation_mm", type number},
+				            {"il_pleut", type logical},
+				            {"station_proche_ferre_300m", type logical},
+				            {"panne_ferree_300m", type logical},
+				            {"panne_ferree_500m", type logical},
+				            {"panne_ferree_bloquante_300m", type logical},
+				            {"panne_ferree_imprevue_300m", type logical},
+				            {"panne_bus_300m", type logical},
+				            {"nb_pannes_ferrees_300m", Int64.Type},
+				            {"distance_min_panne_ferree_m", type number}
+				        }, "en-US"),
+				    JourOrdre = Table.AddColumn(Types, "jour_semaine_ordre",
+				        each if [date_paris] = null then null else Date.DayOfWeek([date_paris], Day.Monday) + 1, Int64.Type),
+				    JourNom = Table.AddColumn(JourOrdre, "jour_nom",
+				        each if [date_paris] = null then null else {"lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"}{Date.DayOfWeek([date_paris], Day.Monday)}, type text),
+				    Periode = Table.AddColumn(JourNom, "periode",
+				        each if [heure_de_pointe] = true then "Heure de pointe" else "Hors pointe", type text),
+				    Pluie = Table.AddColumn(Periode, "pluie_libelle",
+				        each if [il_pleut] = true then "Pluie" else "Sans pluie", type text)
+				in
+				    Pluie
+
+	annotation PBI_ResultType = Table

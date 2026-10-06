@@ -1,0 +1,18 @@
+/// Adresse du workspace Databricks (sans https://)
+expression Hote = "adb-7405605942490257.17.azuredatabricks.net" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: df2c32aa-59ee-5036-b99e-8fd6d9cb9d6c
+
+	annotation PBI_ResultType = Text
+
+/// Chemin HTTP du SQL Warehouse
+expression CheminHTTP = "/sql/1.0/warehouses/4dd75efb6ecd07bd" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: a47f5bcd-c732-55bf-97ca-368a9f421e26
+
+	annotation PBI_ResultType = Text
+
+/// Catalogue Unity Catalog
+expression Catalogue = "dbw_datalake_velib_7405605942490257" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 694203d0-86e9-501d-97c8-e0bcd10d12fd
+
+	annotation PBI_ResultType = Text
+

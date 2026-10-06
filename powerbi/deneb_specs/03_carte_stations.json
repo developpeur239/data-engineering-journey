@@ -1,0 +1,327 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 6,
+    "left": 6,
+    "right": 6,
+    "bottom": 6
+  },
+  "projection": {
+    "type": "mercator",
+    "center": [
+      2.3488,
+      48.8566
+    ],
+    "scale": {
+      "expr": "min(width / 0.0072, height / 0.0050)"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.n_service > 0 ? datum.n_penurie / datum.n_service : null",
+      "as": "taux"
+    },
+    {
+      "filter": "isValid(datum.taux) && isValid(datum.latitude) && isValid(datum.longitude)"
+    },
+    {
+      "calculate": "datum.taux < 0.02 ? 'moins de 2 %' : datum.taux < 0.05 ? '2 à 5 %' : datum.taux < 0.10 ? '5 à 10 %' : datum.taux < 0.15 ? '10 à 15 %' : datum.taux < 0.20 ? '15 à 20 %' : datum.taux < 0.30 ? '20 à 30 %' : 'plus de 30 %'",
+      "as": "classe"
+    }
+  ],
+  "layer": [
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "station_id"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "strokeWidth": 0.8,
+        "opacity": 1
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "capacite_max",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              10,
+              130
+            ],
+            "zero": false
+          },
+          "legend": {
+            "title": "Capacité (places)",
+            "orient": "bottom-right",
+            "values": [
+              20,
+              40,
+              60
+            ],
+            "rowPadding": 6,
+            "symbolFillColor": "#A9B6CE",
+            "symbolStrokeColor": "#A9B6CE",
+            "symbolOpacity": 1,
+            "symbolStrokeWidth": 0,
+            "fillColor": "#161E2E",
+            "padding": 10,
+            "cornerRadius": 8,
+            "offset": 6
+          }
+        },
+        "color": {
+          "field": "classe",
+          "type": "ordinal",
+          "sort": [
+            "moins de 2 %",
+            "2 à 5 %",
+            "5 à 10 %",
+            "10 à 15 %",
+            "15 à 20 %",
+            "20 à 30 %",
+            "plus de 30 %"
+          ],
+          "scale": {
+            "domain": [
+              "moins de 2 %",
+              "2 à 5 %",
+              "5 à 10 %",
+              "10 à 15 %",
+              "15 à 20 %",
+              "20 à 30 %",
+              "plus de 30 %"
+            ],
+            "range": [
+              "#362B27",
+              "#693926",
+              "#9E4A24",
+              "#CD642C",
+              "#EF844A",
+              "#FFA97B",
+              "#FFD4BC"
+            ]
+          },
+          "legend": {
+            "title": "Relevés en pénurie",
+            "orient": "bottom-left",
+            "symbolType": "square",
+            "symbolSize": 170,
+            "rowPadding": 4,
+            "symbolStrokeWidth": 0,
+            "symbolOpacity": 1,
+            "fillColor": "#161E2E",
+            "padding": 10,
+            "cornerRadius": 8,
+            "offset": 6
+          }
+        },
+        "stroke": {
+          "value": "#161E2E"
+        },
+        "order": {
+          "field": "taux",
+          "type": "quantitative"
+        },
+        "fillOpacity": {
+          "condition": {
+            "param": "survol",
+            "value": 0.95
+          },
+          "value": 0.35
+        },
+        "tooltip": [
+          {
+            "field": "station_nom",
+            "type": "nominal",
+            "title": "Station"
+          },
+          {
+            "field": "capacite_max",
+            "type": "quantitative",
+            "title": "Capacité (places)",
+            "format": ",d"
+          },
+          {
+            "field": "taux",
+            "type": "quantitative",
+            "title": "Relevés en pénurie",
+            "format": ".1%"
+          },
+          {
+            "field": "n_service",
+            "type": "quantitative",
+            "title": "Relevés en service",
+            "format": ",d"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "fill": null,
+        "stroke": "#EAF0FA",
+        "strokeWidth": 2,
+        "tooltip": null
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "size": {
+          "value": 420
+        },
+        "strokeOpacity": {
+          "condition": {
+            "param": "survol",
+            "empty": false,
+            "value": 0.9
+          },
+          "value": 0
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "nom": "Gare du Nord",
+            "latitude": 48.8809,
+            "longitude": 2.3553
+          },
+          {
+            "nom": "Gare de Lyon",
+            "latitude": 48.8443,
+            "longitude": 2.3744
+          },
+          {
+            "nom": "Montparnasse",
+            "latitude": 48.8421,
+            "longitude": 2.3219
+          },
+          {
+            "nom": "Châtelet",
+            "latitude": 48.8584,
+            "longitude": 2.347
+          },
+          {
+            "nom": "République",
+            "latitude": 48.8675,
+            "longitude": 2.3636
+          },
+          {
+            "nom": "Trocadéro",
+            "latitude": 48.8629,
+            "longitude": 2.2877
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "dy": -11,
+        "fontWeight": 600,
+        "tooltip": null,
+        "color": "#161E2E",
+        "stroke": "#161E2E",
+        "strokeWidth": 5
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "nom"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "nom": "Gare du Nord",
+            "latitude": 48.8809,
+            "longitude": 2.3553
+          },
+          {
+            "nom": "Gare de Lyon",
+            "latitude": 48.8443,
+            "longitude": 2.3744
+          },
+          {
+            "nom": "Montparnasse",
+            "latitude": 48.8421,
+            "longitude": 2.3219
+          },
+          {
+            "nom": "Châtelet",
+            "latitude": 48.8584,
+            "longitude": 2.347
+          },
+          {
+            "nom": "République",
+            "latitude": 48.8675,
+            "longitude": 2.3636
+          },
+          {
+            "nom": "Trocadéro",
+            "latitude": 48.8629,
+            "longitude": 2.2877
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "dy": -11,
+        "fontWeight": 600,
+        "tooltip": null,
+        "color": "#A9B6CE"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "nom"
+        }
+      }
+    }
+  ]
+}

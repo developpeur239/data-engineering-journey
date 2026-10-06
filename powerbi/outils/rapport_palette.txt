@@ -1,0 +1,48 @@
+## 1. Contraste du texte (WCAG, seuil AA = 4,5:1)
+OK   texte principal #EAF0FA sur fond page #0E1420 : 16.10:1
+OK   texte principal #EAF0FA sur fond carte #161E2E : 14.57:1
+OK   texte principal #EAF0FA sur fond survol #1F2A40 : 12.53:1
+OK   texte secondaire #A9B6CE sur fond page #0E1420 : 9.01:1
+OK   texte secondaire #A9B6CE sur fond carte #161E2E : 8.16:1
+OK   texte secondaire #A9B6CE sur fond survol #1F2A40 : 7.02:1
+OK   texte discret #8D9BB6 sur fond page #0E1420 : 6.58:1
+OK   texte discret #8D9BB6 sur fond carte #161E2E : 5.95:1
+OK   texte discret #8D9BB6 sur fond survol #1F2A40 : 5.12:1
+
+## 2. Contraste des marques sur la carte (seuil 3:1)
+OK   penurie #E26828 sur carte : 4.96:1
+OK   saturation #2A9FD0 sur carte : 5.53:1
+OK   panne #D8478A sur carte : 4.12:1
+OK   pluie #7F6AE6 sur carte : 4.06:1
+OK   neutre #9AA9C4 sur carte : 7.02:1
+OK   divergent_moins #52D1B8 sur carte : 8.87:1
+OK   divergent_milieu #7A879F sur carte : 4.60:1
+OK   divergent_plus #D8478A sur carte : 4.12:1
+
+## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)
+OK   penurie↔saturation : normale 29.1 · protan 22.5 · deutan 23.1 · tritan 32.3
+OK   penurie↔panne : normale 15.5 · protan 16.6 · deutan 13.3 · tritan 4.8
+OK   penurie↔pluie : normale 30.3 · protan 28.5 · deutan 31.2 · tritan 26.4
+OK   saturation↔panne : normale 28.1 · protan 16.5 · deutan 10.9 · tritan 32.9
+OK   saturation↔pluie : normale 16.1 · protan 13.6 · deutan 9.9 · tritan 11.2
+OK   panne↔pluie : normale 20.8 · protan 14.8 · deutan 18.4 · tritan 25.5
+(seuils : vision normale ≥ 15 ; protan/deutan ≥ 6 ; chaque série est de plus étiquetée directement ou par la forme : jamais la couleur seule)
+
+## 4. Divergent (écart avec panne − sans panne)
+info moins↔milieu : normale 20.2 · deutan 16.7 · protan 20.3
+info milieu↔plus : normale 19.6 · deutan 4.4 · protan 9.3
+info moins↔plus : normale 34.9 · deutan 15.3 · protan 29.5
+OK   pôles du divergent distincts en protan/deutan (≥ 8)
+
+## 5. Rampe séquentielle « braise » (taux de pénurie), sombre → clair, une seule teinte
+info étape 1 #362B27 L=0.30 contraste/carte 1.22:1
+info étape 2 #693926 L=0.40 contraste/carte 1.76:1
+info étape 3 #9E4A24 L=0.51 contraste/carte 2.75:1
+info étape 4 #CD642C L=0.62 contraste/carte 4.33:1
+info étape 5 #EF844A L=0.72 contraste/carte 6.41:1
+info étape 6 #FFA97B L=0.81 contraste/carte 8.90:1
+info étape 7 #FFD4BC L=0.90 contraste/carte 12.23:1
+OK   luminosité strictement croissante (Δ L ≥ 0,06 entre étapes)
+OK   première étape discernable du fond de carte (1.22:1 ≥ 1,15)
+OK   rampe monotone en luminosité sous protanopie
+OK   rampe monotone en luminosité sous deuteranopie

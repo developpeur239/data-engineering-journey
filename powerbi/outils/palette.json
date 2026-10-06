@@ -1,0 +1,66 @@
+{
+  "_commentaire": "Source unique des couleurs et de la typographie. velib_theme.json, les specs Deneb et DESIGN.md en dérivent : aucune couleur ni taille ailleurs.",
+  "mode": "sombre",
+  "fond": {
+    "page": "#0E1420",
+    "carte": "#161E2E",
+    "survol": "#1F2A40",
+    "grille": "#2B3750"
+  },
+  "texte": {
+    "principal": "#EAF0FA",
+    "secondaire": "#A9B6CE",
+    "discret": "#8D9BB6"
+  },
+  "serie": {
+    "penurie": "#E26828",
+    "saturation": "#2A9FD0",
+    "panne": "#D8478A",
+    "pluie": "#7F6AE6",
+    "neutre": "#9AA9C4"
+  },
+  "divergent": {
+    "moins": "#52D1B8",
+    "milieu": "#7A879F",
+    "plus": "#D8478A"
+  },
+  "sequentiel_penurie": {
+    "teinte_deg": 45,
+    "L": [
+      0.3,
+      0.4,
+      0.51,
+      0.62,
+      0.72,
+      0.81,
+      0.9
+    ],
+    "C_facteurs": [
+      0.12,
+      0.5,
+      0.82,
+      1.0,
+      1.0,
+      0.85,
+      0.5
+    ],
+    "C_max": 0.15
+  },
+  "typo": {
+    "famille": "Segoe UI",
+    "famille_gras": "Segoe UI Semibold",
+    "taille_titre": 16,
+    "taille_sous_titre": 12,
+    "taille_label": 12,
+    "taille_axe": 11,
+    "taille_infobulle": 12,
+    "taille_kpi": 36
+  },
+  "grille_page": {
+    "largeur": 1280,
+    "hauteur": 720,
+    "marge": 24,
+    "gouttiere": 16,
+    "rayon": 12
+  }
+}

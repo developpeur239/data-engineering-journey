@@ -1,0 +1,141 @@
+{
+  "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux de la table gold_station_heure du modèle sémantique (colonnes ou mesures). Ne pas renommer les champs.",
+  "01_heatmap_heure_jour": [
+    {
+      "type": "colonne",
+      "nom": "heure_du_jour"
+    },
+    {
+      "type": "colonne",
+      "nom": "jour_semaine_ordre"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_penurie"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_saturation"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_service"
+    }
+  ],
+  "02_rythme_journee": [
+    {
+      "type": "colonne",
+      "nom": "heure_du_jour"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_penurie"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_saturation"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_service"
+    }
+  ],
+  "03_carte_stations": [
+    {
+      "type": "colonne",
+      "nom": "station_id"
+    },
+    {
+      "type": "colonne",
+      "nom": "station_nom"
+    },
+    {
+      "type": "colonne",
+      "nom": "latitude"
+    },
+    {
+      "type": "colonne",
+      "nom": "longitude"
+    },
+    {
+      "type": "mesure",
+      "nom": "capacite_max"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_penurie"
+    },
+    {
+      "type": "mesure",
+      "nom": "n_service"
+    }
+  ],
+  "04_haltere_pannes": [
+    {
+      "type": "colonne",
+      "nom": "periode"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux pénurie sans panne"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux pénurie avec panne"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux saturation sans panne"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux saturation avec panne"
+    }
+  ],
+  "05_meteo_barres": [
+    {
+      "type": "colonne",
+      "nom": "pluie_libelle"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux pénurie"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux saturation"
+    }
+  ],
+  "06_meteo_nuage": [
+    {
+      "type": "colonne",
+      "nom": "heure_paris"
+    },
+    {
+      "type": "colonne",
+      "nom": "temperature_c"
+    },
+    {
+      "type": "colonne",
+      "nom": "pluie_libelle"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux pénurie"
+    }
+  ],
+  "07_meteo_courbes": [
+    {
+      "type": "colonne",
+      "nom": "heure_du_jour"
+    },
+    {
+      "type": "colonne",
+      "nom": "pluie_libelle"
+    },
+    {
+      "type": "mesure",
+      "nom": "Taux pénurie"
+    }
+  ]
+}

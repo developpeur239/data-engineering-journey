@@ -1,0 +1,312 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 26,
+    "left": 6,
+    "right": 14,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "calculate": "datum.n_service > 0 ? datum.n_penurie / datum.n_service : null",
+      "as": "taux_penurie"
+    },
+    {
+      "calculate": "datum.n_service > 0 ? datum.n_saturation / datum.n_service : null",
+      "as": "taux_saturation"
+    },
+    {
+      "calculate": "datum.heure_du_jour + 1",
+      "as": "heure_fin"
+    },
+    {
+      "calculate": "['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'][datum.jour_semaine_ordre - 1]",
+      "as": "jour"
+    },
+    {
+      "calculate": "(datum.heure_du_jour < 10 ? '0' : '') + datum.heure_du_jour + ' h – ' + (datum.heure_fin < 10 ? '0' : '') + datum.heure_fin + ' h'",
+      "as": "plage"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "taux_penurie",
+          "as": "taux_max"
+        }
+      ]
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {
+            "a": 7,
+            "b": 10
+          },
+          {
+            "a": 17,
+            "b": 20
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2,
+        "color": "#8D9BB6",
+        "strokeCap": "round"
+      },
+      "encoding": {
+        "x": {
+          "field": "a",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              24
+            ],
+            "nice": false
+          }
+        },
+        "x2": {
+          "field": "b"
+        },
+        "y": {
+          "value": -8
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "m": 8.5,
+            "t": "pointe du matin"
+          },
+          {
+            "m": 18.5,
+            "t": "pointe du soir"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "baseline": "bottom",
+        "dy": -14,
+        "fontSize": 11,
+        "color": "#8D9BB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "m",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              24
+            ],
+            "nice": false
+          }
+        },
+        "y": {
+          "value": 0
+        },
+        "text": {
+          "field": "t"
+        }
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "heure_du_jour",
+              "jour_semaine_ordre"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 4,
+        "stroke": "#161E2E",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              24
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "x2": {
+          "field": "heure_fin"
+        },
+        "y": {
+          "field": "jour_semaine_ordre",
+          "type": "ordinal",
+          "sort": "ascending",
+          "axis": {
+            "labelExpr": "['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'][datum.value-1]",
+            "title": null,
+            "grid": false,
+            "labelFontSize": 12,
+            "labelColor": "#A9B6CE"
+          }
+        },
+        "color": {
+          "field": "taux_penurie",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              "#362B27",
+              "#693926",
+              "#9E4A24",
+              "#CD642C",
+              "#EF844A",
+              "#FFA97B",
+              "#FFD4BC"
+            ],
+            "domainMin": 0
+          },
+          "legend": {
+            "title": "Pénurie (% des relevés)",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 260,
+            "gradientThickness": 8,
+            "format": ".0%",
+            "titleOrient": "left",
+            "titleLimit": 220,
+            "titlePadding": 14,
+            "offset": 14
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.4
+        },
+        "tooltip": [
+          {
+            "field": "jour",
+            "type": "nominal",
+            "title": "Jour"
+          },
+          {
+            "field": "plage",
+            "type": "nominal",
+            "title": "Heure (Paris)"
+          },
+          {
+            "field": "taux_penurie",
+            "type": "quantitative",
+            "title": "Pénurie",
+            "format": ".1%"
+          },
+          {
+            "field": "taux_saturation",
+            "type": "quantitative",
+            "title": "Saturation",
+            "format": ".1%"
+          },
+          {
+            "field": "n_service",
+            "type": "quantitative",
+            "title": "Relevés en service",
+            "format": ",d"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.taux_penurie === datum.taux_max"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 4,
+        "fill": null,
+        "stroke": "#EAF0FA",
+        "strokeWidth": 2,
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              24
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "x2": {
+          "field": "heure_fin"
+        },
+        "y": {
+          "field": "jour_semaine_ordre",
+          "type": "ordinal",
+          "sort": "ascending",
+          "axis": {
+            "labelExpr": "['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'][datum.value-1]",
+            "title": null,
+            "grid": false,
+            "labelFontSize": 12,
+            "labelColor": "#A9B6CE"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "p4_meteo_courbes",
+  "position": {
+    "x": 440,
+    "y": 396,
+    "z": 5,
+    "height": 300,
+    "width": 816,
+    "tabOrder": 3
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "heure_du_jour"
+                }
+              },
+              "queryRef": "gold_station_heure.heure_du_jour",
+              "nativeQueryRef": "heure_du_jour"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "pluie_libelle"
+                }
+              },
+              "queryRef": "gold_station_heure.pluie_libelle",
+              "nativeQueryRef": "pluie_libelle"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux pénurie"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux pénurie",
+              "nativeQueryRef": "Taux pénurie"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"data\":{\"name\":\"dataset\"},\"padding\":{\"top\":10,\"left\":6,\"right\":14,\"bottom\":6},\"layer\":[{\"data\":{\"values\":[{\"a\":7,\"b\":10,\"t\":\"pointe du matin\"},{\"a\":17,\"b\":20,\"t\":\"pointe du soir\"}]},\"mark\":{\"type\":\"rect\",\"color\":\"#1F2A40\",\"opacity\":0.75,\"cornerRadius\":4},\"encoding\":{\"x\":{\"field\":\"a\",\"type\":\"quantitative\"},\"x2\":{\"field\":\"b\"},\"y\":{\"value\":0},\"y2\":{\"value\":{\"expr\":\"height\"}}}},{\"mark\":{\"type\":\"line\",\"interpolate\":\"monotone\",\"strokeWidth\":3,\"strokeCap\":\"round\",\"tooltip\":null},\"encoding\":{\"x\":{\"field\":\"heure_du_jour\",\"type\":\"quantitative\",\"scale\":{\"domain\":[0,23],\"nice\":false},\"axis\":{\"values\":[0,3,6,9,12,15,18,21],\"labelExpr\":\"datum.value + '' h''\",\"title\":null,\"grid\":false}},\"y\":{\"field\":\"Taux pénurie\",\"type\":\"quantitative\",\"scale\":{\"domainMin\":0},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":4}},\"color\":{\"field\":\"pluie_libelle\",\"type\":\"nominal\",\"scale\":{\"domain\":[\"Sans pluie\",\"Pluie\"],\"range\":[\"#9AA9C4\",\"#7F6AE6\"]},\"legend\":{\"title\":null,\"orient\":\"top-right\",\"direction\":\"horizontal\",\"offset\":4,\"fillColor\":\"#161E2E\",\"padding\":6,\"cornerRadius\":6}},\"strokeDash\":{\"field\":\"pluie_libelle\",\"type\":\"nominal\",\"scale\":{\"domain\":[\"Sans pluie\",\"Pluie\"],\"range\":[[1,0],[6,4]]}}}},{\"transform\":[{\"pivot\":\"pluie_libelle\",\"value\":\"Taux pénurie\",\"groupby\":[\"heure_du_jour\"]},{\"calculate\":\"(datum.heure_du_jour < 10 ? ''0'' : '''') + datum.heure_du_jour + '' h – '' + (datum.heure_du_jour + 1 < 10 ? ''0'' : '''') + (datum.heure_du_jour + 1) + '' h''\",\"as\":\"plage\"}],\"params\":[{\"name\":\"survol\",\"select\":{\"type\":\"point\",\"fields\":[\"heure_du_jour\"],\"nearest\":true,\"on\":\"mouseover\",\"clear\":\"mouseout\"}}],\"mark\":{\"type\":\"rule\",\"strokeWidth\":1,\"color\":\"#8D9BB6\"},\"encoding\":{\"x\":{\"field\":\"heure_du_jour\",\"type\":\"quantitative\",\"scale\":{\"domain\":[0,23],\"nice\":false},\"axis\":{\"values\":[0,3,6,9,12,15,18,21],\"labelExpr\":\"datum.value + '' h''\",\"title\":null,\"grid\":false}},\"opacity\":{\"condition\":{\"param\":\"survol\",\"empty\":false,\"value\":1},\"value\":0},\"tooltip\":[{\"field\":\"plage\",\"type\":\"nominal\",\"title\":\"Heure (Paris)\"},{\"field\":\"Sans pluie\",\"type\":\"quantitative\",\"title\":\"Sans pluie\",\"format\":\".1%\"},{\"field\":\"Pluie\",\"type\":\"quantitative\",\"title\":\"Pluie\",\"format\":\".1%\"}]}}]}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"background\":\"transparent\",\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"padding\":{\"left\":6,\"right\":14,\"top\":6,\"bottom\":6},\"view\":{\"stroke\":null},\"axis\":{\"domain\":false,\"ticks\":false,\"grid\":true,\"gridColor\":\"#2B3750\",\"gridWidth\":1,\"gridOpacity\":0.6,\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":11,\"labelColor\":\"#A9B6CE\",\"labelPadding\":8,\"labelFontWeight\":\"normal\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"titlePadding\":10},\"axisX\":{\"grid\":false},\"legend\":{\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":12,\"labelColor\":\"#A9B6CE\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"symbolType\":\"circle\",\"symbolSize\":90,\"padding\":0,\"offset\":8,\"orient\":\"top-left\"},\"text\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#A9B6CE\"},\"mark\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\"},\"title\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#EAF0FA\",\"fontSize\":16,\"fontWeight\":600,\"anchor\":\"start\",\"subtitleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"subtitleColor\":\"#A9B6CE\",\"subtitleFontSize\":12},\"range\":{\"category\":[\"#E26828\",\"#2A9FD0\",\"#D8478A\",\"#7F6AE6\",\"#9AA9C4\"],\"ramp\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"],\"heatmap\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"]},\"customFormatTypes\":true}'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "locale": {
+              "expr": {
+                "Literal": {
+                  "Value": "'fr-FR'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "supportFieldConfiguration": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'À chaque heure, la pénurie est-elle plus haute sous la pluie ?'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Part des relevés en pénurie par heure de la journée, avec et sans pluie'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Courbes du taux de pénurie par heure, avec et sans pluie'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

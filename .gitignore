@@ -220,3 +220,7 @@ prim_api_key*
 echantillons/historiques/velib/stations.zip
 echantillons/historiques/kaggle/*.parquet
 !echantillons/historiques/kaggle/*.parquet.meta.json
+
+# Power BI Desktop : fichiers locaux (cache de données, réglages personnels)
+powerbi/**/.pbi/
+powerbi/**/cache.abf
