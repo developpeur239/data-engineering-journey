@@ -26,12 +26,14 @@ Tout se trouve dans **un seul groupe de ressources**, à supprimer en fin de pro
 | Fonction | Déclenchement (UTC) | Écrit dans `bronze/` |
 |---|---|---|
 | `collecte_5min` | `0 */5 * * * *` | `velib/status/date=AAAA-MM-JJ/heure=HH/status_<UTC>.json.gz` et `prim/disruptions/date=…/heure=…/disruptions_<UTC>.json.gz` |
-| `collecte_quotidienne` | `0 30 3 * * *` | `velib/info/date=…/station_information_<UTC>.json.gz` ; `meteo/date=<jour>/meteo_<jour>_j-1.json.gz` et `…_j-6_consolidee.json.gz` ; `compteurs/date=<jour>/comptages_<jour>.parquet` |
+| `collecte_quotidienne` | `0 30 3 * * *` | `velib/info/date=…/station_information_<UTC>.json.gz` ; `meteo/date=<jour>/meteo_<jour>_j-1.json.gz` et `…_j-6_consolidee.json.gz` ; `compteurs/date=<jour>/comptages_<jour>.parquet` ; **le lundi** : `idfm/arrets_lignes/date=<lundi>/arrets_lignes.csv` (référentiel arrêts-lignes, CSV `;` UTF-8 avec BOM, ≈ 14 Mo). Ce fichier n'est **jamais écrasé** : si la partition existe, le statut est `deja_present` et rien n'est écrit. |
 | *(chargement unique)* | – | `compteurs/historique/mois=AAAA-MM/`, `ratpstatus/date=AAAA-MM-JJ/`, `kaggle/velib-data/v13/` (avec leurs `.meta.json`) |
 
 **Manifestes.** Chaque fichier a un `<nom>.manifest.json` qui contient : source, URL (sans clé), heure UTC, code HTTP, nombre d'essais, tailles brute et stockée, sha256, nombre d'enregistrements et `statut`.
 
 **Échecs.** Si un appel échoue définitivement, après 3 nouvelles tentatives à 2, 4 puis 8 s (aucune sur une erreur 4xx autre que 429), un manifeste `"statut": "echec"` est écrit **sans** fichier de données. Les trous sont ainsi traçables. Les appels Vélib' et PRIM sont indépendants : si l'un échoue, l'autre est quand même écrit.
+
+**Test manuel du référentiel.** Pour déclencher uniquement le référentiel sans retoucher la météo ni les compteurs, ajoutez temporairement l'app setting `REFERENTIEL_SEUL=1`, déclenchez `collecte_quotidienne`, puis **supprimez** le paramètre (`az functionapp config appsettings delete … --setting-names REFERENTIEL_SEUL`). Sans ce paramètre, la fonction se comporte comme avant, avec le référentiel en plus le lundi.
 
 **Décalages mesurés :**
 - **Compteurs vélo :** le portail publie la journée J-1 vers 11:00 UTC. À 03:30 UTC, la fonction récupère donc la **journée de Paris J-2**.

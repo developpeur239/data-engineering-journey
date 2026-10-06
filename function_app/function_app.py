@@ -1,7 +1,8 @@
 """Function App de collecte Bronze — projet datalake Vélib' × météo × pannes (M2 Data).
 
 - collecte_5min        : Vélib' station_status + PRIM perturbations, toutes les 5 min (UTC).
-- collecte_quotidienne : station_information, météo (archive Open-Meteo) et compteurs vélo, à 03:30 UTC.
+- collecte_quotidienne : station_information, météo (archive Open-Meteo) et compteurs vélo, à 03:30 UTC ;
+                         le lundi, en plus, le référentiel IDFM arrets-lignes (hebdomadaire).
 
 Aucun secret dans ce code : la clé PRIM est lue dans l'app setting PRIM_API_KEY,
 le stockage est accédé par identité managée (rôle Storage Blob Data Contributor).
@@ -69,7 +70,32 @@ def collecte_quotidienne(timer: func.TimerRequest) -> None:
     executer_quotidienne(dt.datetime.now(dt.timezone.utc))
 
 
+def collecter_referentiel(maintenant: dt.datetime) -> dict:
+    """Référentiel IDFM arrets-lignes (CSV `;`, UTF-8 avec BOM, ≈ 14 Mo) : un fichier par lundi.
+
+    `ecraser=False` : si la partition du jour existe déjà, rien n'est écrit (statut "deja_present").
+    """
+    return c.collecter("idfm_arrets_lignes", c.prefixe_date("idfm/arrets_lignes", maintenant), "arrets_lignes",
+                       c.URLS["idfm_arrets_lignes"], c.compter_csv_arrets, params={"delimiter": ";"},
+                       compresser=False, extension="csv", taille_max=50 * 1024 * 1024, ecraser=False,
+                       alias_standard=True,
+                       extra={"licence": "ODbL (Île-de-France Mobilités)", "frequence": "hebdomadaire (lundi)"})
+
+
 def executer_quotidienne(maintenant: dt.datetime) -> list[dict]:
+    # REFERENTIEL_SEUL=1 : test manuel, ne lance QUE le référentiel (sans réécrire météo ni compteurs).
+    # Paramètre à retirer après le test ; absent par défaut.
+    seul = os.environ.get("REFERENTIEL_SEUL") == "1"
+    resultats = [] if seul else _collectes_quotidiennes(maintenant)
+    if seul or maintenant.date().weekday() == 0:  # lundi (date UTC)
+        resultats.append(collecter_referentiel(maintenant))
+    for r in resultats:
+        logging.info("%s : statut=%s http=%s enregistrements=%s fichier=%s erreur=%s", r.get("source"), r.get("statut"),
+                     r.get("http_status"), r.get("nb_enregistrements"), r.get("fichier"), r.get("erreur"))
+    return resultats
+
+
+def _collectes_quotidiennes(maintenant: dt.datetime) -> list[dict]:
     ts = c.horodatage(maintenant)
     aujourd_hui = maintenant.date()
     veille = aujourd_hui - dt.timedelta(days=1)
@@ -100,8 +126,4 @@ def executer_quotidienne(maintenant: dt.datetime) -> list[dict]:
         c.URLS["compteurs"], c.compter_parquet, extension="parquet",
         params={"where": f'date >= "{debut:%Y-%m-%dT%H:%M:%S}Z" and date < "{fin:%Y-%m-%dT%H:%M:%S}Z"'},
         compresser=False, extra={"jour_paris": jour_cpt.isoformat(), "licence": "ODbL (Ville de Paris)"}))
-
-    for r in resultats:
-        logging.info("%s : statut=%s http=%s enregistrements=%s fichier=%s erreur=%s", r.get("source"), r.get("statut"),
-                     r.get("http_status"), r.get("nb_enregistrements"), r.get("fichier"), r.get("erreur"))
     return resultats

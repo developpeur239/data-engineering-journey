@@ -37,6 +37,7 @@ URLS = {
     "prim_disruptions": "https://prim.iledefrance-mobilites.fr/marketplace/disruptions_bulk/disruptions/v2",
     "meteo_archive": "https://archive-api.open-meteo.com/v1/archive",
     "compteurs": "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-donnees-compteurs/exports/parquet",
+    "idfm_arrets_lignes": "https://data.iledefrance-mobilites.fr/api/explore/v2.1/catalog/datasets/arrets-lignes/exports/csv",
 }
 
 
@@ -54,8 +55,13 @@ class Reponse:
     entetes_quota: dict = field(default_factory=dict)
 
 
-def telecharger(url: str, params: dict | None = None, headers: dict | None = None) -> Reponse:
-    """GET avec retries (même logique que collecte_test.telecharger)."""
+def telecharger(url: str, params: dict | None = None, headers: dict | None = None,
+                taille_max: int | None = None) -> Reponse:
+    """GET avec retries (même logique que collecte_test.telecharger).
+
+    Sans `taille_max`, la réponse est tronquée à TAILLE_MAX (comportement historique).
+    Avec `taille_max`, une réponse plus grande est une erreur : on n'écrit jamais un fichier tronqué.
+    """
     derniere = None
     for essai in range(1, ESSAIS_SUPPLEMENTAIRES + 2):
         debut = time.monotonic()
@@ -69,7 +75,9 @@ def telecharger(url: str, params: dict | None = None, headers: dict | None = Non
             if r.status_code >= 400:
                 # message limité au code et au début du corps : jamais d'en-têtes
                 raise ErreurDefinitive(f"HTTP {r.status_code} : {r.text[:150]}")
-            contenu = r.content[:TAILLE_MAX]
+            if taille_max is not None and len(r.content) > taille_max:
+                raise ErreurDefinitive(f"réponse de {len(r.content)} octets > limite {taille_max}")
+            contenu = r.content[:TAILLE_MAX] if taille_max is None else r.content
             return Reponse(contenu, r.status_code, round(time.monotonic() - debut, 3), essai,
                            r.headers.get("Content-Type"),
                            {k: v for k, v in r.headers.items()
@@ -104,22 +112,33 @@ def ecrire(chemin: str, donnees: bytes, type_contenu: str) -> None:
                             content_settings=ContentSettings(content_type=type_contenu))
 
 
+def existe(chemin: str) -> bool:
+    return conteneur().get_blob_client(chemin).exists()
+
+
 def collecter(source: str, prefixe: str, nom: str, url: str, compter, params: dict | None = None,
               headers: dict | None = None, secret: str | None = None, compresser: bool = True,
-              extension: str = "json.gz", extra: dict | None = None) -> dict:
+              extension: str = "json.gz", extra: dict | None = None, taille_max: int | None = None,
+              ecraser: bool = True, alias_standard: bool = False) -> dict:
     """Télécharge, écrit `<prefixe>/<nom>.<extension>` + `<prefixe>/<nom>.manifest.json`.
 
     `compter(contenu)` renvoie (nb_enregistrements, champs complémentaires).
-    Ne lève jamais : renvoie le manifeste (statut "ok" ou "echec").
+    Ne lève jamais : renvoie le manifeste (statut "ok", "echec" ou "deja_present").
+    `ecraser=False` : si le fichier existe déjà, rien n'est écrit (ni fichier ni manifeste) et le
+    statut est "deja_present". `alias_standard` ajoute `taille_octets` et `sha256` (fichier stocké).
     """
     maintenant = dt.datetime.now(dt.timezone.utc)
     manifeste = {"source": source, "url": url, "params": params or {}, "heure_collecte_utc": maintenant.isoformat(),
                  **(extra or {})}
     try:
-        rep = telecharger(url, params=params, headers=headers)
+        rep = telecharger(url, params=params, headers=headers, taille_max=taille_max)
         nb, details = compter(rep.contenu)
         stocke = gzip.compress(rep.contenu, compresslevel=6) if compresser else rep.contenu
         chemin = f"{prefixe}/{nom}.{extension}"
+        if not ecraser and existe(chemin):
+            log.info("%s : deja_present (%s), rien n'est écrit", source, chemin)
+            return {"source": source, "statut": "deja_present", "fichier": chemin, "nb_enregistrements": nb,
+                    "taille_stockee_octets": len(stocke), "sha256_stocke": hashlib.sha256(stocke).hexdigest()}
         ecrire(chemin, stocke, "application/gzip" if extension.endswith("gz") else "application/octet-stream")
         manifeste.update({
             "statut": "ok", "fichier": chemin, "http_status": rep.http_status, "essais": rep.essais,
@@ -129,6 +148,8 @@ def collecter(source: str, prefixe: str, nom: str, url: str, compter, params: di
             "sha256_stocke": hashlib.sha256(stocke).hexdigest(),
             "nb_enregistrements": nb, "entetes_quota": rep.entetes_quota, **details,
         })
+        if alias_standard:
+            manifeste.update({"taille_octets": len(stocke), "sha256": manifeste["sha256_stocke"]})
     except Exception as e:  # trace du trou : manifeste d'échec
         manifeste.update({"statut": "echec", "erreur": f"{type(e).__name__}: {str(e)[:300]}"})
     texte = json.dumps(manifeste, ensure_ascii=False, indent=2)
@@ -163,6 +184,19 @@ def compter_meteo(contenu: bytes):
     h = d["hourly"]
     return len(h["time"]), {"temperatures_nulles": sum(1 for x in h["temperature_2m"] if x is None),
                             "point_grille": [d.get("latitude"), d.get("longitude")]}
+
+
+def compter_csv_arrets(contenu: bytes):
+    """Référentiel IDFM arrets-lignes : CSV `;`, UTF-8 avec BOM, une ligne par couple (arrêt, ligne)."""
+    import csv
+    import io
+    lecteur = csv.DictReader(io.StringIO(contenu.decode("utf-8-sig")), delimiter=";")
+    lignes = list(lecteur)
+    if not lignes or "stop_id" not in lecteur.fieldnames or "id" not in lecteur.fieldnames:
+        raise ValueError("CSV arrets-lignes inattendu (colonnes stop_id / id absentes)")
+    return len(lignes), {"encodage": "utf-8 avec BOM", "separateur": ";", "colonnes": lecteur.fieldnames,
+                         "nb_arrets_distincts": len({r["stop_id"] for r in lignes}),
+                         "nb_lignes_transport_distinctes": len({r["id"] for r in lignes})}
 
 
 def compter_parquet(contenu: bytes):
