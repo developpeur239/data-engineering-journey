@@ -1,7 +1,7 @@
 """Génère velib_theme.json à partir de palette.json (thème Power BI, mode sombre, Segoe UI)."""
 import commun as c
 
-F, T, S, D, TY, G = c.F, c.T, c.S, c.D, c.TY, c.G
+F, T, S, TY, G = c.F, c.T, c.S, c.TY, c.G
 R = c.RAMPE
 GRAS = TY["famille_gras"]
 NORMAL = TY["famille"]
@@ -26,8 +26,8 @@ def theme():
     etiquettes = {"fontFamily": NORMAL, "fontSize": TY["taille_label"], "color": solide(T["principal"])}
     return {
         "name": "Vélib Nuit",
-        "dataColors": [S["penurie"], S["saturation"], S["panne"], S["pluie"], S["neutre"], D["moins"], R[3], R[5]],
-        "good": D["moins"], "neutral": S["neutre"], "bad": S["penurie"],
+        "dataColors": [S["penurie"], S["saturation"], S["panne"], S["pluie"], S["neutre"], R[3], R[5], R[1]],
+        "good": S["neutre"], "neutral": S["neutre"], "bad": S["penurie"],
         "maximum": R[6], "center": R[3], "minimum": R[0], "null": F["grille"],
         "foreground": T["principal"], "foregroundNeutralSecondary": T["secondaire"],
         "foregroundNeutralTertiary": T["discret"], "foregroundLight": T["principal"], "foregroundDark": F["page"],

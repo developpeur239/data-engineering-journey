@@ -50,6 +50,41 @@
       }
     },
     {
+      "data": {
+        "values": [
+          {
+            "m": 8.5,
+            "t": "pointe du matin"
+          },
+          {
+            "m": 18.5,
+            "t": "pointe du soir"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "baseline": "bottom",
+        "dy": -8,
+        "fontSize": 11,
+        "color": "#8D9BB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "m",
+          "type": "quantitative"
+        },
+        "y": {
+          "value": {
+            "expr": "height"
+          }
+        },
+        "text": {
+          "field": "t"
+        }
+      }
+    },
+    {
       "mark": {
         "type": "line",
         "interpolate": "monotone",

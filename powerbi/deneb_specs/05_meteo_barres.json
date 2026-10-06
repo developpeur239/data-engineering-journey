@@ -150,6 +150,34 @@
           "format": ".1%"
         }
       }
+    },
+    {
+      "transform": [
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "taux",
+              "as": "maxi"
+            }
+          ]
+        },
+        {
+          "calculate": "datum.maxi * 1.25",
+          "as": "plafond"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "opacity": 0,
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "plafond",
+          "type": "quantitative"
+        }
+      }
     }
   ]
 }

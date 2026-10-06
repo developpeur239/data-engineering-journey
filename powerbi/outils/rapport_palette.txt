@@ -15,9 +15,6 @@ OK   saturation #2A9FD0 sur carte : 5.53:1
 OK   panne #D8478A sur carte : 4.12:1
 OK   pluie #7F6AE6 sur carte : 4.06:1
 OK   neutre #9AA9C4 sur carte : 7.02:1
-OK   divergent_moins #52D1B8 sur carte : 8.87:1
-OK   divergent_milieu #7A879F sur carte : 4.60:1
-OK   divergent_plus #D8478A sur carte : 4.12:1
 
 ## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)
 OK   penurie↔saturation : normale 29.1 · protan 22.5 · deutan 23.1 · tritan 32.3
@@ -28,13 +25,7 @@ OK   saturation↔pluie : normale 16.1 · protan 13.6 · deutan 9.9 · tritan 11
 OK   panne↔pluie : normale 20.8 · protan 14.8 · deutan 18.4 · tritan 25.5
 (seuils : vision normale ≥ 15 ; protan/deutan ≥ 6 ; chaque série est de plus étiquetée directement ou par la forme : jamais la couleur seule)
 
-## 4. Divergent (écart avec panne − sans panne)
-info moins↔milieu : normale 20.2 · deutan 16.7 · protan 20.3
-info milieu↔plus : normale 19.6 · deutan 4.4 · protan 9.3
-info moins↔plus : normale 34.9 · deutan 15.3 · protan 29.5
-OK   pôles du divergent distincts en protan/deutan (≥ 8)
-
-## 5. Rampe séquentielle « braise » (taux de pénurie), sombre → clair, une seule teinte
+## 4. Rampe séquentielle « braise » (taux de pénurie), sombre → clair, une seule teinte
 info étape 1 #362B27 L=0.30 contraste/carte 1.22:1
 info étape 2 #693926 L=0.40 contraste/carte 1.76:1
 info étape 3 #9E4A24 L=0.51 contraste/carte 2.75:1

@@ -3,7 +3,20 @@ import commun as c
 
 P, R = c.P, c.RAMPE
 rap = (c.ICI / "rapport_palette.txt").read_text(encoding="utf-8").strip()
-S, F, T, TY, G, D = P["serie"], P["fond"], P["texte"], P["typo"], P["grille_page"], P["divergent"]
+S, F, T, TY, G = P["serie"], P["fond"], P["texte"], P["typo"], P["grille_page"]
+import couleurs as co
+import specs as sp
+
+_util = co.utilisations({n: f() for n, (f, _) in sp.SPECS.items()})
+
+
+def _tableau_sens():
+    lignes = ["| Couleur | Hex | Sens unique | Où elle apparaît |", "|---|---|---|---|"]
+    for nom, hexa, sens, ou in co.SENS:
+        h = f"`{hexa}`" if hexa else "`" + " ".join(R) + "`"
+        lignes.append(f"| {nom} | {h} | {sens} | {ou} |")
+    return "\n".join(lignes)
+
 
 md = f"""# Direction artistique : tableau de bord Vélib'
 
@@ -61,7 +74,7 @@ Rampe séquentielle (taux de pénurie, carte et heatmap) : **une seule teinte** 
 `{'` → `'.join(R)}`.
 La luminosité est strictement croissante, y compris sous protanopie et deutéranopie.
 
-Divergent (écart « avec panne − sans panne », trait de liaison des haltères) : `{D['moins']}` (moins) · `{D['milieu']}` (neutre) · `{D['plus']}` (plus, = couleur de la panne).
+Pas d'échelle divergente : l'écart « avec panne − sans panne » est porté par le **signe + / −** du texte ; le trait de liaison des haltères est toujours rose (couleur de la panne).
 
 ## 4. Contrôles faits par script (`outils/verifier_palette.py`)
 
@@ -99,7 +112,7 @@ Nombres au format français (virgule décimale, espace avant « % ») : les visu
 |---|---|
 | Vue d'ensemble | 4 KPI de 296 × 104 ; heatmap 608 × 496 à gauche, rythme de la journée 608 × 496 à droite |
 | Carte des stations | carte stylisée 800 × 616 ; tableau « top 20 » 416 × 616 |
-| Effet des pannes | 3 KPI de 400 × 104 ; haltères 800 × 496 ; « Méthode » 416 × 496 |
+| Effet des pannes | 3 KPI de 400 × 104 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 496 |
 | Effet de la météo | barres 400 × 300 puis « Comment lire » 400 × 300 à gauche ; nuage 816 × 300 puis courbes 816 × 300 à droite |
 | Secours (cachée) | grille 3 × 2 de visuels natifs de 400 × 300 |
 
@@ -108,7 +121,7 @@ Nombres au format français (virgule décimale, espace avant « % ») : les visu
 1. Pas de bordure inutile : les cartes ont un fond, pas de contour visible (la bordure a la couleur du fond et ne sert qu'à arrondir les coins) ; les vues Vega n'ont pas de cadre (`view.stroke = null`).
 2. Grille très claire (`{F['grille']}`, 1 px, 0,6 d'opacité), pas de ligne d'axe.
 3. **Étiquetage direct** : le nom de la série est écrit sur le graphique (pics de pénurie et de saturation, « sans panne / avec panne ») ; une légende ne subsiste que quand le direct est impossible.
-4. **Titres qui énoncent la conclusion**, calculés sur les données par des mesures DAX (par ex. « Les pénuries explosent à 8 h »). Quand aucune conclusion ne peut être calculée de façon fiable (température, courbes pluie), le titre est une question prudente.
+4. **Titres qui énoncent la conclusion**, jamais écrits dans une spec : une mesure DAX par visuel (`Titre heatmap`, `Titre rythme`, `Titre carte`, `Titre pannes`, `Titre pluie`, `Titre nuage`, `Titre courbes`) calcule la phrase à partir de `gold_station_heure`, en respectant filtres et segments, avec un texte neutre si les données sont vides. Nombres au format français explicite (`FORMAT(x, "#,##0", "fr-FR")`). Le titre doit correspondre à une valeur affichée : celui des haltères porte sur la première ligne (« Pénurie · heure de pointe »).
 5. **Unités toujours visibles** : « % des relevés », « pts », « °C ».
 6. Pas de double axe, pas de 3D, pas de camembert, pas d'arc-en-ciel.
 7. Marques fines : lignes 3 px, points ≥ 8 px, barres arrondies de 4 px, 2 px d'écart entre cases (trait de la couleur du fond).
@@ -140,7 +153,25 @@ Chaque PNG a été regardé puis critiqué avec la méthode `dataviz` (forme, co
 | Nuage | étiquette « tendance lissée » recouverte par les points ; titre d'axe redondant avec « °C » | halo de la couleur du fond derrière l'étiquette, placée à gauche ; titre d'axe supprimé ; légende dans le coin libre |
 | Courbes | place réservée à la légende qui écrase le tracé ; pluie indiscernable sans couleur | légende dans le coin libre ; pluie = pointillé **et** violet |
 
+Deuxième tour (retours de relecture) :
+
+| Visuel | Défaut relevé | Correction |
+|---|---|---|
+| Barres | la valeur 10,1 % frôlait la légende ; pas de marge en haut de l'axe | légende sous l'axe ; point invisible à 125 % du maximum pour garder de l'air au-dessus de la plus haute barre |
+| Carte | pas de repère géographique ; « 1450 » sans espace | fond très discret (limite de Paris, Seine et canaux, `deneb_specs/paris_fond.json`) ; nombres formatés en `fr-FR` |
+| Haltères | titre sans valeur correspondante ; lignes trop espacées ; trait vert-bleu en plus du rose | titre calculé sur la ligne « Pénurie · heure de pointe » ; carte ramenée à 800 × 340 ; trait toujours rose, le signe +/− dit le sens |
+| Nuage | « tendance lissée » au milieu des points | étiquette au bout droit de la courbe, avec halo de la couleur du fond |
+| Courbes | pas de repère des heures de pointe | libellés « pointe du matin / pointe du soir » comme dans le rythme |
+
 `apercus/planche.png` rassemble les 7 visuels pour juger l'harmonie d'ensemble.
+
+## 11. Un sens par couleur dans tout le rapport
+
+Vérifié automatiquement (`outils/couleurs.py`, lancé par `verifier_coherence.py`) : chaque spec n'utilise que ses couleurs de données autorisées, et aucune couleur hors palette.
+
+{_tableau_sens()}
+
+Les neutres de fond (`{F['page']}`, `{F['carte']}`, `{F['survol']}`, `{F['grille']}`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).
 """
 (c.RACINE / "DESIGN.md").write_text(md, encoding="utf-8")
 print("ok DESIGN.md", len(md))

@@ -151,6 +151,19 @@
           }
         }
       ],
+      "dataLimit": [
+        {
+          "properties": {
+            "override": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
       "stateManagement": [
         {
           "properties": {

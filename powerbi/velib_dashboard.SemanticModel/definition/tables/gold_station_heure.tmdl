@@ -123,15 +123,17 @@ table gold_station_heure
 			VAR t = ADDCOLUMNS(VALUES(gold_station_heure[station_id]), "@r", [Taux pénurie])
 			VAR n = COUNTROWS(FILTER(t, [@r] > 0.2))
 			VAR total = COUNTROWS(t)
-			RETURN IF(total = 0, "Quelles stations manquent de vélos ?", n & " stations sur " & FORMAT(total, "#,0") & " sont vides plus d'un relevé sur cinq")
+			RETURN IF(total = 0, "Quelles stations manquent de vélos ?",
+			    FORMAT(n, "#,##0", "fr-FR") & " stations sur " & FORMAT(total, "#,##0", "fr-FR") & " sont vides plus d'un relevé sur cinq")
 		isHidden
 		displayFolder: Titres
 		lineageTag: 1e66d693-be3e-51e2-aa83-04f0dc402794
 
 	measure 'Titre pannes' =
-			VAR e = [Écart pénurie (pts)]
+			VAR e = CALCULATE([Écart pénurie (pts)], gold_station_heure[heure_de_pointe] = TRUE())
 			RETURN IF(ISBLANK(e), "Une panne ferrée à proximité change-t-elle la pénurie ?",
-			    "Une panne ferrée à moins de 300 m " & IF(e >= 0, "augmente", "réduit") & " la pénurie de " & FORMAT(ABS(e), "0.0") & " pts")
+			    "En heure de pointe, une panne ferrée à moins de 300 m " & IF(e >= 0, "augmente", "réduit")
+			    & " la pénurie de " & FORMAT(ABS(e), "0.0", "fr-FR") & " pts")
 		isHidden
 		displayFolder: Titres
 		lineageTag: 8e570b2f-a966-5172-8593-e68dedc532e1
@@ -140,10 +142,34 @@ table gold_station_heure
 			VAR a = CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = FALSE())
 			VAR b = CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = TRUE())
 			RETURN IF(ISBLANK(a) || ISBLANK(b), "Pénurie et saturation, avec et sans pluie",
-			    "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%") & " à " & FORMAT(b, "0.0%"))
+			    "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%", "fr-FR") & " à " & FORMAT(b, "0.0%", "fr-FR"))
 		isHidden
 		displayFolder: Titres
 		lineageTag: c6bfe188-0ae0-5169-90c8-b41bf7c8c692
+
+	measure 'Titre nuage' =
+			VAR seuil = AVERAGE(gold_station_heure[temperature_c])
+			VAR chaud = CALCULATE([Taux pénurie], gold_station_heure[temperature_c] >= seuil)
+			VAR froid = CALCULATE([Taux pénurie], gold_station_heure[temperature_c] < seuil)
+			RETURN IF(ISBLANK(seuil) || ISBLANK(chaud) || ISBLANK(froid), "La pénurie varie-t-elle avec la température ?",
+			    "Au-dessus de " & FORMAT(seuil, "0.0", "fr-FR") & " °C, la pénurie est de " & FORMAT(chaud, "0.0%", "fr-FR")
+			    & " contre " & FORMAT(froid, "0.0%", "fr-FR") & " en dessous")
+		isHidden
+		displayFolder: Titres
+		lineageTag: e3dadcbe-48a4-592c-8f36-65fb24e48025
+
+	measure 'Titre courbes' =
+			VAR t = ADDCOLUMNS(VALUES(gold_station_heure[heure_du_jour]),
+			    "@p", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = TRUE()),
+			    "@s", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = FALSE()))
+			VAR comparables = FILTER(t, NOT ISBLANK([@p]) && NOT ISBLANK([@s]))
+			VAR total = COUNTROWS(comparables)
+			VAR plus = COUNTROWS(FILTER(comparables, [@p] > [@s]))
+			RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
+			    "Sous la pluie, la pénurie est plus haute à " & FORMAT(plus, "#,##0", "fr-FR") & " heures sur " & FORMAT(total, "#,##0", "fr-FR"))
+		isHidden
+		displayFolder: Titres
+		lineageTag: c2d3efac-d072-5d54-b84d-288d5cabded4
 
 	column station_id
 		dataType: string

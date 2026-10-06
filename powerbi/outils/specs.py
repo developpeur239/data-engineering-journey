@@ -3,10 +3,13 @@
 Convention : `data: {"name": "dataset"}` ; pas de width/height (Deneb applique 'container') ;
 les noms de champs sont ceux des champs liés dans Power BI (voir NOMS_CHAMPS dans generer_rapport.py).
 """
+import json
+
 import commun as c
 
+FOND_PARIS = json.loads((c.RACINE / "deneb_specs" / "paris_fond.json").read_text(encoding="utf-8"))
 VL = "https://vega.github.io/schema/vega-lite/v6.json"
-F, T, S, D, TY = c.F, c.T, c.S, c.D, c.TY
+F, T, S, TY = c.F, c.T, c.S, c.TY
 JOURS_JS = "[" + ",".join(f"'{j}'" for j in c.JOURS) + "]"
 HEURE_AXE = {"values": [0, 3, 6, 9, 12, 15, 18, 21], "labelExpr": "datum.value + ' h'", "title": None}
 TAILLE_LABEL = TY["taille_label"]
@@ -196,6 +199,11 @@ def carte():
             {"calculate": "datum.taux < 0.02 ? 'moins de 2 %' : datum.taux < 0.05 ? '2 à 5 %' : datum.taux < 0.10 ? '5 à 10 %' : datum.taux < 0.15 ? '10 à 15 %' : datum.taux < 0.20 ? '15 à 20 %' : datum.taux < 0.30 ? '20 à 30 %' : 'plus de 30 %'", "as": "classe"},
         ],
         "layer": [
+            # fond très discret : limite de Paris puis Seine et canaux (Open Data Paris, ODbL ; voir paris_fond.json)
+            {"data": {"values": [FOND_PARIS["features"][0]]},
+             "mark": {"type": "geoshape", "fill": F["survol"], "fillOpacity": 0.55, "stroke": F["grille"], "strokeWidth": 1, "tooltip": None}},
+            {"data": {"values": [FOND_PARIS["features"][1]]},
+             "mark": {"type": "geoshape", "fill": F["grille"], "fillOpacity": 0.8, "stroke": None, "tooltip": None}},
             {
                 "params": [survol(["station_id"])],
                 "mark": {"type": "circle", "strokeWidth": 0.8, "opacity": 1},
@@ -243,10 +251,9 @@ def haltere():
             {"calculate": "(datum.ecart >= 0 ? '+' : '−') + replace(format(abs(datum.ecart), '.1f'), '.', ',') + ' pts'", "as": "texte_ecart"},
         ],
         "layer": [
-            {   # trait de liaison, coloré selon le signe de l'écart (échelle divergente)
-                "mark": {"type": "rule", "strokeWidth": 4, "strokeCap": "round", "tooltip": None},
+            {   # trait de liaison : toujours la couleur « panne » ; le signe +/− du texte dit le sens de l'écart
+                "mark": {"type": "rule", "strokeWidth": 4, "strokeCap": "round", "color": S["panne"], "tooltip": None},
                 "encoding": {"y": ligne, "x": {**xs, "field": "sans"}, "x2": {"field": "avec"},
-                             "color": {"condition": {"test": "datum.ecart >= 0", "value": D["plus"]}, "value": D["moins"]},
                              "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.35}},
             },
             {   # « sans panne » : anneau neutre
@@ -308,6 +315,11 @@ def meteo_barres():
                                       {"field": "taux", "type": "quantitative", "title": "Taux", "format": ".1%"}]}},
             {"mark": {"type": "text", "dy": -8, "baseline": "bottom", "fontSize": TAILLE_LABEL, "fontWeight": 600, "color": T["principal"]},
              "encoding": {"text": {"field": "taux", "type": "quantitative", "format": ".1%"}}},
+            {   # marge en haut de l'axe : point invisible à 125 % du maximum, pour que l'étiquette de la plus haute barre ne touche rien
+                "transform": [{"joinaggregate": [{"op": "max", "field": "taux", "as": "maxi"}]},
+                              {"calculate": "datum.maxi * 1.25", "as": "plafond"}],
+                "mark": {"type": "point", "opacity": 0, "tooltip": None},
+                "encoding": {"y": {"field": "plafond", "type": "quantitative"}}},
         ],
     }
 
@@ -340,14 +352,14 @@ def meteo_nuage():
                 "layer": [
                     {"mark": {"type": "line", "color": T["principal"], "strokeWidth": 3, "strokeCap": "round", "tooltip": None},
                      "encoding": {"x": x, "y": y}},
-                    {"transform": [{"window": [{"op": "first_value", "field": "temperature_c", "as": "tmin"}],
+                    {"transform": [{"window": [{"op": "last_value", "field": "temperature_c", "as": "tmax"}],
                                     "frame": [None, None], "sort": [{"field": "temperature_c"}]},
-                                   {"filter": "datum.temperature_c === datum.tmin"}],
+                                   {"filter": "datum.temperature_c === datum.tmax"}],
                      "layer": [
-                         {"mark": {"type": "text", "align": "left", "dx": 6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
+                         {"mark": {"type": "text", "align": "right", "dx": -6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
                                    "color": F["carte"], "stroke": F["carte"], "strokeWidth": 5, "text": "tendance lissée", "tooltip": None},
                           "encoding": {"x": x, "y": y}},
-                         {"mark": {"type": "text", "align": "left", "dx": 6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
+                         {"mark": {"type": "text", "align": "right", "dx": -6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
                                    "color": T["principal"], "text": "tendance lissée", "tooltip": None},
                           "encoding": {"x": x, "y": y}},
                      ]},
@@ -368,7 +380,7 @@ def meteo_courbes():
         "data": {"name": "dataset"},
         "padding": {"top": 10, "left": 6, "right": 14, "bottom": 6},
         "layer": [
-            *bandes_pointe(hauteur_texte=False),
+            *bandes_pointe(),
             {"mark": {"type": "line", "interpolate": "monotone", "strokeWidth": 3, "strokeCap": "round", "tooltip": None},
              "encoding": {"x": x, "y": y,
                           "color": {"field": "pluie_libelle", "type": "nominal", "scale": echelle,

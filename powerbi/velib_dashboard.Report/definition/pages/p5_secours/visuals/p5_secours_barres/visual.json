@@ -100,7 +100,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Équivalent natif des barres'"
+                  "Value": "'Équivalent natif des barres (orange = pénurie, bleu = saturation)'"
                 }
               }
             }

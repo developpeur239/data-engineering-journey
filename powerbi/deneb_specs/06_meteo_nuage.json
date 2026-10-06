@@ -166,9 +166,9 @@
             {
               "window": [
                 {
-                  "op": "first_value",
+                  "op": "last_value",
                   "field": "temperature_c",
-                  "as": "tmin"
+                  "as": "tmax"
                 }
               ],
               "frame": [
@@ -182,15 +182,15 @@
               ]
             },
             {
-              "filter": "datum.temperature_c === datum.tmin"
+              "filter": "datum.temperature_c === datum.tmax"
             }
           ],
           "layer": [
             {
               "mark": {
                 "type": "text",
-                "align": "left",
-                "dx": 6,
+                "align": "right",
+                "dx": -6,
                 "dy": -14,
                 "fontSize": 12,
                 "fontWeight": 600,
@@ -230,8 +230,8 @@
             {
               "mark": {
                 "type": "text",
-                "align": "left",
-                "dx": 6,
+                "align": "right",
+                "dx": -6,
                 "dy": -14,
                 "fontSize": 12,
                 "fontWeight": 600,

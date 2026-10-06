@@ -103,7 +103,7 @@ def main():
             r = contraste(c, f[sur])
             ligne(r >= 4.5, f"texte {nom} {c} sur fond {sur} {f[sur]} : {r:.2f}:1")
     rapport.append("\n## 2. Contraste des marques sur la carte (seuil 3:1)")
-    for nom, c in {**s, **{"divergent_" + k: v for k, v in P['divergent'].items()}}.items():
+    for nom, c in s.items():
         r = contraste(c, f["carte"])
         ligne(r >= 3.0, f"{nom} {c} sur carte : {r:.2f}:1")
     rapport.append("\n## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)")
@@ -117,14 +117,9 @@ def main():
             ligne(v["normale"] >= 15 and min(v["protanopie"], v["deuteranopie"]) >= 6,
                   f"{noms[i]}↔{noms[j]} : normale {v['normale']:.1f} · protan {v['protanopie']:.1f} · deutan {v['deuteranopie']:.1f} · tritan {v['tritanopie']:.1f}")
     rapport.append("(seuils : vision normale ≥ 15 ; protan/deutan ≥ 6 ; chaque série est de plus étiquetée directement ou par la forme : jamais la couleur seule)")
-    d = P["divergent"]
-    rapport.append("\n## 4. Divergent (écart avec panne − sans panne)")
-    for a, b in (("moins", "milieu"), ("milieu", "plus"), ("moins", "plus")):
-        ligne(None, f"{a}↔{b} : normale {de(d[a], d[b]):.1f} · deutan {de(d[a], d[b], 'deuteranopie'):.1f} · protan {de(d[a], d[b], 'protanopie'):.1f}")
-    ligne(de(d["moins"], d["plus"], "deuteranopie") >= 8 and de(d["moins"], d["plus"], "protanopie") >= 8, "pôles du divergent distincts en protan/deutan (≥ 8)")
     sq = P["sequentiel_penurie"]
     rampe = [oklch2hex(L, sq["C_max"] * k, sq["teinte_deg"] + (L - 0.6) * 20) for L, k in zip(sq["L"], sq["C_facteurs"])]
-    rapport.append("\n## 5. Rampe séquentielle « braise » (taux de pénurie), sombre → clair, une seule teinte")
+    rapport.append("\n## 4. Rampe séquentielle « braise » (taux de pénurie), sombre → clair, une seule teinte")
     for i, h in enumerate(rampe):
         rapport.append(f"info étape {i + 1} {h} L={L_ok(h):.2f} contraste/carte {contraste(h, f['carte']):.2f}:1")
     ls = [L_ok(h) for h in rampe]

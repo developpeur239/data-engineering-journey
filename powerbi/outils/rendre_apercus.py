@@ -16,41 +16,55 @@ import donnees_apercu as d
 import specs as sp
 
 TAILLES = {"01_heatmap_heure_jour": (608, 496), "02_rythme_journee": (608, 496), "03_carte_stations": (800, 616),
-           "04_haltere_pannes": (800, 496), "05_meteo_barres": (400, 300), "06_meteo_nuage": (816, 300),
+           "04_haltere_pannes": (800, 340), "05_meteo_barres": (400, 300), "06_meteo_nuage": (816, 300),
            "07_meteo_courbes": (816, 300)}  # tailles des visuels dans la mise en page 1280 x 720 (voir DESIGN.md)
 
 
 def _pc(x, n=1):
-    return f"{x * 100:.{n}f}".replace(".", ",")
+    """Pourcentage à la française : « 8,7 % » (espace insécable), comme FORMAT(x, "0.0%", "fr-FR")."""
+    return f"{x * 100:.{n}f}".replace(".", ",") + "\u00a0%"
+
+
+def _nb(n):
+    """Entier à la française : « 1 450 » (espace fine insécable), comme FORMAT(n, "#,##0", "fr-FR")."""
+    return f"{n:,}".replace(",", "\u202f")
 
 
 def titre_sous_titre(nom, rows):
-    """Reproduit ce que les mesures DAX « Titre … » afficheront, avec les données fictives."""
+    """Reproduit ce que les mesures DAX « Titre … » afficheront, avec les données fictives (jamais écrit dans une spec)."""
     if nom == "01_heatmap_heure_jour":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries culminent le {c.JOURS[m['jour_semaine_ordre'] - 1]} à {m['heure_du_jour']} h",
-                "Part des relevés où la station est vide, par heure et jour de la semaine (heure de Paris)")
+                "Part des relevés où la station est vide, par heure et jour de la semaine")
     if nom == "02_rythme_journee":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries explosent à {m['heure_du_jour']} h",
-                "Part des relevés en pénurie et en saturation, par heure de la journée (heure de Paris)")
+                "Part des relevés en pénurie et en saturation, par heure de la journée")
     if nom == "03_carte_stations":
         n = sum(1 for r in rows if r["n_penurie"] / r["n_service"] > 0.2)
-        return (f"{n} stations sur {len(rows)} sont vides plus d'un relevé sur cinq",
+        return (f"{_nb(n)} stations sur {_nb(len(rows))} sont vides plus d'un relevé sur cinq",
                 "Un cercle = une station : taille = capacité, couleur = part des relevés en pénurie")
     if nom == "04_haltere_pannes":
-        e = sum(r["Taux pénurie avec panne"] - r["Taux pénurie sans panne"] for r in rows) / len(rows) * 100
-        return (f"Une panne ferrée à moins de 300 m {'augmente' if e >= 0 else 'réduit'} la pénurie de {abs(e):.1f} pts".replace(".", ","),
-                "Part des relevés en pénurie et en saturation, sans puis avec panne en cours à moins de 300 m")
+        p = next(r for r in rows if r["periode"] == "Heure de pointe")
+        e = (p["Taux pénurie avec panne"] - p["Taux pénurie sans panne"]) * 100
+        return (f"En heure de pointe, une panne ferrée à moins de 300 m {'augmente' if e >= 0 else 'réduit'} la pénurie de {abs(e):.1f} pts".replace(".", ","),
+                "Part des relevés en pénurie et en saturation, sans puis avec panne en cours")
     if nom == "05_meteo_barres":
         sec = next(r for r in rows if r["pluie_libelle"] == "Sans pluie")
         plu = next(r for r in rows if r["pluie_libelle"] == "Pluie")
-        return (f"Sous la pluie, la pénurie passe de {_pc(sec['Taux pénurie'])} % à {_pc(plu['Taux pénurie'])} %",
+        return (f"Sous la pluie, la pénurie passe de {_pc(sec['Taux pénurie'])} à {_pc(plu['Taux pénurie'])}",
                 "Part des relevés, selon qu'il pleut ou non")
     if nom == "06_meteo_nuage":
-        return ("La pénurie varie-t-elle avec la température ?",
+        seuil = sum(r["temperature_c"] for r in rows) / len(rows)
+        chaud = [r["Taux pénurie"] for r in rows if r["temperature_c"] >= seuil]
+        froid = [r["Taux pénurie"] for r in rows if r["temperature_c"] < seuil]
+        return (f"Au-dessus de {seuil:.1f} °C, la pénurie est de {_pc(sum(chaud) / len(chaud))} contre {_pc(sum(froid) / len(froid))} en dessous".replace(".", ","),
                 "Un point = une heure ; association observée, pas preuve de causalité")
-    return ("À chaque heure, la pénurie est-elle plus haute sous la pluie ?",
+    par_heure = {}
+    for r in rows:
+        par_heure.setdefault(r["heure_du_jour"], {})[r["pluie_libelle"]] = r["Taux pénurie"]
+    plus = sum(1 for v in par_heure.values() if v["Pluie"] > v["Sans pluie"])
+    return (f"Sous la pluie, la pénurie est plus haute à {plus} heures sur {len(par_heure)}",
             "Part des relevés en pénurie par heure de la journée, avec et sans pluie")
 
 

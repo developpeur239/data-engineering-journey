@@ -6,11 +6,11 @@
     "#D8478A",
     "#7F6AE6",
     "#9AA9C4",
-    "#52D1B8",
     "#CD642C",
-    "#FFA97B"
+    "#FFA97B",
+    "#693926"
   ],
-  "good": "#52D1B8",
+  "good": "#9AA9C4",
   "neutral": "#9AA9C4",
   "bad": "#E26828",
   "maximum": "#FFD4BC",

@@ -19,11 +19,6 @@
     "pluie": "#7F6AE6",
     "neutre": "#9AA9C4"
   },
-  "divergent": {
-    "moins": "#52D1B8",
-    "milieu": "#7A879F",
-    "plus": "#D8478A"
-  },
   "sequentiel_penurie": {
     "teinte_deg": 45,
     "L": [

@@ -88,7 +88,9 @@ MESURES += [
     ("lat_moy", f"AVERAGE({col('latitude')})", "0.00000", "Appui natif", True),
     ("temperature_moy", f"AVERAGE({col('temperature_c')})", "0.0", "Appui natif", True),
 ]
-# titres dynamiques (une conclusion calculée sur les données filtrées, avec repli prudent si aucune donnée)
+# Titres dynamiques : une conclusion calculée sur les données filtrées (respecte segments et filtres),
+# avec un texte neutre si aucune donnée. Format français explicite (3e argument de FORMAT = "fr-FR") :
+# espace insécable pour les milliers, virgule décimale, quel que soit le réglage de la machine.
 TITRES = [
     ("Titre heatmap", f"""VAR t = ADDCOLUMNS(
     SUMMARIZE({T}, {col('heure_du_jour')}, {col('jour_semaine_ordre')}, {col('jour_nom')}),
@@ -104,14 +106,30 @@ RETURN IF(ISBLANK(h), "Les pénuries au fil de la journée", "Les pénuries expl
     ("Titre carte", f"""VAR t = ADDCOLUMNS(VALUES({col('station_id')}), "@r", [Taux pénurie])
 VAR n = COUNTROWS(FILTER(t, [@r] > 0.2))
 VAR total = COUNTROWS(t)
-RETURN IF(total = 0, "Quelles stations manquent de vélos ?", n & " stations sur " & FORMAT(total, "#,0") & " sont vides plus d'un relevé sur cinq")"""),
-    ("Titre pannes", """VAR e = [Écart pénurie (pts)]
+RETURN IF(total = 0, "Quelles stations manquent de vélos ?",
+    FORMAT(n, "#,##0", "fr-FR") & " stations sur " & FORMAT(total, "#,##0", "fr-FR") & " sont vides plus d'un relevé sur cinq")"""),
+    ("Titre pannes", f"""VAR e = CALCULATE([Écart pénurie (pts)], {col('heure_de_pointe')} = TRUE())
 RETURN IF(ISBLANK(e), "Une panne ferrée à proximité change-t-elle la pénurie ?",
-    "Une panne ferrée à moins de 300 m " & IF(e >= 0, "augmente", "réduit") & " la pénurie de " & FORMAT(ABS(e), "0.0") & " pts")"""),
+    "En heure de pointe, une panne ferrée à moins de 300 m " & IF(e >= 0, "augmente", "réduit")
+    & " la pénurie de " & FORMAT(ABS(e), "0.0", "fr-FR") & " pts")"""),
     ("Titre pluie", f"""VAR a = CALCULATE([Taux pénurie], {col('il_pleut')} = FALSE())
 VAR b = CALCULATE([Taux pénurie], {col('il_pleut')} = TRUE())
 RETURN IF(ISBLANK(a) || ISBLANK(b), "Pénurie et saturation, avec et sans pluie",
-    "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%") & " à " & FORMAT(b, "0.0%"))"""),
+    "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%", "fr-FR") & " à " & FORMAT(b, "0.0%", "fr-FR"))"""),
+    ("Titre nuage", f"""VAR seuil = AVERAGE({col('temperature_c')})
+VAR chaud = CALCULATE([Taux pénurie], {col('temperature_c')} >= seuil)
+VAR froid = CALCULATE([Taux pénurie], {col('temperature_c')} < seuil)
+RETURN IF(ISBLANK(seuil) || ISBLANK(chaud) || ISBLANK(froid), "La pénurie varie-t-elle avec la température ?",
+    "Au-dessus de " & FORMAT(seuil, "0.0", "fr-FR") & " °C, la pénurie est de " & FORMAT(chaud, "0.0%", "fr-FR")
+    & " contre " & FORMAT(froid, "0.0%", "fr-FR") & " en dessous")"""),
+    ("Titre courbes", f"""VAR t = ADDCOLUMNS(VALUES({col('heure_du_jour')}),
+    "@p", CALCULATE([Taux pénurie], {col('il_pleut')} = TRUE()),
+    "@s", CALCULATE([Taux pénurie], {col('il_pleut')} = FALSE()))
+VAR comparables = FILTER(t, NOT ISBLANK([@p]) && NOT ISBLANK([@s]))
+VAR total = COUNTROWS(comparables)
+VAR plus = COUNTROWS(FILTER(comparables, [@p] > [@s]))
+RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
+    "Sous la pluie, la pénurie est plus haute à " & FORMAT(plus, "#,##0", "fr-FR") & " heures sur " & FORMAT(total, "#,##0", "fr-FR"))"""),
 ]
 for nom, dax in TITRES:
     MESURES.append((nom, dax, None, "Titres", True))

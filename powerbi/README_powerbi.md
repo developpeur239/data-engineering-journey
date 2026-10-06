@@ -14,7 +14,7 @@ powerbi/
 ├── velib_dashboard.SemanticModel/    ← modèle de données (TMDL) : connexion, colonnes typées, mesures DAX
 ├── velib_dashboard.Report/           ← rapport (PBIR) : pages, visuels, thème intégré
 ├── velib_theme.json                  ← thème (couleurs, polices), aussi copié dans le rapport
-├── deneb_specs/                      ← les 7 graphiques Deneb en texte (Vega-Lite) + config commune + champs à lier
+├── deneb_specs/                      ← les 7 graphiques Deneb en texte (Vega-Lite) + config commune + champs à lier + paris_fond.json (fond de carte)
 ├── apercus/                          ← aperçus PNG des graphiques (données fictives) + planche.png
 ├── DESIGN.md                         ← direction artistique (palette, typo, grille, contrôles faits)
 └── outils/                           ← scripts Python qui génèrent et valident tout (facultatif)
@@ -71,11 +71,11 @@ Ne mettez jamais le jeton dans un fichier du dépôt. Si vous avez déjà publi�
 |---|---|
 | **Vue d'ensemble** | 4 cartes (nombre de stations, taux de pénurie, taux de saturation, dernière heure) ; carte de chaleur heure × jour ; rythme de la journée avec les heures de pointe annotées ; segments Période et Week-end |
 | **Carte des stations** | carte stylisée sans fond de plan (taille = capacité, couleur = taux de pénurie, halo au survol) ; tableau des 20 stations les plus souvent vides ; segments Heure du jour et Heure de pointe |
-| **Effet des pannes** | haltères « sans panne → avec panne » (pénurie et saturation, pointe / hors pointe) ; 3 cartes (écart pénurie, écart saturation, part d'heures avec panne ferrée) ; encadré « Méthode » ; segment Panne imprévue |
+| **Effet des pannes** | haltères « sans panne → avec panne » (pénurie et saturation, pointe / hors pointe ; le titre porte sur la ligne « Pénurie · heure de pointe », le trait est toujours rose et le signe +/− donne le sens) ; 3 cartes (écart pénurie, écart saturation, part d'heures avec panne ferrée) ; encadré « Méthode » ; segment Panne imprévue |
 | **Effet de la météo** | barres avec / sans pluie ; nuage température × pénurie avec tendance ; courbes par heure avec / sans pluie ; encadré « Comment lire » |
 | **Secours** (cachée) | un équivalent en visuels Power BI natifs de chaque graphique Deneb |
 
-Les **titres** des graphiques de la page 1, de la carte et des pannes sont **calculés** par des mesures DAX (« Titre heatmap », etc.) : ils changent avec les filtres.
+Les **titres** des 7 graphiques Deneb sont **calculés** par une mesure DAX chacun (`Titre heatmap`, `Titre rythme`, `Titre carte`, `Titre pannes`, `Titre pluie`, `Titre nuage`, `Titre courbes`) : aucun chiffre ni constat n'est écrit dans une spec. Chaque mesure est liée au titre du visuel Power BI (*Format → Titre → Texte → fx*), respecte les filtres et segments, et affiche un texte neutre si les données sont vides. Les nombres sont formatés en français quelle que soit la machine : `FORMAT(x, "#,##0", "fr-FR")` donne « 1 450 » et `FORMAT(x, "0.0", "fr-FR")` donne « 3,0 » (le troisième argument impose la locale ; un motif du type `"# ##0"` n'est pas fiable en DAX). Seul le sous-titre est fixe.
 La page **Secours** est cachée pour les lecteurs mais visible dans Power BI Desktop (onglet grisé en bas).
 
 ## 6. Deneb : le visuel qui dessine les graphiques
@@ -91,6 +91,27 @@ Le rapport déclare Deneb (identifiant `deneb7E15AEF80B9E4D4F8E12924291ECE89A`) 
 3. Cliquez sur **… → Modifier** sur le visuel, choisissez **Vega-Lite** comme *Provider*.
 4. Onglet **Spec** : collez le contenu du fichier `deneb_specs/0X_….json` ; onglet **Config** : collez `deneb_specs/_config_commun.json`.
 5. *Appliquer*. Dans *Mise en forme → Développeur*, réglez **Locale = fr-FR** pour les nombres à la française.
+
+## 6 bis. Fond de carte, formats et limite de lignes
+
+**Fond de la carte (`deneb_specs/paris_fond.json`).** Deux formes très discrètes sous les stations : la limite de Paris et la Seine avec les canaux. Le GeoJSON simplifié (≈ 5 Ko) est **embarqué dans la spec** (Deneb ne charge pas de fichier externe) ; le fichier `paris_fond.json` en est la copie lisible.
+- **Source :** Open Data Paris, jeux [« arrondissements »](https://opendata.paris.fr/explore/dataset/arrondissements/) (union des 20 arrondissements) et [« plan-de-voirie-voies-deau »](https://opendata.paris.fr/explore/dataset/plan-de-voirie-voies-deau/) (emprises de la Seine et des canaux, fragments minuscules écartés).
+- **Licence :** Open Database License (ODbL) : mention « Données © Ville de Paris ». Traitement : union, simplification (≈ 30 m pour la limite, ≈ 15 m pour l'eau), coordonnées arrondies à 4 décimales. Le tracé de la Seine ne couvre que la traversée de Paris intra-muros. Reproduire : `python3 outils/preparer_fond.py` (réseau et `pip install shapely`).
+- La projection est `{"type": "mercator"}` avec `longitude` / `latitude`.
+
+**Formats français des nombres.** `formatLocale` n'est pas une propriété d'une spec Vega-Lite : la locale se règle dans Deneb (*Mise en forme → Développeur → Locale*). Le rapport est déjà réglé sur **fr-FR**, donc les infobulles et étiquettes affichent « 1 450 » (format `,d`) et « 8,7 % ». Les titres, eux, sont formatés par le DAX (§ ci-dessus).
+
+**Limite de lignes de Deneb.** Deneb ne reçoit que les lignes que Power BI lui envoie, déjà regroupées par les champs du visuel (une ligne par combinaison des colonnes liées). Avec les liaisons choisies, on est loin des seuils, même avec plusieurs mois de données :
+
+| Visuel | Lignes envoyées à Deneb (ordre de grandeur) |
+|---|---|
+| Heatmap | 168 (24 heures × 7 jours), quel que soit le nombre de jours |
+| Rythme, courbes pluie | 24 à 48 |
+| Haltères, barres | 2 à 4 |
+| Carte | ≈ 1 450 (une ligne par station ; peut doubler si une capacité ou des coordonnées changent dans le temps) |
+| Nuage | 24 × nombre de jours (168 pour une semaine ; 8 760 pour un an) |
+
+Le seul visuel qui grossit avec le temps est le nuage ; il est donc **déjà pré-agrégé** (une ligne par heure, jamais par station). Par sécurité, chaque visuel Deneb a aussi *Limite de données → Remplacer la limite* activé (`dataLimit.override`). Si vous voyez un bandeau « données tronquées », vérifiez dans *Mise en forme → Limite de données* que ce réglage est actif, ou filtrez la période avec le segment.
 
 ## 7. Si quelque chose ne marche pas
 
@@ -109,7 +130,7 @@ Le rapport déclare Deneb (identifiant `deneb7E15AEF80B9E4D4F8E12924291ECE89A`) 
 
 `Nb stations` · `Taux pénurie` · `Taux saturation` · `Dernière heure` · `Taux pénurie / saturation avec panne` · `Taux pénurie / saturation sans panne` · `Écart pénurie (pts)` · `Écart saturation (pts)` · `Part heures avec panne ferrée`.
 Les mesures « avec panne » ne comptent que les stations à moins de 300 m d'un arrêt ferré (`station_proche_ferre_300m`) et les heures où `panne_ferree_300m` est vraie ; « sans panne » compare aux heures où elle est fausse. Le segment *Panne imprévue* ne restreint que le côté « avec panne ».
-Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, `Titre …`) servent aux graphiques Deneb, aux titres et à la page Secours.
+Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, les 7 `Titre …`) servent aux graphiques Deneb, aux titres et à la page Secours.
 
 ## 9. Choix de design
 
@@ -136,7 +157,7 @@ Détail complet, avec les contrôles chiffrés et les itérations de rendu : voi
 Les scripts de `outils/` fabriquent tous les fichiers à partir d'un seul fichier de couleurs (`outils/palette.json`) :
 
 ```bash
-pip install vl-convert-python pillow jsonschema numpy
+pip install vl-convert-python pillow jsonschema numpy   # + shapely pour preparer_fond.py
 python3 outils/construire.py            # génère le thème, les specs, le modèle, le rapport, DESIGN.md puis valide tout
 python3 outils/construire.py --apercus  # + recalcule les PNG de apercus/
 ```
@@ -148,5 +169,6 @@ La validation vérifie : couleurs (contrastes, daltonisme) ; chaque spec Deneb c
 - L'ouverture réelle dans Power BI Desktop, le rendu final des visuels et le chargement Databricks.
 - La syntaxe TMDL a été écrite d'après la documentation Microsoft mais pas compilée par Power BI.
 - Dans le JSON des visuels, les propriétés propres à chaque type (`objects` : segments, cartes, Deneb) ne sont pas décrites par les schémas Microsoft : elles suivent des exemples publics. Le filtre « 20 premiers » du tableau et les titres calculés par mesure en font partie.
-- Le comportement exact de Deneb pour les champs renommés, les booléens et la locale `fr-FR`.
+- Le comportement exact de Deneb pour les champs renommés, les booléens, la locale `fr-FR`, le réglage `dataLimit.override` et le fond `geoshape` (rendu validé seulement avec vl-convert).
+- Les couleurs par série des visuels natifs de la page Secours (sélecteurs `scopeId` / `metadata`).
 - Le décalage horaire éventuel de `heure_paris` selon la façon dont Databricks stocke l'horodatage.

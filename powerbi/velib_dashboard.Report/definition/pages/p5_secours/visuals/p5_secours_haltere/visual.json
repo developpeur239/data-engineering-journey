@@ -61,7 +61,11 @@
               },
               "queryRef": "gold_station_heure.Taux pénurie avec panne",
               "nativeQueryRef": "Taux pénurie avec panne"
-            },
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
             {
               "field": {
                 "Measure": {
@@ -108,7 +112,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Sans panne / avec panne'"
+                  "Value": "'Pénurie sans / avec panne'"
                 }
               }
             }
@@ -128,7 +132,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Équivalent natif des haltères'"
+                  "Value": "'Équivalent natif des haltères (la saturation est dans l''infobulle)'"
                 }
               }
             }
@@ -141,7 +145,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Barres groupées sans panne et avec panne'"
+                  "Value": "'Barres groupées de pénurie sans panne et avec panne'"
                 }
               }
             }
@@ -149,6 +153,46 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9AA9C4'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_station_heure.Taux pénurie sans panne"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D8478A'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_station_heure.Taux pénurie avec panne"
+          }
+        }
+      ]
+    }
   }
 }

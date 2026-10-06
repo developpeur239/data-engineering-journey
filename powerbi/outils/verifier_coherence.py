@@ -89,6 +89,37 @@ for f in (PROJ / "velib_dashboard.Report/definition").rglob("visual.json"):
         if manquants:
             err(f"{f.parent.name} : champs lus par la spec mais ni liés ni calculés : {sorted(manquants)}")
 
+# 5. titres : jamais dans les specs, toujours une mesure DAX liée au titre du visuel Deneb
+import specs as sp
+import couleurs as co
+
+
+def titres_dans_spec(n, chemin="spec"):
+    if isinstance(n, dict):
+        if "title" in n and ("mark" in n or "layer" in n or "$schema" in n):
+            yield chemin
+        for k, x in n.items():
+            if k in ("layer", "spec"):
+                yield from titres_dans_spec(x, f"{chemin}/{k}")
+    elif isinstance(n, list):
+        for i, x in enumerate(n):
+            yield from titres_dans_spec(x, f"{chemin}[{i}]")
+
+
+toutes = {nom: f() for nom, (f, _) in sp.SPECS.items()}
+for nom, spec in toutes.items():
+    for ch in titres_dans_spec(spec):
+        err(f"{nom} : titre écrit dans la spec ({ch}) ; il doit venir d'une mesure DAX")
+for f in (PROJ / "velib_dashboard.Report/definition").rglob("visual.json"):
+    d = json.loads(f.read_text(encoding="utf-8"))
+    if d.get("visual", {}).get("visualType", "").startswith("deneb"):
+        t = d["visual"]["visualContainerObjects"]["title"][0]["properties"]["text"]["expr"]
+        if "Measure" not in t or t["Measure"]["Property"] not in modele_mes:
+            err(f"{f.parent.name} : le titre n'est pas lié à une mesure du modèle")
+# 6. un sens par couleur
+for m in co.verifier(toutes):
+    err(m)
+
 # 4. secrets
 motifs = [re.compile(r"dapi[0-9a-f]{20,}", re.I), re.compile(r"(?i)(password|passwd|secret|token|apikey|api_key)\s*[:=]\s*[\"'][^\"']{8,}")]
 for f in PROJ.rglob("*"):

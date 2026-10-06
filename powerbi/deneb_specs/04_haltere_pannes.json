@@ -65,6 +65,7 @@
         "type": "rule",
         "strokeWidth": 4,
         "strokeCap": "round",
+        "color": "#D8478A",
         "tooltip": null
       },
       "encoding": {
@@ -106,13 +107,6 @@
         },
         "x2": {
           "field": "avec"
-        },
-        "color": {
-          "condition": {
-            "test": "datum.ecart >= 0",
-            "value": "#D8478A"
-          },
-          "value": "#52D1B8"
         },
         "opacity": {
           "condition": {

@@ -141,6 +141,8 @@ def deneb(nom, cle_spec, pos, titre_mesure, sous_titre, alt):
                                      "enableContextMenu": booleen(True), "enableHighlight": booleen(False),
                                      "enableSelection": booleen(False)}}],
             "developer": [{"properties": {"locale": chaine("fr-FR")}}],
+            # lève la limite de lignes par défaut de Deneb (voir README, « Limite de lignes »)
+            "dataLimit": [{"properties": {"override": booleen(True)}}],
             "stateManagement": [{"properties": {"denebMetaVersion": chaine("2"), "supportFieldConfiguration": chaine("{}")}}],
         },
         "visualContainerObjects": conteneur(titre_mesure=titre_mesure, sous_titre=sous_titre, alt=alt),
@@ -192,6 +194,22 @@ def fond_degrade(mesure):
             "max": {"color": {"Literal": {"Value": f"'{c.RAMPE[6]}'"}}},
             "nullColoringStrategy": {"strategy": {"Literal": {"Value": "'noColor'"}}}}}}}}}}},
         "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}], "metadata": f"{T}.{mesure}"}}
+
+
+def remplissage(hexa, selecteur=None):
+    """Couleur d'une série d'un visuel natif (un sens par couleur : voir DESIGN.md §11)."""
+    e = {"properties": {"fill": couleur(hexa)}}
+    if selecteur:
+        e["selector"] = selecteur
+    return e
+
+
+def par_mesure(nom):
+    return {"metadata": f"{T}.{nom}"}
+
+
+def par_valeur(colonne, valeur):
+    return {"data": [{"scopeId": {"Comparison": {"ComparisonKind": 0, "Left": champ(colonne), "Right": {"Literal": {"Value": f"'{valeur}'"}}}}}]}
 
 
 # ------------------------------------------------------------------ pages
@@ -262,7 +280,8 @@ def pages():
                                   ("Part heures avec panne ferrée", "Part des heures-stations avec une panne ferrée à moins de 300 m")]):
         v.append(carte_kpi(f"{nom}_kpi{i + 1}", m, position(M + i * (w3 + GOUT), y_kpi, w3, haut_kpi, 5, 2 + i), alt, 2 + i))
     larg_h = 800
-    v.append(deneb(f"{nom}_haltere", "04_haltere_pannes", position(M, y_graph, larg_h, h_graph, 5, 5), "Titre pannes",
+    h_halt = 340
+    v.append(deneb(f"{nom}_haltere", "04_haltere_pannes", position(M, y_graph, larg_h, h_halt, 5, 5), "Titre pannes",
                    "Part des relevés en pénurie et en saturation, sans puis avec panne en cours",
                    "Haltères : taux de pénurie et de saturation sans panne puis avec panne, en heure de pointe et hors pointe"))
     methode = [("Méthode", 16, True, TX["principal"]),
@@ -273,6 +292,13 @@ def pages():
                ("Filtre « Panne imprévue » : ne garde, pour « avec panne », que les perturbations non planifiées.", 12, False, TX["secondaire"]),
                ("À retenir : une association n'est pas une preuve de causalité (l'heure, le jour et la météo jouent aussi). "
                 "Les données ne couvrent encore que quelques jours : les écarts peuvent changer.", 12, False, TX["principal"])]
+    lect = [("Comment lire le graphique", 14, True, TX["principal"]),
+            ("Anneau gris : part des relevés sans panne à proximité. Disque rose : part avec panne. Plus le disque est à droite de l'anneau, "
+             "plus la panne s'accompagne de pénurie (ou de saturation). Le signe + ou − dit le sens de l'écart.", 12, False, TX["secondaire"])]
+    zl = zone_texte(f"{nom}_lecture", position(M, y_graph + h_halt + GOUT, larg_h, h_graph - h_halt - GOUT, 5, 7), lect)
+    zl["visual"]["visualContainerObjects"]["background"] = [{"properties": {"show": booleen(True), "color": couleur(F["carte"]), "transparency": num(0)}}]
+    zl["visual"]["visualContainerObjects"]["padding"] = [{"properties": {"top": num(14), "bottom": num(14), "left": num(18), "right": num(18)}}]
+    v.append(zl)
     zt = zone_texte(f"{nom}_methode", position(M + larg_h + GOUT, y_graph, LARG - larg_h - GOUT, h_graph, 5, 6), methode)
     # carte de fond sous le texte (la boîte de texte est transparente)
     zt["visual"]["visualContainerObjects"]["background"] = [{"properties": {"show": booleen(True), "color": couleur(F["carte"]),
@@ -290,19 +316,12 @@ def pages():
          deneb(f"{nom}_barres", "05_meteo_barres", position(M, y_kpi, w_gauche, h4, 5, 1), "Titre pluie",
                "Part des relevés, selon qu'il pleut ou non",
                "Barres : taux de pénurie et de saturation avec et sans pluie"),
-         deneb(f"{nom}_nuage", "06_meteo_nuage", position(M + w_gauche + GOUT, y_kpi, w_droite, h4, 5, 2), None,
+         deneb(f"{nom}_nuage", "06_meteo_nuage", position(M + w_gauche + GOUT, y_kpi, w_droite, h4, 5, 2), "Titre nuage",
                "Un point = une heure ; association observée, pas preuve de causalité",
                "Nuage de points : température et taux de pénurie, avec tendance lissée"),
-         deneb(f"{nom}_courbes", "07_meteo_courbes", position(M + w_gauche + GOUT, y_kpi + h4 + GOUT, w_droite, h4, 5, 3), None,
+         deneb(f"{nom}_courbes", "07_meteo_courbes", position(M + w_gauche + GOUT, y_kpi + h4 + GOUT, w_droite, h4, 5, 3), "Titre courbes",
                "Part des relevés en pénurie par heure de la journée, avec et sans pluie",
                "Courbes du taux de pénurie par heure, avec et sans pluie")]
-    # titres fixes (prudents) pour le nuage et les courbes : aucune conclusion ne peut être calculée de façon fiable
-    v[2]["visual"]["visualContainerObjects"] = conteneur(titre="La pénurie varie-t-elle avec la température ?",
-                                                         sous_titre="Un point = une heure ; association observée, pas preuve de causalité",
-                                                         alt="Nuage de points : température et taux de pénurie, avec tendance lissée")
-    v[3]["visual"]["visualContainerObjects"] = conteneur(titre="À chaque heure, la pénurie est-elle plus haute sous la pluie ?",
-                                                         sous_titre="Part des relevés en pénurie par heure de la journée, avec et sans pluie",
-                                                         alt="Courbes du taux de pénurie par heure, avec et sans pluie")
     lecture = [("Comment lire cette page", 16, True, TX["principal"]),
                ("Barres : pénurie et saturation selon qu'il pleut ou non (météo Open-Meteo, Paris).", 12, False, TX["secondaire"]),
                ("Nuage : un point est une heure ; la ligne blanche est une tendance lissée (loess), à lire comme une indication.", 12, False, TX["secondaire"]),
@@ -333,20 +352,28 @@ def pages():
                "Rythme de la journée", "Équivalent natif du graphique à aires", "Courbes de pénurie et de saturation par heure"),
          natif(f"{nom}_carte", "scatterChart", position(xs[2], ys[0], cw, chh, 5, 3),
                {"Category": [pc("station_nom", True)], "X": [pm("lon_moy")], "Y": [pm("lat_moy")], "Size": [pm("capacite_max")]},
-               "Stations", "Équivalent natif de la carte (longitude × latitude, taille = capacité)", "Nuage de points des stations"),
+               "Stations", "Équivalent natif de la carte (longitude × latitude, taille = capacité)", "Nuage de points des stations",
+               {"dataPoint": [{"properties": {"defaultColor": couleur(S["neutre"])}}]}),
          natif(f"{nom}_haltere", "clusteredBarChart", position(xs[0], ys[1], cw, chh, 5, 4),
-               {"Category": [pc("periode", True)], "Y": [pm("Taux pénurie sans panne"), pm("Taux pénurie avec panne"),
-                                                         pm("Taux saturation sans panne"), pm("Taux saturation avec panne")]},
-               "Sans panne / avec panne", "Équivalent natif des haltères", "Barres groupées sans panne et avec panne"),
+               {"Category": [pc("periode", True)], "Y": [pm("Taux pénurie sans panne"), pm("Taux pénurie avec panne")],
+                "Tooltips": [pm("Taux saturation sans panne"), pm("Taux saturation avec panne")]},
+               "Pénurie sans / avec panne", "Équivalent natif des haltères (la saturation est dans l'infobulle)",
+               "Barres groupées de pénurie sans panne et avec panne",
+               {"dataPoint": [remplissage(S["neutre"], par_mesure("Taux pénurie sans panne")),
+                              remplissage(S["panne"], par_mesure("Taux pénurie avec panne"))]}),
          natif(f"{nom}_barres", "clusteredColumnChart", position(xs[1], ys[1], cw // 2 - 8, chh, 5, 5),
                {"Category": [pc("pluie_libelle", True)], "Y": [pm("Taux pénurie"), pm("Taux saturation")]},
-               "Pluie / sans pluie", "Équivalent natif des barres", "Colonnes groupées avec et sans pluie"),
+               "Pluie / sans pluie", "Équivalent natif des barres (orange = pénurie, bleu = saturation)", "Colonnes groupées avec et sans pluie"),
          natif(f"{nom}_courbes", "lineChart", position(xs[1] + cw // 2 + 8, ys[1], cw // 2 - 8, chh, 5, 6),
                {"Category": [pc("heure_du_jour", True)], "Series": [pc("pluie_libelle")], "Y": [pm("Taux pénurie")]},
-               "Pénurie par heure", "Équivalent natif des courbes avec et sans pluie", "Courbes du taux de pénurie par heure et météo"),
+               "Pénurie par heure", "Équivalent natif des courbes avec et sans pluie", "Courbes du taux de pénurie par heure et météo",
+               {"dataPoint": [remplissage(S["neutre"], par_valeur("pluie_libelle", "Sans pluie")),
+                              remplissage(S["pluie"], par_valeur("pluie_libelle", "Pluie"))]}),
          natif(f"{nom}_nuage", "scatterChart", position(xs[2], ys[1], cw, chh, 5, 7),
                {"Category": [pc("heure_paris", True)], "X": [pm("temperature_moy")], "Y": [pm("Taux pénurie")], "Series": [pc("pluie_libelle")]},
-               "Température et pénurie", "Équivalent natif du nuage de points", "Nuage de points température et pénurie")]
+               "Température et pénurie", "Équivalent natif du nuage de points", "Nuage de points température et pénurie",
+               {"dataPoint": [remplissage(S["neutre"], par_valeur("pluie_libelle", "Sans pluie")),
+                              remplissage(S["pluie"], par_valeur("pluie_libelle", "Pluie"))]})]
     res.append(page(nom, "Secours", v, cachee=True))
     return res
 

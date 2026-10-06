@@ -10,7 +10,7 @@ RACINE = ICI.parent
 P = json.loads((ICI / "palette.json").read_text(encoding="utf-8"))
 RAMPE = json.loads((ICI / "palette_calculee.json").read_text(encoding="utf-8"))["sequentiel_penurie"]
 
-F, T, S, D, TY, G = P["fond"], P["texte"], P["serie"], P["divergent"], P["typo"], P["grille_page"]
+F, T, S, TY, G = P["fond"], P["texte"], P["serie"], P["typo"], P["grille_page"]
 # Police : Segoe UI d'abord ; les suivantes ne servent que si elle est absente (aperçus Linux).
 POLICE = f"{TY['famille']}, Arial, Helvetica, sans-serif"
 
