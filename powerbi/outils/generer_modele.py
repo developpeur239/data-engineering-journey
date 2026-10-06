@@ -83,6 +83,10 @@ MESURES += [
     ("n_penurie", f"SUM({col('nb_releves_penurie')})", "#,0", "Appui Deneb", True),
     ("n_saturation", f"SUM({col('nb_releves_saturation')})", "#,0", "Appui Deneb", True),
     ("capacite_max", f"MAX({col('capacite')})", "0", "Appui Deneb", True),
+    # moyenne de température de la sélection, identique sur toutes les lignes du nuage : ALLSELECTED retire le regroupement du
+    # visuel (heure, température, météo) mais garde les segments et filtres ; le titre du nuage utilise la même mesure
+    ("seuil_temperature", f"CALCULATE(AVERAGE({col('temperature_c')}), ALLSELECTED({col('heure_paris')}), "
+                          f"ALLSELECTED({col('temperature_c')}), ALLSELECTED({col('pluie_libelle')}))", "0.0", "Appui Deneb", True),
     # appui de la page « Secours » (visuels natifs : les axes X / Y d'un nuage de points attendent des mesures)
     ("lon_moy", f"AVERAGE({col('longitude')})", "0.00000", "Appui natif", True),
     ("lat_moy", f"AVERAGE({col('latitude')})", "0.00000", "Appui natif", True),
@@ -116,7 +120,7 @@ RETURN IF(ISBLANK(e), "Une panne ferrée à proximité change-t-elle la pénurie
 VAR b = CALCULATE([Taux pénurie], {col('il_pleut')} = TRUE())
 RETURN IF(ISBLANK(a) || ISBLANK(b), "Pénurie et saturation, avec et sans pluie",
     "Sous la pluie, la pénurie passe de " & FORMAT(a, "0.0%", "fr-FR") & " à " & FORMAT(b, "0.0%", "fr-FR"))"""),
-    ("Titre nuage", f"""VAR seuil = AVERAGE({col('temperature_c')})
+    ("Titre nuage", f"""VAR seuil = [seuil_temperature]
 VAR chaud = CALCULATE([Taux pénurie], {col('temperature_c')} >= seuil)
 VAR froid = CALCULATE([Taux pénurie], {col('temperature_c')} < seuil)
 RETURN IF(ISBLANK(seuil) || ISBLANK(chaud) || ISBLANK(froid), "La pénurie varie-t-elle avec la température ?",

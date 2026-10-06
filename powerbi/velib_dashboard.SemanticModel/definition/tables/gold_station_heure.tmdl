@@ -80,6 +80,12 @@ table gold_station_heure
 		displayFolder: Appui Deneb
 		lineageTag: 82ccb857-ab9c-5963-a16f-962b099d1296
 
+	measure seuil_temperature = CALCULATE(AVERAGE(gold_station_heure[temperature_c]), ALLSELECTED(gold_station_heure[heure_paris]), ALLSELECTED(gold_station_heure[temperature_c]), ALLSELECTED(gold_station_heure[pluie_libelle]))
+		formatString: 0.0
+		isHidden
+		displayFolder: Appui Deneb
+		lineageTag: 4b31bdb6-0d42-58d3-ae84-7b1e254927bd
+
 	measure lon_moy = AVERAGE(gold_station_heure[longitude])
 		formatString: 0.00000
 		isHidden
@@ -148,7 +154,7 @@ table gold_station_heure
 		lineageTag: c6bfe188-0ae0-5169-90c8-b41bf7c8c692
 
 	measure 'Titre nuage' =
-			VAR seuil = AVERAGE(gold_station_heure[temperature_c])
+			VAR seuil = [seuil_temperature]
 			VAR chaud = CALCULATE([Taux pénurie], gold_station_heure[temperature_c] >= seuil)
 			VAR froid = CALCULATE([Taux pénurie], gold_station_heure[temperature_c] < seuil)
 			RETURN IF(ISBLANK(seuil) || ISBLANK(chaud) || ISBLANK(froid), "La pénurie varie-t-elle avec la température ?",

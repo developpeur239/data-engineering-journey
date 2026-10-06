@@ -15,6 +15,7 @@ OK   saturation #2A9FD0 sur carte : 5.53:1
 OK   panne #D8478A sur carte : 4.12:1
 OK   pluie #7F6AE6 sur carte : 4.06:1
 OK   neutre #9AA9C4 sur carte : 7.02:1
+OK   grille_claire #566892 sur carte : 3.01:1
 
 ## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)
 OK   penurie↔saturation : normale 29.1 · protan 22.5 · deutan 23.1 · tritan 32.3

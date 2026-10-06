@@ -5,7 +5,7 @@ import re
 import commun as c
 
 S, F, T, R = c.S, c.F, c.T, c.RAMPE
-NEUTRES_DECOR = {F["carte"], F["survol"], F["grille"], F["page"]}
+NEUTRES_DECOR = {F["carte"], F["survol"], F["grille"], F["grille_claire"], F["page"]}
 TEXTES = set(T.values())
 # rôles autorisés par spec (couleurs de données uniquement ; fonds et textes sont toujours permis)
 AUTORISE = {

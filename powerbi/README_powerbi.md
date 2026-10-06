@@ -130,7 +130,7 @@ Le seul visuel qui grossit avec le temps est le nuage ; il est donc **déjà pr�
 
 `Nb stations` · `Taux pénurie` · `Taux saturation` · `Dernière heure` · `Taux pénurie / saturation avec panne` · `Taux pénurie / saturation sans panne` · `Écart pénurie (pts)` · `Écart saturation (pts)` · `Part heures avec panne ferrée`.
 Les mesures « avec panne » ne comptent que les stations à moins de 300 m d'un arrêt ferré (`station_proche_ferre_300m`) et les heures où `panne_ferree_300m` est vraie ; « sans panne » compare aux heures où elle est fausse. Le segment *Panne imprévue* ne restreint que le côté « avec panne ».
-Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, les 7 `Titre …`) servent aux graphiques Deneb, aux titres et à la page Secours.
+Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, `seuil_temperature`, les 7 `Titre …`) servent aux graphiques Deneb, aux titres et à la page Secours.
 
 ## 9. Choix de design
 

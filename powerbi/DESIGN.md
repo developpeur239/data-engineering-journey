@@ -34,6 +34,7 @@ Neutres teintés bleu-nuit (aucun gris pur, ni noir pur, ni blanc pur) :
 | Surface de carte | `#161E2E` | fond de chaque visuel (rayon 12 px) |
 | Survol / infobulle | `#1F2A40` | infobulles, bandes des heures de pointe |
 | Grille | `#2B3750` | quadrillage, très discret, 1 px |
+| Grille claire | `#566892` | repères en pointillés (moyenne de température), contraste 3:1 sur la carte |
 | Texte principal | `#EAF0FA` | titres, valeurs, KPI |
 | Texte secondaire | `#A9B6CE` | sous-titres, libellés d'axes |
 | Texte discret | `#8D9BB6` | notes, repères, titres d'axes |
@@ -80,6 +81,7 @@ OK   saturation #2A9FD0 sur carte : 5.53:1
 OK   panne #D8478A sur carte : 4.12:1
 OK   pluie #7F6AE6 sur carte : 4.06:1
 OK   neutre #9AA9C4 sur carte : 7.02:1
+OK   grille_claire #566892 sur carte : 3.01:1
 
 ## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)
 OK   penurie↔saturation : normale 29.1 · protan 22.5 · deutan 23.1 · tritan 32.3
@@ -197,4 +199,4 @@ Vérifié automatiquement (`outils/couleurs.py`, lancé par `verifier_coherence.
 | Gris bleuté | `#9AA9C4` | Situation de référence : « sans panne », « sans pluie » | 04 haltères, 05 barres, 06 nuage, 07 courbes |
 | Blanc cassé | `#EAF0FA` | Texte, tendance, anneau de la valeur maximale : jamais une donnée | 01, 02, 03, 06 |
 
-Les neutres de fond (`#0E1420`, `#161E2E`, `#1F2A40`, `#2B3750`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).
+Les neutres de fond (`#0E1420`, `#161E2E`, `#1F2A40`, `#2B3750`, `#566892`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).

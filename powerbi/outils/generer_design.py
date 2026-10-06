@@ -54,6 +54,7 @@ Neutres teintés bleu-nuit (aucun gris pur, ni noir pur, ni blanc pur) :
 | Surface de carte | `{F['carte']}` | fond de chaque visuel (rayon {G['rayon']} px) |
 | Survol / infobulle | `{F['survol']}` | infobulles, bandes des heures de pointe |
 | Grille | `{F['grille']}` | quadrillage, très discret, 1 px |
+| Grille claire | `{F['grille_claire']}` | repères en pointillés (moyenne de température), contraste 3:1 sur la carte |
 | Texte principal | `{T['principal']}` | titres, valeurs, KPI |
 | Texte secondaire | `{T['secondaire']}` | sous-titres, libellés d'axes |
 | Texte discret | `{T['discret']}` | notes, repères, titres d'axes |
@@ -171,7 +172,7 @@ Vérifié automatiquement (`outils/couleurs.py`, lancé par `verifier_coherence.
 
 {_tableau_sens()}
 
-Les neutres de fond (`{F['page']}`, `{F['carte']}`, `{F['survol']}`, `{F['grille']}`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).
+Les neutres de fond (`{F['page']}`, `{F['carte']}`, `{F['survol']}`, `{F['grille']}`, `{F['grille_claire']}`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).
 """
 (c.RACINE / "DESIGN.md").write_text(md, encoding="utf-8")
 print("ok DESIGN.md", len(md))

@@ -113,6 +113,9 @@ def meteo_nuage():
             out.append({"heure_paris": (t0 + dt.timedelta(days=d, hours=h)).strftime("%Y-%m-%dT%H:%M:%S"),
                         "temperature_c": round(temp, 1), "Taux pénurie": round(tp * R.uniform(0.9, 1.1), 4),
                         "pluie_libelle": "Pluie" if pl else "Sans pluie"})
+    seuil = sum(r["temperature_c"] for r in out) / len(out)  # même logique que la mesure DAX seuil_temperature
+    for r in out:
+        r["seuil_temperature"] = seuil
     return out
 
 

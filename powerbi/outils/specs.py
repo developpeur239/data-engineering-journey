@@ -347,6 +347,22 @@ def meteo_nuage():
                                       {"field": "temperature_c", "type": "quantitative", "title": "Température (°C)", "format": ".1f"},
                                       {"field": "Taux pénurie", "type": "quantitative", "title": "Pénurie", "format": ".1%"},
                                       {"field": "pluie_libelle", "type": "nominal", "title": "Météo"}]}},
+            {   # repère vertical : moyenne de température de la sélection, fournie par la mesure seuil_temperature
+                # (la même que celle du titre) ; Power BI la répète sur chaque ligne, d'où l'agrégation en une seule ligne
+                "transform": [{"aggregate": [{"op": "max", "field": "seuil_temperature", "as": "seuil"}]},
+                              {"filter": "isValid(datum.seuil)"},
+                              {"calculate": "'moyenne ' + replace(format(datum.seuil, '.1f'), '.', ',') + ' °C'", "as": "etiquette"}],
+                "layer": [
+                    {"mark": {"type": "rule", "strokeDash": [3, 4], "strokeWidth": 1.5, "color": F["grille_claire"], "tooltip": None},
+                     "encoding": {"x": {**x, "field": "seuil"}}},
+                    {"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 2, "fontSize": TAILLE_AXE,
+                              "color": F["carte"], "stroke": F["carte"], "strokeWidth": 4, "tooltip": None},
+                     "encoding": {"x": {**x, "field": "seuil"}, "y": {"value": 0}, "text": {"field": "etiquette"}}},
+                    {"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 2, "fontSize": TAILLE_AXE,
+                              "color": T["secondaire"], "tooltip": None},
+                     "encoding": {"x": {**x, "field": "seuil"}, "y": {"value": 0}, "text": {"field": "etiquette"}}},
+                ],
+            },
             {   # tendance lissée (loess), toutes heures confondues
                 "transform": [{"loess": "Taux pénurie", "on": "temperature_c", "bandwidth": 0.6}],
                 "layer": [

@@ -55,7 +55,7 @@ def titre_sous_titre(nom, rows):
         return (f"Sous la pluie, la pénurie passe de {_pc(sec['Taux pénurie'])} à {_pc(plu['Taux pénurie'])}",
                 "Part des relevés, selon qu'il pleut ou non")
     if nom == "06_meteo_nuage":
-        seuil = sum(r["temperature_c"] for r in rows) / len(rows)
+        seuil = rows[0]["seuil_temperature"]  # la même valeur que celle tracée sur le graphique
         chaud = [r["Taux pénurie"] for r in rows if r["temperature_c"] >= seuil]
         froid = [r["Taux pénurie"] for r in rows if r["temperature_c"] < seuil]
         return (f"Au-dessus de {seuil:.1f} °C, la pénurie est de {_pc(sum(chaud) / len(chaud))} contre {_pc(sum(froid) / len(froid))} en dessous".replace(".", ","),

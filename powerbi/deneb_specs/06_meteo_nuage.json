@@ -120,6 +120,120 @@
     {
       "transform": [
         {
+          "aggregate": [
+            {
+              "op": "max",
+              "field": "seuil_temperature",
+              "as": "seuil"
+            }
+          ]
+        },
+        {
+          "filter": "isValid(datum.seuil)"
+        },
+        {
+          "calculate": "'moyenne ' + replace(format(datum.seuil, '.1f'), '.', ',') + ' °C'",
+          "as": "etiquette"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "strokeDash": [
+              3,
+              4
+            ],
+            "strokeWidth": 1.5,
+            "color": "#566892",
+            "tooltip": null
+          },
+          "encoding": {
+            "x": {
+              "field": "seuil",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              },
+              "axis": {
+                "title": null,
+                "grid": false,
+                "labelExpr": "datum.value + ' °C'"
+              }
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": 6,
+            "dy": 2,
+            "fontSize": 11,
+            "color": "#161E2E",
+            "stroke": "#161E2E",
+            "strokeWidth": 4,
+            "tooltip": null
+          },
+          "encoding": {
+            "x": {
+              "field": "seuil",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              },
+              "axis": {
+                "title": null,
+                "grid": false,
+                "labelExpr": "datum.value + ' °C'"
+              }
+            },
+            "y": {
+              "value": 0
+            },
+            "text": {
+              "field": "etiquette"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": 6,
+            "dy": 2,
+            "fontSize": 11,
+            "color": "#A9B6CE",
+            "tooltip": null
+          },
+          "encoding": {
+            "x": {
+              "field": "seuil",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              },
+              "axis": {
+                "title": null,
+                "grid": false,
+                "labelExpr": "datum.value + ' °C'"
+              }
+            },
+            "y": {
+              "value": 0
+            },
+            "text": {
+              "field": "etiquette"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
           "loess": "Taux pénurie",
           "on": "temperature_c",
           "bandwidth": 0.6

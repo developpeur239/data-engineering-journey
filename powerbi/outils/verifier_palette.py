@@ -103,7 +103,7 @@ def main():
             r = contraste(c, f[sur])
             ligne(r >= 4.5, f"texte {nom} {c} sur fond {sur} {f[sur]} : {r:.2f}:1")
     rapport.append("\n## 2. Contraste des marques sur la carte (seuil 3:1)")
-    for nom, c in s.items():
+    for nom, c in {**s, "grille_claire": f["grille_claire"]}.items():
         r = contraste(c, f["carte"])
         ligne(r >= 3.0, f"{nom} {c} sur carte : {r:.2f}:1")
     rapport.append("\n## 3. Séparation des séries (OKLab ΔE×100, toutes les paires, vision normale / daltonismes)")
