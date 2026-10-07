@@ -16,6 +16,7 @@ powerbi/
 ├── velib_theme.json                  ← thème (couleurs, polices), aussi copié dans le rapport
 ├── deneb_specs/                      ← les 7 graphiques Deneb en texte (Vega-Lite) + config commune + champs à lier + paris_fond.json (fond de carte)
 ├── apercus/                          ← aperçus PNG des graphiques (données fictives) + planche.png
+├── REPARER_TABLE.md                  ← colonnes et mesures à recréer si vous réimportez la table
 ├── DESIGN.md                         ← direction artistique (palette, typo, grille, contrôles faits)
 └── outils/                           ← scripts Python qui génèrent et valident tout (facultatif)
 ```

@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 ETAPES = [["verifier_palette.py"], ["generer_theme.py"], ["generer_specs.py"], ["generer_modele.py"], ["generer_rapport.py"],
-          ["generer_design.py"], ["valider_specs.py"], ["valider_pbir.py"], ["verifier_coherence.py"]]
+          ["generer_design.py"], ["generer_reparation.py"], ["valider_specs.py"], ["valider_pbir.py"], ["verifier_coherence.py"]]
 if "--apercus" in sys.argv:
     ETAPES.insert(6, ["rendre_apercus.py"])
 for e in ETAPES:
