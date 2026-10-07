@@ -34,10 +34,12 @@ COLONNES = [
     ("panne_bus_300m", "boolean", "type logical", None), ("nb_pannes_ferrees_300m", "int64", "Int64.Type", "0"),
     ("distance_min_panne_ferree_m", "double", "type number", "0"),
 ]
-# colonnes ajoutées dans Power Query (pas dans Databricks)
+# colonnes calculées en DAX dans le modèle (pas dans Power Query : elles ne dépendent pas de la requête d'import)
 CALCULEES = [
-    ("jour_semaine_ordre", "int64", "Int64.Type", "0"), ("jour_nom", "string", "type text", None),
-    ("periode", "string", "type text", None), ("pluie_libelle", "string", "type text", None),
+    ("jour_semaine_ordre", "int64", "0", "IF(ISBLANK(gold_station_heure[date_paris]), BLANK(), WEEKDAY(gold_station_heure[date_paris], 2))"),
+    ("jour_nom", "string", None, 'SWITCH(gold_station_heure[jour_semaine_ordre], 1, "lundi", 2, "mardi", 3, "mercredi", 4, "jeudi", 5, "vendredi", 6, "samedi", 7, "dimanche")'),
+    ("periode", "string", None, 'IF(gold_station_heure[heure_de_pointe] = TRUE(), "Heure de pointe", "Hors pointe")'),
+    ("pluie_libelle", "string", None, 'IF(gold_station_heure[il_pleut] = TRUE(), "Pluie", "Sans pluie")'),
 ]
 
 PARAMETRES = [
@@ -176,6 +178,16 @@ def bloc_colonne(nom, tmdl_type, fmt, calculee=False) -> str:
     return s
 
 
+def bloc_calculee(nom, tmdl_type, fmt, dax) -> str:
+    s = f"\tcolumn {tmdl_nom(nom)} = {dax}\n\t\tdataType: {tmdl_type}\n\t\tisDataTypeInferred\n"
+    if fmt:
+        s += f"\t\tformatString: {fmt}\n"
+    s += f"\t\tlineageTag: {guid('colonne', nom)}\n\t\tsummarizeBy: none\n"
+    if nom == "jour_nom":
+        s += "\t\tsortByColumn: jour_semaine_ordre\n"
+    return s + "\n\t\tannotation SummarizationSetBy = User\n\n"
+
+
 def requete_m() -> str:
     types = ",\n".join(f'            {{"{n}", {tm}}}' for n, _, tm, _ in COLONNES)
     zones = ",\n".join(
@@ -191,25 +203,19 @@ def requete_m() -> str:
         }}),
     Types = Table.TransformColumnTypes(SansFuseau, {{
 {types}
-        }}, "en-US"),
-    JourOrdre = Table.AddColumn(Types, "jour_semaine_ordre",
-        each if [date_paris] = null then null else Date.DayOfWeek([date_paris], Day.Monday) + 1, Int64.Type),
-    JourNom = Table.AddColumn(JourOrdre, "jour_nom",
-        each if [date_paris] = null then null else {{"lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"}}{{Date.DayOfWeek([date_paris], Day.Monday)}}, type text),
-    Periode = Table.AddColumn(JourNom, "periode",
-        each if [heure_de_pointe] = true then "Heure de pointe" else "Hors pointe", type text),
-    Pluie = Table.AddColumn(Periode, "pluie_libelle",
-        each if [il_pleut] = true then "Pluie" else "Sans pluie", type text)
+        }}, "en-US")
 in
-    Pluie"""
+    Types"""
 
 
 def table_tmdl() -> str:
     s = f"table {TABLE}\n\tlineageTag: {guid('table', TABLE)}\n\n"
     for m in MESURES:
         s += bloc_mesure(*m)
-    for n, t, _, f in COLONNES + CALCULEES:
+    for n, t, _, f in COLONNES:
         s += bloc_colonne(n, t, f)
+    for n, t, f, dax in CALCULEES:
+        s += bloc_calculee(n, t, f, dax)
     m = "\n".join("\t\t\t\t" + l if l else "" for l in requete_m().splitlines())
     s += f"\tpartition {TABLE} = m\n\t\tmode: import\n\t\tsource =\n{m}\n\n\tannotation PBI_ResultType = Table\n"
     return s

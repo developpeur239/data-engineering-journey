@@ -21,9 +21,9 @@ def err(m):
 
 
 # 1. TMDL
-modele_cols = {n for n, *_ in gm.COLONNES + gm.CALCULEES}
+modele_cols = {n for n, *_ in gm.COLONNES} | {n for n, *_ in gm.CALCULEES}
 modele_mes = {m[0] for m in gm.MESURES}
-assert len(modele_cols) == len(gm.COLONNES + gm.CALCULEES), "colonnes en double"
+assert len(modele_cols) == len(gm.COLONNES) + len(gm.CALCULEES), "colonnes en double"
 assert not modele_cols & modele_mes, "nom commun à une colonne et une mesure"
 for f in (PROJ / "velib_dashboard.SemanticModel").rglob("*.tmdl"):
     for i, l in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
@@ -32,7 +32,7 @@ for f in (PROJ / "velib_dashboard.SemanticModel").rglob("*.tmdl"):
             err(f"{f.name}:{i} ligne indentée par des espaces")
 txt = (PROJ / "velib_dashboard.SemanticModel/definition/tables/gold_station_heure.tmdl").read_text(encoding="utf-8")
 for n in modele_cols:
-    if f"column {n}\n" not in txt:
+    if f"column {n}\n" not in txt and f"column {n} = " not in txt:
         err(f"colonne absente du TMDL : {n}")
 for n in modele_mes:
     if f"measure {gm.tmdl_nom(n)} =" not in txt:

@@ -64,7 +64,7 @@ Ne mettez jamais le jeton dans un fichier du dépôt. Si vous avez déjà publi�
 
 - **Rafraîchir :** *Accueil → Actualiser*.
 - **Changer d'adresse, de warehouse ou de catalogue :** *Accueil → Transformer les données → Modifier les paramètres*, puis changez `Hote`, `CheminHTTP` ou `Catalogue`, *OK*, *Fermer et appliquer*. Il faudra ressaisir le jeton si l'hôte change.
-- Les colonnes attendues sont celles de `gold_station_heure` (33 colonnes). Si Databricks renomme ou supprime une colonne, l'actualisation affiche « La colonne … de la table est introuvable » : remettez le nom d'origine ou modifiez l'étape *Types* dans *Transformer les données*.
+- Les colonnes attendues sont celles de `gold_station_heure` (33 colonnes) ; Power Query ne fait que les charger et les typer. Les 4 colonnes `jour_semaine_ordre`, `jour_nom`, `periode` et `pluie_libelle` sont des **colonnes calculées en DAX dans le modèle** (voir `REPARER_TABLE.md` pour les recréer). Si Databricks renomme ou supprime une colonne, l'actualisation affiche « La colonne … de la table est introuvable » : remettez le nom d'origine ou modifiez l'étape *Types* dans *Transformer les données*.
 
 ## 5. Les pages
 

@@ -466,37 +466,37 @@ table gold_station_heure
 
 		annotation SummarizationSetBy = User
 
-	column jour_semaine_ordre
+	column jour_semaine_ordre = IF(ISBLANK(gold_station_heure[date_paris]), BLANK(), WEEKDAY(gold_station_heure[date_paris], 2))
 		dataType: int64
+		isDataTypeInferred
 		formatString: 0
 		lineageTag: f014129e-4585-5621-be8b-c2d6a44076a9
 		summarizeBy: none
-		sourceColumn: jour_semaine_ordre
 
 		annotation SummarizationSetBy = User
 
-	column jour_nom
+	column jour_nom = SWITCH(gold_station_heure[jour_semaine_ordre], 1, "lundi", 2, "mardi", 3, "mercredi", 4, "jeudi", 5, "vendredi", 6, "samedi", 7, "dimanche")
 		dataType: string
+		isDataTypeInferred
 		lineageTag: 8f3cd802-198e-5f38-933b-6cade4c77bb7
 		summarizeBy: none
-		sourceColumn: jour_nom
 		sortByColumn: jour_semaine_ordre
 
 		annotation SummarizationSetBy = User
 
-	column periode
+	column periode = IF(gold_station_heure[heure_de_pointe] = TRUE(), "Heure de pointe", "Hors pointe")
 		dataType: string
+		isDataTypeInferred
 		lineageTag: 98a423ec-fa92-55e5-ada0-a3a93b4dad88
 		summarizeBy: none
-		sourceColumn: periode
 
 		annotation SummarizationSetBy = User
 
-	column pluie_libelle
+	column pluie_libelle = IF(gold_station_heure[il_pleut] = TRUE(), "Pluie", "Sans pluie")
 		dataType: string
+		isDataTypeInferred
 		lineageTag: 8d6de83d-9bf0-542f-a766-4279be26d9f7
 		summarizeBy: none
-		sourceColumn: pluie_libelle
 
 		annotation SummarizationSetBy = User
 
@@ -546,16 +546,8 @@ table gold_station_heure
 				            {"panne_bus_300m", type logical},
 				            {"nb_pannes_ferrees_300m", Int64.Type},
 				            {"distance_min_panne_ferree_m", type number}
-				        }, "en-US"),
-				    JourOrdre = Table.AddColumn(Types, "jour_semaine_ordre",
-				        each if [date_paris] = null then null else Date.DayOfWeek([date_paris], Day.Monday) + 1, Int64.Type),
-				    JourNom = Table.AddColumn(JourOrdre, "jour_nom",
-				        each if [date_paris] = null then null else {"lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"}{Date.DayOfWeek([date_paris], Day.Monday)}, type text),
-				    Periode = Table.AddColumn(JourNom, "periode",
-				        each if [heure_de_pointe] = true then "Heure de pointe" else "Hors pointe", type text),
-				    Pluie = Table.AddColumn(Periode, "pluie_libelle",
-				        each if [il_pleut] = true then "Pluie" else "Sans pluie", type text)
+				        }, "en-US")
 				in
-				    Pluie
+				    Types
 
 	annotation PBI_ResultType = Table
