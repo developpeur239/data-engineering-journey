@@ -185,7 +185,8 @@ for nom, dax in TITRES:
 
 
 def tmdl_nom(n: str) -> str:
-    return f"'{n}'" if any(ch in n for ch in " .=:'") else n
+    # une apostrophe dans un nom entre apostrophes se double (« d''ensemble »)
+    return "'" + n.replace("'", "''") + "'" if any(ch in n for ch in " .=:'") else n
 
 
 def bloc_mesure(nom, dax, fmt, dossier, masquee) -> str:

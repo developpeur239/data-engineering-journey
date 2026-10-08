@@ -196,7 +196,7 @@ table gold_station_heure
 		displayFolder: Titres
 		lineageTag: 16ef58d4-b438-58b7-8043-336f3b94f958
 
-	measure 'Sous-titre page vue d'ensemble' =
+	measure 'Sous-titre page vue d''ensemble' =
 			VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
 			VAR r = [Relevés observés]
 			RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
