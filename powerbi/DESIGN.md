@@ -183,6 +183,13 @@ Page « Météo · 3 ans de compteurs » (4 visuels) :
 | Classes de température | note et maximum annoté superposés | marge en haut de l'axe, note alignée à gauche, maximum annoté au-dessus de la barre |
 | Profil horaire | légende posée sur le pic du soir | légende en haut à gauche, zone libre de la nuit |
 
+Troisième tour (page météo 3 ans) :
+
+| Visuel | Défaut relevé | Correction |
+|---|---|---|
+| Haltères période | sur l'échelle commune 0–170, la ligne « Nuit » (13,9 → 11,0) est réduite à un point : l'écart ne se voit pas | **échelle commune conservée** (une échelle par ligne ferait paraître la nuit aussi fréquentée que la pointe et casserait la comparaison entre périodes) ; colonne de valeurs à droite de chaque ligne : « sans → avec » (ex. « 13,9 → 11,0 ») puis l'écart en gras (« −20,6 % ») ; le nombre dit ce que le dessin ne peut pas montrer pour la nuit |
+| Classes de température | libellés et découpage non conformes à la colonne source | valeurs de `classe_temperature` reprises telles quelles (« 1. moins de 5 °C », « 2. 5 à 12 °C », « 3. 12 à 20 °C », « 4. 20 à 27 °C », « 5. 27 °C et plus ») ; le préfixe numérique ne sert qu'au tri et est retiré à l'affichage (axe, infobulle, titre dynamique) ; le titre reprend la classe réelle du maximum (« 20 à 27 °C (193,9 par compteur) ») |
+
 Deuxième tour (retours de relecture) :
 
 | Visuel | Défaut relevé | Correction |

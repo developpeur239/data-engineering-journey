@@ -132,7 +132,7 @@ def meteo_courbes():
 def meteo3_halteres():
     return [{"periode": "pointe", "Passages sans pluie": 163.6, "Passages avec pluie": 141.8},
             {"periode": "journée", "Passages sans pluie": 69.8, "Passages avec pluie": 61.8},
-            {"periode": "nuit", "Passages sans pluie": 13.94, "Passages avec pluie": 11.07}]
+            {"periode": "nuit", "Passages sans pluie": 13.94, "Passages avec pluie": 11.04}]
 
 
 def meteo3_effet():
@@ -142,7 +142,7 @@ def meteo3_effet():
 
 def meteo3_classes():
     vals = [139.8, 152.0, 172.5, 193.9, 184.1]
-    labels = ["1. moins de 5 °C", "2. 5 à 12 °C", "3. 12 à 18 °C", "4. 18 à 27 °C", "5. 27 °C et plus"]
+    labels = ["1. moins de 5 °C", "2. 5 à 12 °C", "3. 12 à 20 °C", "4. 20 à 27 °C", "5. 27 °C et plus"]
     heures = [310, 905, 1240, 1020, 410]
     return [{"classe_temperature": l, "Passages pointe temps sec": v, "Heures pointe temps sec": h} for l, v, h in zip(labels, vals, heures)]
 

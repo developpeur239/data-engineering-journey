@@ -432,13 +432,14 @@ def meteo_halteres():
     return {
         "$schema": VL,
         "data": {"name": "dataset"},
-        "padding": {"top": 26, "left": 6, "right": 70, "bottom": 6},
+        "padding": {"top": 26, "left": 6, "right": 124, "bottom": 6},
         "transform": [
             {"calculate": "datum['Passages avec pluie'] / datum['Passages sans pluie'] - 1", "as": "ecart"},
             {"calculate": "upper(slice(datum.periode, 0, 1)) + slice(datum.periode, 1)", "as": "libelle"},
             {"calculate": "indexof(['pointe', 'journée', 'nuit'], datum.periode)", "as": "ordre"},
             {"calculate": "max(datum['Passages avec pluie'], datum['Passages sans pluie'])", "as": "borne"},
             {"calculate": SIGNE_PCT % ("ecart", "ecart"), "as": "texte_ecart"},
+            {"calculate": "replace(format(datum['Passages sans pluie'], '.1f'), '.', ',') + ' → ' + replace(format(datum['Passages avec pluie'], '.1f'), '.', ',')", "as": "texte_valeurs"},
         ],
         "layer": [
             {"mark": {"type": "rule", "strokeWidth": 4, "strokeCap": "round", "color": S["pluie"], "tooltip": None},
@@ -454,8 +455,11 @@ def meteo_halteres():
                                       {"field": "Passages sans pluie", "type": "quantitative", "title": "Sans pluie", "format": ".1f"},
                                       {"field": "Passages avec pluie", "type": "quantitative", "title": "Avec pluie", "format": ".1f"},
                                       {"field": "texte_ecart", "type": "nominal", "title": "Écart"}]}},
-            {"mark": {"type": "text", "align": "left", "dx": 14, "fontSize": TAILLE_LABEL + 1, "fontWeight": 600, "color": T["principal"], "tooltip": None},
-             "encoding": {"y": ligne, "x": {**xs, "field": "borne"}, "text": {"field": "texte_ecart"}}},
+            # colonne de valeurs à droite : « sans → avec » puis l'écart, lisible même quand les deux points se superposent (nuit)
+            {"mark": {"type": "text", "align": "left", "dx": 24, "dy": -7, "fontSize": TAILLE_AXE + 1, "color": T["secondaire"], "tooltip": None},
+             "encoding": {"y": ligne, "x": {"value": {"expr": "width"}}, "text": {"field": "texte_valeurs"}}},
+            {"mark": {"type": "text", "align": "left", "dx": 24, "dy": 8, "fontSize": TAILLE_LABEL + 1, "fontWeight": 600, "color": T["principal"], "tooltip": None},
+             "encoding": {"y": ligne, "x": {"value": {"expr": "width"}}, "text": {"field": "texte_ecart"}}},
             {"transform": [{"filter": "datum.ordre === 0"}],
              "layer": [{"mark": {"type": "text", "align": "left", "dx": 4, "dy": -22, "fontSize": TAILLE_AXE, "color": T["secondaire"]},
                         "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"}, "text": {"value": "sans pluie"}}},

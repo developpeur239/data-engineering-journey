@@ -6,7 +6,7 @@
   "padding": {
     "top": 26,
     "left": 6,
-    "right": 70,
+    "right": 124,
     "bottom": 6
   },
   "transform": [
@@ -29,6 +29,10 @@
     {
       "calculate": "(datum.ecart >= 0 ? '+' : '−') + replace(format(abs(datum.ecart) * 100, '.1f'), '.', ',') + ' %'",
       "as": "texte_ecart"
+    },
+    {
+      "calculate": "replace(format(datum['Passages sans pluie'], '.1f'), '.', ',') + ' → ' + replace(format(datum['Passages avec pluie'], '.1f'), '.', ',')",
+      "as": "texte_valeurs"
     }
   ],
   "layer": [
@@ -224,7 +228,47 @@
       "mark": {
         "type": "text",
         "align": "left",
-        "dx": 14,
+        "dx": 24,
+        "dy": -7,
+        "fontSize": 12,
+        "color": "#A9B6CE",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "value": {
+            "expr": "width"
+          }
+        },
+        "text": {
+          "field": "texte_valeurs"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 24,
+        "dy": 8,
         "fontSize": 13,
         "fontWeight": 600,
         "color": "#EAF0FA",
@@ -250,18 +294,9 @@
           }
         },
         "x": {
-          "type": "quantitative",
-          "scale": {
-            "domainMin": 0,
-            "zero": true
-          },
-          "axis": {
-            "format": ".0f",
-            "title": "passages par compteur et par heure",
-            "tickCount": 4,
-            "grid": true
-          },
-          "field": "borne"
+          "value": {
+            "expr": "width"
+          }
         },
         "text": {
           "field": "texte_ecart"
