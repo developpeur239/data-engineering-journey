@@ -400,7 +400,8 @@ def meteo_effet():
 
 def meteo_classes():
     classe = {"field": "classe_temperature", "type": "ordinal", "sort": "ascending",
-              "axis": {"title": None, "grid": False, "labelAngle": 0, "labelExpr": "slice(datum.label, 3)", "labelFontSize": TAILLE_AXE + 1,
+              "axis": {"title": None, "grid": False, "labelAngle": 0, "labelExpr": "split(replace(replace(replace(slice(datum.label, 3), ' à ', ' à|'), ' de ', ' de|'), ' et ', '|et '), '|')",
+                       "labelLineHeight": 13, "labelFontSize": TAILLE_AXE,
                        "labelColor": T["secondaire"], "labelLimit": 120}}
     y = {"field": "val", "type": "quantitative", "scale": {"domainMin": 0}, "axis": {"format": ".0f", "title": None, "tickCount": 4}}
     return {

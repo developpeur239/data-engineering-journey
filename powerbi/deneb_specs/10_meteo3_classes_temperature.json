@@ -59,8 +59,9 @@
             "title": null,
             "grid": false,
             "labelAngle": 0,
-            "labelExpr": "slice(datum.label, 3)",
-            "labelFontSize": 12,
+            "labelExpr": "split(replace(replace(replace(slice(datum.label, 3), ' à ', ' à|'), ' de ', ' de|'), ' et ', '|et '), '|')",
+            "labelLineHeight": 13,
+            "labelFontSize": 11,
             "labelColor": "#A9B6CE",
             "labelLimit": 120
           }
@@ -133,8 +134,9 @@
             "title": null,
             "grid": false,
             "labelAngle": 0,
-            "labelExpr": "slice(datum.label, 3)",
-            "labelFontSize": 12,
+            "labelExpr": "split(replace(replace(replace(slice(datum.label, 3), ' à ', ' à|'), ' de ', ' de|'), ' et ', '|et '), '|')",
+            "labelLineHeight": 13,
+            "labelFontSize": 11,
             "labelColor": "#A9B6CE",
             "labelLimit": 120
           }
@@ -181,8 +183,9 @@
             "title": null,
             "grid": false,
             "labelAngle": 0,
-            "labelExpr": "slice(datum.label, 3)",
-            "labelFontSize": 12,
+            "labelExpr": "split(replace(replace(replace(slice(datum.label, 3), ' à ', ' à|'), ' de ', ' de|'), ' et ', '|et '), '|')",
+            "labelLineHeight": 13,
+            "labelFontSize": 11,
             "labelColor": "#A9B6CE",
             "labelLimit": 120
           }

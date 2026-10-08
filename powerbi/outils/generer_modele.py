@@ -147,19 +147,21 @@ VAR n = IF(n_plus > n_moins, n_plus, n_moins)
 RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
     IF(n_plus = n_moins, "Sous la pluie, la pénurie est aussi souvent plus haute que plus basse (" & FORMAT(n_plus, "0", "fr-FR") & " heures de chaque, sur " & FORMAT(total, "0", "fr-FR") & ")",
     "Sous la pluie, la pénurie est " & sens & " à " & FORMAT(n, "0", "fr-FR") & " heures sur " & FORMAT(total, "0", "fr-FR")))"""),
+    # nombre de relevés : une seule mesure pour tous les sous-titres, même périmètre (filtres et segments de la page)
+    ("Relevés observés", f"SUM({col('nb_releves_en_service')}) + 0"),
     # sous-titres dynamiques (période couverte, nombre d'observations) : liés au sous-titre du visuel
     ("Sous-titre page vue d'ensemble", f"""VAR s = DISTINCTCOUNT({col('station_id')}) + 0
-VAR r = SUM({col('nb_releves_en_service')}) + 0
+VAR r = [Relevés observés]
 RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
 """),
     ("Mise à jour des données", f"""VAR d = MAX({col('heure_paris')})
 RETURN IF(ISBLANK(d), "Aucune donnée", "Données à jour au " & FORMAT(d, "dd/MM HH:mm", "fr-FR") & " (heure de Paris)")"""),
     ("Sous-titre heatmap", f"""VAR a = MIN({col('date_paris')})
 VAR b = MAX({col('date_paris')})
-VAR r = SUM({col('nb_releves_en_service')}) + 0
+VAR r = [Relevés observés]
 RETURN IF(ISBLANK(a), "Part des relevés où la station est vide, par heure et jour de la semaine",
     "Du " & FORMAT(a, "dd/MM/yyyy", "fr-FR") & " au " & FORMAT(b, "dd/MM/yyyy", "fr-FR") & " · " & FORMAT(r, "#,##0", "fr-FR") & " relevés")"""),
-    ("Sous-titre rythme", f"""VAR r = SUM({col('nb_releves_en_service')}) + 0
+    ("Sous-titre rythme", f"""VAR r = [Relevés observés]
 RETURN "Part des relevés vides ou pleins, par heure de la journée · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
 """),
     ("Sous-titre carte", f"""VAR s = DISTINCTCOUNT({col('station_id')}) + 0

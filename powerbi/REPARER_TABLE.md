@@ -322,6 +322,15 @@ RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
     "Sous la pluie, la pénurie est " & sens & " à " & FORMAT(n, "0", "fr-FR") & " heures sur " & FORMAT(total, "0", "fr-FR")))
 ```
 
+### `Relevés observés`  (masquée)
+
+Format : `Général`
+
+```dax
+Relevés observés =
+SUM(gold_station_heure[nb_releves_en_service]) + 0
+```
+
 ### `Sous-titre page vue d'ensemble`  (masquée)
 
 Format : `Général`
@@ -329,7 +338,7 @@ Format : `Général`
 ```dax
 Sous-titre page vue d'ensemble =
 VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
-VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+VAR r = [Relevés observés]
 RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
 
 ```
@@ -352,7 +361,7 @@ Format : `Général`
 Sous-titre heatmap =
 VAR a = MIN(gold_station_heure[date_paris])
 VAR b = MAX(gold_station_heure[date_paris])
-VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+VAR r = [Relevés observés]
 RETURN IF(ISBLANK(a), "Part des relevés où la station est vide, par heure et jour de la semaine",
     "Du " & FORMAT(a, "dd/MM/yyyy", "fr-FR") & " au " & FORMAT(b, "dd/MM/yyyy", "fr-FR") & " · " & FORMAT(r, "#,##0", "fr-FR") & " relevés")
 ```
@@ -363,7 +372,7 @@ Format : `Général`
 
 ```dax
 Sous-titre rythme =
-VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+VAR r = [Relevés observés]
 RETURN "Part des relevés vides ou pleins, par heure de la journée · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
 
 ```

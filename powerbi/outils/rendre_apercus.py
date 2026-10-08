@@ -21,6 +21,9 @@ TAILLES = {"01_heatmap_heure_jour": (464, 500), "02_rythme_journee": (752, 500),
            "11_meteo3_profil_horaire_semaine": (400, 292)}  # tailles des visuels dans la mise en page 1280 x 720 (voir DESIGN.md)
 
 
+RELEVES = sum(x["n_service"] for x in d.heatmap())  # un seul nombre de relevés pour les deux sous-titres (même mesure DAX, même périmètre)
+
+
 def _pc(x, n=1):
     """Pourcentage à la française : « 8,7 % » (espace insécable), comme FORMAT(x, "0.0%", "fr-FR")."""
     return f"{x * 100:.{n}f}".replace(".", ",") + "\u00a0%"
@@ -36,11 +39,11 @@ def titre_sous_titre(nom, rows):
     if nom == "01_heatmap_heure_jour":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries culminent le {c.JOURS[m['jour_semaine_ordre'] - 1]} à {m['heure_du_jour']} h",
-                f"Du 01/10/2026 au 07/10/2026 · {_nb(sum(x['n_service'] for x in rows))} relevés")
+                f"Du 01/10/2026 au 07/10/2026 · {_nb(RELEVES)} relevés")
     if nom == "02_rythme_journee":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries explosent à {m['heure_du_jour']} h",
-                f"Part des relevés vides ou pleins, par heure de la journée · {_nb(sum(x['n_service'] for x in rows))} relevés")
+                f"Part des relevés vides ou pleins, par heure de la journée · {_nb(RELEVES)} relevés")
     if nom == "03_carte_stations":
         n = sum(1 for r in rows if r["n_penurie"] / r["n_service"] > 0.2)
         return (f"{_nb(n)} stations sur {_nb(len(rows))} sont vides plus d'un relevé sur cinq",
