@@ -3,9 +3,9 @@
   "name": "p4_meteo_titre",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 10,
     "z": 10,
-    "height": 56,
+    "height": 52,
     "width": 700,
     "tabOrder": 0
   },
@@ -32,10 +32,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "La pluie et la température changent-elles la pénurie ou la saturation ?",
+                    "value": "La pluie change-t-elle les pénuries ?",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "12pt",
+                      "fontSize": "13pt",
                       "color": "#A9B6CE"
                     }
                   }

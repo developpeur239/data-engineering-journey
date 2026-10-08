@@ -23,11 +23,11 @@
                       "Entity": "gold_station_heure"
                     }
                   },
-                  "Property": "panne_ferree_imprevue_300m"
+                  "Property": "panne_imprevue_libelle"
                 }
               },
-              "queryRef": "gold_station_heure.panne_ferree_imprevue_300m",
-              "nativeQueryRef": "panne_ferree_imprevue_300m",
+              "queryRef": "gold_station_heure.panne_imprevue_libelle",
+              "nativeQueryRef": "panne_imprevue_libelle",
               "active": true
             }
           ]
@@ -137,5 +137,62 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "defaut_panne_imprevue_libelle",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "gold_station_heure"
+              }
+            },
+            "Property": "panne_imprevue_libelle"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "g",
+              "Entity": "gold_station_heure",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "g"
+                          }
+                        },
+                        "Property": "panne_imprevue_libelle"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Oui'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

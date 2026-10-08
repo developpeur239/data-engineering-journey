@@ -3,9 +3,9 @@
   "name": "p3_pannes_methode",
   "position": {
     "x": 840,
-    "y": 200,
+    "y": 96,
     "z": 5,
-    "height": 496,
+    "height": 600,
     "width": 416,
     "tabOrder": 6
   },
@@ -56,7 +56,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Écart : différence, en points de pourcentage, entre la part de relevés en pénurie (ou en saturation) avec et sans panne.",
+                    "value": "Heures avec panne observées : nombre de couples station × heure où une panne ferrée est en cours à moins de 300 m.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "12pt",
@@ -68,7 +68,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Filtre « Panne imprévue » : ne garde, pour « avec panne », que les perturbations non planifiées.",
+                    "value": "Filtre « Panne imprévue » : par défaut « Oui », il ne garde, pour « avec panne », que les perturbations non planifiées ; choisissez « Non » pour les perturbations prévues.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "12pt",

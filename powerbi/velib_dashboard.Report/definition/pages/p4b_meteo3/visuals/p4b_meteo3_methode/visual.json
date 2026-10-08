@@ -3,9 +3,9 @@
   "name": "p4b_meteo3_methode",
   "position": {
     "x": 936,
-    "y": 192,
+    "y": 96,
     "z": 5,
-    "height": 504,
+    "height": 600,
     "width": 320,
     "tabOrder": 12
   },
@@ -24,6 +24,18 @@
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "16pt",
                       "fontWeight": "600",
+                      "color": "#EAF0FA"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Les compteurs mesurent le trafic vélo (la demande), pas l'état des stations Vélib'.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
                       "color": "#EAF0FA"
                     }
                   }

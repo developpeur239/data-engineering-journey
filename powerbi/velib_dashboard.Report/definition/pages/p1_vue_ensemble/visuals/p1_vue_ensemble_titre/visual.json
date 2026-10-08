@@ -3,9 +3,9 @@
   "name": "p1_vue_ensemble_titre",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 10,
     "z": 10,
-    "height": 56,
+    "height": 52,
     "width": 700,
     "tabOrder": 0
   },
@@ -32,10 +32,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Pénuries et saturations des stations Vélib', heure de Paris",
+                    "value": "Quand les stations sont-elles vides ou pleines ?",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "12pt",
+                      "fontSize": "13pt",
                       "color": "#A9B6CE"
                     }
                   }

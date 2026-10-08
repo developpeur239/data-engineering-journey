@@ -3,10 +3,10 @@
   "name": "p3_pannes_kpi1",
   "position": {
     "x": 24,
-    "y": 80,
+    "y": 96,
     "z": 5,
-    "height": 104,
-    "width": 400,
+    "height": 84,
+    "width": 800,
     "tabOrder": 2
   },
   "visual": {
@@ -23,11 +23,12 @@
                       "Entity": "gold_station_heure"
                     }
                   },
-                  "Property": "Écart pénurie (pts)"
+                  "Property": "Heures avec panne observées"
                 }
               },
-              "queryRef": "gold_station_heure.Écart pénurie (pts)",
-              "nativeQueryRef": "Écart pénurie (pts)"
+              "queryRef": "gold_station_heure.Heures avec panne observées",
+              "nativeQueryRef": "Heures avec panne observées",
+              "displayName": "Heures avec panne observées"
             }
           ]
         }
@@ -53,7 +54,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Écart de pénurie en points de pourcentage, avec panne moins sans panne'"
+                  "Value": "'Nombre de couples station × heure avec une panne ferrée à moins de 300 m'"
                 }
               }
             }

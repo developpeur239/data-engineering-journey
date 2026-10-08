@@ -68,16 +68,22 @@ Ne mettez jamais le jeton dans un fichier du dépôt. Si vous avez déjà publi�
 
 ## 5. Les pages
 
-| Page | Contenu |
-|---|---|
-| **Vue d'ensemble** | 4 cartes (nombre de stations, taux de pénurie, taux de saturation, dernière heure) ; carte de chaleur heure × jour ; rythme de la journée avec les heures de pointe annotées ; segments Période et Week-end |
-| **Carte des stations** | carte stylisée sans fond de plan (taille = capacité, couleur = taux de pénurie, halo au survol) ; tableau des 20 stations les plus souvent vides ; segments Heure du jour et Heure de pointe |
-| **Effet des pannes** | haltères « sans panne → avec panne » (pénurie et saturation, pointe / hors pointe ; le titre porte sur la ligne « Pénurie · heure de pointe », le trait est toujours rose et le signe +/− donne le sens) ; 3 cartes (écart pénurie, écart saturation, part d'heures avec panne ferrée) ; encadré « Méthode » ; segment Panne imprévue |
-| **Effet de la météo** | barres avec / sans pluie ; nuage température × pénurie avec tendance ; courbes par heure avec / sans pluie ; encadré « Comment lire » |
-| **Météo · 3 ans de compteurs** | nouvelle page (voir « 6 ter ») : effet de la pluie sur les passages vélo, 2023-2025, avec 4 graphiques Deneb et 4 chiffres clés |
-| **Secours** et **Secours · météo 3 ans** (cachées) | un équivalent en visuels Power BI natifs de chaque graphique Deneb |
+Question de recherche : **« Quand et où les stations Vélib' sont-elles vides ou pleines, et la météo et les pannes de transport l'expliquent-elles ? »** Chaque page répond à une sous-question (affichée en sous-titre de la page), chaque indicateur se lit en une phrase et est accompagné du nombre d'observations (dans le sous-titre du visuel ou de la page).
 
-Les **titres** des 7 graphiques Deneb sont **calculés** par une mesure DAX chacun (`Titre heatmap`, `Titre rythme`, `Titre carte`, `Titre pannes`, `Titre pluie`, `Titre nuage`, `Titre courbes`) : aucun chiffre ni constat n'est écrit dans une spec. Chaque mesure est liée au titre du visuel Power BI (*Format → Titre → Texte → fx*), respecte les filtres et segments, et affiche un texte neutre si les données sont vides. Les nombres sont formatés en français quelle que soit la machine : `FORMAT(x, "#,##0", "fr-FR")` donne « 1 450 » et `FORMAT(x, "0.0", "fr-FR")` donne « 3,0 » (le troisième argument impose la locale ; un motif du type `"# ##0"` n'est pas fiable en DAX). Seul le sous-titre est fixe.
+| Page | Question | Indicateurs (et nombre d'observations) | Lecture en une phrase |
+|---|---|---|---|
+| **Vue d'ensemble** | Quand les stations sont-elles vides ou pleines ? | cartes « Temps passé vide (%) », « Temps passé plein (%) » et « Données à jour au JJ/MM HH:MM » ; courbe horaire vide / plein (visuel principal, N relevés) ; carte de chaleur heure × jour (période couverte et N relevés) ; sous-titre de page : N stations suivies et N relevés | « Les stations se vident aux heures de pointe, surtout le matin en semaine » (le titre de chaque graphique énonce le constat calculé) |
+| **Carte des stations** | Où manque-t-on de vélos ? | carte stylisée (taille = capacité, couleur = temps passé vide, N stations) ; tableau des 20 stations les plus souvent vides (Station, Capacité, Temps passé vide en %) | « N stations sur M sont vides plus d'un relevé sur cinq » |
+| **Effet des pannes** | Les pannes de transport l'expliquent-elles ? | haltères « sans panne → avec panne » (vide et plein, pointe / hors pointe ; « sur N heures avec panne ») ; carte « Heures avec panne observées » ; segment Panne imprévue (Oui par défaut) | « En heure de pointe, une panne ferrée à moins de 300 m augmente (ou réduit) la pénurie de X pts » |
+| **Effet de la météo** | La pluie change-t-elle les pénuries ? | barres avec / sans pluie (« N heures de pluie observées du JJ/MM au JJ/MM ») ; courbe horaire pluie / sec (heures de pluie et heures sèches) ; encadré « Comment lire » | « Sous la pluie, la pénurie passe de X % à Y % » ; « …est plus haute (ou plus basse) à X heures sur Y » |
+| **Météo · 3 ans de compteurs** | Le confirme-t-on sur 3 ans de trafic vélo ? | cartes « Effet pluie semaine / week-end (%) » ; barres de l'effet à conditions égales (visuel principal) ; passages par classe de température (pointe, sans pluie) ; profil horaire en semaine ; sous-titre de page : N heures dont X % de pluie | « Sous la pluie, à conditions égales : −15,9 % en semaine, −20,6 % le week-end » |
+| **Secours** et **Secours · météo 3 ans** (cachées, inchangées) | | un équivalent en visuels Power BI natifs de chaque graphique Deneb | |
+
+Retirés à la revue finale (parce qu'ils ne répondent pas directement à la question) : la carte « Nb stations » (le nombre figure dans le sous-titre de la page), les cartes « Écart pénurie / saturation (pts) » et « Part heures avec panne ferrée » (remplacée par « Heures avec panne observées »), le nuage de température (confondu avec l'heure de la journée), les haltères par période (écart brut) et les cartes « Heures étudiées » et « Part des heures de pluie » de la page 3 ans. Les mesures correspondantes sont **masquées, pas supprimées** : elles servent aux titres et sous-titres dynamiques. La sauvegarde d'avant la revue est dans `powerbi_sauvegarde_avant_revue/`.
+
+**Sous-titres dynamiques.** Les sous-titres des graphiques (période couverte, nombre de relevés, d'heures ou de stations) sont des mesures `Sous-titre …` liées au sous-titre du visuel. Le sous-titre de page (nombre de stations, nombre d'heures et part de pluie) est le titre d'une zone de texte vide, liée à une mesure (les zones de texte ne peuvent pas afficher une mesure autrement).
+
+Les **titres** des graphiques Deneb sont **calculés** par une mesure DAX chacun (`Titre heatmap`, `Titre rythme`, `Titre carte`, `Titre pannes`, `Titre pluie`, `Titre courbes`, et ceux de la page 3 ans ; `Titre nuage` est conservée, masquée, mais plus affichée) : aucun chiffre ni constat n'est écrit dans une spec. Chaque mesure est liée au titre du visuel Power BI (*Format → Titre → Texte → fx*), respecte les filtres et segments, et affiche un texte neutre si les données sont vides. Les nombres sont formatés en français quelle que soit la machine : `FORMAT(x, "#,##0", "fr-FR")` donne « 1 450 » et `FORMAT(x, "0.0", "fr-FR")` donne « 3,0 » (le troisième argument impose la locale ; un motif du type `"# ##0"` n'est pas fiable en DAX). Seul le sous-titre est fixe.
 La page **Secours** est cachée pour les lecteurs mais visible dans Power BI Desktop (onglet grisé en bas).
 
 ## 6. Deneb : le visuel qui dessine les graphiques
@@ -125,12 +131,11 @@ Colonnes ajoutées dans le modèle (DAX) : `annee` (pour le segment), `saison_or
 **Mesures** (dossier d'affichage « Météo 3 ans ») : `Passages par compteur`, `Passages sans pluie`, `Passages avec pluie`, `Écart pluie brut (%)`, `Effet pluie à conditions égales (%)`, `Effet pluie semaine (%)`, `Effet pluie week-end (%)`, `Heures de pluie`, `Heures étudiées`, `Part des heures de pluie (%)`, plus des mesures masquées d'appui (`Passages pointe temps sec`, `Heures pointe temps sec`, `Passages semaine sans pluie`, `Passages semaine avec pluie`) et 4 titres dynamiques (`Titre météo haltères`, `Titre météo effet`, `Titre météo température`, `Titre météo profil`), au format français (`FORMAT(…, "fr-FR")`), avec un texte neutre quand il n'y a pas de données.
 **`Effet pluie à conditions égales (%)`** : pour chaque groupe `type_jour × saison × heure_du_jour` ayant au moins 5 heures de pluie, rapport (moyenne avec pluie ÷ moyenne sans pluie − 1) ; moyenne de ces rapports pondérée par le nombre d'heures de pluie du groupe. Elle part du contexte de filtre courant (`SUMMARIZE`), donc elle respecte `type_jour` et les autres segments.
 
-**Page.** 3 segments (type de jour, saison, année), 4 chiffres clés (effet pluie semaine, effet pluie week-end, heures étudiées, part des heures de pluie) et 4 graphiques Deneb (`deneb_specs/08` à `11`) :
-1. haltères « sans pluie → avec pluie » par période (pointe, journée, nuit), écart en % au bout ;
-2. barres de l'effet à conditions égales, semaine et week-end ;
-3. passages par compteur selon la classe de température (pointe, temps sec), maximum annoté ; la note sur les vacances d'été n'apparaît que si la dernière classe est en dessous du maximum ;
-4. profil horaire en semaine, avec et sans pluie (24 points).
-Un encadré « Méthode et limites » rappelle : passages **par compteur** (le nombre de compteurs varie), comparaison **à conditions égales**, jours fériés et vacances non exclus, un seul point météo pour Paris, association et non causalité. Couleurs : violet = pluie, gris = référence.
+**Page.** 3 segments (type de jour, saison, année), 2 chiffres clés (effet pluie semaine et week-end) et 3 graphiques Deneb (`deneb_specs/09` à `11` ; les haltères par période ont été retirés à la revue finale) :
+1. (visuel principal) barres de l'effet à conditions égales, semaine et week-end ;
+2. passages par compteur selon la classe de température (pointe, temps sec), maximum annoté ; la note sur les vacances d'été n'apparaît que si la dernière classe est en dessous du maximum ;
+3. profil horaire en semaine, avec et sans pluie (24 points).
+Un encadré « Méthode et limites » rappelle : les compteurs mesurent le trafic vélo (la demande), pas l'état des stations Vélib' ; passages **par compteur** (le nombre de compteurs varie), comparaison **à conditions égales**, jours fériés et vacances non exclus, un seul point météo pour Paris, association et non causalité. Couleurs : violet = pluie, gris = référence.
 Chaque graphique a un équivalent natif sur la page cachée « Secours · météo 3 ans ».
 
 ### Validation des mesures (à lire)
@@ -201,7 +206,7 @@ Les valeurs de la colonne `periode` (`pointe`, `journée`, `nuit`), `type_jour` 
 
 ## 8. Les mesures du modèle
 
-`Nb stations` · `Taux pénurie` · `Taux saturation` · `Dernière heure` · `Taux pénurie / saturation avec panne` · `Taux pénurie / saturation sans panne` · `Écart pénurie (pts)` · `Écart saturation (pts)` · `Part heures avec panne ferrée`.
+Visibles : `Taux pénurie` (affiché « Temps passé vide (%) ») · `Taux saturation` (« Temps passé plein (%) ») · `Taux pénurie / saturation avec panne` · `Taux pénurie / saturation sans panne` · `Heures avec panne observées`. Masquées (conservées) : `Nb stations` · `Dernière heure` · `Écart pénurie (pts)` · `Écart saturation (pts)` · `Part heures avec panne ferrée` · les `Sous-titre …` et `Mise à jour des données`. Colonne ajoutée : `panne_imprevue_libelle` (Oui / Non, pour le segment « Panne imprévue » ; les mesures « sans panne » retirent aussi le filtre sur cette colonne).
 Les mesures « avec panne » ne comptent que les stations à moins de 300 m d'un arrêt ferré (`station_proche_ferre_300m`) et les heures où `panne_ferree_300m` est vraie ; « sans panne » compare aux heures où elle est fausse. Le segment *Panne imprévue* ne restreint que le côté « avec panne ».
 Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, `seuil_temperature`, les 7 `Titre …`, et pour la table météo 3 ans les mesures d'appui décrites au §6 ter) servent aux graphiques Deneb, aux titres et à la page Secours.
 

@@ -3,9 +3,9 @@
   "name": "p4_meteo_lecture",
   "position": {
     "x": 24,
-    "y": 396,
+    "y": 404,
     "z": 5,
-    "height": 300,
+    "height": 292,
     "width": 400,
     "tabOrder": 4
   },
@@ -32,19 +32,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Barres : pénurie et saturation selon qu'il pleut ou non (météo Open-Meteo, Paris).",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI",
-                      "fontSize": "12pt",
-                      "color": "#A9B6CE"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Nuage : un point est une heure ; la ligne blanche est une tendance lissée (loess), à lire comme une indication.",
+                    "value": "Barres : temps passé vide et plein selon qu'il pleut ou non (météo Open-Meteo, Paris).",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "12pt",
@@ -68,7 +56,19 @@
               {
                 "textRuns": [
                   {
-                    "value": "Peu de jours de données : les différences observées sont indicatives, pas démontrées.",
+                    "value": "Sur 3 ans de compteurs, la pluie réduit le trafic vélo de 16 à 21 % : moins de trajets, donc des stations qui se vident et se remplissent moins.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#A9B6CE"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Peu d'heures de pluie observées : les différences sont indicatives, pas démontrées.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "12pt",

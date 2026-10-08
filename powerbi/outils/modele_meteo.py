@@ -40,9 +40,9 @@ MESURES2 = [
     ("Passages sans pluie", f"CALCULATE([Passages par compteur], {col2('il_pleut')} = FALSE())", "0.0", DOSSIER_MES, False),
     ("Passages avec pluie", f"CALCULATE([Passages par compteur], {col2('il_pleut')} = TRUE())", "0.0", DOSSIER_MES, False),
     ("Écart pluie brut (%)", "DIVIDE([Passages avec pluie], [Passages sans pluie]) - 1", FPCT, DOSSIER_MES, False),
-    ("Heures étudiées", f"COUNTROWS({T2})", "#,0", DOSSIER_MES, False),
+    ("Heures étudiées", f"COUNTROWS({T2})", "#,0", DOSSIER_MES, True),
     ("Heures de pluie", f"CALCULATE(COUNTROWS({T2}), {col2('il_pleut')} = TRUE())", "#,0", DOSSIER_MES, False),
-    ("Part des heures de pluie (%)", "DIVIDE([Heures de pluie], [Heures étudiées])", "0.0%", DOSSIER_MES, False),
+    ("Part des heures de pluie (%)", "DIVIDE([Heures de pluie], [Heures étudiées])", "0.0%", DOSSIER_MES, True),
     # Effet de la pluie à conditions égales : pour chaque strate type_jour × saison × heure_du_jour ayant au moins 5 heures de
     # pluie, rapport (moyenne avec pluie / moyenne sans pluie) - 1 ; moyenne des strates pondérée par leur nombre d'heures de pluie.
     # SUMMARIZE part du contexte de filtre courant : segments et type_jour sont respectés.
@@ -83,6 +83,22 @@ VAR n = COUNTROWS(c)
 VAR b = COUNTROWS(FILTER(c, [@a] < [@s]))
 RETURN IF(n = 0, "Le profil horaire en semaine, avec et sans pluie",
     "En semaine, la pluie fait baisser les passages à " & FORMAT(b, "#,##0", "fr-FR") & " heures sur " & FORMAT(n, "#,##0", "fr-FR"))"""),
+]
+# sous-titres dynamiques (nombre d'observations), liés au sous-titre des visuels et de la page
+TITRES2 += [
+    ("Sous-titre page météo 3 ans", """VAR n = [Heures étudiées] + 0
+VAR p = [Part des heures de pluie (%)]
+RETURN "Compteurs vélo de Paris et Open-Meteo, 2023-2025 · " & FORMAT(n, "#,##0", "fr-FR") & " heures dont " & FORMAT(p, "0.0%", "fr-FR") & " de pluie"
+"""),
+    ("Sous-titre météo effet", """VAR n = [Heures de pluie] + 0
+RETURN FORMAT(n, "#,##0", "fr-FR") & " heures de pluie, comparées à des heures sèches comparables"
+"""),
+    ("Sous-titre météo classes", f"""VAR n = [Heures pointe temps sec] + 0
+RETURN "Passages par compteur en pointe, sans pluie · " & FORMAT(n, "#,##0", "fr-FR") & " heures"
+"""),
+    ("Sous-titre météo profil", f"""VAR n = CALCULATE([Heures étudiées], {col2('type_jour')} = "semaine") + 0
+RETURN "Passages par compteur, en semaine · " & FORMAT(n, "#,##0", "fr-FR") & " heures"
+"""),
 ]
 MESURES2 += [(n, d, None, DOSSIER_MES, True) for n, d in TITRES2]
 MESURES2 = [m for m in MESURES2 if m[0] != "Heures de pluie par strate"]

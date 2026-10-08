@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "p1_vue_ensemble_rythme",
   "position": {
-    "x": 648,
-    "y": 200,
+    "x": 24,
+    "y": 196,
     "z": 5,
-    "height": 496,
-    "width": 608,
-    "tabOrder": 8
+    "height": 500,
+    "width": 752,
+    "tabOrder": 7
   },
   "visual": {
     "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
@@ -223,8 +223,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Part des relevés en pénurie et en saturation, par heure de la journée'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Sous-titre rythme"
                 }
               }
             }
@@ -237,7 +242,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Courbes du taux de pénurie et du taux de saturation par heure, avec les heures de pointe en repère'"
+                  "Value": "'Courbes du temps passé vide et du temps passé plein par heure, avec les heures de pointe en repère'"
                 }
               }
             }

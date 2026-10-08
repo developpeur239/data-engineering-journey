@@ -1312,7 +1312,7 @@
             ]
           },
           "legend": {
-            "title": "Relevés en pénurie",
+            "title": "Temps passé vide",
             "orient": "bottom-left",
             "symbolType": "square",
             "symbolSize": 170,
@@ -1354,7 +1354,7 @@
           {
             "field": "taux",
             "type": "quantitative",
-            "title": "Relevés en pénurie",
+            "title": "Temps passé vide",
             "format": ".1%"
           },
           {

@@ -3,11 +3,11 @@
   "name": "p4_meteo_courbes",
   "position": {
     "x": 440,
-    "y": 396,
+    "y": 92,
     "z": 5,
-    "height": 300,
+    "height": 604,
     "width": 816,
-    "tabOrder": 3
+    "tabOrder": 2
   },
   "visual": {
     "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
@@ -209,8 +209,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Part des relevés en pénurie par heure de la journée, avec et sans pluie'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Sous-titre courbes"
                 }
               }
             }
@@ -223,7 +228,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Courbes du taux de pénurie par heure, avec et sans pluie'"
+                  "Value": "'Courbes du temps passé vide par heure, avec et sans pluie'"
                 }
               }
             }

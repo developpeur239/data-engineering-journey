@@ -3,10 +3,10 @@
   "name": "p1_vue_ensemble_kpi1",
   "position": {
     "x": 24,
-    "y": 80,
+    "y": 96,
     "z": 5,
-    "height": 104,
-    "width": 296,
+    "height": 84,
+    "width": 448,
     "tabOrder": 3
   },
   "visual": {
@@ -23,11 +23,12 @@
                       "Entity": "gold_station_heure"
                     }
                   },
-                  "Property": "Nb stations"
+                  "Property": "Taux pénurie"
                 }
               },
-              "queryRef": "gold_station_heure.Nb stations",
-              "nativeQueryRef": "Nb stations"
+              "queryRef": "gold_station_heure.Taux pénurie",
+              "nativeQueryRef": "Taux pénurie",
+              "displayName": "Temps passé vide (%)"
             }
           ]
         }
@@ -53,7 +54,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Nombre de stations Vélib'' observées'"
+                  "Value": "'Temps passé vide : part des relevés où la station n''a plus de vélo'"
                 }
               }
             }

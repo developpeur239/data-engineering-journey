@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "p1_vue_ensemble_kpi3",
   "position": {
-    "x": 648,
-    "y": 80,
+    "x": 952,
+    "y": 96,
     "z": 5,
-    "height": 104,
-    "width": 296,
+    "height": 84,
+    "width": 304,
     "tabOrder": 5
   },
   "visual": {
@@ -23,11 +23,11 @@
                       "Entity": "gold_station_heure"
                     }
                   },
-                  "Property": "Taux saturation"
+                  "Property": "Mise à jour des données"
                 }
               },
-              "queryRef": "gold_station_heure.Taux saturation",
-              "nativeQueryRef": "Taux saturation"
+              "queryRef": "gold_station_heure.Mise à jour des données",
+              "nativeQueryRef": "Mise à jour des données"
             }
           ]
         }
@@ -53,7 +53,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Part des relevés où la station n''a plus de place libre'"
+                  "Value": "'Date et heure du dernier relevé, heure de Paris'"
                 }
               }
             }
@@ -61,6 +61,45 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EAF0FA'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

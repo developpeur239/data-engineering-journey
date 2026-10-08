@@ -106,16 +106,16 @@ Nombres au format français (virgule décimale, espace avant « % ») : les visu
 
 - marge extérieure **{G['marge']} px**, gouttière entre visuels **{G['gouttiere']} px**, rayon des coins **{G['rayon']} px** ;
 - largeur utile 1232 px : deux colonnes de 608 px, ou quatre KPI de 296 px, ou trois KPI de 400 px ;
-- **bandeau d'en-tête** (y 12 → 68) : titre de page à gauche (énonce la conclusion), filtres à droite : tous les filtres sont **sur une seule ligne, au-dessus des graphiques**, avec leur libellé ;
-- **rangée de KPI** (y 80, hauteur 104) quand la page en a ; **zone des graphiques** ensuite (y 200, hauteur 496), jusqu'à y 696 (marge basse {G['marge']} px).
+- **bandeau d'en-tête** (y 10 → 86 : titre de page, question à laquelle elle répond, ligne dynamique) : titre de page à gauche (énonce la conclusion), filtres à droite : tous les filtres sont **sur une seule ligne, au-dessus des graphiques**, avec leur libellé ;
+- **rangée de cartes** (y 96, hauteur 84) quand la page en a ; **zone des graphiques** ensuite (y 196, hauteur 500), jusqu'à y 696 (marge basse {G['marge']} px).
 
 | Page | Disposition (largeur × hauteur en px) |
 |---|---|
-| Vue d'ensemble | 4 KPI de 296 × 104 ; heatmap 608 × 496 à gauche, rythme de la journée 608 × 496 à droite |
-| Carte des stations | carte stylisée 800 × 616 ; tableau « top 20 » 416 × 616 |
-| Effet des pannes | 3 KPI de 400 × 104 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 496 |
-| Effet de la météo | barres 400 × 300 puis « Comment lire » 400 × 300 à gauche ; nuage 816 × 300 puis courbes 816 × 300 à droite |
-| Météo · 3 ans de compteurs | 4 KPI de 296 × 96 ; grille 2 × 2 de graphiques de 448 × 244 ; « Méthode et limites » 320 × 504 à droite |
+| Vue d'ensemble | 2 cartes de 448 × 84 et « Données à jour » 304 × 84 ; courbe horaire 752 × 500 (visuel principal) à gauche, heatmap 464 × 500 à droite |
+| Carte des stations | carte stylisée 800 × 600 ; tableau « top 20 » 416 × 600 (3 colonnes, sans défilement horizontal) |
+| Effet des pannes | carte « Heures avec panne observées » 800 × 84 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 600 |
+| Effet de la météo | barres 400 × 296 puis « Comment lire » 400 × 300 à gauche ; courbe horaire 816 × 604 à droite |
+| Météo · 3 ans de compteurs | colonne A : 2 cartes de 232 × 84 puis barres « à conditions égales » 480 × 500 (visuel principal) ; colonne B : classes de température et profil horaire de 400 × 292 ; « Méthode et limites » 320 × 600 |
 | Secours (cachées) | grille 3 × 2 de visuels natifs de 400 × 300 ; grille 2 × 2 pour la météo 3 ans |
 
 ## 7. Règles graphiques

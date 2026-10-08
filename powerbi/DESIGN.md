@@ -125,16 +125,16 @@ Nombres au format français (virgule décimale, espace avant « % ») : les visu
 
 - marge extérieure **24 px**, gouttière entre visuels **16 px**, rayon des coins **12 px** ;
 - largeur utile 1232 px : deux colonnes de 608 px, ou quatre KPI de 296 px, ou trois KPI de 400 px ;
-- **bandeau d'en-tête** (y 12 → 68) : titre de page à gauche (énonce la conclusion), filtres à droite : tous les filtres sont **sur une seule ligne, au-dessus des graphiques**, avec leur libellé ;
-- **rangée de KPI** (y 80, hauteur 104) quand la page en a ; **zone des graphiques** ensuite (y 200, hauteur 496), jusqu'à y 696 (marge basse 24 px).
+- **bandeau d'en-tête** (y 10 → 86 : titre de page, question à laquelle elle répond, ligne dynamique) : titre de page à gauche (énonce la conclusion), filtres à droite : tous les filtres sont **sur une seule ligne, au-dessus des graphiques**, avec leur libellé ;
+- **rangée de cartes** (y 96, hauteur 84) quand la page en a ; **zone des graphiques** ensuite (y 196, hauteur 500), jusqu'à y 696 (marge basse 24 px).
 
 | Page | Disposition (largeur × hauteur en px) |
 |---|---|
-| Vue d'ensemble | 4 KPI de 296 × 104 ; heatmap 608 × 496 à gauche, rythme de la journée 608 × 496 à droite |
-| Carte des stations | carte stylisée 800 × 616 ; tableau « top 20 » 416 × 616 |
-| Effet des pannes | 3 KPI de 400 × 104 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 496 |
-| Effet de la météo | barres 400 × 300 puis « Comment lire » 400 × 300 à gauche ; nuage 816 × 300 puis courbes 816 × 300 à droite |
-| Météo · 3 ans de compteurs | 4 KPI de 296 × 96 ; grille 2 × 2 de graphiques de 448 × 244 ; « Méthode et limites » 320 × 504 à droite |
+| Vue d'ensemble | 2 cartes de 448 × 84 et « Données à jour » 304 × 84 ; courbe horaire 752 × 500 (visuel principal) à gauche, heatmap 464 × 500 à droite |
+| Carte des stations | carte stylisée 800 × 600 ; tableau « top 20 » 416 × 600 (3 colonnes, sans défilement horizontal) |
+| Effet des pannes | carte « Heures avec panne observées » 800 × 84 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 600 |
+| Effet de la météo | barres 400 × 296 puis « Comment lire » 400 × 300 à gauche ; courbe horaire 816 × 604 à droite |
+| Météo · 3 ans de compteurs | colonne A : 2 cartes de 232 × 84 puis barres « à conditions égales » 480 × 500 (visuel principal) ; colonne B : classes de température et profil horaire de 400 × 292 ; « Méthode et limites » 320 × 600 |
 | Secours (cachées) | grille 3 × 2 de visuels natifs de 400 × 300 ; grille 2 × 2 pour la météo 3 ans |
 
 ## 7. Règles graphiques
@@ -212,8 +212,8 @@ Vérifié automatiquement (`outils/couleurs.py`, lancé par `verifier_coherence.
 | Rampe « braise » (7 pas) | `#362B27 #693926 #9E4A24 #CD642C #EF844A #FFA97B #FFD4BC` | Intensité de la pénurie, du presque-fond (peu) au pêche clair (beaucoup) | 01 heatmap, 03 carte |
 | Cyan | `#2A9FD0` | Saturation : plus de place libre dans la station | 02 rythme |
 | Rose / magenta | `#D8478A` | Panne ferrée en cours à proximité (« avec panne ») | 04 haltères (disque et trait de liaison) |
-| Violet | `#7F6AE6` | Il pleut | 05 barres, 06 nuage, 07 courbes, 08 à 09 et 11 (page Météo 3 ans) |
-| Gris bleuté | `#9AA9C4` | Situation de référence : « sans panne », « sans pluie » | 04 haltères, 05 barres, 06 nuage, 07 courbes, 08, 10, 11 |
+| Violet | `#7F6AE6` | Il pleut | 05 barres, 07 courbes, 09 et 11 (page Météo 3 ans) |
+| Gris bleuté | `#9AA9C4` | Situation de référence : « sans panne », « sans pluie » | 04 haltères, 05 barres, 07 courbes, 10, 11 |
 | Blanc cassé | `#EAF0FA` | Texte, tendance, anneau de la valeur maximale : jamais une donnée | 01, 02, 03, 06, 08 à 11 (textes) |
 
 Les neutres de fond (`#0E1420`, `#161E2E`, `#1F2A40`, `#2B3750`, `#566892`) ne portent jamais de donnée. Là où la météo est le sujet (barres, nuage, courbes), la couleur code *pluie / sans pluie* ; la pénurie et la saturation y sont désignées par l'axe ou le libellé, pas par la couleur. Les visuels natifs de la page « Secours » reprennent les mêmes couleurs par série (réglage explicite, car le thème attribue sinon ses couleurs dans l'ordre).

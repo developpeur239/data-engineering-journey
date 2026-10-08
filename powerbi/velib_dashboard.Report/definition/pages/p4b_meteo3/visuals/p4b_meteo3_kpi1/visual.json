@@ -3,10 +3,10 @@
   "name": "p4b_meteo3_kpi1",
   "position": {
     "x": 24,
-    "y": 80,
+    "y": 96,
     "z": 5,
-    "height": 96,
-    "width": 296,
+    "height": 84,
+    "width": 232,
     "tabOrder": 4
   },
   "visual": {

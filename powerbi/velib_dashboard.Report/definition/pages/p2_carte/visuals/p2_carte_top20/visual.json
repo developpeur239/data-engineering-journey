@@ -3,14 +3,93 @@
   "name": "p2_carte_top20",
   "position": {
     "x": 840,
-    "y": 80,
+    "y": 96,
     "z": 5,
-    "height": 616,
+    "height": 600,
     "width": 416,
     "tabOrder": 4
   },
   "visual": {
     "visualType": "tableEx",
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "190D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_station_heure.station_nom"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_station_heure.capacite"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "120D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_station_heure.Taux pénurie"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "query": {
       "queryState": {
         "Values": {
@@ -27,7 +106,8 @@
                 }
               },
               "queryRef": "gold_station_heure.station_nom",
-              "nativeQueryRef": "station_nom"
+              "nativeQueryRef": "station_nom",
+              "displayName": "Station"
             },
             {
               "field": {
@@ -41,7 +121,8 @@
                 }
               },
               "queryRef": "gold_station_heure.capacite",
-              "nativeQueryRef": "capacite"
+              "nativeQueryRef": "capacite",
+              "displayName": "Capacité"
             },
             {
               "field": {
@@ -55,21 +136,8 @@
                 }
               },
               "queryRef": "gold_station_heure.Taux pénurie",
-              "nativeQueryRef": "Taux pénurie"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "gold_station_heure"
-                    }
-                  },
-                  "Property": "Taux saturation"
-                }
-              },
-              "queryRef": "gold_station_heure.Taux saturation",
-              "nativeQueryRef": "Taux saturation"
+              "nativeQueryRef": "Taux pénurie",
+              "displayName": "Temps passé vide (%)"
             }
           ]
         }
@@ -140,7 +208,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Tableau des 20 stations avec le plus fort taux de pénurie'"
+                  "Value": "'Tableau des 20 stations les plus souvent vides'"
                 }
               }
             }

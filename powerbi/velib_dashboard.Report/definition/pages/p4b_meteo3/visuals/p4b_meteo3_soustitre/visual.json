@@ -1,12 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
-  "name": "p2_carte_titre",
+  "name": "p4b_meteo3_soustitre",
   "position": {
     "x": 24,
-    "y": 10,
+    "y": 62,
     "z": 10,
-    "height": 52,
-    "width": 700,
+    "height": 24,
+    "width": 600,
     "tabOrder": 0
   },
   "visual": {
@@ -19,23 +19,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Carte des stations",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI Semibold",
-                      "fontSize": "22pt",
-                      "fontWeight": "600",
-                      "color": "#EAF0FA"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Où manque-t-on de vélos ?",
+                    "value": " ",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "13pt",
+                      "fontSize": "10pt",
                       "color": "#A9B6CE"
                     }
                   }
@@ -53,7 +40,44 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Sous-titre page météo 3 ans"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#A9B6CE'"
+                    }
+                  }
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
                 }
               }
             }

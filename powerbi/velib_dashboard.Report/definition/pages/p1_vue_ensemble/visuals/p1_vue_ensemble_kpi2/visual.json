@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "p1_vue_ensemble_kpi2",
   "position": {
-    "x": 336,
-    "y": 80,
+    "x": 488,
+    "y": 96,
     "z": 5,
-    "height": 104,
-    "width": 296,
+    "height": 84,
+    "width": 448,
     "tabOrder": 4
   },
   "visual": {
@@ -23,11 +23,12 @@
                       "Entity": "gold_station_heure"
                     }
                   },
-                  "Property": "Taux pénurie"
+                  "Property": "Taux saturation"
                 }
               },
-              "queryRef": "gold_station_heure.Taux pénurie",
-              "nativeQueryRef": "Taux pénurie"
+              "queryRef": "gold_station_heure.Taux saturation",
+              "nativeQueryRef": "Taux saturation",
+              "displayName": "Temps passé plein (%)"
             }
           ]
         }
@@ -53,7 +54,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Part des relevés où la station n''a plus de vélo'"
+                  "Value": "'Temps passé plein : part des relevés où la station n''a plus de place libre'"
                 }
               }
             }

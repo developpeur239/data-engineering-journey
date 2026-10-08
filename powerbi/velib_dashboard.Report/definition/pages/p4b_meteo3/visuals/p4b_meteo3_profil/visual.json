@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "p4b_meteo3_profil",
   "position": {
-    "x": 480,
-    "y": 452,
+    "x": 520,
+    "y": 404,
     "z": 5,
-    "height": 244,
-    "width": 440,
+    "height": 292,
+    "width": 400,
     "tabOrder": 11
   },
   "visual": {
@@ -209,8 +209,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Source : compteurs de Paris, Open-Meteo, 2023-2025'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Sous-titre météo profil"
                 }
               }
             }

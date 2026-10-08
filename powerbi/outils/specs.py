@@ -81,8 +81,8 @@ def heatmap():
                     "x": x, "x2": {"field": "heure_fin"}, "y": y,
                     "color": {"field": "taux_penurie", "type": "quantitative",
                               "scale": {"range": c.RAMPE, "domainMin": 0},
-                              "legend": {"title": "Pénurie (% des relevés)", "orient": "bottom", "direction": "horizontal",
-                                         "gradientLength": 260, "gradientThickness": 8, "format": ".0%", "titleOrient": "left",
+                              "legend": {"title": "Temps passé vide", "orient": "bottom", "direction": "horizontal",
+                                         "gradientLength": 190, "tickCount": 4, "gradientThickness": 8, "format": ".0%", "titleOrient": "left",
                                          "titleLimit": 220, "titlePadding": 14, "offset": 14}},
                     "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.4},
                     "tooltip": [
@@ -176,7 +176,7 @@ def carte():
     fond_legende = {"fillColor": F["carte"], "padding": 10, "cornerRadius": 8, "offset": 6}
     taux = {"field": "classe", "type": "ordinal", "sort": classes,
             "scale": {"domain": classes, "range": c.RAMPE},
-            "legend": {"title": "Relevés en pénurie", "orient": "bottom-left", "symbolType": "square", "symbolSize": 170,
+            "legend": {"title": "Temps passé vide", "orient": "bottom-left", "symbolType": "square", "symbolSize": 170,
                        "rowPadding": 4, "symbolStrokeWidth": 0, "symbolOpacity": 1, **fond_legende}}
     taille = {"field": "capacite_max", "type": "quantitative", "scale": {"range": [10, 130], "zero": False},
               "legend": {"title": "Capacité (places)", "orient": "bottom-right", "values": [20, 40, 60], "rowPadding": 6,
@@ -212,7 +212,7 @@ def carte():
                              "fillOpacity": {"condition": {"param": "survol", "value": 0.95}, "value": 0.35},
                              "tooltip": [{"field": "station_nom", "type": "nominal", "title": "Station"},
                                          {"field": "capacite_max", "type": "quantitative", "title": "Capacité (places)", "format": ",d"},
-                                         {"field": "taux", "type": "quantitative", "title": "Relevés en pénurie", "format": ".1%"},
+                                         {"field": "taux", "type": "quantitative", "title": "Temps passé vide", "format": ".1%"},
                                          {"field": "n_service", "type": "quantitative", "title": "Relevés en service", "format": ",d"}]},
             },
             {   # halo : anneau clair autour de la station survolée, invisible sinon
@@ -325,67 +325,6 @@ def meteo_barres():
 
 
 # --------------------------------------------------------------------------- 6. météo : nuage température × pénurie
-def meteo_nuage():
-    echelle = {"domain": ["Sans pluie", "Pluie"], "range": [S["neutre"], S["pluie"]]}
-    x = {"field": "temperature_c", "type": "quantitative", "scale": {"zero": False},
-         "axis": {"title": None, "grid": False, "labelExpr": "datum.value + ' °C'"}}
-    y = {"field": "Taux pénurie", "type": "quantitative", "scale": {"domainMin": 0},
-         "axis": {"format": ".0%", "title": None, "tickCount": 4}}
-    return {
-        "$schema": VL,
-        "data": {"name": "dataset"},
-        "padding": {"top": 10, "left": 6, "right": 14, "bottom": 6},
-        "transform": [{"calculate": "timeFormat(toDate(datum.heure_paris), '%d/%m %Hh')", "as": "quand"}],
-        "layer": [
-            {"params": [survol(["heure_paris"])],
-             "mark": {"type": "circle", "size": 70, "stroke": F["carte"], "strokeWidth": 1},
-             "encoding": {"x": x, "y": y,
-                          "color": {"field": "pluie_libelle", "type": "nominal", "scale": echelle,
-                                    "legend": {"title": None, "orient": "top-right", "direction": "horizontal", "offset": 4, "fillColor": F["carte"], "padding": 6, "cornerRadius": 6}},
-                          "opacity": {"condition": {"param": "survol", "value": 0.95}, "value": 0.55},
-                          "tooltip": [{"field": "quand", "type": "nominal", "title": "Heure"},
-                                      {"field": "temperature_c", "type": "quantitative", "title": "Température (°C)", "format": ".1f"},
-                                      {"field": "Taux pénurie", "type": "quantitative", "title": "Pénurie", "format": ".1%"},
-                                      {"field": "pluie_libelle", "type": "nominal", "title": "Météo"}]}},
-            {   # repère vertical : moyenne de température de la sélection, fournie par la mesure seuil_temperature
-                # (la même que celle du titre) ; Power BI la répète sur chaque ligne, d'où l'agrégation en une seule ligne
-                "transform": [{"aggregate": [{"op": "max", "field": "seuil_temperature", "as": "seuil"}]},
-                              {"filter": "isValid(datum.seuil)"},
-                              {"calculate": "'moyenne ' + replace(format(datum.seuil, '.1f'), '.', ',') + ' °C'", "as": "etiquette"}],
-                "layer": [
-                    {"mark": {"type": "rule", "strokeDash": [3, 4], "strokeWidth": 1.5, "color": F["grille_claire"], "tooltip": None},
-                     "encoding": {"x": {**x, "field": "seuil"}}},
-                    {"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 2, "fontSize": TAILLE_AXE,
-                              "color": F["carte"], "stroke": F["carte"], "strokeWidth": 4, "tooltip": None},
-                     "encoding": {"x": {**x, "field": "seuil"}, "y": {"value": 0}, "text": {"field": "etiquette"}}},
-                    {"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 2, "fontSize": TAILLE_AXE,
-                              "color": T["secondaire"], "tooltip": None},
-                     "encoding": {"x": {**x, "field": "seuil"}, "y": {"value": 0}, "text": {"field": "etiquette"}}},
-                ],
-            },
-            {   # tendance lissée (loess), toutes heures confondues
-                "transform": [{"loess": "Taux pénurie", "on": "temperature_c", "bandwidth": 0.6}],
-                "layer": [
-                    {"mark": {"type": "line", "color": T["principal"], "strokeWidth": 3, "strokeCap": "round", "tooltip": None},
-                     "encoding": {"x": x, "y": y}},
-                    {"transform": [{"window": [{"op": "last_value", "field": "temperature_c", "as": "tmax"}],
-                                    "frame": [None, None], "sort": [{"field": "temperature_c"}]},
-                                   {"filter": "datum.temperature_c === datum.tmax"}],
-                     "layer": [
-                         {"mark": {"type": "text", "align": "right", "dx": -6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
-                                   "color": F["carte"], "stroke": F["carte"], "strokeWidth": 5, "text": "tendance lissée", "tooltip": None},
-                          "encoding": {"x": x, "y": y}},
-                         {"mark": {"type": "text", "align": "right", "dx": -6, "dy": -14, "fontSize": TAILLE_LABEL, "fontWeight": 600,
-                                   "color": T["principal"], "text": "tendance lissée", "tooltip": None},
-                          "encoding": {"x": x, "y": y}},
-                     ]},
-                ],
-            },
-        ],
-    }
-
-
-# --------------------------------------------------------------------------- 7. météo : courbes par heure
 def meteo_courbes():
     echelle = {"domain": ["Sans pluie", "Pluie"], "range": [S["neutre"], S["pluie"]]}
     ech = {"domain": [0, 23], "nice": False}
@@ -422,51 +361,6 @@ def meteo_courbes():
 PASSAGES = {"type": "quantitative", "scale": {"domainMin": 0, "zero": True},
             "axis": {"format": ".0f", "title": "passages par compteur et par heure", "tickCount": 4, "grid": True}}
 SIGNE_PCT = "(datum.%s >= 0 ? '+' : '−') + replace(format(abs(datum.%s) * 100, '.1f'), '.', ',') + ' %%'"
-
-
-def meteo_halteres():
-    ligne = {"field": "libelle", "type": "nominal", "sort": {"field": "ordre"},
-             "axis": {"title": None, "grid": True, "gridDash": [2, 5], "gridOpacity": 0.9, "labelFontSize": TAILLE_LABEL + 1,
-                      "labelColor": T["principal"]}}
-    xs = {**PASSAGES}
-    return {
-        "$schema": VL,
-        "data": {"name": "dataset"},
-        "padding": {"top": 26, "left": 6, "right": 124, "bottom": 6},
-        "transform": [
-            {"calculate": "datum['Passages avec pluie'] / datum['Passages sans pluie'] - 1", "as": "ecart"},
-            {"calculate": "upper(slice(datum.periode, 0, 1)) + slice(datum.periode, 1)", "as": "libelle"},
-            {"calculate": "indexof(['pointe', 'journée', 'nuit'], datum.periode)", "as": "ordre"},
-            {"calculate": "max(datum['Passages avec pluie'], datum['Passages sans pluie'])", "as": "borne"},
-            {"calculate": SIGNE_PCT % ("ecart", "ecart"), "as": "texte_ecart"},
-            {"calculate": "replace(format(datum['Passages sans pluie'], '.1f'), '.', ',') + ' → ' + replace(format(datum['Passages avec pluie'], '.1f'), '.', ',')", "as": "texte_valeurs"},
-        ],
-        "layer": [
-            {"mark": {"type": "rule", "strokeWidth": 4, "strokeCap": "round", "color": S["pluie"], "tooltip": None},
-             "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"}, "x2": {"field": "Passages avec pluie"}}},
-            {"params": [survol(["periode"])],
-             "mark": {"type": "point", "filled": True, "opacity": 1, "size": 170, "fill": F["carte"], "stroke": S["neutre"], "strokeWidth": 3, "tooltip": None},
-             "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"},
-                          "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.4}}},
-            {"mark": {"type": "point", "filled": True, "opacity": 1, "size": 170, "color": S["pluie"], "stroke": F["carte"], "strokeWidth": 2},
-             "encoding": {"y": ligne, "x": {**xs, "field": "Passages avec pluie"},
-                          "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.4},
-                          "tooltip": [{"field": "libelle", "type": "nominal", "title": "Période"},
-                                      {"field": "Passages sans pluie", "type": "quantitative", "title": "Sans pluie", "format": ".1f"},
-                                      {"field": "Passages avec pluie", "type": "quantitative", "title": "Avec pluie", "format": ".1f"},
-                                      {"field": "texte_ecart", "type": "nominal", "title": "Écart"}]}},
-            # colonne de valeurs à droite : « sans → avec » puis l'écart, lisible même quand les deux points se superposent (nuit)
-            {"mark": {"type": "text", "align": "left", "dx": 24, "dy": -7, "fontSize": TAILLE_AXE + 1, "color": T["secondaire"], "tooltip": None},
-             "encoding": {"y": ligne, "x": {"value": {"expr": "width"}}, "text": {"field": "texte_valeurs"}}},
-            {"mark": {"type": "text", "align": "left", "dx": 24, "dy": 8, "fontSize": TAILLE_LABEL + 1, "fontWeight": 600, "color": T["principal"], "tooltip": None},
-             "encoding": {"y": ligne, "x": {"value": {"expr": "width"}}, "text": {"field": "texte_ecart"}}},
-            {"transform": [{"filter": "datum.ordre === 0"}],
-             "layer": [{"mark": {"type": "text", "align": "left", "dx": 4, "dy": -22, "fontSize": TAILLE_AXE, "color": T["secondaire"]},
-                        "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"}, "text": {"value": "sans pluie"}}},
-                       {"mark": {"type": "text", "align": "right", "dx": -4, "dy": -22, "fontSize": TAILLE_AXE, "color": T["secondaire"]},
-                        "encoding": {"y": ligne, "x": {**xs, "field": "Passages avec pluie"}, "text": {"value": "avec pluie"}}}]},
-        ],
-    }
 
 
 def meteo_effet():
@@ -585,9 +479,7 @@ SPECS = {
     "03_carte_stations": (carte, "stations"),
     "04_haltere_pannes": (haltere, "pannes"),
     "05_meteo_barres": (meteo_barres, "meteo_barres"),
-    "06_meteo_nuage": (meteo_nuage, "meteo_nuage"),
     "07_meteo_courbes": (meteo_courbes, "meteo_courbes"),
-    "08_meteo3_halteres_periode": (meteo_halteres, "meteo3_halteres"),
     "09_meteo3_effet_conditions_egales": (meteo_effet, "meteo3_effet"),
     "10_meteo3_classes_temperature": (meteo_classes, "meteo3_classes"),
     "11_meteo3_profil_horaire_semaine": (meteo_profil, "meteo3_profil"),

@@ -199,10 +199,11 @@
             "domainMin": 0
           },
           "legend": {
-            "title": "Pénurie (% des relevés)",
+            "title": "Temps passé vide",
             "orient": "bottom",
             "direction": "horizontal",
-            "gradientLength": 260,
+            "gradientLength": 190,
+            "tickCount": 4,
             "gradientThickness": 8,
             "format": ".0%",
             "titleOrient": "left",

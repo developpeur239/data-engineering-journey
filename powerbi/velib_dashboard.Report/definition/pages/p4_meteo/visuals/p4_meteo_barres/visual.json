@@ -3,9 +3,9 @@
   "name": "p4_meteo_barres",
   "position": {
     "x": 24,
-    "y": 80,
+    "y": 92,
     "z": 5,
-    "height": 300,
+    "height": 296,
     "width": 400,
     "tabOrder": 1
   },
@@ -209,8 +209,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Part des relevés, selon qu''il pleut ou non'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Sous-titre pluie"
                 }
               }
             }
@@ -223,7 +228,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Barres : taux de pénurie et de saturation avec et sans pluie'"
+                  "Value": "'Barres : temps passé vide et plein avec et sans pluie'"
                 }
               }
             }

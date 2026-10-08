@@ -3,7 +3,7 @@
   "name": "p3_pannes_haltere",
   "position": {
     "x": 24,
-    "y": 200,
+    "y": 196,
     "z": 5,
     "height": 340,
     "width": 800,
@@ -237,8 +237,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Part des relevés en pénurie et en saturation, sans puis avec panne en cours'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Sous-titre pannes"
                 }
               }
             }
@@ -251,7 +256,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Haltères : taux de pénurie et de saturation sans panne puis avec panne, en heure de pointe et hors pointe'"
+                  "Value": "'Haltères : temps passé vide et plein sans panne puis avec panne, en heure de pointe et hors pointe'"
                 }
               }
             }

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "p4b_meteo3_kpi2",
   "position": {
-    "x": 336,
-    "y": 80,
+    "x": 272,
+    "y": 96,
     "z": 5,
-    "height": 96,
-    "width": 296,
+    "height": 84,
+    "width": 232,
     "tabOrder": 5
   },
   "visual": {

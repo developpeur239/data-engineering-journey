@@ -3,9 +3,9 @@
   "name": "p4b_meteo3_titre",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 10,
     "z": 10,
-    "height": 56,
+    "height": 52,
     "width": 700,
     "tabOrder": 0
   },
@@ -32,10 +32,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Source : compteurs de Paris, Open-Meteo, 2023-2025",
+                    "value": "Le confirme-t-on sur 3 ans de trafic vélo ?",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "12pt",
+                      "fontSize": "13pt",
                       "color": "#A9B6CE"
                     }
                   }

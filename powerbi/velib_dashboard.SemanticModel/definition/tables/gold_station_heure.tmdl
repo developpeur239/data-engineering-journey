@@ -3,6 +3,7 @@ table gold_station_heure
 
 	measure 'Nb stations' = DISTINCTCOUNT(gold_station_heure[station_id])
 		formatString: #,0
+		isHidden
 		displayFolder: Indicateurs
 		lineageTag: 9e80284e-3e92-5b73-b63b-d9ed34a2bcc7
 
@@ -18,6 +19,7 @@ table gold_station_heure
 
 	measure 'Dernière heure' = MAX(gold_station_heure[heure_paris])
 		formatString: dd/MM HH:mm
+		isHidden
 		displayFolder: Indicateurs
 		lineageTag: 333d815a-9f9f-5ce5-a774-90db5d090deb
 
@@ -26,7 +28,7 @@ table gold_station_heure
 		displayFolder: Pannes
 		lineageTag: 07c419cd-116b-5eec-94c9-a86f31f4ed2a
 
-	measure 'Taux pénurie sans panne' = CALCULATE([Taux pénurie], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+	measure 'Taux pénurie sans panne' = CALCULATE([Taux pénurie], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
 		formatString: 0.0%
 		displayFolder: Pannes
 		lineageTag: b6a20b2b-bd87-53fa-bdbb-1a6eeccf8af9
@@ -36,25 +38,33 @@ table gold_station_heure
 		displayFolder: Pannes
 		lineageTag: eb2444eb-2d96-5a1d-93f8-4413c0bbe944
 
-	measure 'Taux saturation sans panne' = CALCULATE([Taux saturation], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+	measure 'Taux saturation sans panne' = CALCULATE([Taux saturation], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
 		formatString: 0.0%
 		displayFolder: Pannes
 		lineageTag: 72b93763-8b22-5c59-a869-56d75ff382c6
 
 	measure 'Écart pénurie (pts)' = ([Taux pénurie avec panne] - [Taux pénurie sans panne]) * 100
 		formatString: "+0.0"" pts"";-0.0"" pts"";0.0"" pts"""
+		isHidden
 		displayFolder: Pannes
 		lineageTag: fb244750-7e99-504f-a533-f57058c398ed
 
 	measure 'Écart saturation (pts)' = ([Taux saturation avec panne] - [Taux saturation sans panne]) * 100
 		formatString: "+0.0"" pts"";-0.0"" pts"";0.0"" pts"""
+		isHidden
 		displayFolder: Pannes
 		lineageTag: 1909b31c-bde2-5d1b-b08f-63cf160992c2
 
-	measure 'Part heures avec panne ferrée' = DIVIDE(CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE()), CALCULATE(COUNTROWS(gold_station_heure), REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE()))
+	measure 'Part heures avec panne ferrée' = DIVIDE(CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE()), CALCULATE(COUNTROWS(gold_station_heure), REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE()))
 		formatString: 0.0%
+		isHidden
 		displayFolder: Pannes
 		lineageTag: f06b3904-6a34-52d1-b86b-0bd718dcc294
+
+	measure 'Heures avec panne observées' = CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE())
+		formatString: #,0
+		displayFolder: Pannes
+		lineageTag: b45c9644-5bb5-56b2-80d8-32a6680d5254
 
 	measure n_service = SUM(gold_station_heure[nb_releves_en_service])
 		formatString: #,0
@@ -169,13 +179,81 @@ table gold_station_heure
 			    "@p", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = TRUE()),
 			    "@s", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = FALSE()))
 			VAR comparables = FILTER(t, NOT ISBLANK([@p]) && NOT ISBLANK([@s]))
-			VAR total = COUNTROWS(comparables)
-			VAR plus = COUNTROWS(FILTER(comparables, [@p] > [@s]))
+			VAR total = COUNTROWS(comparables) + 0
+			VAR n_plus = COUNTROWS(FILTER(comparables, [@p] > [@s])) + 0
+			VAR n_moins = COUNTROWS(FILTER(comparables, [@p] < [@s])) + 0
+			VAR sens = IF(n_plus > n_moins, "plus haute", "plus basse")
+			VAR n = IF(n_plus > n_moins, n_plus, n_moins)
 			RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
-			    "Sous la pluie, la pénurie est plus haute à " & FORMAT(plus, "#,##0", "fr-FR") & " heures sur " & FORMAT(total, "#,##0", "fr-FR"))
+			    IF(n_plus = n_moins, "Sous la pluie, la pénurie est aussi souvent plus haute que plus basse (" & FORMAT(n_plus, "0", "fr-FR") & " heures de chaque, sur " & FORMAT(total, "0", "fr-FR") & ")",
+			    "Sous la pluie, la pénurie est " & sens & " à " & FORMAT(n, "0", "fr-FR") & " heures sur " & FORMAT(total, "0", "fr-FR")))
 		isHidden
 		displayFolder: Titres
 		lineageTag: c2d3efac-d072-5d54-b84d-288d5cabded4
+
+	measure 'Sous-titre page vue d'ensemble' =
+			VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
+			VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+			RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+		isHidden
+		displayFolder: Titres
+		lineageTag: 67de2dce-b82c-5c4a-9d27-0f1c6ae22178
+
+	measure 'Mise à jour des données' =
+			VAR d = MAX(gold_station_heure[heure_paris])
+			RETURN IF(ISBLANK(d), "Aucune donnée", "Données à jour au " & FORMAT(d, "dd/MM HH:mm", "fr-FR") & " (heure de Paris)")
+		isHidden
+		displayFolder: Titres
+		lineageTag: 40f71011-93d5-5ef9-8375-2f37636651f2
+
+	measure 'Sous-titre heatmap' =
+			VAR a = MIN(gold_station_heure[date_paris])
+			VAR b = MAX(gold_station_heure[date_paris])
+			VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+			RETURN IF(ISBLANK(a), "Part des relevés où la station est vide, par heure et jour de la semaine",
+			    "Du " & FORMAT(a, "dd/MM/yyyy", "fr-FR") & " au " & FORMAT(b, "dd/MM/yyyy", "fr-FR") & " · " & FORMAT(r, "#,##0", "fr-FR") & " relevés")
+		isHidden
+		displayFolder: Titres
+		lineageTag: 43d740b5-c718-5f6b-9eae-c626da2734a5
+
+	measure 'Sous-titre rythme' =
+			VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+			RETURN "Part des relevés vides ou pleins, par heure de la journée · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+		isHidden
+		displayFolder: Titres
+		lineageTag: a855cb4c-c9a9-5db9-9b27-ad1c511c2cc4
+
+	measure 'Sous-titre carte' =
+			VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
+			RETURN "Un cercle = une station (" & FORMAT(s, "#,##0", "fr-FR") & ") : taille = capacité, couleur = temps passé vide"
+		isHidden
+		displayFolder: Titres
+		lineageTag: fdd319b0-a4b6-5c80-b809-4a4a22c69446
+
+	measure 'Sous-titre pannes' =
+			VAR n = [Heures avec panne observées] + 0
+			RETURN "Temps passé vide et plein, sans puis avec panne · sur " & FORMAT(n, "#,##0", "fr-FR") & " heures avec panne"
+		isHidden
+		displayFolder: Titres
+		lineageTag: 972a5ae0-59ef-50d6-8c00-3db71c19c4d9
+
+	measure 'Sous-titre pluie' =
+			VAR n = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = TRUE()) + 0
+			VAR a = CALCULATE(MIN(gold_station_heure[date_paris]), gold_station_heure[il_pleut] = TRUE())
+			VAR b = CALCULATE(MAX(gold_station_heure[date_paris]), gold_station_heure[il_pleut] = TRUE())
+			RETURN IF(n = 0, "Aucune heure de pluie observée sur la sélection",
+			    FORMAT(n, "#,##0", "fr-FR") & " heures de pluie observées du " & FORMAT(a, "dd/MM", "fr-FR") & " au " & FORMAT(b, "dd/MM", "fr-FR"))
+		isHidden
+		displayFolder: Titres
+		lineageTag: b86753bd-2bd6-51c9-b24c-36fd2d05e294
+
+	measure 'Sous-titre courbes' =
+			VAR n = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = TRUE()) + 0
+			VAR m = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = FALSE()) + 0
+			RETURN "Temps passé vide par heure de la journée · " & FORMAT(n, "#,##0", "fr-FR") & " heures de pluie, " & FORMAT(m, "#,##0", "fr-FR") & " sans pluie"
+		isHidden
+		displayFolder: Titres
+		lineageTag: 37ab83b2-49aa-5815-9445-54f89ef68e30
 
 	column station_id
 		dataType: string
@@ -496,6 +574,14 @@ table gold_station_heure
 		dataType: string
 		isDataTypeInferred
 		lineageTag: 8d6de83d-9bf0-542f-a766-4279be26d9f7
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column panne_imprevue_libelle = IF(gold_station_heure[panne_ferree_imprevue_300m] = TRUE(), "Oui", "Non")
+		dataType: string
+		isDataTypeInferred
+		lineageTag: e8d753b0-b9ea-5167-807f-935e0392ccbd
 		summarizeBy: none
 
 		annotation SummarizationSetBy = User

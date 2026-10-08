@@ -40,6 +40,8 @@ CALCULEES = [
     ("jour_nom", "string", None, 'SWITCH(gold_station_heure[jour_semaine_ordre], 1, "lundi", 2, "mardi", 3, "mercredi", 4, "jeudi", 5, "vendredi", 6, "samedi", 7, "dimanche")'),
     ("periode", "string", None, 'IF(gold_station_heure[heure_de_pointe] = TRUE(), "Heure de pointe", "Hors pointe")'),
     ("pluie_libelle", "string", None, 'IF(gold_station_heure[il_pleut] = TRUE(), "Pluie", "Sans pluie")'),
+    # libellés Oui / Non du segment « Panne imprévue » (la colonne booléenne affiche True / False)
+    ("panne_imprevue_libelle", "string", None, 'IF(gold_station_heure[panne_ferree_imprevue_300m] = TRUE(), "Oui", "Non")'),
 ]
 
 PARAMETRES = [
@@ -59,10 +61,10 @@ def col(nom):
 
 MESURES = [
     # (nom, DAX, format, dossier, masquée)
-    ("Nb stations", f"DISTINCTCOUNT({col('station_id')})", "#,0", "Indicateurs", False),
+    ("Nb stations", f"DISTINCTCOUNT({col('station_id')})", "#,0", "Indicateurs", True),
     ("Taux pénurie", f"DIVIDE(SUM({col('nb_releves_penurie')}), SUM({col('nb_releves_en_service')}))", "0.0%", "Indicateurs", False),
     ("Taux saturation", f"DIVIDE(SUM({col('nb_releves_saturation')}), SUM({col('nb_releves_en_service')}))", "0.0%", "Indicateurs", False),
-    ("Dernière heure", f"MAX({col('heure_paris')})", "dd/MM HH:mm", "Indicateurs", False),
+    ("Dernière heure", f"MAX({col('heure_paris')})", "dd/MM HH:mm", "Indicateurs", True),
 ]
 for ind in ("pénurie", "saturation"):
     base = f"[Taux {ind}]"
@@ -70,15 +72,19 @@ for ind in ("pénurie", "saturation"):
                     f"CALCULATE({base}, {col('station_proche_ferre_300m')} = TRUE(), {col('panne_ferree_300m')} = TRUE())",
                     "0.0%", "Pannes", False))
     MESURES.append((f"Taux {ind} sans panne",
-                    f"CALCULATE({base}, REMOVEFILTERS({col('panne_ferree_imprevue_300m')}), "
+                    f"CALCULATE({base}, REMOVEFILTERS({col('panne_ferree_imprevue_300m')}, {col('panne_imprevue_libelle')}), "
                     f"{col('station_proche_ferre_300m')} = TRUE(), {col('panne_ferree_300m')} = FALSE())",
                     "0.0%", "Pannes", False))
 for ind in ("pénurie", "saturation"):
-    MESURES.append((f"Écart {ind} (pts)", f"([Taux {ind} avec panne] - [Taux {ind} sans panne]) * 100", FORMAT_PTS, "Pannes", False))
+    MESURES.append((f"Écart {ind} (pts)", f"([Taux {ind} avec panne] - [Taux {ind} sans panne]) * 100", FORMAT_PTS, "Pannes", True))
 MESURES.append(("Part heures avec panne ferrée",
                 f"DIVIDE(CALCULATE(COUNTROWS({T}), {col('station_proche_ferre_300m')} = TRUE(), {col('panne_ferree_300m')} = TRUE()), "
-                f"CALCULATE(COUNTROWS({T}), REMOVEFILTERS({col('panne_ferree_imprevue_300m')}), {col('station_proche_ferre_300m')} = TRUE()))",
-                "0.0%", "Pannes", False))
+                f"CALCULATE(COUNTROWS({T}), REMOVEFILTERS({col('panne_ferree_imprevue_300m')}, {col('panne_imprevue_libelle')}), {col('station_proche_ferre_300m')} = TRUE()))",
+                "0.0%", "Pannes", True))
+# nombre de couples station × heure avec panne ferrée à moins de 300 m (respecte les filtres, dont « Panne imprévue »)
+MESURES.append(("Heures avec panne observées",
+                f"CALCULATE(COUNTROWS({T}), {col('station_proche_ferre_300m')} = TRUE(), {col('panne_ferree_300m')} = TRUE())",
+                "#,0", "Pannes", False))
 # mesures d'appui pour les visuels Deneb (Deneb calcule les taux lui-même à partir de ces sommes)
 MESURES += [
     ("n_service", f"SUM({col('nb_releves_en_service')})", "#,0", "Appui Deneb", True),
@@ -128,14 +134,49 @@ VAR froid = CALCULATE([Taux pénurie], {col('temperature_c')} < seuil)
 RETURN IF(ISBLANK(seuil) || ISBLANK(chaud) || ISBLANK(froid), "La pénurie varie-t-elle avec la température ?",
     "Au-dessus de " & FORMAT(seuil, "0.0", "fr-FR") & " °C, la pénurie est de " & FORMAT(chaud, "0.0%", "fr-FR")
     & " contre " & FORMAT(froid, "0.0%", "fr-FR") & " en dessous")"""),
+    # n_plus / n_moins : COUNTROWS d'une table vide vaut BLANK, que FORMAT affiche comme un texte vide ; on ajoute 0
     ("Titre courbes", f"""VAR t = ADDCOLUMNS(VALUES({col('heure_du_jour')}),
     "@p", CALCULATE([Taux pénurie], {col('il_pleut')} = TRUE()),
     "@s", CALCULATE([Taux pénurie], {col('il_pleut')} = FALSE()))
 VAR comparables = FILTER(t, NOT ISBLANK([@p]) && NOT ISBLANK([@s]))
-VAR total = COUNTROWS(comparables)
-VAR plus = COUNTROWS(FILTER(comparables, [@p] > [@s]))
+VAR total = COUNTROWS(comparables) + 0
+VAR n_plus = COUNTROWS(FILTER(comparables, [@p] > [@s])) + 0
+VAR n_moins = COUNTROWS(FILTER(comparables, [@p] < [@s])) + 0
+VAR sens = IF(n_plus > n_moins, "plus haute", "plus basse")
+VAR n = IF(n_plus > n_moins, n_plus, n_moins)
 RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
-    "Sous la pluie, la pénurie est plus haute à " & FORMAT(plus, "#,##0", "fr-FR") & " heures sur " & FORMAT(total, "#,##0", "fr-FR"))"""),
+    IF(n_plus = n_moins, "Sous la pluie, la pénurie est aussi souvent plus haute que plus basse (" & FORMAT(n_plus, "0", "fr-FR") & " heures de chaque, sur " & FORMAT(total, "0", "fr-FR") & ")",
+    "Sous la pluie, la pénurie est " & sens & " à " & FORMAT(n, "0", "fr-FR") & " heures sur " & FORMAT(total, "0", "fr-FR")))"""),
+    # sous-titres dynamiques (période couverte, nombre d'observations) : liés au sous-titre du visuel
+    ("Sous-titre page vue d'ensemble", f"""VAR s = DISTINCTCOUNT({col('station_id')}) + 0
+VAR r = SUM({col('nb_releves_en_service')}) + 0
+RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+"""),
+    ("Mise à jour des données", f"""VAR d = MAX({col('heure_paris')})
+RETURN IF(ISBLANK(d), "Aucune donnée", "Données à jour au " & FORMAT(d, "dd/MM HH:mm", "fr-FR") & " (heure de Paris)")"""),
+    ("Sous-titre heatmap", f"""VAR a = MIN({col('date_paris')})
+VAR b = MAX({col('date_paris')})
+VAR r = SUM({col('nb_releves_en_service')}) + 0
+RETURN IF(ISBLANK(a), "Part des relevés où la station est vide, par heure et jour de la semaine",
+    "Du " & FORMAT(a, "dd/MM/yyyy", "fr-FR") & " au " & FORMAT(b, "dd/MM/yyyy", "fr-FR") & " · " & FORMAT(r, "#,##0", "fr-FR") & " relevés")"""),
+    ("Sous-titre rythme", f"""VAR r = SUM({col('nb_releves_en_service')}) + 0
+RETURN "Part des relevés vides ou pleins, par heure de la journée · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+"""),
+    ("Sous-titre carte", f"""VAR s = DISTINCTCOUNT({col('station_id')}) + 0
+RETURN "Un cercle = une station (" & FORMAT(s, "#,##0", "fr-FR") & ") : taille = capacité, couleur = temps passé vide"
+"""),
+    ("Sous-titre pannes", f"""VAR n = [Heures avec panne observées] + 0
+RETURN "Temps passé vide et plein, sans puis avec panne · sur " & FORMAT(n, "#,##0", "fr-FR") & " heures avec panne"
+"""),
+    ("Sous-titre pluie", f"""VAR n = CALCULATE(DISTINCTCOUNT({col('heure_paris')}), {col('il_pleut')} = TRUE()) + 0
+VAR a = CALCULATE(MIN({col('date_paris')}), {col('il_pleut')} = TRUE())
+VAR b = CALCULATE(MAX({col('date_paris')}), {col('il_pleut')} = TRUE())
+RETURN IF(n = 0, "Aucune heure de pluie observée sur la sélection",
+    FORMAT(n, "#,##0", "fr-FR") & " heures de pluie observées du " & FORMAT(a, "dd/MM", "fr-FR") & " au " & FORMAT(b, "dd/MM", "fr-FR"))"""),
+    ("Sous-titre courbes", f"""VAR n = CALCULATE(DISTINCTCOUNT({col('heure_paris')}), {col('il_pleut')} = TRUE()) + 0
+VAR m = CALCULATE(DISTINCTCOUNT({col('heure_paris')}), {col('il_pleut')} = FALSE()) + 0
+RETURN "Temps passé vide par heure de la journée · " & FORMAT(n, "#,##0", "fr-FR") & " heures de pluie, " & FORMAT(m, "#,##0", "fr-FR") & " sans pluie"
+"""),
 ]
 for nom, dax in TITRES:
     MESURES.append((nom, dax, None, "Titres", True))

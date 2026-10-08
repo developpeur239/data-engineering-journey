@@ -23,6 +23,7 @@ table gold_velo_meteo_heure
 
 	measure 'Heures étudiées' = COUNTROWS(gold_velo_meteo_heure)
 		formatString: #,0
+		isHidden
 		displayFolder: Météo 3 ans
 		lineageTag: 73dbd108-db92-5de0-ac16-848672cfe6ec
 
@@ -33,6 +34,7 @@ table gold_velo_meteo_heure
 
 	measure 'Part des heures de pluie (%)' = DIVIDE([Heures de pluie], [Heures étudiées])
 		formatString: 0.0%
+		isHidden
 		displayFolder: Météo 3 ans
 		lineageTag: 6716dbd6-78d0-57d8-89c9-d8d9f879f864
 
@@ -121,6 +123,35 @@ table gold_velo_meteo_heure
 		isHidden
 		displayFolder: Météo 3 ans
 		lineageTag: 1d9f1e5a-e30b-5545-9560-de4d09292adb
+
+	measure 'Sous-titre page météo 3 ans' =
+			VAR n = [Heures étudiées] + 0
+			VAR p = [Part des heures de pluie (%)]
+			RETURN "Compteurs vélo de Paris et Open-Meteo, 2023-2025 · " & FORMAT(n, "#,##0", "fr-FR") & " heures dont " & FORMAT(p, "0.0%", "fr-FR") & " de pluie"
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: 7ca392a8-2cf9-580e-8c77-faae4abe4717
+
+	measure 'Sous-titre météo effet' =
+			VAR n = [Heures de pluie] + 0
+			RETURN FORMAT(n, "#,##0", "fr-FR") & " heures de pluie, comparées à des heures sèches comparables"
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: ece77f18-4342-55d4-85d9-67ac2dd8edd3
+
+	measure 'Sous-titre météo classes' =
+			VAR n = [Heures pointe temps sec] + 0
+			RETURN "Passages par compteur en pointe, sans pluie · " & FORMAT(n, "#,##0", "fr-FR") & " heures"
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: c3588bda-e8c8-5db3-af41-aac0a84febb4
+
+	measure 'Sous-titre météo profil' =
+			VAR n = CALCULATE([Heures étudiées], gold_velo_meteo_heure[type_jour] = "semaine") + 0
+			RETURN "Passages par compteur, en semaine · " & FORMAT(n, "#,##0", "fr-FR") & " heures"
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: 58ee3c31-a2b0-5f00-8f7d-e869910982fb
 
 	column heure_utc
 		dataType: dateTime

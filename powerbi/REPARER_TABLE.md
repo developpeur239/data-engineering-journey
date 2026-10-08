@@ -28,6 +28,8 @@ jour_nom = SWITCH(gold_station_heure[jour_semaine_ordre], 1, "lundi", 2, "mardi"
 periode = IF(gold_station_heure[heure_de_pointe] = TRUE(), "Heure de pointe", "Hors pointe")
 
 pluie_libelle = IF(gold_station_heure[il_pleut] = TRUE(), "Pluie", "Sans pluie")
+
+panne_imprevue_libelle = IF(gold_station_heure[panne_ferree_imprevue_300m] = TRUE(), "Oui", "Non")
 ```
 
 Ensuite :
@@ -42,7 +44,7 @@ Pour chaque mesure : clic droit sur la table dans le volet *Données* → **Nouv
 
 Si **seule** `seuil_temperature` manque, ne recréez que celle-là. Sinon, créez les mesures dans cet ordre (les dernières utilisent les premières).
 
-### `Nb stations`
+### `Nb stations`  (masquée)
 
 Format : `#,0`
 
@@ -69,7 +71,7 @@ Taux saturation =
 DIVIDE(SUM(gold_station_heure[nb_releves_saturation]), SUM(gold_station_heure[nb_releves_en_service]))
 ```
 
-### `Dernière heure`
+### `Dernière heure`  (masquée)
 
 Format : `dd/MM HH:mm`
 
@@ -93,7 +95,7 @@ Format : `0.0%`
 
 ```dax
 Taux pénurie sans panne =
-CALCULATE([Taux pénurie], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+CALCULATE([Taux pénurie], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
 ```
 
 ### `Taux saturation avec panne`
@@ -111,10 +113,10 @@ Format : `0.0%`
 
 ```dax
 Taux saturation sans panne =
-CALCULATE([Taux saturation], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
+CALCULATE([Taux saturation], REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = FALSE())
 ```
 
-### `Écart pénurie (pts)`
+### `Écart pénurie (pts)`  (masquée)
 
 Format : `"+0.0"" pts"";-0.0"" pts"";0.0"" pts"""`
 
@@ -123,7 +125,7 @@ Format : `"+0.0"" pts"";-0.0"" pts"";0.0"" pts"""`
 ([Taux pénurie avec panne] - [Taux pénurie sans panne]) * 100
 ```
 
-### `Écart saturation (pts)`
+### `Écart saturation (pts)`  (masquée)
 
 Format : `"+0.0"" pts"";-0.0"" pts"";0.0"" pts"""`
 
@@ -132,13 +134,22 @@ Format : `"+0.0"" pts"";-0.0"" pts"";0.0"" pts"""`
 ([Taux saturation avec panne] - [Taux saturation sans panne]) * 100
 ```
 
-### `Part heures avec panne ferrée`
+### `Part heures avec panne ferrée`  (masquée)
 
 Format : `0.0%`
 
 ```dax
 Part heures avec panne ferrée =
-DIVIDE(CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE()), CALCULATE(COUNTROWS(gold_station_heure), REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m]), gold_station_heure[station_proche_ferre_300m] = TRUE()))
+DIVIDE(CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE()), CALCULATE(COUNTROWS(gold_station_heure), REMOVEFILTERS(gold_station_heure[panne_ferree_imprevue_300m], gold_station_heure[panne_imprevue_libelle]), gold_station_heure[station_proche_ferre_300m] = TRUE()))
+```
+
+### `Heures avec panne observées`
+
+Format : `#,0`
+
+```dax
+Heures avec panne observées =
+CALCULATE(COUNTROWS(gold_station_heure), gold_station_heure[station_proche_ferre_300m] = TRUE(), gold_station_heure[panne_ferree_300m] = TRUE())
 ```
 
 ### `n_service`  (masquée)
@@ -301,10 +312,107 @@ VAR t = ADDCOLUMNS(VALUES(gold_station_heure[heure_du_jour]),
     "@p", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = TRUE()),
     "@s", CALCULATE([Taux pénurie], gold_station_heure[il_pleut] = FALSE()))
 VAR comparables = FILTER(t, NOT ISBLANK([@p]) && NOT ISBLANK([@s]))
-VAR total = COUNTROWS(comparables)
-VAR plus = COUNTROWS(FILTER(comparables, [@p] > [@s]))
+VAR total = COUNTROWS(comparables) + 0
+VAR n_plus = COUNTROWS(FILTER(comparables, [@p] > [@s])) + 0
+VAR n_moins = COUNTROWS(FILTER(comparables, [@p] < [@s])) + 0
+VAR sens = IF(n_plus > n_moins, "plus haute", "plus basse")
+VAR n = IF(n_plus > n_moins, n_plus, n_moins)
 RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
-    "Sous la pluie, la pénurie est plus haute à " & FORMAT(plus, "#,##0", "fr-FR") & " heures sur " & FORMAT(total, "#,##0", "fr-FR"))
+    IF(n_plus = n_moins, "Sous la pluie, la pénurie est aussi souvent plus haute que plus basse (" & FORMAT(n_plus, "0", "fr-FR") & " heures de chaque, sur " & FORMAT(total, "0", "fr-FR") & ")",
+    "Sous la pluie, la pénurie est " & sens & " à " & FORMAT(n, "0", "fr-FR") & " heures sur " & FORMAT(total, "0", "fr-FR")))
+```
+
+### `Sous-titre page vue d'ensemble`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre page vue d'ensemble =
+VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
+VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+RETURN FORMAT(s, "#,##0", "fr-FR") & " stations suivies · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+
+```
+
+### `Mise à jour des données`  (masquée)
+
+Format : `Général`
+
+```dax
+Mise à jour des données =
+VAR d = MAX(gold_station_heure[heure_paris])
+RETURN IF(ISBLANK(d), "Aucune donnée", "Données à jour au " & FORMAT(d, "dd/MM HH:mm", "fr-FR") & " (heure de Paris)")
+```
+
+### `Sous-titre heatmap`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre heatmap =
+VAR a = MIN(gold_station_heure[date_paris])
+VAR b = MAX(gold_station_heure[date_paris])
+VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+RETURN IF(ISBLANK(a), "Part des relevés où la station est vide, par heure et jour de la semaine",
+    "Du " & FORMAT(a, "dd/MM/yyyy", "fr-FR") & " au " & FORMAT(b, "dd/MM/yyyy", "fr-FR") & " · " & FORMAT(r, "#,##0", "fr-FR") & " relevés")
+```
+
+### `Sous-titre rythme`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre rythme =
+VAR r = SUM(gold_station_heure[nb_releves_en_service]) + 0
+RETURN "Part des relevés vides ou pleins, par heure de la journée · " & FORMAT(r, "#,##0", "fr-FR") & " relevés"
+
+```
+
+### `Sous-titre carte`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre carte =
+VAR s = DISTINCTCOUNT(gold_station_heure[station_id]) + 0
+RETURN "Un cercle = une station (" & FORMAT(s, "#,##0", "fr-FR") & ") : taille = capacité, couleur = temps passé vide"
+
+```
+
+### `Sous-titre pannes`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre pannes =
+VAR n = [Heures avec panne observées] + 0
+RETURN "Temps passé vide et plein, sans puis avec panne · sur " & FORMAT(n, "#,##0", "fr-FR") & " heures avec panne"
+
+```
+
+### `Sous-titre pluie`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre pluie =
+VAR n = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = TRUE()) + 0
+VAR a = CALCULATE(MIN(gold_station_heure[date_paris]), gold_station_heure[il_pleut] = TRUE())
+VAR b = CALCULATE(MAX(gold_station_heure[date_paris]), gold_station_heure[il_pleut] = TRUE())
+RETURN IF(n = 0, "Aucune heure de pluie observée sur la sélection",
+    FORMAT(n, "#,##0", "fr-FR") & " heures de pluie observées du " & FORMAT(a, "dd/MM", "fr-FR") & " au " & FORMAT(b, "dd/MM", "fr-FR"))
+```
+
+### `Sous-titre courbes`  (masquée)
+
+Format : `Général`
+
+```dax
+Sous-titre courbes =
+VAR n = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = TRUE()) + 0
+VAR m = CALCULATE(DISTINCTCOUNT(gold_station_heure[heure_paris]), gold_station_heure[il_pleut] = FALSE()) + 0
+RETURN "Temps passé vide par heure de la journée · " & FORMAT(n, "#,##0", "fr-FR") & " heures de pluie, " & FORMAT(m, "#,##0", "fr-FR") & " sans pluie"
+
 ```
 
 ## Étape 3. Relier à nouveau les visuels

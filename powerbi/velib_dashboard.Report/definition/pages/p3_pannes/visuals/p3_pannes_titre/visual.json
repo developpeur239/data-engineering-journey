@@ -3,9 +3,9 @@
   "name": "p3_pannes_titre",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 10,
     "z": 10,
-    "height": 56,
+    "height": 52,
     "width": 700,
     "tabOrder": 0
   },
@@ -32,10 +32,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Stations à moins de 300 m d'un arrêt de métro, RER ou tramway",
+                    "value": "Les pannes de transport l'expliquent-elles ?",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "12pt",
+                      "fontSize": "13pt",
                       "color": "#A9B6CE"
                     }
                   }

@@ -1,5 +1,5 @@
 {
-  "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux de la table gold_station_heure du modèle sémantique (specs 01 à 07) ou gold_velo_meteo_heure (specs 08 à 11) (colonnes ou mesures). Ne pas renommer les champs.",
+  "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux de la table gold_station_heure du modèle sémantique (specs 01 à 05 et 07) ou gold_velo_meteo_heure (specs 09 à 11) (colonnes ou mesures). Ne pas renommer les champs.",
   "01_heatmap_heure_jour": [
     {
       "type": "colonne",
@@ -106,28 +106,6 @@
       "nom": "Taux saturation"
     }
   ],
-  "06_meteo_nuage": [
-    {
-      "type": "colonne",
-      "nom": "heure_paris"
-    },
-    {
-      "type": "colonne",
-      "nom": "temperature_c"
-    },
-    {
-      "type": "colonne",
-      "nom": "pluie_libelle"
-    },
-    {
-      "type": "mesure",
-      "nom": "Taux pénurie"
-    },
-    {
-      "type": "mesure",
-      "nom": "seuil_temperature"
-    }
-  ],
   "07_meteo_courbes": [
     {
       "type": "colonne",
@@ -140,20 +118,6 @@
     {
       "type": "mesure",
       "nom": "Taux pénurie"
-    }
-  ],
-  "08_meteo3_halteres_periode": [
-    {
-      "type": "colonne",
-      "nom": "periode"
-    },
-    {
-      "type": "mesure",
-      "nom": "Passages sans pluie"
-    },
-    {
-      "type": "mesure",
-      "nom": "Passages avec pluie"
     }
   ],
   "09_meteo3_effet_conditions_egales": [

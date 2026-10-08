@@ -15,11 +15,10 @@ import commun as c
 import donnees_apercu as d
 import specs as sp
 
-TAILLES = {"01_heatmap_heure_jour": (608, 496), "02_rythme_journee": (608, 496), "03_carte_stations": (800, 616),
-           "04_haltere_pannes": (800, 340), "05_meteo_barres": (400, 300), "06_meteo_nuage": (816, 300),
-           "07_meteo_courbes": (816, 300), "08_meteo3_halteres_periode": (440, 244),
-           "09_meteo3_effet_conditions_egales": (440, 244), "10_meteo3_classes_temperature": (440, 244),
-           "11_meteo3_profil_horaire_semaine": (440, 244)}  # tailles des visuels dans la mise en page 1280 x 720 (voir DESIGN.md)
+TAILLES = {"01_heatmap_heure_jour": (464, 500), "02_rythme_journee": (752, 500), "03_carte_stations": (800, 600),
+           "04_haltere_pannes": (800, 340), "05_meteo_barres": (400, 296), "07_meteo_courbes": (816, 604),
+           "09_meteo3_effet_conditions_egales": (480, 500), "10_meteo3_classes_temperature": (400, 292),
+           "11_meteo3_profil_horaire_semaine": (400, 292)}  # tailles des visuels dans la mise en page 1280 x 720 (voir DESIGN.md)
 
 
 def _pc(x, n=1):
@@ -37,56 +36,50 @@ def titre_sous_titre(nom, rows):
     if nom == "01_heatmap_heure_jour":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries culminent le {c.JOURS[m['jour_semaine_ordre'] - 1]} à {m['heure_du_jour']} h",
-                "Part des relevés où la station est vide, par heure et jour de la semaine")
+                f"Du 01/10/2026 au 07/10/2026 · {_nb(sum(x['n_service'] for x in rows))} relevés")
     if nom == "02_rythme_journee":
         m = max(rows, key=lambda r: r["n_penurie"] / r["n_service"])
         return (f"Les pénuries explosent à {m['heure_du_jour']} h",
-                "Part des relevés en pénurie et en saturation, par heure de la journée")
+                f"Part des relevés vides ou pleins, par heure de la journée · {_nb(sum(x['n_service'] for x in rows))} relevés")
     if nom == "03_carte_stations":
         n = sum(1 for r in rows if r["n_penurie"] / r["n_service"] > 0.2)
         return (f"{_nb(n)} stations sur {_nb(len(rows))} sont vides plus d'un relevé sur cinq",
-                "Un cercle = une station : taille = capacité, couleur = part des relevés en pénurie")
+                f"Un cercle = une station ({_nb(len(rows))}) : taille = capacité, couleur = temps passé vide")
     if nom == "04_haltere_pannes":
         p = next(r for r in rows if r["periode"] == "Heure de pointe")
         e = (p["Taux pénurie avec panne"] - p["Taux pénurie sans panne"]) * 100
         return (f"En heure de pointe, une panne ferrée à moins de 300 m {'augmente' if e >= 0 else 'réduit'} la pénurie de {abs(e):.1f} pts".replace(".", ","),
-                "Part des relevés en pénurie et en saturation, sans puis avec panne en cours")
+                "Temps passé vide et plein, sans puis avec panne · sur 1\u202f840 heures avec panne")
     if nom == "05_meteo_barres":
         sec = next(r for r in rows if r["pluie_libelle"] == "Sans pluie")
         plu = next(r for r in rows if r["pluie_libelle"] == "Pluie")
         return (f"Sous la pluie, la pénurie passe de {_pc(sec['Taux pénurie'])} à {_pc(plu['Taux pénurie'])}",
-                "Part des relevés, selon qu'il pleut ou non")
-    if nom == "06_meteo_nuage":
-        seuil = rows[0]["seuil_temperature"]  # la même valeur que celle tracée sur le graphique
-        chaud = [r["Taux pénurie"] for r in rows if r["temperature_c"] >= seuil]
-        froid = [r["Taux pénurie"] for r in rows if r["temperature_c"] < seuil]
-        return (f"Au-dessus de {seuil:.1f} °C, la pénurie est de {_pc(sum(chaud) / len(chaud))} contre {_pc(sum(froid) / len(froid))} en dessous".replace(".", ","),
-                "Un point = une heure ; association observée, pas preuve de causalité")
-    if nom == "08_meteo3_halteres_periode":
-        p = next(x for x in rows if x["periode"] == "pointe")
-        e = p["Passages avec pluie"] / p["Passages sans pluie"] - 1
-        return (f"Aux heures de pointe, la pluie {'fait baisser' if e < 0 else 'fait monter'} les passages de {_pc(abs(e))}",
-                "Source : compteurs de Paris, Open-Meteo, 2023-2025")
+                "212 heures de pluie observées du 03/10 au 07/10")
     if nom == "09_meteo3_effet_conditions_egales":
         s = next(x for x in rows if x["type_jour"] == "semaine")["Effet pluie à conditions égales (%)"]
         w = next(x for x in rows if x["type_jour"] == "week-end")["Effet pluie à conditions égales (%)"]
         f = lambda x: ("+" if x > 0 else "-" if x < 0 else "") + _pc(abs(x))  # noqa: E731
         return (f"Sous la pluie, à conditions égales : {f(s)} en semaine, {f(w)} le week-end",
-                "Source : compteurs de Paris, Open-Meteo, 2023-2025")
+                f"{_nb(sum(x['Heures de pluie'] for x in rows))} heures de pluie, comparées à des heures sèches comparables")
     if nom == "10_meteo3_classes_temperature":
         m = max(rows, key=lambda x: x["Passages pointe temps sec"])
         return (f"Par temps sec, les passages en pointe culminent à {m['classe_temperature'][3:]} ({m['Passages pointe temps sec']:.1f} par compteur)".replace(".", ","),
-                "Pointe, hors pluie. Source : compteurs de Paris, Open-Meteo, 2023-2025")
+                f"Passages par compteur en pointe, sans pluie · {_nb(sum(x['Heures pointe temps sec'] for x in rows))} heures")
     if nom == "11_meteo3_profil_horaire_semaine":
         b = sum(1 for x in rows if x["Passages semaine avec pluie"] < x["Passages semaine sans pluie"])
         return (f"En semaine, la pluie fait baisser les passages à {b} heures sur {len(rows)}",
-                "Source : compteurs de Paris, Open-Meteo, 2023-2025")
+                f"Passages par compteur, en semaine · {_nb(18792)} heures")
     par_heure = {}
-    for r in rows:
-        par_heure.setdefault(r["heure_du_jour"], {})[r["pluie_libelle"]] = r["Taux pénurie"]
+    for r_ in rows:
+        par_heure.setdefault(r_["heure_du_jour"], {})[r_["pluie_libelle"]] = r_["Taux pénurie"]
     plus = sum(1 for v in par_heure.values() if v["Pluie"] > v["Sans pluie"])
-    return (f"Sous la pluie, la pénurie est plus haute à {plus} heures sur {len(par_heure)}",
-            "Part des relevés en pénurie par heure de la journée, avec et sans pluie")
+    moins = sum(1 for v in par_heure.values() if v["Pluie"] < v["Sans pluie"])
+    total = plus + moins + sum(1 for v in par_heure.values() if v["Pluie"] == v["Sans pluie"])
+    if plus == moins:
+        titre = f"Sous la pluie, la pénurie est aussi souvent plus haute que plus basse ({plus} heures de chaque, sur {total})"
+    else:
+        titre = f"Sous la pluie, la pénurie est {'plus haute' if plus > moins else 'plus basse'} à {max(plus, moins)} heures sur {total}"
+    return (titre, "Temps passé vide par heure de la journée · 212 heures de pluie, 1\u202f450 sans pluie")
 
 
 DONNEES = {s: getattr(d, f) for s, (_, f) in sp.SPECS.items()}
@@ -138,7 +131,7 @@ def planche():
     """Vue d'ensemble : les visuels côte à côte, pour juger l'harmonie (couleurs, typo, marges)."""
     out = c.RACINE / "apercus"
     noms = list(sp.SPECS)
-    anciens, nouveaux = noms[:7], noms[7:]
+    anciens, nouveaux = noms[:6], noms[6:]
     k = 0.5
 
     def charger(n, f=k):
@@ -147,7 +140,7 @@ def planche():
     imgs = {n: charger(n) for n in anciens}
     nov = {n: charger(n) for n in nouveaux}
     marge, entete = 24, 70
-    colonnes = [[0, 2, 4], [1, 3, 5, 6]]
+    colonnes = [[0, 2, 4], [1, 3, 5]]
     lmax = max(i.width for i in imgs.values())
     largeur = max(marge * 3 + lmax * 2, marge * 3 + max(i.width for i in nov.values()) * 2)
     hauteurs = [sum(imgs[anciens[i]].height + marge for i in col) for col in colonnes]
