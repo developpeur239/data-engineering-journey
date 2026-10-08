@@ -1,0 +1,19 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+ref table gold_station_heure
+ref table gold_velo_meteo_heure
+
+ref culture fr-FR
+
+annotation PBI_QueryOrder = ["Hote","CheminHTTP","Catalogue","gold_station_heure","gold_velo_meteo_heure"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]

@@ -1,0 +1,264 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "p3_pannes_haltere",
+  "position": {
+    "x": 24,
+    "y": 200,
+    "z": 5,
+    "height": 340,
+    "width": 800,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "periode"
+                }
+              },
+              "queryRef": "gold_station_heure.periode",
+              "nativeQueryRef": "periode"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux pénurie sans panne"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux pénurie sans panne",
+              "nativeQueryRef": "Taux pénurie sans panne"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux pénurie avec panne"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux pénurie avec panne",
+              "nativeQueryRef": "Taux pénurie avec panne"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux saturation sans panne"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux saturation sans panne",
+              "nativeQueryRef": "Taux saturation sans panne"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux saturation avec panne"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux saturation avec panne",
+              "nativeQueryRef": "Taux saturation avec panne"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"data\":{\"name\":\"dataset\"},\"padding\":{\"top\":30,\"left\":6,\"right\":90,\"bottom\":6},\"transform\":[{\"fold\":[\"Taux pénurie sans panne\",\"Taux pénurie avec panne\",\"Taux saturation sans panne\",\"Taux saturation avec panne\"],\"as\":[\"cle\",\"valeur\"]},{\"calculate\":\"indexof(datum.cle, ''pénurie'') >= 0 ? ''Pénurie'' : ''Saturation''\",\"as\":\"indicateur\"},{\"calculate\":\"indexof(datum.cle, ''sans'') >= 0 ? ''sans'' : ''avec''\",\"as\":\"etat\"},{\"pivot\":\"etat\",\"value\":\"valeur\",\"groupby\":[\"periode\",\"indicateur\"]},{\"calculate\":\"(datum.avec - datum.sans) * 100\",\"as\":\"ecart\"},{\"calculate\":\"datum.indicateur + '' · '' + datum.periode\",\"as\":\"ligne\"},{\"calculate\":\"(datum.periode === ''Heure de pointe'' ? 0 : 2) + (datum.indicateur === ''Pénurie'' ? 0 : 1)\",\"as\":\"ordre\"},{\"calculate\":\"max(datum.avec, datum.sans)\",\"as\":\"borne\"},{\"calculate\":\"(datum.ecart >= 0 ? ''+'' : ''−'') + replace(format(abs(datum.ecart), ''.1f''), ''.'', '','') + '' pts''\",\"as\":\"texte_ecart\"}],\"layer\":[{\"mark\":{\"type\":\"rule\",\"strokeWidth\":4,\"strokeCap\":\"round\",\"color\":\"#D8478A\",\"tooltip\":null},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"sans\"},\"x2\":{\"field\":\"avec\"},\"opacity\":{\"condition\":{\"param\":\"survol\",\"value\":1},\"value\":0.35}}},{\"mark\":{\"type\":\"point\",\"filled\":true,\"opacity\":1,\"size\":190,\"fill\":\"#161E2E\",\"stroke\":\"#9AA9C4\",\"strokeWidth\":3,\"tooltip\":null},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"sans\"},\"opacity\":{\"condition\":{\"param\":\"survol\",\"value\":1},\"value\":0.35}}},{\"params\":[{\"name\":\"survol\",\"select\":{\"type\":\"point\",\"on\":\"mouseover\",\"clear\":\"mouseout\",\"fields\":[\"ligne\"]}}],\"mark\":{\"type\":\"point\",\"filled\":true,\"opacity\":1,\"size\":190,\"color\":\"#D8478A\",\"stroke\":\"#161E2E\",\"strokeWidth\":2},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"avec\"},\"opacity\":{\"condition\":{\"param\":\"survol\",\"value\":1},\"value\":0.35},\"tooltip\":[{\"field\":\"ligne\",\"type\":\"nominal\",\"title\":\"Situation\"},{\"field\":\"sans\",\"type\":\"quantitative\",\"title\":\"Sans panne\",\"format\":\".1%\"},{\"field\":\"avec\",\"type\":\"quantitative\",\"title\":\"Avec panne\",\"format\":\".1%\"},{\"field\":\"texte_ecart\",\"type\":\"nominal\",\"title\":\"Écart\"}]}},{\"mark\":{\"type\":\"text\",\"align\":\"left\",\"dx\":16,\"fontSize\":14,\"fontWeight\":600,\"color\":\"#EAF0FA\",\"tooltip\":null},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"borne\"},\"text\":{\"field\":\"texte_ecart\"}}},{\"transform\":[{\"filter\":\"datum.ordre === 0\"}],\"layer\":[{\"mark\":{\"type\":\"text\",\"align\":\"center\",\"dy\":-26,\"fontSize\":11,\"color\":\"#A9B6CE\"},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"sans\"},\"text\":{\"value\":\"sans panne\"}}},{\"mark\":{\"type\":\"text\",\"align\":\"center\",\"dy\":-26,\"fontSize\":11,\"color\":\"#A9B6CE\"},\"encoding\":{\"y\":{\"field\":\"ligne\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":true,\"gridDash\":[2,5],\"gridOpacity\":0.9,\"labelFontSize\":12,\"labelColor\":\"#EAF0FA\",\"labelExpr\":\"split(datum.label, '' · '')\",\"labelLineHeight\":16,\"labelLimit\":160}},\"x\":{\"type\":\"quantitative\",\"scale\":{\"domainMin\":0,\"nice\":true,\"zero\":true},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":5,\"grid\":true},\"field\":\"avec\"},\"text\":{\"value\":\"avec panne\"}}}]}]}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"background\":\"transparent\",\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"padding\":{\"left\":6,\"right\":14,\"top\":6,\"bottom\":6},\"view\":{\"stroke\":null},\"axis\":{\"domain\":false,\"ticks\":false,\"grid\":true,\"gridColor\":\"#2B3750\",\"gridWidth\":1,\"gridOpacity\":0.6,\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":11,\"labelColor\":\"#A9B6CE\",\"labelPadding\":8,\"labelFontWeight\":\"normal\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"titlePadding\":10},\"axisX\":{\"grid\":false},\"legend\":{\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":12,\"labelColor\":\"#A9B6CE\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"symbolType\":\"circle\",\"symbolSize\":90,\"padding\":0,\"offset\":8,\"orient\":\"top-left\"},\"text\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#A9B6CE\"},\"mark\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\"},\"title\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#EAF0FA\",\"fontSize\":16,\"fontWeight\":600,\"anchor\":\"start\",\"subtitleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"subtitleColor\":\"#A9B6CE\",\"subtitleFontSize\":12},\"range\":{\"category\":[\"#E26828\",\"#2A9FD0\",\"#D8478A\",\"#7F6AE6\",\"#9AA9C4\"],\"ramp\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"],\"heatmap\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"]},\"customFormatTypes\":true}'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "locale": {
+              "expr": {
+                "Literal": {
+                  "Value": "'fr-FR'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataLimit": [
+        {
+          "properties": {
+            "override": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "supportFieldConfiguration": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Titre pannes"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Part des relevés en pénurie et en saturation, sans puis avec panne en cours'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Haltères : taux de pénurie et de saturation sans panne puis avec panne, en heure de pointe et hors pointe'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

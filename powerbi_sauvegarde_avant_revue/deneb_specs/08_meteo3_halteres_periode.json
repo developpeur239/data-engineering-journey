@@ -1,0 +1,410 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 26,
+    "left": 6,
+    "right": 124,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "calculate": "datum['Passages avec pluie'] / datum['Passages sans pluie'] - 1",
+      "as": "ecart"
+    },
+    {
+      "calculate": "upper(slice(datum.periode, 0, 1)) + slice(datum.periode, 1)",
+      "as": "libelle"
+    },
+    {
+      "calculate": "indexof(['pointe', 'journée', 'nuit'], datum.periode)",
+      "as": "ordre"
+    },
+    {
+      "calculate": "max(datum['Passages avec pluie'], datum['Passages sans pluie'])",
+      "as": "borne"
+    },
+    {
+      "calculate": "(datum.ecart >= 0 ? '+' : '−') + replace(format(abs(datum.ecart) * 100, '.1f'), '.', ',') + ' %'",
+      "as": "texte_ecart"
+    },
+    {
+      "calculate": "replace(format(datum['Passages sans pluie'], '.1f'), '.', ',') + ' → ' + replace(format(datum['Passages avec pluie'], '.1f'), '.', ',')",
+      "as": "texte_valeurs"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 4,
+        "strokeCap": "round",
+        "color": "#7F6AE6",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0f",
+            "title": "passages par compteur et par heure",
+            "tickCount": 4,
+            "grid": true
+          },
+          "field": "Passages sans pluie"
+        },
+        "x2": {
+          "field": "Passages avec pluie"
+        }
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "periode"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "opacity": 1,
+        "size": 170,
+        "fill": "#161E2E",
+        "stroke": "#9AA9C4",
+        "strokeWidth": 3,
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0f",
+            "title": "passages par compteur et par heure",
+            "tickCount": 4,
+            "grid": true
+          },
+          "field": "Passages sans pluie"
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.4
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "opacity": 1,
+        "size": 170,
+        "color": "#7F6AE6",
+        "stroke": "#161E2E",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0,
+            "zero": true
+          },
+          "axis": {
+            "format": ".0f",
+            "title": "passages par compteur et par heure",
+            "tickCount": 4,
+            "grid": true
+          },
+          "field": "Passages avec pluie"
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.4
+        },
+        "tooltip": [
+          {
+            "field": "libelle",
+            "type": "nominal",
+            "title": "Période"
+          },
+          {
+            "field": "Passages sans pluie",
+            "type": "quantitative",
+            "title": "Sans pluie",
+            "format": ".1f"
+          },
+          {
+            "field": "Passages avec pluie",
+            "type": "quantitative",
+            "title": "Avec pluie",
+            "format": ".1f"
+          },
+          {
+            "field": "texte_ecart",
+            "type": "nominal",
+            "title": "Écart"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 24,
+        "dy": -7,
+        "fontSize": 12,
+        "color": "#A9B6CE",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "value": {
+            "expr": "width"
+          }
+        },
+        "text": {
+          "field": "texte_valeurs"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 24,
+        "dy": 8,
+        "fontSize": 13,
+        "fontWeight": 600,
+        "color": "#EAF0FA",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": true,
+            "gridDash": [
+              2,
+              5
+            ],
+            "gridOpacity": 0.9,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA"
+          }
+        },
+        "x": {
+          "value": {
+            "expr": "width"
+          }
+        },
+        "text": {
+          "field": "texte_ecart"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.ordre === 0"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 4,
+            "dy": -22,
+            "fontSize": 11,
+            "color": "#A9B6CE"
+          },
+          "encoding": {
+            "y": {
+              "field": "libelle",
+              "type": "nominal",
+              "sort": {
+                "field": "ordre"
+              },
+              "axis": {
+                "title": null,
+                "grid": true,
+                "gridDash": [
+                  2,
+                  5
+                ],
+                "gridOpacity": 0.9,
+                "labelFontSize": 13,
+                "labelColor": "#EAF0FA"
+              }
+            },
+            "x": {
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0,
+                "zero": true
+              },
+              "axis": {
+                "format": ".0f",
+                "title": "passages par compteur et par heure",
+                "tickCount": 4,
+                "grid": true
+              },
+              "field": "Passages sans pluie"
+            },
+            "text": {
+              "value": "sans pluie"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -4,
+            "dy": -22,
+            "fontSize": 11,
+            "color": "#A9B6CE"
+          },
+          "encoding": {
+            "y": {
+              "field": "libelle",
+              "type": "nominal",
+              "sort": {
+                "field": "ordre"
+              },
+              "axis": {
+                "title": null,
+                "grid": true,
+                "gridDash": [
+                  2,
+                  5
+                ],
+                "gridOpacity": 0.9,
+                "labelFontSize": 13,
+                "labelColor": "#EAF0FA"
+              }
+            },
+            "x": {
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0,
+                "zero": true
+              },
+              "axis": {
+                "format": ".0f",
+                "title": "passages par compteur et par heure",
+                "tickCount": 4,
+                "grid": true
+              },
+              "field": "Passages avec pluie"
+            },
+            "text": {
+              "value": "avec pluie"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

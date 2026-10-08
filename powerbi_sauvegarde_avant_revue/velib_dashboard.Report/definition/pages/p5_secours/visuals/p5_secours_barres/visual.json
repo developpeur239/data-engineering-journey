@@ -1,0 +1,126 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "p5_secours_barres",
+  "position": {
+    "x": 440,
+    "y": 396,
+    "z": 5,
+    "height": 300,
+    "width": 192,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "pluie_libelle"
+                }
+              },
+              "queryRef": "gold_station_heure.pluie_libelle",
+              "nativeQueryRef": "pluie_libelle",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux pénurie"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux pénurie",
+              "nativeQueryRef": "Taux pénurie"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_station_heure"
+                    }
+                  },
+                  "Property": "Taux saturation"
+                }
+              },
+              "queryRef": "gold_station_heure.Taux saturation",
+              "nativeQueryRef": "Taux saturation"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Pluie / sans pluie'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Équivalent natif des barres (orange = pénurie, bleu = saturation)'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Colonnes groupées avec et sans pluie'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

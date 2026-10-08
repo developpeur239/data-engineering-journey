@@ -1,0 +1,183 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 26,
+    "left": 6,
+    "right": 14,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "fold": [
+        "Taux pénurie",
+        "Taux saturation"
+      ],
+      "as": [
+        "cle",
+        "taux"
+      ]
+    },
+    {
+      "calculate": "indexof(datum.cle, 'pénurie') >= 0 ? 'Pénurie' : 'Saturation'",
+      "as": "indicateur"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "indicateur",
+      "type": "nominal",
+      "sort": [
+        "Pénurie",
+        "Saturation"
+      ],
+      "axis": {
+        "title": null,
+        "grid": false,
+        "labelFontSize": 13,
+        "labelColor": "#EAF0FA",
+        "labelAngle": 0
+      }
+    },
+    "xOffset": {
+      "field": "pluie_libelle",
+      "type": "nominal",
+      "sort": [
+        "Sans pluie",
+        "Pluie"
+      ]
+    },
+    "y": {
+      "field": "taux",
+      "type": "quantitative",
+      "scale": {
+        "domainMin": 0
+      },
+      "axis": {
+        "format": ".0%",
+        "title": null,
+        "tickCount": 4
+      }
+    }
+  },
+  "layer": [
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "pluie_libelle",
+              "indicateur"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "cornerRadiusTopLeft": 4,
+        "cornerRadiusTopRight": 4,
+        "stroke": "#161E2E",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "pluie_libelle",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Sans pluie",
+              "Pluie"
+            ],
+            "range": [
+              "#9AA9C4",
+              "#7F6AE6"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "bottom",
+            "direction": "horizontal",
+            "symbolType": "square",
+            "offset": 14
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.45
+        },
+        "tooltip": [
+          {
+            "field": "indicateur",
+            "type": "nominal",
+            "title": "Indicateur"
+          },
+          {
+            "field": "pluie_libelle",
+            "type": "nominal",
+            "title": "Météo"
+          },
+          {
+            "field": "taux",
+            "type": "quantitative",
+            "title": "Taux",
+            "format": ".1%"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -8,
+        "baseline": "bottom",
+        "fontSize": 12,
+        "fontWeight": 600,
+        "color": "#EAF0FA"
+      },
+      "encoding": {
+        "text": {
+          "field": "taux",
+          "type": "quantitative",
+          "format": ".1%"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "taux",
+              "as": "maxi"
+            }
+          ]
+        },
+        {
+          "calculate": "datum.maxi * 1.25",
+          "as": "plafond"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "opacity": 0,
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "field": "plafond",
+          "type": "quantitative"
+        }
+      }
+    }
+  ]
+}

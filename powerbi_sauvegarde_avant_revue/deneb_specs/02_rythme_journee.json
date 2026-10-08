@@ -1,0 +1,719 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 10,
+    "left": 6,
+    "right": 14,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "calculate": "datum.n_service > 0 ? datum.n_penurie / datum.n_service : null",
+      "as": "penurie"
+    },
+    {
+      "calculate": "datum.n_service > 0 ? datum.n_saturation / datum.n_service : null",
+      "as": "saturation"
+    },
+    {
+      "fold": [
+        "penurie",
+        "saturation"
+      ],
+      "as": [
+        "serie",
+        "taux"
+      ]
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {
+            "a": 7,
+            "b": 10,
+            "t": "pointe du matin"
+          },
+          {
+            "a": 17,
+            "b": 20,
+            "t": "pointe du soir"
+          }
+        ]
+      },
+      "mark": {
+        "type": "rect",
+        "color": "#1F2A40",
+        "opacity": 0.75,
+        "cornerRadius": 4
+      },
+      "encoding": {
+        "x": {
+          "field": "a",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "b"
+        },
+        "y": {
+          "value": 0
+        },
+        "y2": {
+          "value": {
+            "expr": "height"
+          }
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "m": 8.5,
+            "t": "pointe du matin"
+          },
+          {
+            "m": 18.5,
+            "t": "pointe du soir"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "baseline": "bottom",
+        "dy": -8,
+        "fontSize": 11,
+        "color": "#8D9BB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "m",
+          "type": "quantitative"
+        },
+        "y": {
+          "value": {
+            "expr": "height"
+          }
+        },
+        "text": {
+          "field": "t"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'penurie'"
+        }
+      ],
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "line": false,
+        "color": {
+          "gradient": "linear",
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "stops": [
+            {
+              "offset": 0,
+              "color": "rgba(226,104,40,0)"
+            },
+            {
+              "offset": 1,
+              "color": "rgba(226,104,40,0.38)"
+            }
+          ]
+        },
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "taux",
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          },
+          "stack": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'penurie'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 3,
+        "color": "#E26828",
+        "strokeCap": "round",
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "taux",
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          },
+          "stack": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'penurie'"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "taux",
+              "as": "pic"
+            }
+          ],
+          "groupby": [
+            "serie"
+          ]
+        },
+        {
+          "filter": "datum.taux === datum.pic"
+        },
+        {
+          "calculate": "'Pénurie · pic à ' + datum.heure_du_jour + ' h'",
+          "as": "etiquette"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "point",
+            "filled": true,
+            "opacity": 1,
+            "size": 110,
+            "color": "#E26828",
+            "stroke": "#161E2E",
+            "strokeWidth": 2,
+            "tooltip": null
+          },
+          "encoding": {
+            "x": {
+              "field": "heure_du_jour",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  23
+                ],
+                "nice": false
+              },
+              "axis": {
+                "values": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21
+                ],
+                "labelExpr": "datum.value + ' h'",
+                "title": null,
+                "grid": false
+              }
+            },
+            "y": {
+              "field": "taux",
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 4
+              }
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 12,
+            "dy": -4,
+            "fontSize": 12,
+            "color": "#EAF0FA",
+            "fontWeight": 600
+          },
+          "encoding": {
+            "x": {
+              "field": "heure_du_jour",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  23
+                ],
+                "nice": false
+              },
+              "axis": {
+                "values": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21
+                ],
+                "labelExpr": "datum.value + ' h'",
+                "title": null,
+                "grid": false
+              }
+            },
+            "y": {
+              "field": "taux",
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 4
+              }
+            },
+            "text": {
+              "field": "etiquette"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'saturation'"
+        }
+      ],
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "line": false,
+        "color": {
+          "gradient": "linear",
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "stops": [
+            {
+              "offset": 0,
+              "color": "rgba(42,159,208,0)"
+            },
+            {
+              "offset": 1,
+              "color": "rgba(42,159,208,0.38)"
+            }
+          ]
+        },
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "taux",
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          },
+          "stack": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'saturation'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 3,
+        "color": "#2A9FD0",
+        "strokeCap": "round",
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "taux",
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          },
+          "stack": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.serie === 'saturation'"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "taux",
+              "as": "pic"
+            }
+          ],
+          "groupby": [
+            "serie"
+          ]
+        },
+        {
+          "filter": "datum.taux === datum.pic"
+        },
+        {
+          "calculate": "'Saturation · pic à ' + datum.heure_du_jour + ' h'",
+          "as": "etiquette"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "point",
+            "filled": true,
+            "opacity": 1,
+            "size": 110,
+            "color": "#2A9FD0",
+            "stroke": "#161E2E",
+            "strokeWidth": 2,
+            "tooltip": null
+          },
+          "encoding": {
+            "x": {
+              "field": "heure_du_jour",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  23
+                ],
+                "nice": false
+              },
+              "axis": {
+                "values": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21
+                ],
+                "labelExpr": "datum.value + ' h'",
+                "title": null,
+                "grid": false
+              }
+            },
+            "y": {
+              "field": "taux",
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 4
+              }
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 12,
+            "dy": -4,
+            "fontSize": 12,
+            "color": "#EAF0FA",
+            "fontWeight": 600
+          },
+          "encoding": {
+            "x": {
+              "field": "heure_du_jour",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  23
+                ],
+                "nice": false
+              },
+              "axis": {
+                "values": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21
+                ],
+                "labelExpr": "datum.value + ' h'",
+                "title": null,
+                "grid": false
+              }
+            },
+            "y": {
+              "field": "taux",
+              "type": "quantitative",
+              "scale": {
+                "domainMin": 0
+              },
+              "axis": {
+                "format": ".0%",
+                "title": null,
+                "tickCount": 4
+              }
+            },
+            "text": {
+              "field": "etiquette"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "pivot": "serie",
+          "value": "taux",
+          "groupby": [
+            "heure_du_jour"
+          ]
+        },
+        {
+          "calculate": "(datum.heure_du_jour < 10 ? '0' : '') + datum.heure_du_jour + ' h – ' + (datum.heure_du_jour + 1 < 10 ? '0' : '') + (datum.heure_du_jour + 1) + ' h'",
+          "as": "plage"
+        }
+      ],
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "fields": [
+              "heure_du_jour"
+            ],
+            "nearest": true,
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1,
+        "color": "#8D9BB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "empty": false,
+            "value": 1
+          },
+          "value": 0
+        },
+        "tooltip": [
+          {
+            "field": "plage",
+            "type": "nominal",
+            "title": "Heure (Paris)"
+          },
+          {
+            "field": "penurie",
+            "type": "quantitative",
+            "title": "Pénurie",
+            "format": ".1%"
+          },
+          {
+            "field": "saturation",
+            "type": "quantitative",
+            "title": "Saturation",
+            "format": ".1%"
+          }
+        ]
+      }
+    }
+  ]
+}

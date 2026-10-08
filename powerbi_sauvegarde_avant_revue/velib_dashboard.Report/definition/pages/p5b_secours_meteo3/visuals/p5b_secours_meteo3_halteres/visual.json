@@ -1,0 +1,166 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "p5b_secours_meteo3_halteres",
+  "position": {
+    "x": 24,
+    "y": 80,
+    "z": 5,
+    "height": 300,
+    "width": 608,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "periode"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.periode",
+              "nativeQueryRef": "periode",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Passages sans pluie"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.Passages sans pluie",
+              "nativeQueryRef": "Passages sans pluie"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Passages avec pluie"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.Passages avec pluie",
+              "nativeQueryRef": "Passages avec pluie"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Passages sans / avec pluie'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Équivalent natif des haltères'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Barres groupées des passages par compteur sans et avec pluie'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9AA9C4'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_velo_meteo_heure.Passages sans pluie"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#7F6AE6'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "gold_velo_meteo_heure.Passages avec pluie"
+          }
+        }
+      ]
+    }
+  }
+}

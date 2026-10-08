@@ -1,0 +1,336 @@
+table gold_velo_meteo_heure
+	lineageTag: 28e62fc7-830c-555c-a6f1-7273dfdae315
+
+	measure 'Passages par compteur' = AVERAGE(gold_velo_meteo_heure[passages_par_compteur])
+		formatString: 0.0
+		displayFolder: Météo 3 ans
+		lineageTag: a283da24-3fba-526a-951d-2345aef2ee9a
+
+	measure 'Passages sans pluie' = CALCULATE([Passages par compteur], gold_velo_meteo_heure[il_pleut] = FALSE())
+		formatString: 0.0
+		displayFolder: Météo 3 ans
+		lineageTag: 0fa590a9-c9f6-5df6-8e1b-5eb81fc266da
+
+	measure 'Passages avec pluie' = CALCULATE([Passages par compteur], gold_velo_meteo_heure[il_pleut] = TRUE())
+		formatString: 0.0
+		displayFolder: Météo 3 ans
+		lineageTag: 008f1ba7-3303-50b3-9337-6bf8448ac756
+
+	measure 'Écart pluie brut (%)' = DIVIDE([Passages avec pluie], [Passages sans pluie]) - 1
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Météo 3 ans
+		lineageTag: c56a72ff-e258-55f4-9b6b-df28c3829610
+
+	measure 'Heures étudiées' = COUNTROWS(gold_velo_meteo_heure)
+		formatString: #,0
+		displayFolder: Météo 3 ans
+		lineageTag: 73dbd108-db92-5de0-ac16-848672cfe6ec
+
+	measure 'Heures de pluie' = CALCULATE(COUNTROWS(gold_velo_meteo_heure), gold_velo_meteo_heure[il_pleut] = TRUE())
+		formatString: #,0
+		displayFolder: Météo 3 ans
+		lineageTag: 83209310-3a9b-5809-b386-d32aa770b745
+
+	measure 'Part des heures de pluie (%)' = DIVIDE([Heures de pluie], [Heures étudiées])
+		formatString: 0.0%
+		displayFolder: Météo 3 ans
+		lineageTag: 6716dbd6-78d0-57d8-89c9-d8d9f879f864
+
+	measure 'Effet pluie à conditions égales (%)' =
+			VAR strates = SUMMARIZE(gold_velo_meteo_heure, gold_velo_meteo_heure[type_jour], gold_velo_meteo_heure[saison], gold_velo_meteo_heure[heure_du_jour])
+			VAR t = ADDCOLUMNS(strates,
+			    "@np", CALCULATE(COUNTROWS(gold_velo_meteo_heure), gold_velo_meteo_heure[il_pleut] = TRUE()),
+			    "@mp", CALCULATE([Passages par compteur], gold_velo_meteo_heure[il_pleut] = TRUE()),
+			    "@ms", CALCULATE([Passages par compteur], gold_velo_meteo_heure[il_pleut] = FALSE()))
+			VAR ok = FILTER(t, [@np] >= 5 && NOT ISBLANK([@mp]) && NOT ISBLANK([@ms]) && [@ms] <> 0)
+			RETURN DIVIDE(SUMX(ok, [@np] * ([@mp] / [@ms] - 1)), SUMX(ok, [@np]))
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Météo 3 ans
+		lineageTag: 4ab4a269-cd8e-52a5-a322-34ae17ad1152
+
+	measure 'Effet pluie semaine (%)' = CALCULATE([Effet pluie à conditions égales (%)], gold_velo_meteo_heure[type_jour] = "semaine")
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Météo 3 ans
+		lineageTag: e9bf9ebb-1dd5-5106-ad10-66893331c2ae
+
+	measure 'Effet pluie week-end (%)' = CALCULATE([Effet pluie à conditions égales (%)], gold_velo_meteo_heure[type_jour] = "week-end")
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Météo 3 ans
+		lineageTag: 45ca90c8-2287-56ce-af19-da07e3ac9b8e
+
+	measure 'Passages pointe temps sec' = CALCULATE([Passages par compteur], gold_velo_meteo_heure[periode] = "pointe", gold_velo_meteo_heure[il_pleut] = FALSE())
+		formatString: 0.0
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: f3b49bb0-fa37-5e7f-93a3-48b66d1980a1
+
+	measure 'Heures pointe temps sec' = CALCULATE(COUNTROWS(gold_velo_meteo_heure), gold_velo_meteo_heure[periode] = "pointe", gold_velo_meteo_heure[il_pleut] = FALSE())
+		formatString: #,0
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: fdbfc9b7-85ef-5823-9bd1-5c34edbff41d
+
+	measure 'Passages semaine sans pluie' = CALCULATE([Passages sans pluie], gold_velo_meteo_heure[type_jour] = "semaine")
+		formatString: 0.0
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: c179fa57-3e6f-563d-bb4c-8e535642881a
+
+	measure 'Passages semaine avec pluie' = CALCULATE([Passages avec pluie], gold_velo_meteo_heure[type_jour] = "semaine")
+		formatString: 0.0
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: f48ca344-e095-528e-83f2-9b5bd8473f45
+
+	measure 'Titre météo haltères' =
+			VAR e = CALCULATE([Écart pluie brut (%)], gold_velo_meteo_heure[periode] = "pointe")
+			RETURN IF(ISBLANK(e), "La pluie change-t-elle la fréquentation à vélo ?",
+			    "Aux heures de pointe, la pluie " & IF(e < 0, "fait baisser", "fait monter") & " les passages de " & FORMAT(ABS(e), "0.0%", "fr-FR"))
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: ba0303a2-de54-5e27-b1d9-83b0ce95165d
+
+	measure 'Titre météo effet' =
+			VAR s = [Effet pluie semaine (%)]
+			VAR w = [Effet pluie week-end (%)]
+			RETURN IF(ISBLANK(s) || ISBLANK(w), "Quel effet de la pluie, à conditions égales ?",
+			    "Sous la pluie, à conditions égales : " & FORMAT(s, "+0.0%;-0.0%;0.0%", "fr-FR") & " en semaine, "
+			    & FORMAT(w, "+0.0%;-0.0%;0.0%", "fr-FR") & " le week-end")
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: 4aa0b70b-afdf-589d-9e2c-7b3fd26c0a7b
+
+	measure 'Titre météo température' =
+			VAR t = ADDCOLUMNS(VALUES(gold_velo_meteo_heure[classe_temperature]), "@v", [Passages pointe temps sec])
+			VAR m = TOPN(1, t, [@v], DESC)
+			VAR c = MAXX(m, gold_velo_meteo_heure[classe_temperature])
+			VAR v = MAXX(m, [@v])
+			RETURN IF(ISBLANK(v), "Les passages en pointe selon la température",
+			    "Par temps sec, les passages en pointe culminent à " & MID(c, 4, LEN(c)) & " (" & FORMAT(v, "0.0", "fr-FR") & " par compteur)")
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: 0fb70b04-cc38-5d6e-8a22-ec4ef71743c2
+
+	measure 'Titre météo profil' =
+			VAR t = ADDCOLUMNS(VALUES(gold_velo_meteo_heure[heure_du_jour]), "@s", [Passages semaine sans pluie], "@a", [Passages semaine avec pluie])
+			VAR c = FILTER(t, NOT ISBLANK([@s]) && NOT ISBLANK([@a]))
+			VAR n = COUNTROWS(c)
+			VAR b = COUNTROWS(FILTER(c, [@a] < [@s]))
+			RETURN IF(n = 0, "Le profil horaire en semaine, avec et sans pluie",
+			    "En semaine, la pluie fait baisser les passages à " & FORMAT(b, "#,##0", "fr-FR") & " heures sur " & FORMAT(n, "#,##0", "fr-FR"))
+		isHidden
+		displayFolder: Météo 3 ans
+		lineageTag: 1d9f1e5a-e30b-5545-9560-de4d09292adb
+
+	column heure_utc
+		dataType: dateTime
+		formatString: dd/MM/yyyy HH:mm
+		lineageTag: efc59e90-98ce-59e7-9485-95f82225240c
+		summarizeBy: none
+		sourceColumn: heure_utc
+
+		annotation SummarizationSetBy = User
+
+	column heure_paris
+		dataType: dateTime
+		formatString: dd/MM/yyyy HH:mm
+		lineageTag: 8adf4010-0706-584d-ba44-76b4d6c6a6de
+		summarizeBy: none
+		sourceColumn: heure_paris
+
+		annotation SummarizationSetBy = User
+
+	column date_paris
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: f182982a-fe41-5820-ad95-48968004b5d0
+		summarizeBy: none
+		sourceColumn: date_paris
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = User
+
+	column heure_du_jour
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e8b032f-68f8-5b00-9da5-1e66196ce37c
+		summarizeBy: none
+		sourceColumn: heure_du_jour
+
+		annotation SummarizationSetBy = User
+
+	column mois
+		dataType: int64
+		formatString: 0
+		lineageTag: 05d98c7b-b29a-5971-a6b9-bfca5ea3c217
+		summarizeBy: none
+		sourceColumn: mois
+
+		annotation SummarizationSetBy = User
+
+	column saison
+		dataType: string
+		lineageTag: 941d7d3a-1e05-57df-8d63-8a4e55a3dc84
+		summarizeBy: none
+		sourceColumn: saison
+
+		annotation SummarizationSetBy = User
+
+	column type_jour
+		dataType: string
+		lineageTag: 131a7c6f-67be-509c-8d8b-4453400b079a
+		summarizeBy: none
+		sourceColumn: type_jour
+
+		annotation SummarizationSetBy = User
+
+	column periode
+		dataType: string
+		lineageTag: d6a2c948-ccb2-58a6-b8d8-3ff116d797b8
+		summarizeBy: none
+		sourceColumn: periode
+
+		annotation SummarizationSetBy = User
+
+	column passages_total
+		dataType: int64
+		formatString: #,0
+		lineageTag: ea3fecb2-769d-51f2-946a-163b6325bac3
+		summarizeBy: none
+		sourceColumn: passages_total
+
+		annotation SummarizationSetBy = User
+
+	column compteurs_actifs
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4fe49dbf-ed25-575a-9301-db250ce9ebe2
+		summarizeBy: none
+		sourceColumn: compteurs_actifs
+
+		annotation SummarizationSetBy = User
+
+	column passages_par_compteur
+		dataType: double
+		formatString: 0.0
+		lineageTag: 75147967-e53a-538a-b3c7-6e4706f2ee2e
+		summarizeBy: none
+		sourceColumn: passages_par_compteur
+
+		annotation SummarizationSetBy = User
+
+	column temperature_c
+		dataType: double
+		formatString: 0.0
+		lineageTag: df96ecd5-41a9-579f-92a4-1b59529a9231
+		summarizeBy: none
+		sourceColumn: temperature_c
+
+		annotation SummarizationSetBy = User
+
+	column precipitation_mm
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9cc200db-6a5d-546f-8efa-a30f3da630db
+		summarizeBy: none
+		sourceColumn: precipitation_mm
+
+		annotation SummarizationSetBy = User
+
+	column pluie_mm
+		dataType: double
+		formatString: 0.0
+		lineageTag: d3e51761-1b9e-55df-9b8c-4a18f553b3fe
+		summarizeBy: none
+		sourceColumn: pluie_mm
+
+		annotation SummarizationSetBy = User
+
+	column vent_kmh
+		dataType: double
+		formatString: 0.0
+		lineageTag: 7982a38a-7956-599f-a8b9-e24df7f6d1dd
+		summarizeBy: none
+		sourceColumn: vent_kmh
+
+		annotation SummarizationSetBy = User
+
+	column il_pleut
+		dataType: boolean
+		lineageTag: b7414177-30a9-5cbe-9c44-0aa1a9c41606
+		summarizeBy: none
+		sourceColumn: il_pleut
+
+		annotation SummarizationSetBy = User
+
+	column classe_temperature
+		dataType: string
+		lineageTag: c499e3f7-853d-59f2-9dc9-90381d742f77
+		summarizeBy: none
+		sourceColumn: classe_temperature
+
+		annotation SummarizationSetBy = User
+
+	column annee = IF(ISBLANK(gold_velo_meteo_heure[date_paris]), BLANK(), YEAR(gold_velo_meteo_heure[date_paris]))
+		dataType: int64
+		isDataTypeInferred
+		formatString: 0
+		lineageTag: e7c58dec-ea8d-5b44-aecc-0fba46c897d9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column saison_ordre = SWITCH(gold_velo_meteo_heure[saison], "hiver", 1, "printemps", 2, "été", 3, "automne", 4)
+		dataType: int64
+		isDataTypeInferred
+		formatString: 0
+		lineageTag: 3160da83-ddea-5e6a-86c6-24f4c30e98ea
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column saison_libelle = gold_velo_meteo_heure[saison]
+		dataType: string
+		isDataTypeInferred
+		lineageTag: fd685dec-018e-5fe6-bbd6-8073b1e6d604
+		summarizeBy: none
+		sortByColumn: saison_ordre
+
+		annotation SummarizationSetBy = User
+
+	partition gold_velo_meteo_heure = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Hote, CheminHTTP, [Catalog = null, Database = null, EnableAutomaticProxyDiscovery = null]),
+				    Catalogue_ = Source{[Name = Catalogue, Kind = "Database"]}[Data],
+				    Schema_ = Catalogue_{[Name = "velib", Kind = "Schema"]}[Data],
+				    Table_ = Schema_{[Name = "gold_velo_meteo_heure", Kind = "Table"]}[Data],
+				    SansFuseau = Table.TransformColumns(Table_, {
+				            {"heure_utc", each if _ is datetimezone then DateTimeZone.RemoveZone(_) else _, type datetime},
+				            {"heure_paris", each if _ is datetimezone then DateTimeZone.RemoveZone(_) else _, type datetime}
+				        }),
+				    Types = Table.TransformColumnTypes(SansFuseau, {
+				            {"heure_utc", type datetime},
+				            {"heure_paris", type datetime},
+				            {"date_paris", type date},
+				            {"heure_du_jour", Int64.Type},
+				            {"mois", Int64.Type},
+				            {"saison", type text},
+				            {"type_jour", type text},
+				            {"periode", type text},
+				            {"passages_total", Int64.Type},
+				            {"compteurs_actifs", Int64.Type},
+				            {"passages_par_compteur", type number},
+				            {"temperature_c", type number},
+				            {"precipitation_mm", type number},
+				            {"pluie_mm", type number},
+				            {"vent_kmh", type number},
+				            {"il_pleut", type logical},
+				            {"classe_temperature", type text}
+				        }, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
