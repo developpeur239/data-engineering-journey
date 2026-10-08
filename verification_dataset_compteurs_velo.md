@@ -16,6 +16,15 @@ Vérifié le 2026-10-08. Les 20 fichiers ont été téléchargés en local pour 
 
 Réserves importantes : trois formats de fichier différents selon les années (séparateur, encodage, dates), des dates sans fuseau avant 2024 (voir §3), et un volume de lignes très inégal. Détails ci-dessous.
 
+## Identifiants à utiliser dans Data Factory (sélection recommandée : compteurs 2023, 2024, 2025)
+
+| Année | `<id>` de la pièce jointe | URL relative (base `https://opendata.paris.fr`) | Décompressé |
+|---|---|---|---|
+| 2023 | `2023_comptage_velo_donnees_compteurs_zip` | `/api/explore/v2.1/catalog/datasets/comptage-velo-historique-donnees-compteurs/attachments/2023_comptage_velo_donnees_compteurs_zip` | 1 179 295 725 o |
+| 2024 | `2024_comptage_velo_donnees_compteurs_zip` | `/api/explore/v2.1/catalog/datasets/comptage-velo-historique-donnees-compteurs/attachments/2024_comptage_velo_donnees_compteurs_zip` | 1 724 653 331 o |
+| 2025 | `2025_comptage_velo_donnees_compteurs_zip` | `/api/explore/v2.1/catalog/datasets/comptage-velo-historique-donnees-compteurs/attachments/2025_comptage_velo_donnees_compteurs_zip` | 1 929 395 211 o |
+| **Total** | | | **4 833 344 267 o (4,83 Go)** |
+
 ## 1. Liens
 
 Ce que l'API Opendatasoft expose : `GET https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/comptage-velo-historique-donnees-compteurs/attachments` liste **20 pièces jointes** (ODbL ; jeu modifié le 20/02/2026).
