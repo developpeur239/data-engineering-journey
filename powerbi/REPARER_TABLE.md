@@ -320,10 +320,10 @@ annee = IF(ISBLANK(gold_velo_meteo_heure[date_paris]), BLANK(), YEAR(gold_velo_m
 
 saison_ordre = SWITCH(gold_velo_meteo_heure[saison], "hiver", 1, "printemps", 2, "été", 3, "automne", 4)
 
-periode_ordre = SWITCH(gold_velo_meteo_heure[periode], "pointe", 1, "journée", 2, "nuit", 3)
+saison_libelle = gold_velo_meteo_heure[saison]
 ```
 
-Puis, trier `saison` par `saison_ordre` et `periode` par `periode_ordre` (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
+Puis, trier `saison_libelle` par `saison_ordre` (jamais `saison` elle-même : « dépendance circulaire ») (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
 
 ## Plus simple : repartir du projet
 

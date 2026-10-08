@@ -346,7 +346,7 @@ def pages():
     src = "Source : compteurs de Paris, Open-Meteo, 2023-2025"
     v = [entete(nom, "Météo · 3 ans de compteurs", src),
          segmentation(f"{nom}_seg_jour", "type_jour", position(640, 8, 200, 64, 20, 1), "Type de jour", "Dropdown", 1),
-         segmentation(f"{nom}_seg_saison", "saison", position(856, 8, 200, 64, 21, 2), "Saison", "Dropdown", 2),
+         segmentation(f"{nom}_seg_saison", "saison_libelle", position(856, 8, 200, 64, 21, 2), "Saison", "Dropdown", 2),
          segmentation(f"{nom}_seg_annee", "annee", position(1072, 8, 184, 64, 22, 3), "Année", "Dropdown", 3)]
     w4 = (LARG - 3 * GOUT) // 4                             # 296
     for i, (m, alt) in enumerate([("Effet pluie semaine (%)", "Effet de la pluie sur les passages en semaine, à conditions égales"),

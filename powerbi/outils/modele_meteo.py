@@ -28,10 +28,10 @@ CALCULEES2 = [
     ("annee", "int64", "0", f"IF(ISBLANK({col2('date_paris')}), BLANK(), YEAR({col2('date_paris')}))", None),
     ("saison_ordre", "int64", "0",
      f'SWITCH({col2("saison")}, "hiver", 1, "printemps", 2, "été", 3, "automne", 4)', None),
-    ("periode_ordre", "int64", "0",
-     f'SWITCH({col2("periode")}, "pointe", 1, "journée", 2, "nuit", 3)', None),
+    # copie de `saison` triée par saison_ordre : trier `saison` elle-même par une colonne qui en dépend = dépendance circulaire
+    ("saison_libelle", "string", None, col2("saison"), None),
 ]
-TRI = {"saison": "saison_ordre", "periode": "periode_ordre"}
+TRI = {"saison_libelle": "saison_ordre"}
 DOSSIER_MES = "Météo 3 ans"
 
 FPCT = '"+0.0%;-0.0%;0.0%"'
@@ -123,7 +123,10 @@ def calculee2(nom, tmdl_type, fmt, dax, _) -> str:
     s = f"\tcolumn {nom} = {dax}\n\t\tdataType: {tmdl_type}\n\t\tisDataTypeInferred\n"
     if fmt:
         s += f"\t\tformatString: {fmt}\n"
-    return s + f"\t\tlineageTag: {gm.guid(TABLE2, 'colonne', nom)}\n\t\tsummarizeBy: none\n\n\t\tannotation SummarizationSetBy = User\n\n"
+    s += f"\t\tlineageTag: {gm.guid(TABLE2, 'colonne', nom)}\n\t\tsummarizeBy: none\n"
+    if nom in TRI:
+        s += f"\t\tsortByColumn: {TRI[nom]}\n"
+    return s + "\n\t\tannotation SummarizationSetBy = User\n\n"
 
 
 def table_tmdl2() -> str:

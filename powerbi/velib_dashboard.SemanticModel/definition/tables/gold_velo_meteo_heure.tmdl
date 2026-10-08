@@ -174,7 +174,6 @@ table gold_velo_meteo_heure
 		lineageTag: 941d7d3a-1e05-57df-8d63-8a4e55a3dc84
 		summarizeBy: none
 		sourceColumn: saison
-		sortByColumn: saison_ordre
 
 		annotation SummarizationSetBy = User
 
@@ -191,7 +190,6 @@ table gold_velo_meteo_heure
 		lineageTag: d6a2c948-ccb2-58a6-b8d8-3ff116d797b8
 		summarizeBy: none
 		sourceColumn: periode
-		sortByColumn: periode_ordre
 
 		annotation SummarizationSetBy = User
 
@@ -292,12 +290,12 @@ table gold_velo_meteo_heure
 
 		annotation SummarizationSetBy = User
 
-	column periode_ordre = SWITCH(gold_velo_meteo_heure[periode], "pointe", 1, "journée", 2, "nuit", 3)
-		dataType: int64
+	column saison_libelle = gold_velo_meteo_heure[saison]
+		dataType: string
 		isDataTypeInferred
-		formatString: 0
-		lineageTag: ef116432-2739-552e-bf9c-4647fb388ffb
+		lineageTag: fd685dec-018e-5fe6-bbd6-8073b1e6d604
 		summarizeBy: none
+		sortByColumn: saison_ordre
 
 		annotation SummarizationSetBy = User
 

@@ -58,7 +58,7 @@ Table indépendante (aucune relation). Colonnes calculées à recréer (clic dro
 {chr(10).join(f"{n} = {d}" + chr(10) for n, _, _, d, _ in mm.CALCULEES2).rstrip()}
 ```
 
-Puis, trier `saison` par `saison_ordre` et `periode` par `periode_ordre` (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
+Puis, trier `saison_libelle` par `saison_ordre` (jamais `saison` elle-même : « dépendance circulaire ») (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
 
 ## Plus simple : repartir du projet
 

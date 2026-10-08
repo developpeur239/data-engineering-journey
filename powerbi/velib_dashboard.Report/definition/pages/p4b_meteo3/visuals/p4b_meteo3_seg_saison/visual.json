@@ -23,11 +23,11 @@
                       "Entity": "gold_velo_meteo_heure"
                     }
                   },
-                  "Property": "saison"
+                  "Property": "saison_libelle"
                 }
               },
-              "queryRef": "gold_velo_meteo_heure.saison",
-              "nativeQueryRef": "saison",
+              "queryRef": "gold_velo_meteo_heure.saison_libelle",
+              "nativeQueryRef": "saison_libelle",
               "active": true
             }
           ]
