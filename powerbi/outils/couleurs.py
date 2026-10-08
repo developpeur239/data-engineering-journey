@@ -16,15 +16,19 @@ AUTORISE = {
     "05_meteo_barres": {S["pluie"], S["neutre"]},
     "06_meteo_nuage": {S["pluie"], S["neutre"]},
     "07_meteo_courbes": {S["pluie"], S["neutre"]},
+    "08_meteo3_halteres_periode": {S["pluie"], S["neutre"]},
+    "09_meteo3_effet_conditions_egales": {S["pluie"]},
+    "10_meteo3_classes_temperature": {S["neutre"]},
+    "11_meteo3_profil_horaire_semaine": {S["pluie"], S["neutre"]},
 }
 SENS = [
     ("Orange braise", S["penurie"], "Pénurie : plus de vélo dans la station", "02 rythme (courbe et aire). Les cases et cercles de pénurie utilisent la rampe de même teinte (ci-dessous)."),
     ("Rampe « braise » (7 pas)", None, "Intensité de la pénurie, du presque-fond (peu) au pêche clair (beaucoup)", "01 heatmap, 03 carte"),
     ("Cyan", S["saturation"], "Saturation : plus de place libre dans la station", "02 rythme"),
     ("Rose / magenta", S["panne"], "Panne ferrée en cours à proximité (« avec panne »)", "04 haltères (disque et trait de liaison)"),
-    ("Violet", S["pluie"], "Il pleut", "05 barres, 06 nuage, 07 courbes"),
-    ("Gris bleuté", S["neutre"], "Situation de référence : « sans panne », « sans pluie »", "04 haltères, 05 barres, 06 nuage, 07 courbes"),
-    ("Blanc cassé", T["principal"], "Texte, tendance, anneau de la valeur maximale : jamais une donnée", "01, 02, 03, 06"),
+    ("Violet", S["pluie"], "Il pleut", "05 barres, 06 nuage, 07 courbes, 08 à 09 et 11 (page Météo 3 ans)"),
+    ("Gris bleuté", S["neutre"], "Situation de référence : « sans panne », « sans pluie »", "04 haltères, 05 barres, 06 nuage, 07 courbes, 08, 10, 11"),
+    ("Blanc cassé", T["principal"], "Texte, tendance, anneau de la valeur maximale : jamais une donnée", "01, 02, 03, 06, 08 à 11 (textes)"),
 ]
 
 

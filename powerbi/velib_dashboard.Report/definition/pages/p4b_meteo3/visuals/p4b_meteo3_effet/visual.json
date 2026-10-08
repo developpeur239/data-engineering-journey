@@ -1,0 +1,236 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "p4b_meteo3_effet",
+  "position": {
+    "x": 480,
+    "y": 192,
+    "z": 5,
+    "height": 244,
+    "width": 440,
+    "tabOrder": 9
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "type_jour"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.type_jour",
+              "nativeQueryRef": "type_jour"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Effet pluie à conditions égales (%)"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.Effet pluie à conditions égales (%)",
+              "nativeQueryRef": "Effet pluie à conditions égales (%)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Heures de pluie"
+                }
+              },
+              "queryRef": "gold_velo_meteo_heure.Heures de pluie",
+              "nativeQueryRef": "Heures de pluie"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"$schema\":\"https://vega.github.io/schema/vega-lite/v6.json\",\"data\":{\"name\":\"dataset\"},\"padding\":{\"top\":10,\"left\":6,\"right\":14,\"bottom\":6},\"transform\":[{\"calculate\":\"datum[''Effet pluie à conditions égales (%)'']\",\"as\":\"effet\"},{\"calculate\":\"datum.type_jour === ''semaine'' ? ''En semaine'' : datum.type_jour === ''week-end'' ? ''Le week-end'' : datum.type_jour\",\"as\":\"libelle\"},{\"calculate\":\"indexof([''semaine'', ''week-end''], datum.type_jour)\",\"as\":\"ordre\"},{\"calculate\":\"(datum.effet >= 0 ? ''+'' : ''−'') + replace(format(abs(datum.effet) * 100, ''.1f''), ''.'', '','') + '' %''\",\"as\":\"texte\"},{\"joinaggregate\":[{\"op\":\"min\",\"field\":\"effet\",\"as\":\"mini\"}]},{\"calculate\":\"datum.mini * 1.8\",\"as\":\"plancher\"}],\"layer\":[{\"params\":[{\"name\":\"survol\",\"select\":{\"type\":\"point\",\"on\":\"mouseover\",\"clear\":\"mouseout\",\"fields\":[\"type_jour\"]}}],\"mark\":{\"type\":\"bar\",\"cornerRadiusBottomLeft\":4,\"cornerRadiusBottomRight\":4,\"color\":\"#7F6AE6\",\"stroke\":\"#161E2E\",\"strokeWidth\":2,\"width\":{\"band\":0.55}},\"encoding\":{\"x\":{\"field\":\"libelle\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":false,\"labelAngle\":0,\"labelFontSize\":13,\"labelColor\":\"#EAF0FA\",\"orient\":\"bottom\"}},\"y\":{\"field\":\"effet\",\"type\":\"quantitative\",\"scale\":{\"domainMax\":0,\"nice\":false},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":4}},\"opacity\":{\"condition\":{\"param\":\"survol\",\"value\":1},\"value\":0.45},\"tooltip\":[{\"field\":\"libelle\",\"type\":\"nominal\",\"title\":\"Jours\"},{\"field\":\"texte\",\"type\":\"nominal\",\"title\":\"Effet de la pluie\"},{\"field\":\"Heures de pluie\",\"type\":\"quantitative\",\"title\":\"Heures de pluie\",\"format\":\",d\"}]}},{\"mark\":{\"type\":\"text\",\"baseline\":\"top\",\"dy\":8,\"fontSize\":14,\"fontWeight\":600,\"color\":\"#EAF0FA\",\"tooltip\":null},\"encoding\":{\"x\":{\"field\":\"libelle\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":false,\"labelAngle\":0,\"labelFontSize\":13,\"labelColor\":\"#EAF0FA\",\"orient\":\"bottom\"}},\"y\":{\"field\":\"effet\",\"type\":\"quantitative\",\"scale\":{\"domainMax\":0,\"nice\":false},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":4}},\"text\":{\"field\":\"texte\"}}},{\"mark\":{\"type\":\"point\",\"opacity\":0,\"tooltip\":null},\"encoding\":{\"x\":{\"field\":\"libelle\",\"type\":\"nominal\",\"sort\":{\"field\":\"ordre\"},\"axis\":{\"title\":null,\"grid\":false,\"labelAngle\":0,\"labelFontSize\":13,\"labelColor\":\"#EAF0FA\",\"orient\":\"bottom\"}},\"y\":{\"field\":\"plancher\",\"type\":\"quantitative\",\"scale\":{\"domainMax\":0,\"nice\":false},\"axis\":{\"format\":\".0%\",\"title\":null,\"tickCount\":4}}}},{\"mark\":{\"type\":\"rule\",\"strokeWidth\":1,\"color\":\"#566892\",\"tooltip\":null},\"encoding\":{\"y\":{\"datum\":0,\"type\":\"quantitative\"}}},{\"mark\":{\"type\":\"text\",\"align\":\"left\",\"baseline\":\"bottom\",\"dx\":4,\"dy\":-2,\"fontSize\":11,\"color\":\"#8D9BB6\",\"tooltip\":null,\"text\":\"comparaison à heure, jour et saison comparables\"},\"encoding\":{\"x\":{\"value\":0},\"y\":{\"value\":{\"expr\":\"height\"}}}}]}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"background\":\"transparent\",\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"padding\":{\"left\":6,\"right\":14,\"top\":6,\"bottom\":6},\"view\":{\"stroke\":null},\"axis\":{\"domain\":false,\"ticks\":false,\"grid\":true,\"gridColor\":\"#2B3750\",\"gridWidth\":1,\"gridOpacity\":0.6,\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":11,\"labelColor\":\"#A9B6CE\",\"labelPadding\":8,\"labelFontWeight\":\"normal\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"titlePadding\":10},\"axisX\":{\"grid\":false},\"legend\":{\"labelFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"labelFontSize\":12,\"labelColor\":\"#A9B6CE\",\"titleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"titleFontSize\":11,\"titleFontWeight\":\"normal\",\"titleColor\":\"#8D9BB6\",\"symbolType\":\"circle\",\"symbolSize\":90,\"padding\":0,\"offset\":8,\"orient\":\"top-left\"},\"text\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#A9B6CE\"},\"mark\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\"},\"title\":{\"font\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"color\":\"#EAF0FA\",\"fontSize\":16,\"fontWeight\":600,\"anchor\":\"start\",\"subtitleFont\":\"Segoe UI, Arial, Helvetica, sans-serif\",\"subtitleColor\":\"#A9B6CE\",\"subtitleFontSize\":12},\"range\":{\"category\":[\"#E26828\",\"#2A9FD0\",\"#D8478A\",\"#7F6AE6\",\"#9AA9C4\"],\"ramp\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"],\"heatmap\":[\"#362B27\",\"#693926\",\"#9E4A24\",\"#CD642C\",\"#EF844A\",\"#FFA97B\",\"#FFD4BC\"]},\"customFormatTypes\":true}'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "locale": {
+              "expr": {
+                "Literal": {
+                  "Value": "'fr-FR'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataLimit": [
+        {
+          "properties": {
+            "override": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "supportFieldConfiguration": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "gold_velo_meteo_heure"
+                    }
+                  },
+                  "Property": "Titre météo effet"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Source : compteurs de Paris, Open-Meteo, 2023-2025'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Barres : effet de la pluie à conditions égales, en semaine et le week-end'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

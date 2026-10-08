@@ -1,0 +1,244 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 10,
+    "left": 6,
+    "right": 14,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "calculate": "datum['Effet pluie à conditions égales (%)']",
+      "as": "effet"
+    },
+    {
+      "calculate": "datum.type_jour === 'semaine' ? 'En semaine' : datum.type_jour === 'week-end' ? 'Le week-end' : datum.type_jour",
+      "as": "libelle"
+    },
+    {
+      "calculate": "indexof(['semaine', 'week-end'], datum.type_jour)",
+      "as": "ordre"
+    },
+    {
+      "calculate": "(datum.effet >= 0 ? '+' : '−') + replace(format(abs(datum.effet) * 100, '.1f'), '.', ',') + ' %'",
+      "as": "texte"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "min",
+          "field": "effet",
+          "as": "mini"
+        }
+      ]
+    },
+    {
+      "calculate": "datum.mini * 1.8",
+      "as": "plancher"
+    }
+  ],
+  "layer": [
+    {
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "on": "mouseover",
+            "clear": "mouseout",
+            "fields": [
+              "type_jour"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "cornerRadiusBottomLeft": 4,
+        "cornerRadiusBottomRight": 4,
+        "color": "#7F6AE6",
+        "stroke": "#161E2E",
+        "strokeWidth": 2,
+        "width": {
+          "band": 0.55
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": false,
+            "labelAngle": 0,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA",
+            "orient": "bottom"
+          }
+        },
+        "y": {
+          "field": "effet",
+          "type": "quantitative",
+          "scale": {
+            "domainMax": 0,
+            "nice": false
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "value": 1
+          },
+          "value": 0.45
+        },
+        "tooltip": [
+          {
+            "field": "libelle",
+            "type": "nominal",
+            "title": "Jours"
+          },
+          {
+            "field": "texte",
+            "type": "nominal",
+            "title": "Effet de la pluie"
+          },
+          {
+            "field": "Heures de pluie",
+            "type": "quantitative",
+            "title": "Heures de pluie",
+            "format": ",d"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "baseline": "top",
+        "dy": 8,
+        "fontSize": 14,
+        "fontWeight": 600,
+        "color": "#EAF0FA",
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": false,
+            "labelAngle": 0,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA",
+            "orient": "bottom"
+          }
+        },
+        "y": {
+          "field": "effet",
+          "type": "quantitative",
+          "scale": {
+            "domainMax": 0,
+            "nice": false
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          }
+        },
+        "text": {
+          "field": "texte"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "opacity": 0,
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "libelle",
+          "type": "nominal",
+          "sort": {
+            "field": "ordre"
+          },
+          "axis": {
+            "title": null,
+            "grid": false,
+            "labelAngle": 0,
+            "labelFontSize": 13,
+            "labelColor": "#EAF0FA",
+            "orient": "bottom"
+          }
+        },
+        "y": {
+          "field": "plancher",
+          "type": "quantitative",
+          "scale": {
+            "domainMax": 0,
+            "nice": false
+          },
+          "axis": {
+            "format": ".0%",
+            "title": null,
+            "tickCount": 4
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1,
+        "color": "#566892",
+        "tooltip": null
+      },
+      "encoding": {
+        "y": {
+          "datum": 0,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "bottom",
+        "dx": 4,
+        "dy": -2,
+        "fontSize": 11,
+        "color": "#8D9BB6",
+        "tooltip": null,
+        "text": "comparaison à heure, jour et saison comparables"
+      },
+      "encoding": {
+        "x": {
+          "value": 0
+        },
+        "y": {
+          "value": {
+            "expr": "height"
+          }
+        }
+      }
+    }
+  ]
+}

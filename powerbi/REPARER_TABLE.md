@@ -311,6 +311,20 @@ RETURN IF(total = 0, "À chaque heure, la pluie change-t-elle la pénurie ?",
 
 Un visuel dont un champ a disparu affiche « Corrigez ce visuel » ou reste vide. Pour chaque graphique Deneb, glissez à nouveau dans le puits **Valeurs** les champs listés dans `deneb_specs/_champs_par_visuel.json` (même ordre, sans renommer). Les visuels natifs se corrigent en re-glissant le champ manquant.
 
+## Table météo 3 ans (`gold_velo_meteo_heure`) : colonnes et mesures
+
+Table indépendante (aucune relation). Colonnes calculées à recréer (clic droit sur la table → *Nouvelle colonne*) :
+
+```dax
+annee = IF(ISBLANK(gold_velo_meteo_heure[date_paris]), BLANK(), YEAR(gold_velo_meteo_heure[date_paris]))
+
+saison_ordre = SWITCH(gold_velo_meteo_heure[saison], "hiver", 1, "printemps", 2, "été", 3, "automne", 4)
+
+periode_ordre = SWITCH(gold_velo_meteo_heure[periode], "pointe", 1, "journée", 2, "nuit", 3)
+```
+
+Puis, trier `saison` par `saison_ordre` et `periode` par `periode_ordre` (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
+
 ## Plus simple : repartir du projet
 
 Si trop de choses manquent, rouvrez `velib_dashboard.pbip` depuis le zip : le modèle contient déjà tout (colonnes, mesures, tri). Il suffit alors de ressaisir le jeton Databricks.

@@ -74,7 +74,8 @@ Ne mettez jamais le jeton dans un fichier du dépôt. Si vous avez déjà publi�
 | **Carte des stations** | carte stylisée sans fond de plan (taille = capacité, couleur = taux de pénurie, halo au survol) ; tableau des 20 stations les plus souvent vides ; segments Heure du jour et Heure de pointe |
 | **Effet des pannes** | haltères « sans panne → avec panne » (pénurie et saturation, pointe / hors pointe ; le titre porte sur la ligne « Pénurie · heure de pointe », le trait est toujours rose et le signe +/− donne le sens) ; 3 cartes (écart pénurie, écart saturation, part d'heures avec panne ferrée) ; encadré « Méthode » ; segment Panne imprévue |
 | **Effet de la météo** | barres avec / sans pluie ; nuage température × pénurie avec tendance ; courbes par heure avec / sans pluie ; encadré « Comment lire » |
-| **Secours** (cachée) | un équivalent en visuels Power BI natifs de chaque graphique Deneb |
+| **Météo · 3 ans de compteurs** | nouvelle page (voir « 6 ter ») : effet de la pluie sur les passages vélo, 2023-2025, avec 4 graphiques Deneb et 4 chiffres clés |
+| **Secours** et **Secours · météo 3 ans** (cachées) | un équivalent en visuels Power BI natifs de chaque graphique Deneb |
 
 Les **titres** des 7 graphiques Deneb sont **calculés** par une mesure DAX chacun (`Titre heatmap`, `Titre rythme`, `Titre carte`, `Titre pannes`, `Titre pluie`, `Titre nuage`, `Titre courbes`) : aucun chiffre ni constat n'est écrit dans une spec. Chaque mesure est liée au titre du visuel Power BI (*Format → Titre → Texte → fx*), respecte les filtres et segments, et affiche un texte neutre si les données sont vides. Les nombres sont formatés en français quelle que soit la machine : `FORMAT(x, "#,##0", "fr-FR")` donne « 1 450 » et `FORMAT(x, "0.0", "fr-FR")` donne « 3,0 » (le troisième argument impose la locale ; un motif du type `"# ##0"` n'est pas fiable en DAX). Seul le sous-titre est fixe.
 La page **Secours** est cachée pour les lecteurs mais visible dans Power BI Desktop (onglet grisé en bas).
@@ -114,6 +115,77 @@ Le rapport déclare Deneb (identifiant `deneb7E15AEF80B9E4D4F8E12924291ECE89A`) 
 
 Le seul visuel qui grossit avec le temps est le nuage ; il est donc **déjà pré-agrégé** (une ligne par heure, jamais par station). Par sécurité, chaque visuel Deneb a aussi *Limite de données → Remplacer la limite* activé (`dataLimit.override`). Si vous voyez un bandeau « données tronquées », vérifiez dans *Mise en forme → Limite de données* que ce réglage est actif, ou filtrez la période avec le segment.
 
+## 6 ter. Page « Météo · 3 ans de compteurs » (table `gold_velo_meteo_heure`)
+
+**Sauvegarde.** Avant toute modification, le dossier `powerbi/` a été copié dans `powerbi_sauvegarde_avant_meteo/` (2,5 Mo, commitée). La page « Effet de la météo » d'origine est inchangée.
+
+**Table.** `dbw_datalake_velib_7405605942490257.velib.gold_velo_meteo_heure` (≈ 26 304 lignes, une par heure, 2023-2025), en mode Importation, avec les **mêmes paramètres** `Hote`, `CheminHTTP`, `Catalogue` (aucun secret). Elle est **indépendante** : aucune relation avec `gold_station_heure` (grain et période différents ; le contrôle automatique refuse toute relation). Les segments des pages existantes portent sur `gold_station_heure` : ils **ne filtrent pas** la table météo, et les segments de la nouvelle page (`type_jour`, `saison`, `annee`) ne filtrent pas les autres pages ; aucun segment n'est synchronisé entre pages.
+Colonnes ajoutées dans le modèle (DAX) : `annee` (pour le segment), `saison_ordre` et `periode_ordre` (tri hiver → automne et pointe → nuit).
+
+**Mesures** (dossier d'affichage « Météo 3 ans ») : `Passages par compteur`, `Passages sans pluie`, `Passages avec pluie`, `Écart pluie brut (%)`, `Effet pluie à conditions égales (%)`, `Effet pluie semaine (%)`, `Effet pluie week-end (%)`, `Heures de pluie`, `Heures étudiées`, `Part des heures de pluie (%)`, plus des mesures masquées d'appui (`Passages pointe temps sec`, `Heures pointe temps sec`, `Passages semaine sans pluie`, `Passages semaine avec pluie`) et 4 titres dynamiques (`Titre météo haltères`, `Titre météo effet`, `Titre météo température`, `Titre météo profil`), au format français (`FORMAT(…, "fr-FR")`), avec un texte neutre quand il n'y a pas de données.
+**`Effet pluie à conditions égales (%)`** : pour chaque groupe `type_jour × saison × heure_du_jour` ayant au moins 5 heures de pluie, rapport (moyenne avec pluie ÷ moyenne sans pluie − 1) ; moyenne de ces rapports pondérée par le nombre d'heures de pluie du groupe. Elle part du contexte de filtre courant (`SUMMARIZE`), donc elle respecte `type_jour` et les autres segments.
+
+**Page.** 3 segments (type de jour, saison, année), 4 chiffres clés (effet pluie semaine, effet pluie week-end, heures étudiées, part des heures de pluie) et 4 graphiques Deneb (`deneb_specs/08` à `11`) :
+1. haltères « sans pluie → avec pluie » par période (pointe, journée, nuit), écart en % au bout ;
+2. barres de l'effet à conditions égales, semaine et week-end ;
+3. passages par compteur selon la classe de température (pointe, temps sec), maximum annoté ; la note sur les vacances d'été n'apparaît que si la dernière classe est en dessous du maximum ;
+4. profil horaire en semaine, avec et sans pluie (24 points).
+Un encadré « Méthode et limites » rappelle : passages **par compteur** (le nombre de compteurs varie), comparaison **à conditions égales**, jours fériés et vacances non exclus, un seul point météo pour Paris, association et non causalité. Couleurs : violet = pluie, gris = référence.
+Chaque graphique a un équivalent natif sur la page cachée « Secours · météo 3 ans ».
+
+### Validation des mesures (à lire)
+
+**Je n'ai pas accès à votre table Databricks ni à un moteur DAX**, donc je n'ai pas pu exécuter les mesures sur vos données. J'ai fait deux choses à la place.
+
+1. **Reconstitution de la table** à partir des mêmes sources publiques (`outils/validation_meteo3/`) : compteurs de la Ville de Paris 2023, 2024, 2025 (fichiers « compteurs », agrégés par heure UTC : somme des passages ÷ nombre de compteurs présents) et Open-Meteo archive (Paris, UTC, `precipitation ≥ 0,1 mm` = pluie). La grille fait bien **26 304 heures**. J'ai ensuite recalculé en Python la logique exacte de la mesure (strates `type_jour × saison × heure_du_jour`, au moins 5 heures de pluie, moyenne pondérée) :
+
+| Contrôle | Votre valeur Databricks | Ma reconstitution | Écart |
+|---|---|---|---|
+| Heures de pluie retenues par la mesure | 4 618 | **4 618** | aucun |
+| Heures de pluie totales (`il_pleut`) | n/d | 4 620 | n/d |
+| Effet à conditions égales, semaine | −15,9 % | −14,3 % | **+1,6 point** |
+| Effet à conditions égales, week-end | −20,6 % | −19,7 % | **+0,9 point** |
+| Écart brut, pointe / journée / nuit | −13,3 % / −11,5 % / −20,6 % (163,6 → 141,8, etc.) | −11,7 % à −14,7 % selon la définition de « pointe » testée (voir le script) | non comparable : définition de la période inconnue |
+| Passages en pointe temps sec par classe | 139,8 / 152,0 / 172,5 / 193,9 / 184,1 | non reproduit | seuils de classes inconnus |
+
+**Lecture :** le nombre d'heures de pluie retenues (4 618) est retrouvé **exactement**, ce qui confirme la mécanique des strates et le seuil de 5 heures. L'écart de quelques points sur l'effet vient de ma reconstitution de la colonne `passages_par_compteur` (je ne connais pas votre définition de `compteurs_actifs`, ni vos découpages `periode` et `classe_temperature`). Quatre définitions testées donnent −13,6 % à −14,5 % en semaine, sans atteindre −15,9 %. **Ce n'est donc pas une preuve que la mesure DAX donnera vos chiffres à l'identique.**
+
+2. **Requêtes SQL équivalentes à lancer dans Databricks**, puis à comparer aux cartes Power BI (sans segment actif) :
+
+```sql
+-- effet à conditions égales (doit égaler la mesure « Effet pluie à conditions égales (%) »)
+WITH strates AS (
+  SELECT type_jour, saison, heure_du_jour,
+         SUM(CASE WHEN il_pleut THEN 1 ELSE 0 END)                    AS n_pluie,
+         AVG(CASE WHEN il_pleut THEN passages_par_compteur END)       AS moy_pluie,
+         AVG(CASE WHEN NOT il_pleut THEN passages_par_compteur END)   AS moy_sec
+  FROM dbw_datalake_velib_7405605942490257.velib.gold_velo_meteo_heure
+  GROUP BY type_jour, saison, heure_du_jour)
+SELECT type_jour,
+       SUM(n_pluie)                                         AS heures_de_pluie_retenues,
+       SUM(n_pluie * (moy_pluie / moy_sec - 1)) / SUM(n_pluie) AS effet_conditions_egales
+FROM strates
+WHERE n_pluie >= 5 AND moy_sec > 0 AND moy_pluie IS NOT NULL
+GROUP BY type_jour;                    -- attendu : semaine -0,159 ; week-end -0,206 ; 4 618 heures au total
+
+-- écart brut par période (mesures « Passages sans pluie », « Passages avec pluie », « Écart pluie brut (%) »)
+SELECT periode,
+       AVG(CASE WHEN NOT il_pleut THEN passages_par_compteur END) AS sans_pluie,
+       AVG(CASE WHEN il_pleut THEN passages_par_compteur END)     AS avec_pluie,
+       AVG(CASE WHEN il_pleut THEN passages_par_compteur END)
+         / AVG(CASE WHEN NOT il_pleut THEN passages_par_compteur END) - 1 AS ecart
+FROM dbw_datalake_velib_7405605942490257.velib.gold_velo_meteo_heure GROUP BY periode;
+
+-- température, pointe, temps sec (mesure masquée « Passages pointe temps sec »)
+SELECT classe_temperature, AVG(passages_par_compteur) AS passages_par_compteur
+FROM dbw_datalake_velib_7405605942490257.velib.gold_velo_meteo_heure
+WHERE periode = 'pointe' AND NOT il_pleut
+GROUP BY classe_temperature ORDER BY classe_temperature;
+```
+
+Point de vigilance : la mesure calcule la **moyenne simple des `passages_par_compteur`** par heure (comme `AVG` en SQL), pas un ratio de sommes. Si vos chiffres Databricks sont des ratios de sommes, des écarts apparaîtront.
+Les valeurs de la colonne `periode` (`pointe`, `journée`, `nuit`), `type_jour` (`semaine`, `week-end`) et `saison` (`hiver`, `printemps`, `été`, `automne`) sont écrites **en minuscules avec accents** dans les mesures : s'ils diffèrent dans votre table, les mesures ressortiront vides.
+
 ## 7. Si quelque chose ne marche pas
 
 | Symptôme | À essayer |
@@ -131,7 +203,7 @@ Le seul visuel qui grossit avec le temps est le nuage ; il est donc **déjà pr�
 
 `Nb stations` · `Taux pénurie` · `Taux saturation` · `Dernière heure` · `Taux pénurie / saturation avec panne` · `Taux pénurie / saturation sans panne` · `Écart pénurie (pts)` · `Écart saturation (pts)` · `Part heures avec panne ferrée`.
 Les mesures « avec panne » ne comptent que les stations à moins de 300 m d'un arrêt ferré (`station_proche_ferre_300m`) et les heures où `panne_ferree_300m` est vraie ; « sans panne » compare aux heures où elle est fausse. Le segment *Panne imprévue* ne restreint que le côté « avec panne ».
-Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, `seuil_temperature`, les 7 `Titre …`) servent aux graphiques Deneb, aux titres et à la page Secours.
+Des mesures masquées (`n_penurie`, `n_service`, `n_saturation`, `capacite_max`, `lon_moy`, `lat_moy`, `temperature_moy`, `seuil_temperature`, les 7 `Titre …`, et pour la table météo 3 ans les mesures d'appui décrites au §6 ter) servent aux graphiques Deneb, aux titres et à la page Secours.
 
 ## 9. Choix de design
 

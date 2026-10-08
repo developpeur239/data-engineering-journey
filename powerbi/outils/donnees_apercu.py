@@ -126,3 +126,31 @@ def meteo_courbes():
             out.append({"heure_du_jour": h, "pluie_libelle": lib,
                         "Taux pénurie": round(((taux_penurie(h, 1) * 5 + taux_penurie(h, 6) * 2) / 7) * k * R.uniform(0.96, 1.04), 4)})
     return out
+
+
+# --- page « Météo · 3 ans de compteurs » : chiffres de référence fournis par l'utilisateur (Databricks), profil horaire inventé
+def meteo3_halteres():
+    return [{"periode": "pointe", "Passages sans pluie": 163.6, "Passages avec pluie": 141.8},
+            {"periode": "journée", "Passages sans pluie": 69.8, "Passages avec pluie": 61.8},
+            {"periode": "nuit", "Passages sans pluie": 13.94, "Passages avec pluie": 11.07}]
+
+
+def meteo3_effet():
+    return [{"type_jour": "semaine", "Effet pluie à conditions égales (%)": -0.159, "Heures de pluie": 3300},
+            {"type_jour": "week-end", "Effet pluie à conditions égales (%)": -0.206, "Heures de pluie": 1318}]
+
+
+def meteo3_classes():
+    vals = [139.8, 152.0, 172.5, 193.9, 184.1]
+    labels = ["1. moins de 5 °C", "2. 5 à 12 °C", "3. 12 à 18 °C", "4. 18 à 27 °C", "5. 27 °C et plus"]
+    heures = [310, 905, 1240, 1020, 410]
+    return [{"classe_temperature": l, "Passages pointe temps sec": v, "Heures pointe temps sec": h} for l, v, h in zip(labels, vals, heures)]
+
+
+def meteo3_profil():
+    out = []
+    for h in range(24):
+        sec = 8 + 160 * _g(h, 8.2, 1.1) + 190 * _g(h, 18.0, 1.5) + 60 * _g(h, 12.8, 2.4) + 30 * _g(h, 15.5, 3)
+        out.append({"heure_du_jour": h, "Passages semaine sans pluie": round(sec, 1),
+                    "Passages semaine avec pluie": round(sec * (0.84 + 0.02 * _g(h, 3, 3)) * R.uniform(0.985, 1.015), 1)})
+    return out

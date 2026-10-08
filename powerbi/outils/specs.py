@@ -417,6 +417,164 @@ def meteo_courbes():
     }
 
 
+# --------------------------------------------------------------------------- 8 à 11. page « Météo · 3 ans de compteurs »
+# Données : table gold_velo_meteo_heure (comptages vélo de Paris × météo Open-Meteo, une ligne par heure). Violet = pluie, gris = référence.
+PASSAGES = {"type": "quantitative", "scale": {"domainMin": 0, "zero": True},
+            "axis": {"format": ".0f", "title": "passages par compteur et par heure", "tickCount": 4, "grid": True}}
+SIGNE_PCT = "(datum.%s >= 0 ? '+' : '−') + replace(format(abs(datum.%s) * 100, '.1f'), '.', ',') + ' %%'"
+
+
+def meteo_halteres():
+    ligne = {"field": "libelle", "type": "nominal", "sort": {"field": "ordre"},
+             "axis": {"title": None, "grid": True, "gridDash": [2, 5], "gridOpacity": 0.9, "labelFontSize": TAILLE_LABEL + 1,
+                      "labelColor": T["principal"]}}
+    xs = {**PASSAGES}
+    return {
+        "$schema": VL,
+        "data": {"name": "dataset"},
+        "padding": {"top": 26, "left": 6, "right": 70, "bottom": 6},
+        "transform": [
+            {"calculate": "datum['Passages avec pluie'] / datum['Passages sans pluie'] - 1", "as": "ecart"},
+            {"calculate": "upper(slice(datum.periode, 0, 1)) + slice(datum.periode, 1)", "as": "libelle"},
+            {"calculate": "indexof(['pointe', 'journée', 'nuit'], datum.periode)", "as": "ordre"},
+            {"calculate": "max(datum['Passages avec pluie'], datum['Passages sans pluie'])", "as": "borne"},
+            {"calculate": SIGNE_PCT % ("ecart", "ecart"), "as": "texte_ecart"},
+        ],
+        "layer": [
+            {"mark": {"type": "rule", "strokeWidth": 4, "strokeCap": "round", "color": S["pluie"], "tooltip": None},
+             "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"}, "x2": {"field": "Passages avec pluie"}}},
+            {"params": [survol(["periode"])],
+             "mark": {"type": "point", "filled": True, "opacity": 1, "size": 170, "fill": F["carte"], "stroke": S["neutre"], "strokeWidth": 3, "tooltip": None},
+             "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"},
+                          "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.4}}},
+            {"mark": {"type": "point", "filled": True, "opacity": 1, "size": 170, "color": S["pluie"], "stroke": F["carte"], "strokeWidth": 2},
+             "encoding": {"y": ligne, "x": {**xs, "field": "Passages avec pluie"},
+                          "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.4},
+                          "tooltip": [{"field": "libelle", "type": "nominal", "title": "Période"},
+                                      {"field": "Passages sans pluie", "type": "quantitative", "title": "Sans pluie", "format": ".1f"},
+                                      {"field": "Passages avec pluie", "type": "quantitative", "title": "Avec pluie", "format": ".1f"},
+                                      {"field": "texte_ecart", "type": "nominal", "title": "Écart"}]}},
+            {"mark": {"type": "text", "align": "left", "dx": 14, "fontSize": TAILLE_LABEL + 1, "fontWeight": 600, "color": T["principal"], "tooltip": None},
+             "encoding": {"y": ligne, "x": {**xs, "field": "borne"}, "text": {"field": "texte_ecart"}}},
+            {"transform": [{"filter": "datum.ordre === 0"}],
+             "layer": [{"mark": {"type": "text", "align": "left", "dx": 4, "dy": -22, "fontSize": TAILLE_AXE, "color": T["secondaire"]},
+                        "encoding": {"y": ligne, "x": {**xs, "field": "Passages sans pluie"}, "text": {"value": "sans pluie"}}},
+                       {"mark": {"type": "text", "align": "right", "dx": -4, "dy": -22, "fontSize": TAILLE_AXE, "color": T["secondaire"]},
+                        "encoding": {"y": ligne, "x": {**xs, "field": "Passages avec pluie"}, "text": {"value": "avec pluie"}}}]},
+        ],
+    }
+
+
+def meteo_effet():
+    cat = {"field": "libelle", "type": "nominal", "sort": {"field": "ordre"},
+           "axis": {"title": None, "grid": False, "labelAngle": 0, "labelFontSize": TAILLE_LABEL + 1, "labelColor": T["principal"], "orient": "bottom"}}
+    y = {"field": "effet", "type": "quantitative", "scale": {"domainMax": 0, "nice": False},
+         "axis": {"format": ".0%", "title": None, "tickCount": 4}}
+    return {
+        "$schema": VL,
+        "data": {"name": "dataset"},
+        "padding": {"top": 10, "left": 6, "right": 14, "bottom": 6},
+        "transform": [
+            {"calculate": "datum['Effet pluie à conditions égales (%)']", "as": "effet"},
+            {"calculate": "datum.type_jour === 'semaine' ? 'En semaine' : datum.type_jour === 'week-end' ? 'Le week-end' : datum.type_jour", "as": "libelle"},
+            {"calculate": "indexof(['semaine', 'week-end'], datum.type_jour)", "as": "ordre"},
+            {"calculate": SIGNE_PCT % ("effet", "effet"), "as": "texte"},
+            {"joinaggregate": [{"op": "min", "field": "effet", "as": "mini"}]},
+            {"calculate": "datum.mini * 1.8", "as": "plancher"},
+        ],
+        "layer": [
+            {"params": [survol(["type_jour"])],
+             "mark": {"type": "bar", "cornerRadiusBottomLeft": 4, "cornerRadiusBottomRight": 4, "color": S["pluie"], "stroke": F["carte"], "strokeWidth": 2, "width": {"band": 0.55}},
+             "encoding": {"x": cat, "y": y, "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.45},
+                          "tooltip": [{"field": "libelle", "type": "nominal", "title": "Jours"},
+                                      {"field": "texte", "type": "nominal", "title": "Effet de la pluie"},
+                                      {"field": "Heures de pluie", "type": "quantitative", "title": "Heures de pluie", "format": ",d"}]}},
+            {"mark": {"type": "text", "baseline": "top", "dy": 8, "fontSize": TAILLE_LABEL + 2, "fontWeight": 600, "color": T["principal"], "tooltip": None},
+             "encoding": {"x": cat, "y": y, "text": {"field": "texte"}}},
+            {"mark": {"type": "point", "opacity": 0, "tooltip": None}, "encoding": {"x": cat, "y": {**y, "field": "plancher"}}},
+            {"mark": {"type": "rule", "strokeWidth": 1, "color": F["grille_claire"], "tooltip": None}, "encoding": {"y": {"datum": 0, "type": "quantitative"}}},
+            {"mark": {"type": "text", "align": "left", "baseline": "bottom", "dx": 4, "dy": -2, "fontSize": TAILLE_AXE, "color": T["discret"], "tooltip": None,
+                      "text": "comparaison à heure, jour et saison comparables"},
+             "encoding": {"x": {"value": 0}, "y": {"value": {"expr": "height"}}}},
+        ],
+    }
+
+
+def meteo_classes():
+    classe = {"field": "classe_temperature", "type": "ordinal", "sort": "ascending",
+              "axis": {"title": None, "grid": False, "labelAngle": 0, "labelExpr": "slice(datum.label, 3)", "labelFontSize": TAILLE_AXE + 1,
+                       "labelColor": T["secondaire"], "labelLimit": 120}}
+    y = {"field": "val", "type": "quantitative", "scale": {"domainMin": 0}, "axis": {"format": ".0f", "title": None, "tickCount": 4}}
+    return {
+        "$schema": VL,
+        "data": {"name": "dataset"},
+        "padding": {"top": 10, "left": 6, "right": 14, "bottom": 6},
+        "transform": [
+            {"calculate": "datum['Passages pointe temps sec']", "as": "val"},
+            {"joinaggregate": [{"op": "max", "field": "val", "as": "maxi"}]},
+            {"calculate": "slice(datum.classe_temperature, 3)", "as": "libelle"},
+        ],
+        "layer": [
+            {"params": [survol(["classe_temperature"])],
+             "mark": {"type": "bar", "cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4, "stroke": F["carte"], "strokeWidth": 2},
+             "encoding": {"x": classe, "y": y,
+                          "color": {"condition": {"test": "datum.val === datum.maxi", "value": S["neutre"]}, "value": F["grille_claire"]},
+                          "opacity": {"condition": {"param": "survol", "value": 1}, "value": 0.5},
+                          "tooltip": [{"field": "libelle", "type": "nominal", "title": "Température"},
+                                      {"field": "val", "type": "quantitative", "title": "Passages par compteur (pointe, temps sec)", "format": ".1f"},
+                                      {"field": "Heures pointe temps sec", "type": "quantitative", "title": "Heures étudiées", "format": ",d"}]}},
+            {   # marge en haut de l'axe : point invisible à 150 % du maximum (place pour le maximum annoté et la note)
+                "transform": [{"calculate": "datum.maxi * 1.7", "as": "plafond"}],
+                "mark": {"type": "point", "opacity": 0, "tooltip": None},
+                "encoding": {"x": classe, "y": {**y, "field": "plafond"}}},
+            {   # maximum annoté
+                "transform": [{"filter": "datum.val === datum.maxi"}, {"calculate": "'maximum : ' + replace(format(datum.val, '.1f'), '.', ',')", "as": "etiquette"}],
+                "mark": {"type": "text", "baseline": "bottom", "dy": -6, "fontSize": TAILLE_LABEL, "fontWeight": 600, "color": T["principal"], "tooltip": None},
+                "encoding": {"x": classe, "y": y, "text": {"field": "etiquette"}}},
+            {   # note affichée seulement si la dernière classe est en dessous du maximum
+                "transform": [{"window": [{"op": "last_value", "field": "val", "as": "derniere"}], "frame": [None, None],
+                              "sort": [{"field": "classe_temperature"}]},
+                             {"filter": "datum.derniere < datum.maxi"},
+                             {"aggregate": [{"op": "max", "field": "derniere", "as": "d"}]}],
+                "layer": [{"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 2, "fontSize": TAILLE_AXE, "color": T["discret"], "tooltip": None,
+                                    "text": "la baisse au-delà de 27 °C coïncide"},
+                           "encoding": {"x": {"value": 0}, "y": {"value": 0}}},
+                          {"mark": {"type": "text", "align": "left", "baseline": "top", "dx": 6, "dy": 16, "fontSize": TAILLE_AXE, "color": T["discret"], "tooltip": None,
+                                    "text": "avec les vacances d'été"},
+                           "encoding": {"x": {"value": 0}, "y": {"value": 0}}}]},
+        ],
+    }
+
+
+def meteo_profil():
+    x = {"field": "heure_du_jour", "type": "quantitative", "scale": {"domain": [0, 23], "nice": False}, "axis": {**HEURE_AXE, "grid": False}}
+    y = {"field": "val", "type": "quantitative", "scale": {"domainMin": 0}, "axis": {"format": ".0f", "title": None, "tickCount": 4}}
+    echelle = {"domain": ["Sans pluie", "Avec pluie"], "range": [S["neutre"], S["pluie"]]}
+    return {
+        "$schema": VL,
+        "data": {"name": "dataset"},
+        "padding": {"top": 10, "left": 6, "right": 14, "bottom": 6},
+        "transform": [{"fold": ["Passages semaine sans pluie", "Passages semaine avec pluie"], "as": ["cle", "val"]},
+                      {"calculate": "indexof(datum.cle, 'sans') >= 0 ? 'Sans pluie' : 'Avec pluie'", "as": "serie"}],
+        "layer": [
+            *bandes_pointe(hauteur_texte=False),
+            {"mark": {"type": "line", "interpolate": "monotone", "strokeWidth": 3, "strokeCap": "round", "tooltip": None},
+             "encoding": {"x": x, "y": y,
+                          "color": {"field": "serie", "type": "nominal", "scale": echelle,
+                                    "legend": {"title": None, "orient": "top-left", "direction": "horizontal", "offset": 4, "fillColor": F["carte"], "padding": 6, "cornerRadius": 6}},
+                          "strokeDash": {"field": "serie", "type": "nominal", "scale": {"domain": ["Sans pluie", "Avec pluie"], "range": [[1, 0], [6, 4]]}}}},
+            {"transform": [{"calculate": "(datum.heure_du_jour < 10 ? '0' : '') + datum.heure_du_jour + ' h – ' + (datum.heure_du_jour + 1 < 10 ? '0' : '') + (datum.heure_du_jour + 1) + ' h'", "as": "plage"},
+                           {"filter": "datum.serie === 'Sans pluie'"}],
+             "params": [{"name": "survol", "select": {"type": "point", "fields": ["heure_du_jour"], "nearest": True, "on": "mouseover", "clear": "mouseout"}}],
+             "mark": {"type": "rule", "strokeWidth": 1, "color": T["discret"]},
+             "encoding": {"x": x, "opacity": {"condition": {"param": "survol", "empty": False, "value": 1}, "value": 0},
+                          "tooltip": [{"field": "plage", "type": "nominal", "title": "Heure (Paris)"},
+                                      {"field": "Passages semaine sans pluie", "type": "quantitative", "title": "Sans pluie", "format": ".1f"},
+                                      {"field": "Passages semaine avec pluie", "type": "quantitative", "title": "Avec pluie", "format": ".1f"}]}},
+        ],
+    }
+
+
 SPECS = {
     "01_heatmap_heure_jour": (heatmap, "heatmap"),
     "02_rythme_journee": (rythme, "rythme"),
@@ -425,4 +583,8 @@ SPECS = {
     "05_meteo_barres": (meteo_barres, "meteo_barres"),
     "06_meteo_nuage": (meteo_nuage, "meteo_nuage"),
     "07_meteo_courbes": (meteo_courbes, "meteo_courbes"),
+    "08_meteo3_halteres_periode": (meteo_halteres, "meteo3_halteres"),
+    "09_meteo3_effet_conditions_egales": (meteo_effet, "meteo3_effet"),
+    "10_meteo3_classes_temperature": (meteo_classes, "meteo3_classes"),
+    "11_meteo3_profil_horaire_semaine": (meteo_profil, "meteo3_profil"),
 }

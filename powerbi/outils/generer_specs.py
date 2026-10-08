@@ -16,6 +16,11 @@ CHAMPS = {
     "06_meteo_nuage": [("colonne", "heure_paris"), ("colonne", "temperature_c"), ("colonne", "pluie_libelle"), ("mesure", "Taux pénurie"),
                        ("mesure", "seuil_temperature")],
     "07_meteo_courbes": [("colonne", "heure_du_jour"), ("colonne", "pluie_libelle"), ("mesure", "Taux pénurie")],
+    # page « Météo · 3 ans » : champs de la table gold_velo_meteo_heure
+    "08_meteo3_halteres_periode": [("colonne", "periode"), ("mesure", "Passages sans pluie"), ("mesure", "Passages avec pluie")],
+    "09_meteo3_effet_conditions_egales": [("colonne", "type_jour"), ("mesure", "Effet pluie à conditions égales (%)"), ("mesure", "Heures de pluie")],
+    "10_meteo3_classes_temperature": [("colonne", "classe_temperature"), ("mesure", "Passages pointe temps sec"), ("mesure", "Heures pointe temps sec")],
+    "11_meteo3_profil_horaire_semaine": [("colonne", "heure_du_jour"), ("mesure", "Passages semaine sans pluie"), ("mesure", "Passages semaine avec pluie")],
 }
 
 
@@ -27,7 +32,7 @@ def main():
         c.ecrire_json(dossier / f"{nom}.json", fabrique())
     c.ecrire_json(dossier / "_champs_par_visuel.json", {
         "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux "
-                      "de la table gold_station_heure du modèle sémantique (colonnes ou mesures). Ne pas renommer les champs.",
+                      "de la table gold_station_heure du modèle sémantique (specs 01 à 07) ou gold_velo_meteo_heure (specs 08 à 11) (colonnes ou mesures). Ne pas renommer les champs.",
         **{n: [{"type": t, "nom": f} for t, f in ch] for n, ch in CHAMPS.items()}})
     print("ok", len(sp.SPECS), "specs")
 

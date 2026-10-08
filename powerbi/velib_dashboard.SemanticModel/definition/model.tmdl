@@ -8,10 +8,11 @@ model Model
 		returnErrorValuesAsNull
 
 ref table gold_station_heure
+ref table gold_velo_meteo_heure
 
 ref culture fr-FR
 
-annotation PBI_QueryOrder = ["Hote","CheminHTTP","Catalogue","gold_station_heure"]
+annotation PBI_QueryOrder = ["Hote","CheminHTTP","Catalogue","gold_station_heure","gold_velo_meteo_heure"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 

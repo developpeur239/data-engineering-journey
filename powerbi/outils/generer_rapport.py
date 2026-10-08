@@ -13,6 +13,8 @@ NOM = "velib_dashboard"
 DOSSIER = c.RACINE / f"{NOM}.Report"
 DEF = DOSSIER / "definition"
 T = "gold_station_heure"
+T2 = "gold_velo_meteo_heure"
+ENT = {"courante": T}  # table utilisée par les fabriques de champs (changée le temps de construire la page « Météo · 3 ans »)
 DENEB = "deneb7E15AEF80B9E4D4F8E12924291ECE89A"
 SCH = "https://developer.microsoft.com/json-schemas/fabric/item/report/definition"
 V_VISUEL, V_PAGE, V_RAPPORT = "2.7.0", "2.0.0", "3.2.0"
@@ -44,18 +46,18 @@ def couleur(h):
 
 
 def champ(nom, mesure=False):
-    return {("Measure" if mesure else "Column"): {"Expression": {"SourceRef": {"Entity": T}}, "Property": nom}}
+    return {("Measure" if mesure else "Column"): {"Expression": {"SourceRef": {"Entity": ENT["courante"]}}, "Property": nom}}
 
 
 def projection(nom, mesure=False, actif=False):
-    p = {"field": champ(nom, mesure), "queryRef": f"{T}.{nom}", "nativeQueryRef": nom}
+    p = {"field": champ(nom, mesure), "queryRef": f"{ENT['courante']}.{nom}", "nativeQueryRef": nom}
     if actif:
         p["active"] = True
     return p
 
 
 def mesure_expr(nom):
-    return {"expr": {"Measure": {"Expression": {"SourceRef": {"Entity": T}}, "Property": nom}}}
+    return {"expr": {"Measure": {"Expression": {"SourceRef": {"Entity": ENT["courante"]}}, "Property": nom}}}
 
 
 # ------------------------------------------------------------------ éléments communs
@@ -205,7 +207,7 @@ def remplissage(hexa, selecteur=None):
 
 
 def par_mesure(nom):
-    return {"metadata": f"{T}.{nom}"}
+    return {"metadata": f"{ENT['courante']}.{nom}"}
 
 
 def par_valeur(colonne, valeur):
@@ -333,6 +335,69 @@ def pages():
     zt["visual"]["visualContainerObjects"]["padding"] = [{"properties": {"top": num(16), "bottom": num(16), "left": num(18), "right": num(18)}}]
     v.append(zt)
     res.append(page(nom, "Effet de la météo", v))
+
+    # 4 bis. Météo · 3 ans de compteurs (table gold_velo_meteo_heure, indépendante de gold_station_heure)
+    ENT["courante"] = T2
+    nom = "p4b_meteo3"
+    h_kpi, y_g2 = 96, 192
+    h_row = (G["hauteur"] - M - y_g2 - GOUT) // 2          # 244
+    w_c = (LARG - 320 - 2 * GOUT) // 2                      # 448 ; colonne « méthode » de 320 px
+    x2 = M + w_c + GOUT
+    src = "Source : compteurs de Paris, Open-Meteo, 2023-2025"
+    v = [entete(nom, "Météo · 3 ans de compteurs", src),
+         segmentation(f"{nom}_seg_jour", "type_jour", position(640, 8, 200, 64, 20, 1), "Type de jour", "Dropdown", 1),
+         segmentation(f"{nom}_seg_saison", "saison", position(856, 8, 200, 64, 21, 2), "Saison", "Dropdown", 2),
+         segmentation(f"{nom}_seg_annee", "annee", position(1072, 8, 184, 64, 22, 3), "Année", "Dropdown", 3)]
+    w4 = (LARG - 3 * GOUT) // 4                             # 296
+    for i, (m, alt) in enumerate([("Effet pluie semaine (%)", "Effet de la pluie sur les passages en semaine, à conditions égales"),
+                                  ("Effet pluie week-end (%)", "Effet de la pluie sur les passages le week-end, à conditions égales"),
+                                  ("Heures étudiées", "Nombre d'heures de comptage étudiées"),
+                                  ("Part des heures de pluie (%)", "Part des heures où il pleut")]):
+        v.append(carte_kpi(f"{nom}_kpi{i + 1}", m, position(M + i * (w4 + GOUT), y_kpi, w4, h_kpi, 5, 4 + i), alt, 4 + i))
+    v += [deneb(f"{nom}_halteres", "08_meteo3_halteres_periode", position(M, y_g2, w_c, h_row, 5, 8), "Titre météo haltères",
+                src, "Haltères : passages par compteur sans pluie puis avec pluie, par période"),
+          deneb(f"{nom}_effet", "09_meteo3_effet_conditions_egales", position(x2, y_g2, w_c, h_row, 5, 9), "Titre météo effet",
+                src, "Barres : effet de la pluie à conditions égales, en semaine et le week-end"),
+          deneb(f"{nom}_classes", "10_meteo3_classes_temperature", position(M, y_g2 + h_row + GOUT, w_c, h_row, 5, 10), "Titre météo température",
+                src, "Barres : passages par compteur selon la classe de température, en heure de pointe et sans pluie"),
+          deneb(f"{nom}_profil", "11_meteo3_profil_horaire_semaine", position(x2, y_g2 + h_row + GOUT, w_c, h_row, 5, 11), "Titre météo profil",
+                src, "Courbes : profil horaire en semaine, avec et sans pluie")]
+    methode3 = [("Méthode et limites", 16, True, TX["principal"]),
+                ("Passages par compteur : moyenne des comptages par compteur actif, car le nombre de compteurs varie d'une année à l'autre.", 12, False, TX["secondaire"]),
+                ("À conditions égales : on compare pluie et temps sec à la même heure, pour le même type de jour et la même saison, "
+                 "puis on pondère par le nombre d'heures de pluie (au moins 5 par groupe).", 12, False, TX["secondaire"]),
+                ("Jours fériés et vacances scolaires ne sont pas exclus. Un seul point météo pour tout Paris.", 12, False, TX["secondaire"]),
+                ("Association, pas causalité : la météo n'explique pas à elle seule les écarts.", 12, False, TX["principal"])]
+    zm = zone_texte(f"{nom}_methode", position(M + 2 * w_c + 2 * GOUT, y_g2, 320, 2 * h_row + GOUT, 5, 12), methode3)
+    zm["visual"]["visualContainerObjects"]["background"] = [{"properties": {"show": booleen(True), "color": couleur(F["carte"]), "transparency": num(0)}}]
+    zm["visual"]["visualContainerObjects"]["padding"] = [{"properties": {"top": num(16), "bottom": num(16), "left": num(18), "right": num(18)}}]
+    v.append(zm)
+    res.append(page(nom, "Météo · 3 ans de compteurs", v))
+
+    # 4 ter. Secours de la page météo 3 ans (cachée) : équivalents natifs
+    nom = "p5b_secours_meteo3"
+    cw2, ch2 = (LARG - GOUT) // 2, 300
+    pm = lambda m: (m, True, False)  # noqa: E731
+    pc = lambda n, a=False: (n, False, a)  # noqa: E731
+    v = [entete(nom, "Secours · météo 3 ans (page cachée)", "Mêmes indicateurs avec des visuels Power BI natifs, à utiliser si Deneb n'est pas disponible"),
+         natif(f"{nom}_halteres", "clusteredBarChart", position(M, y_kpi, cw2, ch2, 5, 1),
+               {"Category": [pc("periode", True)], "Y": [pm("Passages sans pluie"), pm("Passages avec pluie")]},
+               "Passages sans / avec pluie", "Équivalent natif des haltères", "Barres groupées des passages par compteur sans et avec pluie",
+               {"dataPoint": [remplissage(S["neutre"], par_mesure("Passages sans pluie")), remplissage(S["pluie"], par_mesure("Passages avec pluie"))]}),
+         natif(f"{nom}_effet", "clusteredColumnChart", position(M + cw2 + GOUT, y_kpi, cw2, ch2, 5, 2),
+               {"Category": [pc("type_jour", True)], "Y": [pm("Effet pluie à conditions égales (%)")]},
+               "Effet de la pluie à conditions égales", "Équivalent natif des barres", "Colonnes de l'effet de la pluie par type de jour",
+               {"dataPoint": [{"properties": {"defaultColor": couleur(S["pluie"])}}]}),
+         natif(f"{nom}_classes", "clusteredColumnChart", position(M, y_kpi + ch2 + GOUT, cw2, ch2, 5, 3),
+               {"Category": [pc("classe_temperature", True)], "Y": [pm("Passages pointe temps sec")]},
+               "Passages en pointe, temps sec, par température", "Équivalent natif des barres par classe", "Colonnes par classe de température",
+               {"dataPoint": [{"properties": {"defaultColor": couleur(S["neutre"])}}]}),
+         natif(f"{nom}_profil", "lineChart", position(M + cw2 + GOUT, y_kpi + ch2 + GOUT, cw2, ch2, 5, 4),
+               {"Category": [pc("heure_du_jour", True)], "Y": [pm("Passages semaine sans pluie"), pm("Passages semaine avec pluie")]},
+               "Profil horaire en semaine", "Équivalent natif des courbes", "Courbes de passages par heure, avec et sans pluie",
+               {"dataPoint": [remplissage(S["neutre"], par_mesure("Passages semaine sans pluie")), remplissage(S["pluie"], par_mesure("Passages semaine avec pluie"))]})]
+    res.append(page(nom, "Secours · météo 3 ans", v, cachee=True))
+    ENT["courante"] = T
 
     # 5. Secours (cachée) : un équivalent natif de chaque visuel Deneb
     nom = "p5_secours"

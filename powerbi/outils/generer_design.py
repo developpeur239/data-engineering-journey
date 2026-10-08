@@ -115,7 +115,8 @@ Nombres au format français (virgule décimale, espace avant « % ») : les visu
 | Carte des stations | carte stylisée 800 × 616 ; tableau « top 20 » 416 × 616 |
 | Effet des pannes | 3 KPI de 400 × 104 ; haltères 800 × 340 puis « Comment lire » 800 × 140 ; « Méthode » 416 × 496 |
 | Effet de la météo | barres 400 × 300 puis « Comment lire » 400 × 300 à gauche ; nuage 816 × 300 puis courbes 816 × 300 à droite |
-| Secours (cachée) | grille 3 × 2 de visuels natifs de 400 × 300 |
+| Météo · 3 ans de compteurs | 4 KPI de 296 × 96 ; grille 2 × 2 de graphiques de 448 × 244 ; « Méthode et limites » 320 × 504 à droite |
+| Secours (cachées) | grille 3 × 2 de visuels natifs de 400 × 300 ; grille 2 × 2 pour la météo 3 ans |
 
 ## 7. Règles graphiques
 
@@ -153,6 +154,15 @@ Chaque PNG a été regardé puis critiqué avec la méthode `dataviz` (forme, co
 | Barres pluie | légende posée sur l'étiquette de la plus haute barre ; carte trop haute pour 4 barres | légende placée sous l'axe ; visuel ramené à 400 × 300 et accompagné du bloc « Comment lire » |
 | Nuage | étiquette « tendance lissée » recouverte par les points ; titre d'axe redondant avec « °C » | halo de la couleur du fond derrière l'étiquette, placée à gauche ; titre d'axe supprimé ; légende dans le coin libre |
 | Courbes | place réservée à la légende qui écrase le tracé ; pluie indiscernable sans couleur | légende dans le coin libre ; pluie = pointillé **et** violet |
+
+Page « Météo · 3 ans de compteurs » (4 visuels) :
+
+| Visuel | Défaut relevé | Correction |
+|---|---|---|
+| Haltères période | libellés « avec pluie » et « sans pluie » superposés (valeurs proches) ; titre tronqué | libellés placés de part et d'autre des disques ; l'aperçu fait passer les titres à la ligne comme Power BI |
+| Effet à conditions égales | note recouverte par l'étiquette d'une barre ; titre sur 3 lignes | marge sous les barres (axe prolongé de 80 %) ; titre raccourci (« −15,9 % en semaine, −20,6 % le week-end ») |
+| Classes de température | note et maximum annoté superposés | marge en haut de l'axe, note alignée à gauche, maximum annoté au-dessus de la barre |
+| Profil horaire | légende posée sur le pic du soir | légende en haut à gauche, zone libre de la nuit |
 
 Deuxième tour (retours de relecture) :
 

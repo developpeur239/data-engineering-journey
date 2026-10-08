@@ -239,10 +239,11 @@ MODEL = f"""model Model
 		returnErrorValuesAsNull
 
 ref table {TABLE}
+ref table gold_velo_meteo_heure
 
 ref culture fr-FR
 
-annotation PBI_QueryOrder = ["Hote","CheminHTTP","Catalogue","{TABLE}"]
+annotation PBI_QueryOrder = ["Hote","CheminHTTP","Catalogue","{TABLE}","gold_velo_meteo_heure"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -265,6 +266,8 @@ def main():
     (DOSSIER / "definition" / "expressions.tmdl").write_text(expressions_tmdl(), encoding="utf-8")
     (DOSSIER / "definition" / "cultures" / "fr-FR.tmdl").write_text("culture fr-FR\n", encoding="utf-8")
     (DOSSIER / "definition" / "tables" / f"{TABLE}.tmdl").write_text(table_tmdl(), encoding="utf-8")
+    import modele_meteo as mm  # import tardif : modele_meteo importe ce module
+    (DOSSIER / "definition" / "tables" / f"{mm.TABLE2}.tmdl").write_text(mm.table_tmdl2(), encoding="utf-8")
     print("ok", DOSSIER.name)
 
 

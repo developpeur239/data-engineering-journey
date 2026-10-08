@@ -1,5 +1,5 @@
 {
-  "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux de la table gold_station_heure du modèle sémantique (colonnes ou mesures). Ne pas renommer les champs.",
+  "_lisez-moi": "Champs à placer dans le puits « Valeurs » de Deneb pour chaque spec, dans cet ordre. Les noms sont ceux de la table gold_station_heure du modèle sémantique (specs 01 à 07) ou gold_velo_meteo_heure (specs 08 à 11) (colonnes ou mesures). Ne pas renommer les champs.",
   "01_heatmap_heure_jour": [
     {
       "type": "colonne",
@@ -140,6 +140,62 @@
     {
       "type": "mesure",
       "nom": "Taux pénurie"
+    }
+  ],
+  "08_meteo3_halteres_periode": [
+    {
+      "type": "colonne",
+      "nom": "periode"
+    },
+    {
+      "type": "mesure",
+      "nom": "Passages sans pluie"
+    },
+    {
+      "type": "mesure",
+      "nom": "Passages avec pluie"
+    }
+  ],
+  "09_meteo3_effet_conditions_egales": [
+    {
+      "type": "colonne",
+      "nom": "type_jour"
+    },
+    {
+      "type": "mesure",
+      "nom": "Effet pluie à conditions égales (%)"
+    },
+    {
+      "type": "mesure",
+      "nom": "Heures de pluie"
+    }
+  ],
+  "10_meteo3_classes_temperature": [
+    {
+      "type": "colonne",
+      "nom": "classe_temperature"
+    },
+    {
+      "type": "mesure",
+      "nom": "Passages pointe temps sec"
+    },
+    {
+      "type": "mesure",
+      "nom": "Heures pointe temps sec"
+    }
+  ],
+  "11_meteo3_profil_horaire_semaine": [
+    {
+      "type": "colonne",
+      "nom": "heure_du_jour"
+    },
+    {
+      "type": "mesure",
+      "nom": "Passages semaine sans pluie"
+    },
+    {
+      "type": "mesure",
+      "nom": "Passages semaine avec pluie"
     }
   ]
 }

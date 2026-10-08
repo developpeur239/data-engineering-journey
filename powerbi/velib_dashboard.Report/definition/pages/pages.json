@@ -5,6 +5,8 @@
     "p2_carte",
     "p3_pannes",
     "p4_meteo",
+    "p4b_meteo3",
+    "p5b_secours_meteo3",
     "p5_secours"
   ],
   "activePageName": "p1_vue_ensemble"

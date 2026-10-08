@@ -10,6 +10,7 @@ import sys
 
 import commun as c
 import generer_modele as gm
+import modele_meteo as mm
 
 PROJ = c.RACINE
 erreurs = []
@@ -20,23 +21,33 @@ def err(m):
     print("ECHEC", m)
 
 
-# 1. TMDL
-modele_cols = {n for n, *_ in gm.COLONNES} | {n for n, *_ in gm.CALCULEES}
-modele_mes = {m[0] for m in gm.MESURES}
-assert len(modele_cols) == len(gm.COLONNES) + len(gm.CALCULEES), "colonnes en double"
-assert not modele_cols & modele_mes, "nom commun à une colonne et une mesure"
+# 1. TMDL (deux tables : gold_station_heure et gold_velo_meteo_heure, sans relation)
+TABLES = {
+    gm.TABLE: ({n for n, *_ in gm.COLONNES} | {n for n, *_ in gm.CALCULEES}, {m[0] for m in gm.MESURES}),
+    mm.TABLE2: ({n for n, *_ in mm.COLONNES2} | {c[0] for c in mm.CALCULEES2}, {m[0] for m in mm.MESURES2}),
+}
+assert len(TABLES[gm.TABLE][0]) == len(gm.COLONNES) + len(gm.CALCULEES), "colonnes en double"
+assert len(TABLES[mm.TABLE2][0]) == len(mm.COLONNES2) + len(mm.CALCULEES2), "colonnes en double (table météo)"
+modele_mes = set()
+for tab, (cols_t, mes_t) in TABLES.items():
+    assert not cols_t & mes_t, f"{tab} : nom commun à une colonne et une mesure"
+    modele_mes |= mes_t
+assert not TABLES[gm.TABLE][1] & TABLES[mm.TABLE2][1], "mesure portant le même nom dans les deux tables (ambigu en DAX)"
 for f in (PROJ / "velib_dashboard.SemanticModel").rglob("*.tmdl"):
     for i, l in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
         if l.startswith(" ") and not re.match(r"^\t+ ", l) and "\t" not in l[:1]:
-            # une ligne qui commence par des espaces n'est tolérée que dans un bloc M/DAX (déjà précédé de tabulations)
             err(f"{f.name}:{i} ligne indentée par des espaces")
-txt = (PROJ / "velib_dashboard.SemanticModel/definition/tables/gold_station_heure.tmdl").read_text(encoding="utf-8")
-for n in modele_cols:
-    if f"column {n}\n" not in txt and f"column {n} = " not in txt:
-        err(f"colonne absente du TMDL : {n}")
-for n in modele_mes:
-    if f"measure {gm.tmdl_nom(n)} =" not in txt:
-        err(f"mesure absente du TMDL : {n}")
+for tab, (cols_t, mes_t) in TABLES.items():
+    txt = (PROJ / f"velib_dashboard.SemanticModel/definition/tables/{tab}.tmdl").read_text(encoding="utf-8")
+    for n in cols_t:
+        if f"column {n}\n" not in txt and f"column {n} = " not in txt:
+            err(f"{tab} : colonne absente du TMDL : {n}")
+    for n in mes_t:
+        if f"measure {gm.tmdl_nom(n)} =" not in txt:
+            err(f"{tab} : mesure absente du TMDL : {n}")
+model_txt = (PROJ / "velib_dashboard.SemanticModel/definition/model.tmdl").read_text(encoding="utf-8")
+if "relationship" in model_txt or (PROJ / "velib_dashboard.SemanticModel/definition/relationships.tmdl").exists():
+    err("une relation existe : la table météo doit rester indépendante")
 
 # 2 et 3
 BIBLIO = {"datum", "d"}
@@ -50,18 +61,18 @@ for f in (PROJ / "velib_dashboard.Report/definition").rglob("visual.json"):
             for k in ("Column", "Measure"):
                 if k in n and isinstance(n[k], dict) and "Property" in n[k]:
                     ent = n[k]["Expression"]["SourceRef"].get("Entity")
-                    if ent == gm.TABLE:
-                        refs.add((k, n[k]["Property"]))
+                    if ent in TABLES:
+                        refs.add((ent, k, n[k]["Property"]))
             for x in n.values():
                 parcourir(x)
         elif isinstance(n, list):
             for x in n:
                 parcourir(x)
     parcourir(d)
-    for k, nom in refs:
-        existe = nom in (modele_cols if k == "Column" else modele_mes)
+    for ent, k, nom in refs:
+        existe = nom in (TABLES[ent][0] if k == "Column" else TABLES[ent][1])
         if not existe:
-            err(f"{f.parent.name} : {k} inconnu {nom}")
+            err(f"{f.parent.name} : {k} inconnu dans {ent} : {nom}")
     if v.get("visualType", "").startswith("deneb"):
         spec = json.loads(v["objects"]["vega"][0]["properties"]["jsonSpec"]["expr"]["Literal"]["Value"][1:-1].replace("''", "'"))
         liees = {p["nativeQueryRef"] for p in v["query"]["queryState"]["dataset"]["projections"]}

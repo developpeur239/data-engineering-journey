@@ -1,6 +1,7 @@
 """Écrit REPARER_TABLE.md : les colonnes (Power Query) et mesures (DAX) à recréer si la table a été réimportée."""
 import commun as c
 import generer_modele as gm
+import modele_meteo as mm
 
 mesures = []
 for nom, dax, fmt, dossier, masquee in gm.MESURES:
@@ -48,6 +49,16 @@ Si **seule** `seuil_temperature` manque, ne recréez que celle-là. Sinon, crée
 ## Étape 3. Relier à nouveau les visuels
 
 Un visuel dont un champ a disparu affiche « Corrigez ce visuel » ou reste vide. Pour chaque graphique Deneb, glissez à nouveau dans le puits **Valeurs** les champs listés dans `deneb_specs/_champs_par_visuel.json` (même ordre, sans renommer). Les visuels natifs se corrigent en re-glissant le champ manquant.
+
+## Table météo 3 ans (`gold_velo_meteo_heure`) : colonnes et mesures
+
+Table indépendante (aucune relation). Colonnes calculées à recréer (clic droit sur la table → *Nouvelle colonne*) :
+
+```dax
+{chr(10).join(f"{n} = {d}" + chr(10) for n, _, _, d, _ in mm.CALCULEES2).rstrip()}
+```
+
+Puis, trier `saison` par `saison_ordre` et `periode` par `periode_ordre` (*Outils de colonne → Trier par colonne*). Les mesures (dossier « Météo 3 ans ») sont listées dans `README_powerbi.md` et leur texte exact dans `outils/modele_meteo.py` (liste `MESURES2`).
 
 ## Plus simple : repartir du projet
 

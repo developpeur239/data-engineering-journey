@@ -1,0 +1,246 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "data": {
+    "name": "dataset"
+  },
+  "padding": {
+    "top": 10,
+    "left": 6,
+    "right": 14,
+    "bottom": 6
+  },
+  "transform": [
+    {
+      "fold": [
+        "Passages semaine sans pluie",
+        "Passages semaine avec pluie"
+      ],
+      "as": [
+        "cle",
+        "val"
+      ]
+    },
+    {
+      "calculate": "indexof(datum.cle, 'sans') >= 0 ? 'Sans pluie' : 'Avec pluie'",
+      "as": "serie"
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {
+            "a": 7,
+            "b": 10,
+            "t": "pointe du matin"
+          },
+          {
+            "a": 17,
+            "b": 20,
+            "t": "pointe du soir"
+          }
+        ]
+      },
+      "mark": {
+        "type": "rect",
+        "color": "#1F2A40",
+        "opacity": 0.75,
+        "cornerRadius": 4
+      },
+      "encoding": {
+        "x": {
+          "field": "a",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "b"
+        },
+        "y": {
+          "value": 0
+        },
+        "y2": {
+          "value": {
+            "expr": "height"
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 3,
+        "strokeCap": "round",
+        "tooltip": null
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "val",
+          "type": "quantitative",
+          "scale": {
+            "domainMin": 0
+          },
+          "axis": {
+            "format": ".0f",
+            "title": null,
+            "tickCount": 4
+          }
+        },
+        "color": {
+          "field": "serie",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Sans pluie",
+              "Avec pluie"
+            ],
+            "range": [
+              "#9AA9C4",
+              "#7F6AE6"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "top-left",
+            "direction": "horizontal",
+            "offset": 4,
+            "fillColor": "#161E2E",
+            "padding": 6,
+            "cornerRadius": 6
+          }
+        },
+        "strokeDash": {
+          "field": "serie",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Sans pluie",
+              "Avec pluie"
+            ],
+            "range": [
+              [
+                1,
+                0
+              ],
+              [
+                6,
+                4
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "calculate": "(datum.heure_du_jour < 10 ? '0' : '') + datum.heure_du_jour + ' h – ' + (datum.heure_du_jour + 1 < 10 ? '0' : '') + (datum.heure_du_jour + 1) + ' h'",
+          "as": "plage"
+        },
+        {
+          "filter": "datum.serie === 'Sans pluie'"
+        }
+      ],
+      "params": [
+        {
+          "name": "survol",
+          "select": {
+            "type": "point",
+            "fields": [
+              "heure_du_jour"
+            ],
+            "nearest": true,
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1,
+        "color": "#8D9BB6"
+      },
+      "encoding": {
+        "x": {
+          "field": "heure_du_jour",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              23
+            ],
+            "nice": false
+          },
+          "axis": {
+            "values": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21
+            ],
+            "labelExpr": "datum.value + ' h'",
+            "title": null,
+            "grid": false
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "survol",
+            "empty": false,
+            "value": 1
+          },
+          "value": 0
+        },
+        "tooltip": [
+          {
+            "field": "plage",
+            "type": "nominal",
+            "title": "Heure (Paris)"
+          },
+          {
+            "field": "Passages semaine sans pluie",
+            "type": "quantitative",
+            "title": "Sans pluie",
+            "format": ".1f"
+          },
+          {
+            "field": "Passages semaine avec pluie",
+            "type": "quantitative",
+            "title": "Avec pluie",
+            "format": ".1f"
+          }
+        ]
+      }
+    }
+  ]
+}
