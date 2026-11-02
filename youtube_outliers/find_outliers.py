@@ -1,237 +1,211 @@
-"""Repère les chaînes YouTube « outliers » : petites, récentes, avec au moins
-une vidéo qui a fait beaucoup plus de vues que la chaîne n'a d'abonnés.
-
-Critère par défaut : vues de la vidéo >= 10 x abonnés de la chaîne.
+"""Tableau des niches YouTube : repère les petites chaînes qui explosent et les classe S/A/B/C.
 
 Pipeline (style ETL) :
-    1. Extract   : search.list  -> vidéos récentes sur un mot-clé (100 unités de quota / page)
-                   videos.list  -> vues de chaque vidéo        (1 unité / 50 vidéos)
-                   channels.list -> abonnés, date de création   (1 unité / 50 chaînes)
-    2. Transform : jointure vidéo <-> chaîne, filtres, meilleure vidéo par chaîne
-    3. Load      : tableau dans le terminal + export CSV optionnel
+    1. Extract   : pour chaque niche, recherche des vidéos les plus vues (search.list),
+                   puis les chaînes (channels.list) et leurs N dernières vidéos
+                   (playlistItems.list + videos.list).
+    2. Transform : critères par chaîne (metrics.py) : explosion du dernier succès,
+                   régularité, tendance, Short ou vidéo longue, revenu estimé, concurrence.
+    3. Load      : tableau classé dans le terminal + export CSV optionnel.
 
 Usage :
     export YOUTUBE_API_KEY="..."
-    python find_outliers.py "3d reconstruction" --pages 2 --csv outliers.csv
+    python find_outliers.py "3d news reconstruction=news" "ai takeover documentary=tech" \
+        "stickman battle=entertainment" --csv board.csv
+
+Une niche s'écrit "mot-clé=thème". Le thème choisit le RPM des vidéos longues dans rpm.json.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import json
 import os
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, Iterator
+from pathlib import Path
 
-import requests
+from metrics import (
+    ChannelReport,
+    Thresholds,
+    analyze_channel,
+    channel_from_api,
+    rank_board,
+    video_from_api,
+)
+from youtube_client import YouTubeClient
 
-API_URL = "https://www.googleapis.com/youtube/v3"
-BATCH_SIZE = 50  # maximum d'IDs par appel videos.list / channels.list
-
-
-@dataclass
-class Outlier:
-    channel_id: str
-    channel_title: str
-    subscribers: int
-    channel_videos: int
-    channel_created: str
-    top_video_title: str
-    top_video_views: int
-    ratio: float
-
-    @property
-    def channel_url(self) -> str:
-        return f"https://www.youtube.com/channel/{self.channel_id}"
+DEFAULT_RPM_FILE = Path(__file__).with_name("rpm.json")
+TREND_ICONS = {"chauffe": "🔥", "refroidit": "❄️", "stable": "➖", "n/a": "?"}
 
 
-# --------------------------------------------------------------------------- #
-# Extract
-# --------------------------------------------------------------------------- #
-class YouTubeClient:
-    def __init__(self, api_key: str, session: requests.Session | None = None):
-        self.api_key = api_key
-        self.session = session or requests.Session()
-
-    def _get(self, endpoint: str, **params) -> dict:
-        params["key"] = self.api_key
-        resp = self.session.get(f"{API_URL}/{endpoint}", params=params, timeout=30)
-        if resp.status_code != 200:
-            raise RuntimeError(f"{endpoint} -> HTTP {resp.status_code}: {resp.text[:300]}")
-        return resp.json()
-
-    def search_videos(
-        self, query: str, published_after: datetime, pages: int, region: str | None
-    ) -> list[str]:
-        """IDs des vidéos les plus vues publiées après `published_after`."""
-        video_ids: list[str] = []
-        page_token = None
-        for _ in range(pages):
-            params = dict(
-                part="id",
-                q=query,
-                type="video",
-                order="viewCount",
-                maxResults=50,
-                publishedAfter=published_after.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            )
-            if region:
-                params["regionCode"] = region
-            if page_token:
-                params["pageToken"] = page_token
-            data = self._get("search", **params)
-            video_ids += [item["id"]["videoId"] for item in data.get("items", [])]
-            page_token = data.get("nextPageToken")
-            if not page_token:
-                break
-        return list(dict.fromkeys(video_ids))  # dédoublonne en gardant l'ordre
-
-    def videos(self, video_ids: list[str]) -> list[dict]:
-        return self._batched("videos", video_ids, part="snippet,statistics")
-
-    def channels(self, channel_ids: list[str]) -> list[dict]:
-        return self._batched("channels", channel_ids, part="snippet,statistics")
-
-    def _batched(self, endpoint: str, ids: list[str], part: str) -> list[dict]:
-        items: list[dict] = []
-        for chunk in chunked(ids, BATCH_SIZE):
-            items += self._get(endpoint, part=part, id=",".join(chunk)).get("items", [])
-        return items
+def parse_niche(arg: str) -> tuple[str, str]:
+    query, _, theme = arg.partition("=")
+    return query.strip(), (theme.strip() or "default")
 
 
-def chunked(seq: list[str], size: int) -> Iterator[list[str]]:
-    for i in range(0, len(seq), size):
-        yield seq[i : i + size]
+def load_rpm(path: Path, theme: str, rpm_long: float | None, rpm_short: float | None) -> tuple[float, float]:
+    table = json.loads(path.read_text(encoding="utf-8"))
+    long_table = table["long"]
+    if rpm_long is None:
+        if theme not in long_table:
+            print(f"Thème inconnu « {theme} » : RPM par défaut utilisé.", file=sys.stderr)
+        rpm_long = long_table.get(theme, long_table["default"])
+    return float(rpm_long), float(table["short"] if rpm_short is None else rpm_short)
 
 
 # --------------------------------------------------------------------------- #
-# Transform (fonctions pures -> testables sans réseau)
+# Extract + Transform
 # --------------------------------------------------------------------------- #
-def parse_date(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
-
-
-def find_outliers(
-    videos: Iterable[dict],
-    channels: Iterable[dict],
+def analyze_niche(
+    client: YouTubeClient,
+    query: str,
     *,
-    min_ratio: float = 10.0,
-    max_subs: int = 100_000,
-    min_subs: int = 1_000,
-    created_after: datetime | None = None,
-) -> list[Outlier]:
-    """Garde, pour chaque chaîne qui passe les filtres, sa meilleure vidéo."""
-    channels_by_id = {c["id"]: c for c in channels}
-    best: dict[str, Outlier] = {}
+    rpm_long: float,
+    rpm_short: float,
+    cutoff: datetime,
+    pages: int,
+    region: str | None,
+    min_subs: int,
+    max_subs: int,
+    recent: int,
+    thresholds: Thresholds,
+    now: datetime,
+) -> list[ChannelReport]:
+    # 1. Vidéos les plus vues de la niche -> chaînes candidates
+    found = client.videos(client.search_videos(query, cutoff, pages, region))
+    channel_ids = list(dict.fromkeys(v["snippet"]["channelId"] for v in found))
+    channels = [c for c in map(channel_from_api, client.channels(channel_ids)) if c]
+    channels = [c for c in channels if min_subs <= c.subscribers <= max_subs and c.created >= cutoff]
 
-    for video in videos:
-        channel = channels_by_id.get(video["snippet"]["channelId"])
-        if channel is None:
-            continue
-        stats = channel.get("statistics", {})
-        if stats.get("hiddenSubscriberCount"):
-            continue  # impossible de calculer le ratio
-        subs = int(stats.get("subscriberCount", 0))
-        if not (min_subs <= subs <= max_subs):
-            continue
-        created = parse_date(channel["snippet"]["publishedAt"])
-        if created_after and created < created_after:
-            continue
+    # 2. Dernières vidéos de chaque chaîne candidate
+    upload_ids = [vid for c in channels for vid in client.recent_upload_ids(c.uploads_playlist, recent)]
+    by_channel: dict[str, list] = {}
+    for item in client.videos(upload_ids):
+        video = video_from_api(item)
+        by_channel.setdefault(video.channel_id, []).append(video)
 
-        views = int(video.get("statistics", {}).get("viewCount", 0))
-        ratio = views / subs
-        if ratio < min_ratio:
-            continue
-
-        current = best.get(channel["id"])
-        if current is None or views > current.top_video_views:
-            best[channel["id"]] = Outlier(
-                channel_id=channel["id"],
-                channel_title=channel["snippet"]["title"],
-                subscribers=subs,
-                channel_videos=int(stats.get("videoCount", 0)),
-                channel_created=created.date().isoformat(),
-                top_video_title=video["snippet"]["title"],
-                top_video_views=views,
-                ratio=round(ratio, 1),
-            )
-
-    return sorted(best.values(), key=lambda o: o.ratio, reverse=True)
+    # 3. Critères
+    reports = []
+    for c in channels:
+        report = analyze_channel(
+            c,
+            by_channel.get(c.channel_id, []),
+            niche=query,
+            rpm_long=rpm_long,
+            rpm_short=rpm_short,
+            thresholds=thresholds,
+            now=now,
+        )
+        if report:
+            reports.append(report)
+    return reports
 
 
 # --------------------------------------------------------------------------- #
 # Load
 # --------------------------------------------------------------------------- #
-def human(n: int) -> str:
+def human(n: float) -> str:
     for unit, div in (("M", 1_000_000), ("K", 1_000)):
         if n >= div:
             return f"{n / div:.1f}{unit}"
-    return str(n)
+    return f"{n:.0f}"
 
 
-def print_table(outliers: list[Outlier]) -> None:
-    if not outliers:
-        print("Aucune chaîne outlier trouvée. Essaie un autre mot-clé, plus de --pages ou --months.")
+def print_board(board: list[ChannelReport]) -> None:
+    if not board:
+        print("Aucune chaîne outlier. Essaie --ratio 10, plus de --pages, --months ou d'autres mots-clés.")
         return
-    print(f"{'Ratio':>7}  {'Abonnés':>8}  {'Vues top':>8}  {'Vidéos':>6}  {'Créée':>10}  Chaîne")
-    for o in outliers:
+    header = (
+        f"{'Tier':<4} {'Pts':>3}  {'Explos.':>7} {'Abonnés':>7} {'Dern. succès':>14} {'Médiane':>7} "
+        f"{'≥50K':>4} {'Tend.':>5} {'Format':>6} {'$/30j':>7} {'Conc.':>5}  Chaîne · Niche"
+    )
+    print(header)
+    print("-" * len(header))
+    for r in board:
+        hit = f"{human(r.latest_hit_views)} {r.latest_hit_days_ago}j"
+        flag = " ⚠️1 carton" if r.one_hit else ""
         print(
-            f"{o.ratio:>6.1f}x  {human(o.subscribers):>8}  {human(o.top_video_views):>8}  "
-            f"{o.channel_videos:>6}  {o.channel_created:>10}  {o.channel_title}  {o.channel_url}"
+            f"{r.tier:<4} {r.score:>3}  {r.blowup:>6.0f}x {human(r.subscribers):>7} {hit:>14} "
+            f"{human(r.median_views):>7} {r.share_above_hit_views:>4.0%} {TREND_ICONS[r.trend]:>5} "
+            f"{r.format:>6} {human(r.revenue_30d):>7} {r.competition:>5}  "
+            f"{r.channel_title} · {r.niche}{flag}\n{'':>6}{r.channel_url}"
         )
+    print("\nColonne « faisable par Claude » : à remplir à la main dans le CSV.")
 
 
-def write_csv(outliers: list[Outlier], path: str) -> None:
+def write_csv(board: list[ChannelReport], path: str) -> None:
     with open(path, "w", newline="", encoding="utf-8") as f:
-        fields = list(Outlier.__dataclass_fields__) + ["channel_url"]
+        fields = list(ChannelReport.__dataclass_fields__) + ["channel_url"]
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
-        for o in outliers:
-            writer.writerow({**asdict(o), "channel_url": o.channel_url})
+        for r in board:
+            writer.writerow({**asdict(r), "channel_url": r.channel_url})
 
 
 # --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
-def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Trouve les chaînes YouTube outliers d'un format.")
-    p.add_argument("query", help='mot-clé du format, ex. "3d reconstruction"')
-    p.add_argument("--ratio", type=float, default=10.0, help="vues / abonnés minimum (défaut 10)")
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(description="Classe les petites chaînes YouTube qui explosent, niche par niche.")
+    p.add_argument("niches", nargs="+", help='une ou plusieurs niches "mot-clé=thème", ex. "3d news=news"')
+    p.add_argument("--ratio", type=float, default=100, help="explosion min. du dernier succès, vues/abonnés (défaut 100)")
+    p.add_argument("--hit-views", type=int, default=50_000, help="seuil de régularité en vues (défaut 50K)")
     p.add_argument("--max-subs", type=int, default=100_000, help="abonnés max (défaut 100K)")
     p.add_argument("--min-subs", type=int, default=1_000, help="abonnés min (défaut 1K)")
-    p.add_argument("--months", type=int, default=12, help="vidéos et chaînes de moins de N mois (défaut 12)")
-    p.add_argument("--pages", type=int, default=1, help="pages de recherche, 100 unités de quota chacune (défaut 1)")
+    p.add_argument("--months", type=int, default=12, help="chaînes créées il y a moins de N mois (défaut 12)")
+    p.add_argument("--recent", type=int, default=15, help="nombre de dernières vidéos analysées, max 50 (défaut 15)")
+    p.add_argument("--pages", type=int, default=1, help="pages de recherche par niche, 100 unités chacune (défaut 1)")
     p.add_argument("--region", help="code pays, ex. FR ou US")
+    p.add_argument("--rpm-file", type=Path, default=DEFAULT_RPM_FILE, help="table des RPM (défaut rpm.json)")
+    p.add_argument("--rpm-long", type=float, help="force le RPM des vidéos longues ($)")
+    p.add_argument("--rpm-short", type=float, help="force le RPM des Shorts ($)")
     p.add_argument("--csv", help="chemin d'export CSV")
-    args = p.parse_args(argv)
+    return p
 
-    api_key = os.environ.get("YOUTUBE_API_KEY")
-    if not api_key:
-        print("Erreur : définis la variable d'environnement YOUTUBE_API_KEY.", file=sys.stderr)
-        return 1
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=30 * args.months)
-    client = YouTubeClient(api_key)
+def main(argv: list[str] | None = None, client: YouTubeClient | None = None) -> int:
+    args = build_parser().parse_args(argv)
 
-    video_ids = client.search_videos(args.query, cutoff, args.pages, args.region)
-    videos = client.videos(video_ids)
-    channel_ids = list(dict.fromkeys(v["snippet"]["channelId"] for v in videos))
-    channels = client.channels(channel_ids)
+    if client is None:
+        api_key = os.environ.get("YOUTUBE_API_KEY")
+        if not api_key:
+            print("Erreur : définis la variable d'environnement YOUTUBE_API_KEY.", file=sys.stderr)
+            return 1
+        client = YouTubeClient(api_key)
 
-    outliers = find_outliers(
-        videos,
-        channels,
-        min_ratio=args.ratio,
-        max_subs=args.max_subs,
-        min_subs=args.min_subs,
-        created_after=cutoff,
-    )
-    print(f"{len(video_ids)} vidéos analysées, {len(channels)} chaînes, {len(outliers)} outliers.\n")
-    print_table(outliers)
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=30 * args.months)
+    thresholds = Thresholds(ratio=args.ratio, hit_views=args.hit_views)
+
+    reports: list[ChannelReport] = []
+    for arg in args.niches:
+        query, theme = parse_niche(arg)
+        rpm_long, rpm_short = load_rpm(args.rpm_file, theme, args.rpm_long, args.rpm_short)
+        found = analyze_niche(
+            client,
+            query,
+            rpm_long=rpm_long,
+            rpm_short=rpm_short,
+            cutoff=cutoff,
+            pages=args.pages,
+            region=args.region,
+            min_subs=args.min_subs,
+            max_subs=args.max_subs,
+            recent=args.recent,
+            thresholds=thresholds,
+            now=now,
+        )
+        print(f"« {query} » ({theme}, RPM long {rpm_long} $ / short {rpm_short} $) : {len(found)} chaîne(s) outlier")
+        reports += found
+
+    board = rank_board(reports)
+    print(f"\nQuota utilisé : ~{client.quota_used} unités sur 10 000 / jour.\n")
+    print_board(board)
     if args.csv:
-        write_csv(outliers, args.csv)
+        write_csv(board, args.csv)
         print(f"\nCSV écrit : {args.csv}")
     return 0
 

@@ -1,7 +1,7 @@
-# YouTube outliers
+# YouTube outliers : le tableau des niches
 
-Petit pipeline ETL en Python qui repère les chaînes YouTube **« outliers »** d'un format :
-petites, récentes, avec au moins une vidéo qui a fait **≥ 10 × plus de vues que la chaîne n'a d'abonnés**.
+Pipeline ETL en Python sur l'API YouTube Data v3. Pour chaque niche (mot-clé), il repère les **petites chaînes récentes
+qui explosent**, calcule leurs critères et les classe **S / A / B / C**.
 
 ## Installation
 
@@ -15,37 +15,67 @@ Pour la clé : Google Cloud Console → crée un projet → *APIs & Services* �
 
 ## Utilisation
 
+Une niche s'écrit `"mot-clé=thème"`. Le thème choisit le RPM des vidéos longues dans [`rpm.json`](rpm.json).
+
 ```bash
-python find_outliers.py "3d reconstruction"
-python find_outliers.py "plane crash explained" --pages 3 --csv outliers.csv
-python find_outliers.py "géographie" --region FR --months 6 --max-subs 50000
+python find_outliers.py \
+  "3d news reconstruction=news" \
+  "ai takeover documentary=tech" \
+  "stickman battle=entertainment" \
+  "horror story stick figures=horror" \
+  --csv board.csv
 ```
 
-| Option | Défaut | Rôle |
+Thèmes fournis : `tech`, `finance`, `news`, `education`, `science`, `entertainment`, `horror`, `default`.
+
+## Les critères
+
+| Critère | Calcul | Option |
 |---|---|---|
-| `--ratio` | 10 | vues / abonnés minimum |
-| `--max-subs` / `--min-subs` | 100 000 / 1 000 | fourchette d'abonnés |
-| `--months` | 12 | vidéos **et** chaînes de moins de N mois |
-| `--pages` | 1 | pages de 50 résultats de recherche |
-| `--region` | — | code pays (`FR`, `US`…) |
-| `--csv` | — | export CSV |
+| **Explosion** | vues du **dernier succès** ÷ abonnés. Le dernier succès est la vidéo la plus récente, parmi les N dernières, qui dépasse le seuil | `--ratio` (défaut **100**) |
+| **Régularité** | médiane des vues et part des N dernières vidéos au-dessus de 50K | `--hit-views`, `--recent` |
+| **Un seul carton** ⚠️ | meilleure vidéo ≥ 20 × la médiane | — |
+| **Tendance** | médiane des 5 dernières ÷ médiane des précédentes : 🔥 chauffe (≥ 1,2), ❄️ refroidit (≤ 0,8), ➖ stable | — |
+| **Format** | Short si ≤ 3 min. Chaîne `short` (≥ 70 % de Shorts), `long` (≤ 30 %) ou `mixte` | — |
+| **Argent** | vues des vidéos des 30 derniers jours × RPM (Short ou longue) ÷ 1000 | `rpm.json`, `--rpm-long`, `--rpm-short` |
+| **Concurrence** | nombre de chaînes outliers trouvées dans la même niche | — |
+| **Faisable par Claude** | jugement humain : colonne `buildable_by_claude` vide dans le CSV, à remplir | — |
 
-## Pipeline
+Filtres de départ : entre `--min-subs` (1K) et `--max-subs` (100K) abonnés, chaîne créée il y a moins de `--months` (12) mois, abonnés non masqués.
 
-1. **Extract** : `search.list` (vidéos les plus vues sur le mot-clé), puis `videos.list` et `channels.list` par lots de 50.
-2. **Transform** : jointure vidéo ↔ chaîne, filtres (abonnés, âge, abonnés masqués, ratio), meilleure vidéo par chaîne, tri par ratio.
-3. **Load** : tableau dans le terminal + CSV.
+### Barème (indicatif, dans `metrics.score`)
+
+| Critère | Points |
+|---|---|
+| Explosion | ≥ 500× : 3 · ≥ 100× : 2 · ≥ 10× : 1 |
+| Revenu estimé sur 30 jours | ≥ 10 000 $ : 3 · ≥ 3 000 $ : 2 · ≥ 1 000 $ : 1 |
+| Régularité (au moins 5 vidéos) | ≥ 70 % des vidéos > 50K : 2 · ≥ 40 % : 1 · un seul carton : −1 |
+| Tendance | chauffe : +1 · refroidit : −1 |
+| Concurrence | 1 chaîne : +2 · ≤ 4 : +1 · ≥ 8 : −1 |
+
+**S ≥ 9 · A ≥ 7 · B ≥ 5 · C sinon.** En cas d'égalité, la niche la moins encombrée passe devant, puis la plus grosse explosion.
+
+## Structure
+
+```
+youtube_client.py   Extract   : appels API + compteur de quota
+metrics.py          Transform : critères, score, tiers (fonctions pures)
+find_outliers.py    Load/CLI  : tableau terminal + CSV
+rpm.json            table des RPM, modifiable
+tests/              tests unitaires + test bout-en-bout avec une fausse API
+```
 
 ## Quota
 
-Quota gratuit : 10 000 unités par jour. Une page de recherche coûte 100 unités, `videos`/`channels` 1 unité par lot de 50.
-Une exécution avec `--pages 1` coûte ~102 unités, donc environ 90 recherches par jour.
+Quota gratuit : 10 000 unités par jour. Par niche, il faut compter environ 100 unités par page de recherche, plus ~1 unité par chaîne candidate pour ses dernières vidéos, soit **~100 à 160 unités par niche**.
+Le script affiche le quota utilisé à la fin.
 
 ## Limites
 
-- La date de « création » est celle de la chaîne (`publishedAt`), pas celle de la première vidéo.
-- `search.list` ne renvoie qu'un échantillon ; varie les mots-clés (et la langue) pour couvrir un format.
-- Le nombre d'abonnés renvoyé par l'API est arrondi à 3 chiffres significatifs.
+- **Les RPM sont des ordres de grandeur** repris de la vidéo, pas des mesures. Le vrai RPM n'est visible que dans le YouTube Studio de la chaîne, donc le revenu est une estimation grossière.
+- **Les vues du mois sont sous-estimées.** L'API ne donne pas l'historique des vues : on additionne les vues totales des vidéos publiées dans les 30 derniers jours.
+- **La concurrence dépend du mot-clé** et de l'échantillon que renvoie `search.list`. Varie les formulations et les langues.
+- **La date de création** est celle de la chaîne, pas celle de sa première vidéo. Le nombre d'abonnés est arrondi par l'API.
 
 ## Tests
 
