@@ -10,19 +10,55 @@ Critères (repris de la vidéo « 13 faceless niches ») :
     - argent       : vues des 30 derniers jours x RPM (table par thème et par format).
                      Le score utilise le revenu « récurrent » : sans les cartons isolés,
                      et à 0 si la chaîne n'a pas les 1 000 abonnés pour être monétisée.
-    - concurrence  : nombre de chaînes outliers trouvées dans la même niche
+    - catégorie    : catégorie YouTube dominante des vidéos. Si elle contredit le thème
+                     demandé (ex. « Film & Animation » pour une niche tech), la chaîne est
+                     marquée « hors niche » et son RPM vient de la catégorie détectée.
+    - concurrence  : nombre de chaînes outliers DANS la niche (hors-niche exclues)
     - Claude       : faisable en code ? -> laissé vide, à remplir à la main
 """
 
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from statistics import median
 
 SHORT_MAX_SECONDS = 180  # YouTube accepte des Shorts jusqu'à 3 minutes
 MONETIZATION_MIN_SUBS = 1_000  # minimum du Programme Partenaire YouTube
+
+# Catégories YouTube (snippet.categoryId) -> (nom, thème RPM).
+# 22 « People & Blogs » est la catégorie par défaut à l'upload : elle ne dit rien, thème None.
+CATEGORIES: dict[str, tuple[str, str | None]] = {
+    "1": ("Film & Animation", "entertainment"),
+    "2": ("Autos", None),
+    "10": ("Musique", "entertainment"),
+    "15": ("Animaux", "entertainment"),
+    "17": ("Sport", "entertainment"),
+    "19": ("Voyages", None),
+    "20": ("Jeux vidéo", "entertainment"),
+    "22": ("People & Blogs", None),
+    "23": ("Humour", "entertainment"),
+    "24": ("Divertissement", "entertainment"),
+    "25": ("Actualités", "news"),
+    "26": ("Tutoriels", "education"),
+    "27": ("Éducation", "education"),
+    "28": ("Science & Tech", "science"),
+    "29": ("Associatif", None),
+}
+
+# Deux familles suffisent : c'est l'écart de RPM divertissement / informatif qui compte.
+THEME_FAMILY = {
+    "entertainment": "divertissement",
+    "horror": "divertissement",
+    "news": "informatif",
+    "education": "informatif",
+    "finance": "informatif",
+    "science": "informatif",
+    "tech": "informatif",
+}
+
 _DURATION_RE = re.compile(r"^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$")
 
 
@@ -37,6 +73,7 @@ class Video:
     published: datetime
     views: int
     duration_s: int
+    category_id: str = ""
 
     @property
     def is_short(self) -> bool:
@@ -63,6 +100,17 @@ class Thresholds:
 
 
 @dataclass
+class RpmTable:
+    """RPM en $ pour 1 000 vues : un pour les Shorts, un par thème pour les vidéos longues."""
+
+    short: float
+    long: dict[str, float] = field(default_factory=lambda: {"default": 5.0})
+
+    def long_for(self, theme: str) -> float:
+        return self.long.get(theme, self.long["default"])
+
+
+@dataclass
 class ChannelReport:
     niche: str
     channel_id: str
@@ -83,6 +131,10 @@ class ChannelReport:
     revenue_30d: float
     revenue_recurring_30d: float
     monetizable: bool
+    theme_requested: str = "default"
+    category: str = ""
+    theme_used: str = "default"
+    off_niche: bool = False
     competition: int = 0
     score: int = 0
     tier: str = ""
@@ -117,6 +169,7 @@ def video_from_api(item: dict) -> Video:
         published=parse_date(item["snippet"]["publishedAt"]),
         views=int(item.get("statistics", {}).get("viewCount", 0)),
         duration_s=parse_duration(item.get("contentDetails", {}).get("duration", "")),
+        category_id=item["snippet"].get("categoryId", ""),
     )
 
 
@@ -161,6 +214,22 @@ def channel_format(videos: list[Video]) -> str:
     return "mixte"
 
 
+def dominant_category(videos: list[Video]) -> str:
+    counts = Counter(v.category_id for v in videos if v.category_id)
+    return counts.most_common(1)[0][0] if counts else ""
+
+
+def resolve_theme(requested: str, category_id: str) -> tuple[str, bool]:
+    """(thème utilisé pour le RPM, hors niche ?)."""
+    detected = CATEGORIES.get(category_id, ("", None))[1]
+    wanted_family = THEME_FAMILY.get(requested)
+    if detected is None or wanted_family is None:
+        return requested, False  # rien à comparer
+    if THEME_FAMILY[detected] == wanted_family:
+        return requested, False  # ex. finance en « Éducation » : on garde le RPM finance
+    return detected, True
+
+
 def estimate_revenue(
     videos: list[Video], now: datetime, rpm_long: float, rpm_short: float
 ) -> tuple[int, float]:
@@ -181,8 +250,8 @@ def analyze_channel(
     videos: list[Video],
     *,
     niche: str,
-    rpm_long: float,
-    rpm_short: float,
+    theme: str,
+    rpm: RpmTable,
     thresholds: Thresholds = Thresholds(),
     now: datetime | None = None,
 ) -> ChannelReport | None:
@@ -200,6 +269,9 @@ def analyze_channel(
     med = median(v.views for v in videos)
     best = max(v.views for v in videos)
     carton_floor = thresholds.one_hit_factor * max(med, 1)
+    category_id = dominant_category(videos)
+    theme_used, off_niche = resolve_theme(theme, category_id)
+    rpm_long, rpm_short = rpm.long_for(theme_used), rpm.short
     monetizable = channel.subscribers >= MONETIZATION_MIN_SUBS
     views_30d, revenue_30d = estimate_revenue(videos, now, rpm_long, rpm_short)
     _, revenue_recurring = estimate_revenue(
@@ -228,6 +300,10 @@ def analyze_channel(
         revenue_30d=revenue_30d,
         revenue_recurring_30d=revenue_recurring,
         monetizable=monetizable,
+        theme_requested=theme,
+        category=CATEGORIES.get(category_id, (category_id or "?", None))[0],
+        theme_used=theme_used,
+        off_niche=off_niche,
     )
 
 
@@ -251,6 +327,9 @@ def score(r: ChannelReport) -> int:
     pts += {"chauffe": 1, "refroidit": -1}.get(r.trend, 0)
     # 5. Concurrence : moins de chaînes dans la niche = mieux
     pts += 2 if r.competition <= 1 else 1 if r.competition <= 4 else -1 if r.competition >= 8 else 0
+    # 6. Hors niche : la chaîne ne fait pas ce que la niche demandait
+    if r.off_niche:
+        pts -= 2
     return pts
 
 
@@ -261,13 +340,12 @@ def tier(points: int) -> str:
 def rank_board(reports: list[ChannelReport]) -> list[ChannelReport]:
     """Calcule concurrence, score et tier, puis trie.
 
+    La concurrence ne compte que les chaînes dans la niche (les hors-niche ne sont pas des concurrents).
     Égalité de score : la niche la moins encombrée passe devant, puis la plus grosse explosion.
     """
-    per_niche: dict[str, int] = {}
+    per_niche = Counter(r.niche for r in reports if not r.off_niche)
     for r in reports:
-        per_niche[r.niche] = per_niche.get(r.niche, 0) + 1
-    for r in reports:
-        r.competition = per_niche[r.niche]
+        r.competition = per_niche[r.niche] + (1 if r.off_niche else 0)
         r.score = score(r)
         r.tier = tier(r.score)
     return sorted(reports, key=lambda r: (-r.score, r.competition, -r.blowup))

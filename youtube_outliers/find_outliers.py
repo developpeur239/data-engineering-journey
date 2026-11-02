@@ -13,7 +13,8 @@ Usage :
     python find_outliers.py "3d news reconstruction=news" "ai takeover documentary=tech" \
         "stickman battle=entertainment" --csv board.csv
 
-Une niche s'écrit "mot-clé=thème". Le thème choisit le RPM des vidéos longues dans rpm.json.
+Une niche s'écrit "mot-clé=thème". Le thème choisit le RPM des vidéos longues dans rpm.json,
+sauf si la catégorie YouTube de la chaîne le contredit (la chaîne est alors marquée « hors niche »).
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ from pathlib import Path
 
 from metrics import (
     ChannelReport,
+    RpmTable,
     Thresholds,
     analyze_channel,
     channel_from_api,
@@ -46,14 +48,11 @@ def parse_niche(arg: str) -> tuple[str, str]:
     return query.strip(), (theme.strip() or "default")
 
 
-def load_rpm(path: Path, theme: str, rpm_long: float | None, rpm_short: float | None) -> tuple[float, float]:
+def load_rpm(path: Path, rpm_long: float | None = None, rpm_short: float | None = None) -> RpmTable:
+    """Table des RPM ; --rpm-long / --rpm-short écrasent toutes les valeurs correspondantes."""
     table = json.loads(path.read_text(encoding="utf-8"))
-    long_table = table["long"]
-    if rpm_long is None:
-        if theme not in long_table:
-            print(f"Thème inconnu « {theme} » : RPM par défaut utilisé.", file=sys.stderr)
-        rpm_long = long_table.get(theme, long_table["default"])
-    return float(rpm_long), float(table["short"] if rpm_short is None else rpm_short)
+    long_table = {k: float(rpm_long if rpm_long is not None else v) for k, v in table["long"].items()}
+    return RpmTable(short=float(table["short"] if rpm_short is None else rpm_short), long=long_table)
 
 
 # --------------------------------------------------------------------------- #
@@ -63,8 +62,8 @@ def analyze_niche(
     client: YouTubeClient,
     query: str,
     *,
-    rpm_long: float,
-    rpm_short: float,
+    theme: str,
+    rpm: RpmTable,
     cutoff: datetime,
     pages: int,
     region: str | None,
@@ -94,8 +93,8 @@ def analyze_niche(
             c,
             by_channel.get(c.channel_id, []),
             niche=query,
-            rpm_long=rpm_long,
-            rpm_short=rpm_short,
+            theme=theme,
+            rpm=rpm,
             thresholds=thresholds,
             now=now,
         )
@@ -127,6 +126,8 @@ def print_board(board: list[ChannelReport]) -> None:
     for r in board:
         hit = f"{human(r.latest_hit_views)} {r.latest_hit_days_ago}j"
         flag = (" ⚠️1 carton" if r.one_hit else "") + ("" if r.monetizable else " 🚫non monétisable")
+        if r.off_niche:
+            flag += f" ⚠️hors niche ({r.category} → RPM {r.theme_used})"
         print(
             f"{r.tier:<4} {r.score:>3}  {r.blowup:>6.0f}x {human(r.subscribers):>7} {hit:>14} "
             f"{human(r.median_views):>7} {r.share_above_hit_views:>4.0%} {TREND_ICONS[r.trend]:>5} "
@@ -180,15 +181,17 @@ def main(argv: list[str] | None = None, client: YouTubeClient | None = None) -> 
     cutoff = now - timedelta(days=30 * args.months)
     thresholds = Thresholds(ratio=args.ratio, hit_views=args.hit_views)
 
+    rpm = load_rpm(args.rpm_file, args.rpm_long, args.rpm_short)
     reports: list[ChannelReport] = []
     for arg in args.niches:
         query, theme = parse_niche(arg)
-        rpm_long, rpm_short = load_rpm(args.rpm_file, theme, args.rpm_long, args.rpm_short)
+        if theme not in rpm.long:
+            print(f"Thème inconnu « {theme} » : RPM par défaut utilisé.", file=sys.stderr)
         found = analyze_niche(
             client,
             query,
-            rpm_long=rpm_long,
-            rpm_short=rpm_short,
+            theme=theme,
+            rpm=rpm,
             cutoff=cutoff,
             pages=args.pages,
             region=args.region,
@@ -198,7 +201,11 @@ def main(argv: list[str] | None = None, client: YouTubeClient | None = None) -> 
             thresholds=thresholds,
             now=now,
         )
-        print(f"« {query} » ({theme}, RPM long {rpm_long} $ / short {rpm_short} $) : {len(found)} chaîne(s) outlier")
+        off = sum(r.off_niche for r in found)
+        print(
+            f"« {query} » ({theme}, RPM long {rpm.long_for(theme)} $ / short {rpm.short} $) : "
+            f"{len(found) - off} chaîne(s) outlier dans la niche, {off} hors niche"
+        )
         reports += found
 
     board = rank_board(reports)

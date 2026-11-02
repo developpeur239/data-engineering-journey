@@ -13,12 +13,14 @@ from find_outliers import human, main, parse_niche  # noqa: E402
 from metrics import (  # noqa: E402
     Channel,
     ChannelReport,
+    RpmTable,
     Thresholds,
     Video,
     analyze_channel,
     channel_format,
     parse_duration,
     rank_board,
+    resolve_theme,
     tier,
     trend_label,
 )
@@ -27,16 +29,19 @@ from youtube_client import YouTubeClient  # noqa: E402
 NOW = datetime(2026, 11, 1, tzinfo=timezone.utc)
 
 
-def vid(views, days_ago, duration=600, cid="c1", title="v"):
-    return Video(f"v{views}_{days_ago}", cid, title, NOW - timedelta(days=days_ago), views, duration)
+RPM = RpmTable(short=0.4, long={"default": 10, "tech": 12, "entertainment": 4})
+
+
+def vid(views, days_ago, duration=600, cid="c1", title="v", category=""):
+    return Video(f"v{views}_{days_ago}", cid, title, NOW - timedelta(days=days_ago), views, duration, category)
 
 
 def chan(subs=5_000, cid="c1"):
     return Channel(cid, "Chaîne", subs, 20, NOW - timedelta(days=60), "UU" + cid)
 
 
-def analyze(channel, videos, **kw):
-    return analyze_channel(channel, videos, niche="n", rpm_long=10, rpm_short=0.4, now=NOW, **kw)
+def analyze(channel, videos, theme="default", **kw):
+    return analyze_channel(channel, videos, niche="n", theme=theme, rpm=RPM, now=NOW, **kw)
 
 
 class ParsingTest(unittest.TestCase):
@@ -116,8 +121,32 @@ class CriteriaTest(unittest.TestCase):
         self.assertEqual((r.revenue_30d, r.revenue_recurring_30d), (0, 0))
 
 
+class CategoryTest(unittest.TestCase):
+    def test_resolve_theme(self):
+        self.assertEqual(resolve_theme("tech", "1"), ("entertainment", True))   # film IA dans une niche tech
+        self.assertEqual(resolve_theme("finance", "27"), ("finance", False))    # même famille : on garde finance
+        self.assertEqual(resolve_theme("horror", "24"), ("horror", False))
+        self.assertEqual(resolve_theme("tech", "22"), ("tech", False))          # People & Blogs : ne dit rien
+        self.assertEqual(resolve_theme("default", "1"), ("default", False))
+
+    def test_off_niche_channel_uses_detected_rpm(self):
+        videos = [vid(1_000_000, 5, category="1")] + [vid(80_000, d, category="1") for d in range(6, 10)]
+        r = analyze(chan(5_000), videos, theme="tech", thresholds=Thresholds(ratio=10))
+        self.assertTrue(r.off_niche)
+        self.assertEqual((r.category, r.theme_used), ("Film & Animation", "entertainment"))
+        self.assertEqual(r.revenue_30d, (1_000_000 + 4 * 80_000) * 4 / 1000)  # RPM divertissement, pas tech
+
+    def test_off_niche_excluded_from_competition_and_penalized(self):
+        in_niche = BoardTest.report(None, "n", 50, 0)
+        off = BoardTest.report(None, "n", 50, 0, channel_id="off", off_niche=True)
+        rank_board([in_niche, off])
+        self.assertEqual(in_niche.competition, 1)  # la hors-niche n'est pas comptée comme concurrente
+        self.assertEqual(off.competition, 2)       # elle, en revanche, voit la niche avec sa propre présence
+        self.assertEqual(off.score, in_niche.score - 1 - 2)  # -1 concurrence, -2 hors niche
+
+
 class BoardTest(unittest.TestCase):
-    def report(self, niche, blowup, revenue, **kw):
+    def report(self, niche, blowup, revenue, **kw):  # self inutilisé : réutilisé par CategoryTest
         defaults = dict(
             channel_id=f"{niche}{blowup}", channel_title="c", subscribers=5_000, channel_created="2026-09-01",
             videos_analyzed=15, latest_hit_title="t", latest_hit_views=1, latest_hit_days_ago=1,
@@ -191,7 +220,7 @@ class EndToEndTest(unittest.TestCase):
                 rows = list(csv.DictReader(f))
         self.assertEqual([r["channel_id"] for r in rows], ["small"])  # la grosse chaîne est filtrée
         self.assertEqual(rows[0]["blowup"], "210.0")
-        self.assertEqual(rows[0]["revenue_30d"], "6300.0")  # 630K x 10 $ (RPM news)
+        self.assertEqual(rows[0]["revenue_30d"], "3780.0")  # 630K x 6 $ (RPM news de rpm.json)
         self.assertEqual(rows[0]["buildable_by_claude"], "")
         self.assertIn("small", buf.getvalue())
 
