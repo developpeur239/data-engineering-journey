@@ -121,6 +121,31 @@ class CriteriaTest(unittest.TestCase):
         self.assertEqual((r.revenue_30d, r.revenue_recurring_30d), (0, 0))
 
 
+class ShortsOnlyTest(unittest.TestCase):
+    def test_shorts_only_path_and_progress(self):
+        videos = [vid(3_000_000, d, duration=40) for d in (5, 20, 60, 120)]
+        r = analyze(chan(20_000), videos, thresholds=Thresholds(ratio=10))
+        self.assertTrue(r.shorts_only)
+        self.assertEqual(r.shorts_views_90d, 9_000_000)  # la vidéo de 120 jours est exclue
+        self.assertEqual(r.monetization_path, "Shorts : 9.0M / 10M vues sur 90 j")
+
+    def test_shorts_ypp_reached_and_long_channels(self):
+        shorts = [vid(4_000_000, d, duration=40) for d in (5, 20, 60)]
+        self.assertEqual(analyze(chan(20_000), shorts, thresholds=Thresholds(ratio=10)).monetization_path,
+                         "Shorts : 10M vues/90 j atteint")
+        long_ = analyze(chan(20_000), [vid(400_000, 5)], thresholds=Thresholds(ratio=10))
+        self.assertFalse(long_.shorts_only)
+        self.assertTrue(long_.monetization_path.startswith("vidéos longues"))
+        tiny = analyze(chan(800), [vid(400_000, 5)])
+        self.assertEqual(tiny.monetization_path, "non : moins de 1 000 abonnés")
+
+    def test_shorts_only_costs_one_point(self):
+        long_ = BoardTest.report(None, "n", 50, 0)
+        short = BoardTest.report(None, "n2", 50, 0, shorts_only=True)
+        rank_board([long_, short])
+        self.assertEqual(short.score, long_.score - 1)
+
+
 class CategoryTest(unittest.TestCase):
     def test_resolve_theme(self):
         self.assertEqual(resolve_theme("tech", "1"), ("entertainment", True))   # film IA dans une niche tech

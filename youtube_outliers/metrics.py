@@ -14,6 +14,8 @@ Critères (repris de la vidéo « 13 faceless niches ») :
                      demandé (ex. « Film & Animation » pour une niche tech), la chaîne est
                      marquée « hors niche » et son RPM vient de la catégorie détectée.
     - concurrence  : nombre de chaînes outliers DANS la niche (hors-niche exclues)
+    - Shorts seul. : chaîne à >= 70 % de Shorts. Elle se monétise par la voie Shorts
+                     (10M vues de Shorts en 90 jours) et à un RPM très bas : -1 point.
     - Claude       : faisable en code ? -> laissé vide, à remplir à la main
 """
 
@@ -27,6 +29,7 @@ from statistics import median
 
 SHORT_MAX_SECONDS = 180  # YouTube accepte des Shorts jusqu'à 3 minutes
 MONETIZATION_MIN_SUBS = 1_000  # minimum du Programme Partenaire YouTube
+SHORTS_YPP_VIEWS_90D = 10_000_000  # voie Shorts du Programme Partenaire : 10M vues de Shorts en 90 jours
 
 # Catégories YouTube (snippet.categoryId) -> (nom, thème RPM).
 # 22 « People & Blogs » est la catégorie par défaut à l'upload : elle ne dit rien, thème None.
@@ -131,6 +134,9 @@ class ChannelReport:
     revenue_30d: float
     revenue_recurring_30d: float
     monetizable: bool
+    shorts_only: bool = False
+    shorts_views_90d: int = 0
+    monetization_path: str = ""
     theme_requested: str = "default"
     category: str = ""
     theme_used: str = "default"
@@ -230,6 +236,17 @@ def resolve_theme(requested: str, category_id: str) -> tuple[str, bool]:
     return detected, True
 
 
+def monetization_path(subscribers: int, shorts_only: bool, shorts_views_90d: int) -> str:
+    """Voie du Programme Partenaire YouTube la plus probable et où en est la chaîne."""
+    if subscribers < MONETIZATION_MIN_SUBS:
+        return "non : moins de 1 000 abonnés"
+    if shorts_only:
+        if shorts_views_90d >= SHORTS_YPP_VIEWS_90D:
+            return "Shorts : 10M vues/90 j atteint"
+        return f"Shorts : {shorts_views_90d / 1_000_000:.1f}M / 10M vues sur 90 j"
+    return "vidéos longues : 4 000 h de visionnage (non vérifiable via l'API)"
+
+
 def estimate_revenue(
     videos: list[Video], now: datetime, rpm_long: float, rpm_short: float
 ) -> tuple[int, float]:
@@ -272,6 +289,10 @@ def analyze_channel(
     category_id = dominant_category(videos)
     theme_used, off_niche = resolve_theme(theme, category_id)
     rpm_long, rpm_short = rpm.long_for(theme_used), rpm.short
+    fmt = channel_format(videos)
+    shorts_views_90d = sum(
+        v.views for v in videos if v.is_short and v.published >= now - timedelta(days=90)
+    )
     monetizable = channel.subscribers >= MONETIZATION_MIN_SUBS
     views_30d, revenue_30d = estimate_revenue(videos, now, rpm_long, rpm_short)
     _, revenue_recurring = estimate_revenue(
@@ -295,11 +316,14 @@ def analyze_channel(
         share_above_hit_views=round(sum(v.views >= thresholds.hit_views for v in videos) / len(videos), 2),
         one_hit=len(videos) >= 5 and best >= carton_floor,
         trend=trend_label(videos, thresholds),
-        format=channel_format(videos),
+        format=fmt,
         views_30d=views_30d,
         revenue_30d=revenue_30d,
         revenue_recurring_30d=revenue_recurring,
         monetizable=monetizable,
+        shorts_only=fmt == "short",
+        shorts_views_90d=shorts_views_90d,
+        monetization_path=monetization_path(channel.subscribers, fmt == "short", shorts_views_90d),
         theme_requested=theme,
         category=CATEGORIES.get(category_id, (category_id or "?", None))[0],
         theme_used=theme_used,
@@ -327,7 +351,10 @@ def score(r: ChannelReport) -> int:
     pts += {"chauffe": 1, "refroidit": -1}.get(r.trend, 0)
     # 5. Concurrence : moins de chaînes dans la niche = mieux
     pts += 2 if r.competition <= 1 else 1 if r.competition <= 4 else -1 if r.competition >= 8 else 0
-    # 6. Hors niche : la chaîne ne fait pas ce que la niche demandait
+    # 6. Shorts seulement : RPM très bas, la régularité en vues compte moins
+    if r.shorts_only:
+        pts -= 1
+    # 7. Hors niche : la chaîne ne fait pas ce que la niche demandait
     if r.off_niche:
         pts -= 2
     return pts

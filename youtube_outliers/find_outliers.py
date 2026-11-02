@@ -126,6 +126,8 @@ def print_board(board: list[ChannelReport]) -> None:
     for r in board:
         hit = f"{human(r.latest_hit_views)} {r.latest_hit_days_ago}j"
         flag = (" ⚠️1 carton" if r.one_hit else "") + ("" if r.monetizable else " 🚫non monétisable")
+        if r.shorts_only:
+            flag += f" 📱Shorts seulement ({r.monetization_path})"
         if r.off_niche:
             flag += f" ⚠️hors niche ({r.category} → RPM {r.theme_used})"
         print(

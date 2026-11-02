@@ -39,6 +39,7 @@ Thèmes fournis : `tech`, `finance`, `news`, `education`, `science`, `entertainm
 | **Format** | Short si ≤ 3 min. Chaîne `short` (≥ 70 % de Shorts), `long` (≤ 30 %) ou `mixte` | — |
 | **Argent** | vues des vidéos des 30 derniers jours × RPM (Short ou longue) ÷ 1000. Le **revenu récurrent** exclut les cartons isolés (≥ 50 × la médiane). Revenu à 0 et 🚫 sous 1 000 abonnés (non monétisable) | `rpm.json`, `--rpm-long`, `--rpm-short` |
 | **Catégorie** | catégorie YouTube dominante des vidéos de la chaîne. Si elle contredit le thème demandé (famille *divertissement* contre *informatif*), la chaîne est marquée ⚠️ **hors niche** : son RPM vient de la catégorie détectée et elle perd 2 points | — |
+| **Shorts seulement** 📱 | chaîne à ≥ 70 % de Shorts. Colonne `monetization_path` : voie Shorts du Programme Partenaire (**10M vues de Shorts en 90 jours**) et progression, voie vidéos longues (4 000 h, non vérifiable via l'API), ou non monétisable (< 1 000 abonnés) | — |
 | **Concurrence** | nombre de chaînes outliers **dans** la niche (les hors-niche ne comptent pas) | — |
 | **Faisable par Claude** | jugement humain : colonne `buildable_by_claude` vide dans le CSV, à remplir | — |
 
@@ -53,6 +54,7 @@ Filtres de départ : entre `--min-subs` (1K) et `--max-subs` (100K) abonnés, ch
 | Régularité (au moins 5 vidéos) | ≥ 70 % des vidéos > 50K : 2 · ≥ 40 % : 1 · un seul carton : −1 |
 | Tendance | chauffe : +1 · refroidit : −1 |
 | Concurrence | 1 chaîne : +2 · ≤ 4 : +1 · ≥ 8 : −1 |
+| Shorts seulement | −1 |
 | Hors niche | −2 |
 
 **S ≥ 9 · A ≥ 7 · B ≥ 5 · C sinon.** En cas d'égalité, la niche la moins encombrée passe devant, puis la plus grosse explosion.
@@ -76,6 +78,7 @@ Le script affiche le quota utilisé à la fin.
 
 - **Les RPM sont des ordres de grandeur** : ceux de la vidéo, baissés d'environ 40 % après comparaison avec vidIQ. Ce ne sont pas des mesures. Le vrai RPM n'est visible que dans le YouTube Studio de la chaîne, donc le revenu est une estimation grossière.
 - **Les vues du mois sont sous-estimées.** L'API ne donne pas l'historique des vues : on additionne les vues totales des vidéos publiées dans les 30 derniers jours.
+- **Les vues de Shorts sur 90 jours ne comptent que les `--recent` dernières vidéos analysées** (15 par défaut). Pour une chaîne qui publie beaucoup, monte `--recent` à 50.
 - **La catégorie YouTube est choisie par le créateur** : elle peut être fausse. « People & Blogs », la catégorie par défaut, est ignorée. Un « hors niche » peut aussi vouloir dire que le thème donné à la niche est mal choisi.
 - **La concurrence dépend du mot-clé** et de l'échantillon que renvoie `search.list`. Varie les formulations et les langues.
 - **La date de création** est celle de la chaîne, pas celle de sa première vidéo. Le nombre d'abonnés est arrondi par l'API.
