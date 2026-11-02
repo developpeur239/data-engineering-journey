@@ -72,10 +72,18 @@ def analyze_niche(
     recent: int,
     thresholds: Thresholds,
     now: datetime,
+    search_after: datetime | None = None,
+    language: str | None = None,
+    exclude: set[str] | None = None,
+    titles: dict[str, list[str]] | None = None,
 ) -> list[ChannelReport]:
+    """`search_after` : fenêtre de recherche (défaut : `cutoff`, qui filtre aussi l'âge des chaînes).
+    `exclude` : chaînes déjà analysées, ignorées pour économiser le quota.
+    `titles` : si fourni, reçoit les titres des dernières vidéos de chaque chaîne retenue."""
     # 1. Vidéos les plus vues de la niche -> chaînes candidates
-    found = client.videos(client.search_videos(query, cutoff, pages, region))
+    found = client.videos(client.search_videos(query, search_after or cutoff, pages, region, language))
     channel_ids = list(dict.fromkeys(v["snippet"]["channelId"] for v in found))
+    channel_ids = [c for c in channel_ids if c not in (exclude or set())]
     channels = [c for c in map(channel_from_api, client.channels(channel_ids)) if c]
     channels = [c for c in channels if min_subs <= c.subscribers <= max_subs and c.created >= cutoff]
 
@@ -100,6 +108,8 @@ def analyze_niche(
         )
         if report:
             reports.append(report)
+            if titles is not None:
+                titles[c.channel_id] = [v.title for v in by_channel.get(c.channel_id, [])]
     return reports
 
 

@@ -16,6 +16,10 @@ def chunked(seq: list[str], size: int) -> Iterator[list[str]]:
         yield seq[i : i + size]
 
 
+class QuotaExceeded(RuntimeError):
+    pass
+
+
 class YouTubeClient:
     """Coûts de quota : search = 100, videos / channels / playlistItems = 1 par appel."""
 
@@ -28,12 +32,19 @@ class YouTubeClient:
         params["key"] = self.api_key
         resp = self.session.get(f"{API_URL}/{endpoint}", params=params, timeout=30)
         self.quota_used += cost
+        if resp.status_code == 403 and "quotaExceeded" in resp.text:
+            raise QuotaExceeded("Quota quotidien YouTube épuisé (remis à zéro à minuit, heure du Pacifique).")
         if resp.status_code != 200:
             raise RuntimeError(f"{endpoint} -> HTTP {resp.status_code}: {resp.text[:300]}")
         return resp.json()
 
     def search_videos(
-        self, query: str, published_after: datetime, pages: int, region: str | None = None
+        self,
+        query: str,
+        published_after: datetime,
+        pages: int,
+        region: str | None = None,
+        language: str | None = None,
     ) -> list[str]:
         """IDs des vidéos les plus vues publiées après `published_after`."""
         video_ids: list[str] = []
@@ -49,6 +60,8 @@ class YouTubeClient:
             )
             if region:
                 params["regionCode"] = region
+            if language:
+                params["relevanceLanguage"] = language
             if page_token:
                 params["pageToken"] = page_token
             data = self._get("search", cost=100, **params)
@@ -64,6 +77,8 @@ class YouTubeClient:
             data = self._get(
                 "playlistItems", part="contentDetails", playlistId=uploads_playlist, maxResults=min(n, 50)
             )
+        except QuotaExceeded:
+            raise
         except RuntimeError:
             return []  # playlist privée ou supprimée
         return [item["contentDetails"]["videoId"] for item in data.get("items", [])]

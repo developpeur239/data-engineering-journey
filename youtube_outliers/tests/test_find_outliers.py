@@ -63,7 +63,9 @@ class ParsingTest(unittest.TestCase):
 
 class CriteriaTest(unittest.TestCase):
     def test_blowup_uses_latest_hit_not_biggest(self):
-        videos = [vid(5_000_000, 60, title="vieux gros"), vid(600_000, 3, title="récent"), vid(1_000, 1)]
+        # la vieille grosse vidéo est hors des 5 dernières : le succès retenu est le récent
+        videos = [vid(5_000_000, 60, title="vieux gros"), vid(600_000, 3, title="récent")]
+        videos += [vid(1_000, d) for d in (1, 2, 4, 5)]
         r = analyze(chan(5_000), videos)
         self.assertEqual(r.latest_hit_title, "récent")
         self.assertEqual(r.blowup, 120.0)
@@ -139,11 +141,41 @@ class ShortsOnlyTest(unittest.TestCase):
         tiny = analyze(chan(800), [vid(400_000, 5)])
         self.assertEqual(tiny.monetization_path, "non : moins de 1 000 abonnés")
 
-    def test_shorts_only_costs_one_point(self):
+    def test_shorts_only_costs_two_points(self):
         long_ = BoardTest.report(None, "n", 50, 0)
         short = BoardTest.report(None, "n2", 50, 0, shorts_only=True)
         rank_board([long_, short])
-        self.assertEqual(short.score, long_.score - 1)
+        self.assertEqual(short.score, long_.score - 2)
+
+
+class LatestHitTest(unittest.TestCase):
+    def test_old_hit_used_when_recent_videos_are_small(self):
+        videos = [vid(900_000, 40, title="ancien succès")] + [vid(2_000, d) for d in range(1, 6)]
+        r = analyze(chan(5_000), videos, thresholds=Thresholds(ratio=10))
+        self.assertEqual(r.latest_hit_title, "ancien succès")
+
+
+class CalibrationTest(unittest.TestCase):
+    """Profils de référence reconstitués (approximativement) d'après la vidéo « 13 faceless niches »."""
+
+    def test_cross_section_is_S(self):
+        # 2 600 abonnés, lancée le 12 octobre, actualités en 3D, vidéos longues, seule dans sa niche,
+        # 630K vues sur sa grosse vidéo et « moins d'un million de vues ce mois-ci ».
+        videos = [vid(v, d, duration=480, category="25") for v, d in
+                  [(630_000, 20), (150_000, 15), (80_000, 8), (40_000, 3)]]
+        r = analyze(chan(2_600), videos, theme="news", thresholds=Thresholds(ratio=10))
+        [r] = rank_board([r])
+        self.assertEqual(r.tier, "S", f"score {r.score}")
+
+    def test_from_the_ground_up_is_not_top(self):
+        # 35 000 abonnés, Shorts 3D, 17,9M vues sur le dernier, ~24M vues dans le mois, 5 chaînes sur le format.
+        videos = [vid(17_900_000, 2, duration=40, category="27")]
+        videos += [vid(400_000, d, duration=40, category="27") for d in range(3, 31, 2)]
+        reports = [analyze(chan(35_000, cid=f"c{i}"), [
+            Video(v.video_id, f"c{i}", v.title, v.published, v.views, v.duration_s, v.category_id) for v in videos
+        ], theme="education", thresholds=Thresholds(ratio=10)) for i in range(5)]
+        board = rank_board(reports)
+        self.assertNotIn(board[0].tier, ("S", "A"), f"score {board[0].score}")
 
 
 class CategoryTest(unittest.TestCase):
@@ -152,7 +184,8 @@ class CategoryTest(unittest.TestCase):
         self.assertEqual(resolve_theme("finance", "27"), ("finance", False))    # même famille : on garde finance
         self.assertEqual(resolve_theme("horror", "24"), ("horror", False))
         self.assertEqual(resolve_theme("tech", "22"), ("tech", False))          # People & Blogs : ne dit rien
-        self.assertEqual(resolve_theme("default", "1"), ("default", False))
+        self.assertEqual(resolve_theme("default", "1"), ("entertainment", False))  # découverte : catégorie
+        self.assertEqual(resolve_theme("default", "22"), ("default", False))
 
     def test_off_niche_channel_uses_detected_rpm(self):
         videos = [vid(1_000_000, 5, category="1")] + [vid(80_000, d, category="1") for d in range(6, 10)]

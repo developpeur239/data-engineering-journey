@@ -3,7 +3,8 @@
 Fonctions pures, sans réseau, donc testables.
 
 Critères (repris de la vidéo « 13 faceless niches ») :
-    - explosion    : vues du DERNIER succès / abonnés (seuil par défaut 100)
+    - explosion    : vues du DERNIER succès / abonnés (seuil par défaut 100). Dernier succès =
+                     la plus grosse des 5 dernières vidéos (sinon le succès le plus récent)
     - régularité   : médiane des vues récentes, part des vidéos >= 50K, drapeau « un seul carton »
     - tendance     : médiane des 5 dernières vidéos / médiane des précédentes
     - format       : Shorts (<= 3 min) ou vidéos longues
@@ -229,6 +230,8 @@ def resolve_theme(requested: str, category_id: str) -> tuple[str, bool]:
     """(thème utilisé pour le RPM, hors niche ?)."""
     detected = CATEGORIES.get(category_id, ("", None))[1]
     wanted_family = THEME_FAMILY.get(requested)
+    if requested == "default" and detected is not None:
+        return detected, False  # pas de thème demandé (mode découverte) : on prend la catégorie
     if detected is None or wanted_family is None:
         return requested, False  # rien à comparer
     if THEME_FAMILY[detected] == wanted_family:
@@ -281,7 +284,10 @@ def analyze_channel(
     hits = [v for v in videos if v.views >= thresholds.ratio * channel.subscribers]
     if not hits:
         return None
-    latest_hit = hits[0]  # le plus récent, pas le plus gros
+    # « Dernier succès » : la plus grosse des 5 dernières vidéos. Si elle n'atteint pas le seuil,
+    # le succès est plus ancien : on garde le plus récent au-dessus du seuil.
+    recent_best = max(videos[:5], key=lambda v: v.views)
+    latest_hit = recent_best if recent_best in hits else hits[0]
 
     med = median(v.views for v in videos)
     best = max(v.views for v in videos)
@@ -295,8 +301,9 @@ def analyze_channel(
     )
     monetizable = channel.subscribers >= MONETIZATION_MIN_SUBS
     views_30d, revenue_30d = estimate_revenue(videos, now, rpm_long, rpm_short)
+    enough = len(videos) >= 5  # en dessous, la médiane ne dit pas ce qu'est un « carton »
     _, revenue_recurring = estimate_revenue(
-        [v for v in videos if v.views < carton_floor], now, rpm_long, rpm_short
+        [v for v in videos if not enough or v.views < carton_floor], now, rpm_long, rpm_short
     )
     if not monetizable:
         revenue_30d = revenue_recurring = 0.0
@@ -314,7 +321,7 @@ def analyze_channel(
         blowup=round(latest_hit.views / channel.subscribers, 1),
         median_views=int(med),
         share_above_hit_views=round(sum(v.views >= thresholds.hit_views for v in videos) / len(videos), 2),
-        one_hit=len(videos) >= 5 and best >= carton_floor,
+        one_hit=enough and best >= carton_floor,
         trend=trend_label(videos, thresholds),
         format=fmt,
         views_30d=views_30d,
@@ -335,25 +342,26 @@ def analyze_channel(
 # Classement
 # --------------------------------------------------------------------------- #
 def score(r: ChannelReport) -> int:
-    """Barème indicatif, à ajuster. Le critère « faisable par Claude » n'y entre pas."""
+    """Barème calibré pour que Cross Section, la chaîne S de la vidéo, sorte en S
+    (voir CalibrationTest). Le critère « faisable par Claude » n'y entre pas."""
     pts = 0
     # 1. Explosion du dernier succès
     pts += 3 if r.blowup >= 500 else 2 if r.blowup >= 100 else 1 if r.blowup >= 10 else 0
     # 2. Argent : revenu récurrent estimé sur 30 jours (sans les cartons isolés)
     rev = r.revenue_recurring_30d
-    pts += 3 if rev >= 10_000 else 2 if rev >= 3_000 else 1 if rev >= 1_000 else 0
-    # 3. Régularité
-    if r.videos_analyzed >= 5:
+    pts += 3 if rev >= 5_000 else 2 if rev >= 2_000 else 1 if rev >= 500 else 0
+    # 3. Régularité (dès 3 vidéos, pour ne pas pénaliser les chaînes toutes neuves)
+    if r.videos_analyzed >= 3:
         pts += 2 if r.share_above_hit_views >= 0.7 else 1 if r.share_above_hit_views >= 0.4 else 0
     if r.one_hit:
         pts -= 1
     # 4. Tendance
     pts += {"chauffe": 1, "refroidit": -1}.get(r.trend, 0)
     # 5. Concurrence : moins de chaînes dans la niche = mieux
-    pts += 2 if r.competition <= 1 else 1 if r.competition <= 4 else -1 if r.competition >= 8 else 0
+    pts += 2 if r.competition <= 1 else 1 if r.competition <= 3 else -1
     # 6. Shorts seulement : RPM très bas, la régularité en vues compte moins
     if r.shorts_only:
-        pts -= 1
+        pts -= 2
     # 7. Hors niche : la chaîne ne fait pas ce que la niche demandait
     if r.off_niche:
         pts -= 2
@@ -364,7 +372,9 @@ def tier(points: int) -> str:
     return "S" if points >= 9 else "A" if points >= 7 else "B" if points >= 5 else "C"
 
 
-def rank_board(reports: list[ChannelReport]) -> list[ChannelReport]:
+def rank_board(
+    reports: list[ChannelReport], competition: dict[str, int] | None = None
+) -> list[ChannelReport]:
     """Calcule concurrence, score et tier, puis trie.
 
     La concurrence ne compte que les chaînes dans la niche (les hors-niche ne sont pas des concurrents).
@@ -372,7 +382,10 @@ def rank_board(reports: list[ChannelReport]) -> list[ChannelReport]:
     """
     per_niche = Counter(r.niche for r in reports if not r.off_niche)
     for r in reports:
-        r.competition = per_niche[r.niche] + (1 if r.off_niche else 0)
+        if competition is not None:  # concurrence calculée ailleurs (mode découverte)
+            r.competition = competition.get(r.channel_id, 1)
+        else:
+            r.competition = per_niche[r.niche] + (1 if r.off_niche else 0)
         r.score = score(r)
         r.tier = tier(r.score)
     return sorted(reports, key=lambda r: (-r.score, r.competition, -r.blowup))
