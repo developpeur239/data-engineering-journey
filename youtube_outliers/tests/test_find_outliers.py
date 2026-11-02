@@ -99,13 +99,30 @@ class CriteriaTest(unittest.TestCase):
         self.assertEqual(r.revenue_30d, 10_000 + 400)  # 1M x 10$ + 1M x 0,40$
 
 
+    def test_recurring_revenue_excludes_isolated_hit(self):
+        videos = [vid(3_000_000, 5)] + [vid(20_000, d) for d in range(6, 15)]
+        r = analyze(chan(18_000), videos, thresholds=Thresholds(ratio=10))
+        self.assertTrue(r.one_hit)  # 3M >= 50 x 20K
+        self.assertEqual(r.revenue_30d, 30_000 + 9 * 200)
+        self.assertEqual(r.revenue_recurring_30d, 9 * 200)
+
+    def test_one_hit_needs_50x_median(self):
+        videos = [vid(600_000, 1)] + [vid(20_000, d) for d in range(2, 10)]  # 30x
+        self.assertFalse(analyze(chan(5_000), videos).one_hit)
+
+    def test_not_monetizable_below_1000_subs(self):
+        r = analyze(chan(800), [vid(500_000, 2)])
+        self.assertFalse(r.monetizable)
+        self.assertEqual((r.revenue_30d, r.revenue_recurring_30d), (0, 0))
+
+
 class BoardTest(unittest.TestCase):
     def report(self, niche, blowup, revenue, **kw):
         defaults = dict(
             channel_id=f"{niche}{blowup}", channel_title="c", subscribers=5_000, channel_created="2026-09-01",
             videos_analyzed=15, latest_hit_title="t", latest_hit_views=1, latest_hit_days_ago=1,
             median_views=1, share_above_hit_views=0.8, one_hit=False, trend="chauffe", format="long",
-            views_30d=1,
+            views_30d=1, revenue_recurring_30d=revenue, monetizable=True,
         )
         defaults.update(kw)
         return ChannelReport(niche=niche, blowup=blowup, revenue_30d=revenue, **defaults)

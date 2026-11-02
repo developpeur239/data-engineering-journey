@@ -34,10 +34,10 @@ Thèmes fournis : `tech`, `finance`, `news`, `education`, `science`, `entertainm
 |---|---|---|
 | **Explosion** | vues du **dernier succès** ÷ abonnés. Le dernier succès est la vidéo la plus récente, parmi les N dernières, qui dépasse le seuil | `--ratio` (défaut **100**) |
 | **Régularité** | médiane des vues et part des N dernières vidéos au-dessus de 50K | `--hit-views`, `--recent` |
-| **Un seul carton** ⚠️ | meilleure vidéo ≥ 20 × la médiane | — |
+| **Un seul carton** ⚠️ | meilleure vidéo ≥ 50 × la médiane | — |
 | **Tendance** | médiane des 5 dernières ÷ médiane des précédentes : 🔥 chauffe (≥ 1,2), ❄️ refroidit (≤ 0,8), ➖ stable | — |
 | **Format** | Short si ≤ 3 min. Chaîne `short` (≥ 70 % de Shorts), `long` (≤ 30 %) ou `mixte` | — |
-| **Argent** | vues des vidéos des 30 derniers jours × RPM (Short ou longue) ÷ 1000 | `rpm.json`, `--rpm-long`, `--rpm-short` |
+| **Argent** | vues des vidéos des 30 derniers jours × RPM (Short ou longue) ÷ 1000. Le **revenu récurrent** exclut les cartons isolés (≥ 50 × la médiane). Revenu à 0 et 🚫 sous 1 000 abonnés (non monétisable) | `rpm.json`, `--rpm-long`, `--rpm-short` |
 | **Concurrence** | nombre de chaînes outliers trouvées dans la même niche | — |
 | **Faisable par Claude** | jugement humain : colonne `buildable_by_claude` vide dans le CSV, à remplir | — |
 
@@ -48,7 +48,7 @@ Filtres de départ : entre `--min-subs` (1K) et `--max-subs` (100K) abonnés, ch
 | Critère | Points |
 |---|---|
 | Explosion | ≥ 500× : 3 · ≥ 100× : 2 · ≥ 10× : 1 |
-| Revenu estimé sur 30 jours | ≥ 10 000 $ : 3 · ≥ 3 000 $ : 2 · ≥ 1 000 $ : 1 |
+| Revenu **récurrent** estimé sur 30 jours | ≥ 10 000 $ : 3 · ≥ 3 000 $ : 2 · ≥ 1 000 $ : 1 |
 | Régularité (au moins 5 vidéos) | ≥ 70 % des vidéos > 50K : 2 · ≥ 40 % : 1 · un seul carton : −1 |
 | Tendance | chauffe : +1 · refroidit : −1 |
 | Concurrence | 1 chaîne : +2 · ≤ 4 : +1 · ≥ 8 : −1 |

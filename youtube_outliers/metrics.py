@@ -7,7 +7,9 @@ Critères (repris de la vidéo « 13 faceless niches ») :
     - régularité   : médiane des vues récentes, part des vidéos >= 50K, drapeau « un seul carton »
     - tendance     : médiane des 5 dernières vidéos / médiane des précédentes
     - format       : Shorts (<= 3 min) ou vidéos longues
-    - argent       : vues des 30 derniers jours x RPM (table par thème et par format)
+    - argent       : vues des 30 derniers jours x RPM (table par thème et par format).
+                     Le score utilise le revenu « récurrent » : sans les cartons isolés,
+                     et à 0 si la chaîne n'a pas les 1 000 abonnés pour être monétisée.
     - concurrence  : nombre de chaînes outliers trouvées dans la même niche
     - Claude       : faisable en code ? -> laissé vide, à remplir à la main
 """
@@ -20,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 from statistics import median
 
 SHORT_MAX_SECONDS = 180  # YouTube accepte des Shorts jusqu'à 3 minutes
+MONETIZATION_MIN_SUBS = 1_000  # minimum du Programme Partenaire YouTube
 _DURATION_RE = re.compile(r"^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$")
 
 
@@ -54,7 +57,7 @@ class Channel:
 class Thresholds:
     ratio: float = 100.0        # explosion minimale du dernier succès
     hit_views: int = 50_000     # seuil « vidéo qui marche » pour la régularité
-    one_hit_factor: float = 20  # meilleure vidéo >= 20 x médiane -> un seul carton
+    one_hit_factor: float = 50  # vidéo >= 50 x médiane -> carton isolé
     heating: float = 1.2        # tendance : au-dessus -> chauffe
     cooling: float = 0.8        # tendance : en dessous -> refroidit
 
@@ -78,6 +81,8 @@ class ChannelReport:
     format: str
     views_30d: int
     revenue_30d: float
+    revenue_recurring_30d: float
+    monetizable: bool
     competition: int = 0
     score: int = 0
     tier: str = ""
@@ -194,7 +199,14 @@ def analyze_channel(
 
     med = median(v.views for v in videos)
     best = max(v.views for v in videos)
+    carton_floor = thresholds.one_hit_factor * max(med, 1)
+    monetizable = channel.subscribers >= MONETIZATION_MIN_SUBS
     views_30d, revenue_30d = estimate_revenue(videos, now, rpm_long, rpm_short)
+    _, revenue_recurring = estimate_revenue(
+        [v for v in videos if v.views < carton_floor], now, rpm_long, rpm_short
+    )
+    if not monetizable:
+        revenue_30d = revenue_recurring = 0.0
 
     return ChannelReport(
         niche=niche,
@@ -209,11 +221,13 @@ def analyze_channel(
         blowup=round(latest_hit.views / channel.subscribers, 1),
         median_views=int(med),
         share_above_hit_views=round(sum(v.views >= thresholds.hit_views for v in videos) / len(videos), 2),
-        one_hit=len(videos) >= 5 and best >= thresholds.one_hit_factor * max(med, 1),
+        one_hit=len(videos) >= 5 and best >= carton_floor,
         trend=trend_label(videos, thresholds),
         format=channel_format(videos),
         views_30d=views_30d,
         revenue_30d=revenue_30d,
+        revenue_recurring_30d=revenue_recurring,
+        monetizable=monetizable,
     )
 
 
@@ -225,8 +239,9 @@ def score(r: ChannelReport) -> int:
     pts = 0
     # 1. Explosion du dernier succès
     pts += 3 if r.blowup >= 500 else 2 if r.blowup >= 100 else 1 if r.blowup >= 10 else 0
-    # 2. Argent : revenu estimé sur 30 jours
-    pts += 3 if r.revenue_30d >= 10_000 else 2 if r.revenue_30d >= 3_000 else 1 if r.revenue_30d >= 1_000 else 0
+    # 2. Argent : revenu récurrent estimé sur 30 jours (sans les cartons isolés)
+    rev = r.revenue_recurring_30d
+    pts += 3 if rev >= 10_000 else 2 if rev >= 3_000 else 1 if rev >= 1_000 else 0
     # 3. Régularité
     if r.videos_analyzed >= 5:
         pts += 2 if r.share_above_hit_views >= 0.7 else 1 if r.share_above_hit_views >= 0.4 else 0

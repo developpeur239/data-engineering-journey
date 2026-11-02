@@ -120,17 +120,17 @@ def print_board(board: list[ChannelReport]) -> None:
         return
     header = (
         f"{'Tier':<4} {'Pts':>3}  {'Explos.':>7} {'Abonnés':>7} {'Dern. succès':>14} {'Médiane':>7} "
-        f"{'≥50K':>4} {'Tend.':>5} {'Format':>6} {'$/30j':>7} {'Conc.':>5}  Chaîne · Niche"
+        f"{'≥50K':>4} {'Tend.':>5} {'Format':>6} {'$/30j':>7} {'$récur.':>7} {'Conc.':>5}  Chaîne · Niche"
     )
     print(header)
     print("-" * len(header))
     for r in board:
         hit = f"{human(r.latest_hit_views)} {r.latest_hit_days_ago}j"
-        flag = " ⚠️1 carton" if r.one_hit else ""
+        flag = (" ⚠️1 carton" if r.one_hit else "") + ("" if r.monetizable else " 🚫non monétisable")
         print(
             f"{r.tier:<4} {r.score:>3}  {r.blowup:>6.0f}x {human(r.subscribers):>7} {hit:>14} "
             f"{human(r.median_views):>7} {r.share_above_hit_views:>4.0%} {TREND_ICONS[r.trend]:>5} "
-            f"{r.format:>6} {human(r.revenue_30d):>7} {r.competition:>5}  "
+            f"{r.format:>6} {human(r.revenue_30d):>7} {human(r.revenue_recurring_30d):>7} {r.competition:>5}  "
             f"{r.channel_title} · {r.niche}{flag}\n{'':>6}{r.channel_url}"
         )
     print("\nColonne « faisable par Claude » : à remplir à la main dans le CSV.")
