@@ -1018,7 +1018,11 @@ def main(argv=None):
         wv.setframerate(sr)
         wv.writeframes(allv.tobytes())
     total_s = len(allv) / sr
-    clashes = fx.mix_check(allv, sr, np.frombuffer(open(sfx, "rb").read()[44:], dtype=np.int16) / 32768.0, 0.45)
+    with wave.open(str(sfx)) as wv:
+        sfx_sig = np.frombuffer(wv.readframes(wv.getnframes()), dtype=np.int16) / 32768.0
+    sfx_sig = fx.duck_under_voice(sfx_sig, allv, sr, 0.45)       # effets abaissés sous les syllabes seulement
+    fx._write(sfx, sfx_sig)
+    clashes = fx.mix_check(allv, sr, sfx_sig, 0.45)
     print(f"Contrôle du mixage : {len(clashes)} moment(s) où un effet approche la voix à moins de 3 dB"
           + (f" ({', '.join(fmt_ts(c) for c in clashes[:12])})" if clashes else ""))
 

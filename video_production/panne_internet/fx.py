@@ -530,3 +530,30 @@ def mix_check(voice: np.ndarray, vsr: int, sfx: np.ndarray, gain_sfx: float, sta
         if not merged or t - merged[-1] > 0.5:
             merged.append(t)
     return merged
+
+
+def duck_under_voice(sfx: np.ndarray, voice: np.ndarray, vsr: int, gain_sfx: float, margin: float = 4.5) -> np.ndarray:
+    """Baisse les effets uniquement là où ils approchent la voix (même fenêtres de 50 ms que mix_check).
+
+    Les impacts tombent dans les blancs : ils ne sont pas touchés. Le battement de cœur et les tic-tac
+    sont abaissés sous les syllabes, puis remontent dans les respirations (rampes de 50 ms).
+    """
+    hop = int(SR * 0.05)
+    def env(x, sr):
+        h = int(sr * 0.05)
+        m = len(x) // h
+        f = x[: m * h].astype(np.float32).reshape(m, h)
+        return 20 * np.log10(np.sqrt((f ** 2).mean(axis=1)) + 1e-9)
+    v = env(voice / 32768.0, vsr)
+    s = env(sfx * gain_sfx, SR)
+    m = min(len(v), len(s))
+    g_db = np.zeros(len(s))
+    speak = v[:m] > -35
+    over = s[:m] - (v[:m] - margin)
+    g_db[:m] = np.where(speak & (over > 0), -over, 0.0)
+    g_db = np.minimum(g_db, np.minimum(np.roll(g_db, 1), np.roll(g_db, -1)))   # la rampe ne déborde jamais
+    g = np.repeat(10 ** (g_db / 20), hop)
+    g = np.convolve(g, np.ones(hop) / hop, mode="same")
+    out = sfx.astype(np.float64).copy()
+    out[: len(g)] *= g[: len(out)]
+    return out
