@@ -27,7 +27,13 @@ python render.py ... --only 1-5 --preview   # aperçu rapide en 960x540
    (images NASA, domaine public, copies du dépôt three.js : `examples/textures/planets/earth_atmos_2048.jpg`,
    `earth_lights_2048.png`, `earth_clouds_1024.png`), éclairage, halo d'atmosphère, lumières qui s'éteignent pendant la panne.
    Panneaux de données (`hud`), coordonnées (`coords`) et mention « ILLUSTRATION » sous les scènes dessinées.
-5. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
+5. **Caméra et son** (`fx.py`) : règles de caméra inspirées des mesures du dépôt MIT
+   [mromidev/claude-animated-shorts](https://github.com/mromidev/claude-animated-shorts) — glissé d'entrée lissé (24 images),
+   poussée lente continue (aucun plan figé), secousse sur 7 images et petite rotation sur les mots-clés (`IMPACTS`).
+   Bande-son synthétisée : souffles de transition, impacts, bips d'erreur, tic-tac des chiffres, montée avant le
+   retournement, battement de cœur pendant l'escalade, nappe musicale dont l'intensité suit le script, baissée
+   automatiquement sous la voix ; mixage final à −14 LUFS.
+6. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
 
 ## Voix MiniMax (option)
 

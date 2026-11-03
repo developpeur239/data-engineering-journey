@@ -28,6 +28,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 sys.path.insert(0, str(Path(__file__).parent))
+import fx  # noqa: E402
 from scenes import BEATS, SCENES  # noqa: E402
 
 FPS = 24
@@ -810,7 +811,7 @@ def tts_minimax(text: str, out: Path, voice_id: str, model: str, speed: float, e
 
 def scene_key(scene) -> str:
     import hashlib  # noqa: PLC0415
-    code = Path(__file__).read_bytes()  # le cache se périme dès que le code de rendu change
+    code = Path(__file__).read_bytes() + (Path(__file__).parent / "fx.py").read_bytes()  # cache périmé si le code change
     return hashlib.sha1(repr(scene).encode() + code).hexdigest()[:8]
 
 
@@ -820,7 +821,7 @@ def wav_duration(path: Path) -> float:
 
 
 def render_scene(args):
-    i, scene, frames, w, h, geo_path, out, tex_dir = args
+    i, scene, frames, w, h, geo_path, out, tex_dir, impact_t = args
     beat, label, voice, onscreen, kind, p = scene
     cv = Canvas(w, h)
     geo = Geo(Path(geo_path)) if kind in ("map", "globe") else None
@@ -858,11 +859,8 @@ def render_scene(args):
             draw_device(img, cv, t, dur, p)
         elif kind == "person":
             draw_person(img, cv, t, dur, p)
-        # léger mouvement de caméra (zoom lent)
-        z = 1 + 0.035 * (t / max(dur, 1))
-        if z > 1.001:
-            W2, H2 = int(w / z), int(h / z)
-            img = img.crop(((w - W2) // 2, (h - H2) // 2, (w - W2) // 2 + W2, (h - H2) // 2 + H2)).resize((w, h), Image.BILINEAR)
+        # caméra : glissé d'entrée, poussée lente, secousse et rotation sur l'impact (fx.py)
+        img = fx.apply_camera(img, *fx.camera_params(i + 1, t, f, impact_t))
         hud(img, cv, t, p, kind)
         overlay(img, cv, label, onscreen, t, dur, beat)
         img = fade(img, t, dur)
@@ -933,20 +931,22 @@ def main(argv=None):
         idx = [i for i in idx if lo - 1 <= i <= hi - 1]
 
     # 1. Voix
-    frames = {}
+    frames, voice_dur = {}, {}
     for i in idx:
         wav = tts_dir / f"{i:02d}.wav"
         if a.tts == "minimax":
             tts_minimax(SCENES[i][2], wav, a.minimax_voice, a.minimax_model, a.minimax_speed, a.minimax_emotion)
         else:
             tts(SCENES[i][2], wav, a.voice)
-        frames[i] = int(math.ceil((wav_duration(wav) + PAD_S) * FPS))
+        voice_dur[i] = wav_duration(wav)
+        frames[i] = int(math.ceil((voice_dur[i] + PAD_S) * FPS))
     print(f"Voix prêtes : {len(idx)} scènes, {sum(frames.values()) / FPS / 60:.2f} min")
 
     # 2. Images
     suffix = "_p" if a.preview else ""
     seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
-    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None)
+    impact_at = {i: fx.keyword_time(SCENES[i][2], fx.IMPACTS[i + 1], voice_dur[i]) for i in idx if i + 1 in fx.IMPACTS}
+    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None, impact_at.get(i))
             for i in idx if not seg[i].exists()]
     print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
     with ProcessPoolExecutor(a.jobs) as ex:
@@ -973,18 +973,24 @@ def main(argv=None):
         wv.setframerate(sr)
         wv.writeframes(allv.tobytes())
     total_s = len(allv) / sr
-    amb = work / "ambient.wav"
-    ambient(amb, total_s)
+    starts, t_acc = [], 0.0
+    for i in idx:
+        starts.append(t_acc)
+        t_acc += frames[i] / FPS
+    music, sfx = fx.build_soundtrack(work, SCENES, starts, [frames[i] / FPS for i in idx], [voice_dur[i] for i in idx], idx)
 
     concat = work / f"concat{suffix}.txt"
     concat.write_text("".join(f"file '{seg[i]}'\n" for i in idx))
     out = work / f"video{suffix}.mp4"
     subprocess.run([
-        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(amb),
+        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(music), "-i", str(sfx),
         "-filter_complex",
-        "[1:a]aresample=48000,highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=120[v];"
-        "[2:a]aresample=48000,volume=0.10[m];"
-        "[v][m]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-15:TP=-1.5:LRA=11[a]",
+        # voix nettoyée et compressée ; elle sert aussi de déclencheur pour baisser la musique
+        "[1:a]aresample=48000,highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,asplit=2[v][key];"
+        "[2:a]aresample=48000,volume=0.22[mraw];"
+        "[mraw][key]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[m];"
+        "[3:a]aresample=48000,volume=0.45[s];"
+        "[v][m][s]amix=inputs=3:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[a]",
         "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", str(out)], check=True)
 
     # 4. Sous-titres et chapitres
