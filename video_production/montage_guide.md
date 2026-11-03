@@ -50,7 +50,15 @@ Résumé de tutoriels de montage (Film Editing Pro) et de deux skills MIT
 - Pour la panne d'Internet, ouverture : détail de l'écran « REFUSÉ » (*que se passe-t-il ?*) → Marc avec son fils
   (*qui ?*) → la station, la ville éclairée (*où ?*), par un zoom arrière continu.
 
-## 6. Caméra (mesures de mromidev/claude-animated-shorts)
+## 6. Ponts sonores (le son de la scène suivante commence avant l'image)
+- **Bruitage** : on entend la scène suivante avant de la voir (une foule avant la file au distributeur, les bips d'un
+  moniteur avant l'hôpital, le grésillement de la radio sous la fin du temps 7). Avance de 0,5 à 1,5 s.
+- **Musique** : l'accord chaud du moment clé (temps 8) démarre sous la dernière image du temps 7.
+- **Voix** : sur certaines transitions, la phrase suivante démarre 0,3 à 0,5 s avant la coupe.
+- Effet : continuité, on prépare le spectateur à la suite sans le surprendre malgré lui ; à utiliser sur les
+  changements de lieu et de temps, pas sur chaque coupe.
+
+## 7. Caméra (mesures de mromidev/claude-animated-shorts)
 - Glissés lissés de 18 à 40 images, poussée lente pendant les plans fixes (jamais d'image figée),
   secousse sur 7 images et petite rotation sur les impacts, coupes franches seulement sur les grands sauts.
 - Contrôle qualité : `ffmpeg freezedetect` / `blackdetect` sur chaque rendu.
