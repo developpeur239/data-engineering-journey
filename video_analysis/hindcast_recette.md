@@ -111,7 +111,7 @@ Ce document sert à comprendre un format, **pas à le copier**.
 | Idée | Ouverture sensorielle | « Let's do the math » | Retournement possible |
 |---|---|---|---|
 | Et si l'éruption du Vésuve de 79 avait lieu aujourd'hui à Naples ? | Un livreur à Naples, 9h12, le sol qui vibre | ~700 000 habitants dans la zone rouge (3 M dans l'agglomération) | Le plan d'évacuation prévoit 72 h, l'éruption en laisse 15 min |
-| Et si la crue de 1910 revenait à Paris ? | Un conducteur de métro, ligne 14, l'eau dans le tunnel | 8,62 m au pont d'Austerlitz, en 1910 comme pour l'exercice européen EU Sequana 2016 | L'eau monte lentement ; ce qui tue la ville, c'est la coupure d'électricité |
+| Et si la crue de 1910 revenait à Paris ? | Une agente RATP à Châtelet, 4 h du matin, l'eau dans l'escalier | 8,62 m au pont d'Austerlitz, en 1910 comme pour l'exercice européen EU Sequana 2016 | L'eau monte lentement ; ce qui tue la ville, c'est la coupure d'électricité |
 | Et si un astéroïde comme celui de Toungouska tombait sur Paris ? | Un matin de juin sur le périphérique | 10 à 15 Mt, 2 000 km² de forêt rasés en 1908 | On l'avait vu, mais trop tard pour dévier |
 
 **Rappel YouTube (« inauthentic content ») :** chaque vidéo doit être une vraie recherche, avec un vrai script et une vraie voix. Ce sont les sources, la structure et la mise en scène qui font le succès de Hindcast, pas un modèle répété à la chaîne.
