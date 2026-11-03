@@ -783,7 +783,8 @@ def tts_elevenlabs(text: str, out: Path, voice_id: str, model: str, stability: f
     if out.exists():
         return 0
     from elevenlabs import ElevenLabs, VoiceSettings  # noqa: PLC0415
-    client = ElevenLabs()
+    import os  # noqa: PLC0415
+    client = ElevenLabs(api_key=os.environ["ELEVENLABS_API_KEY"].strip().strip(",;").strip())
     mp3 = out.with_suffix(".mp3")
     # SDK 2.x : la réponse brute (en-têtes de coût) passe par with_raw_response, en gestionnaire de contexte
     with client.text_to_speech.with_raw_response.convert(
@@ -935,6 +936,53 @@ def fmt_ts(s: float, srt=False) -> str:
     return f"{m:02d}:{int(sec):02d}"
 
 
+def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
+    """Scènes du studio three.js : une page par scène, plusieurs navigateurs en parallèle."""
+    def plain(v):
+        if isinstance(v, tuple):
+            v = list(v)
+        if isinstance(v, list):
+            return [plain(x) for x in v]
+        if isinstance(v, dict):
+            return {k: plain(x) for k, x in v.items()}
+        return v
+    jobs = []
+    for n, i in enumerate(idx):
+        beat, label, voice, onscreen, kind, p = SCENES[i]
+        prev_b = SCENES[idx[n - 1]][0] if n > 0 else None
+        next_b = SCENES[idx[n + 1]][0] if n + 1 < len(idx) else None
+        sc = {"n": i + 1, "beat": beat, "beatName": BEATS[beat], "label": label, "onscreen": onscreen, "kind": kind, "p": plain(p),
+              "dur": frames[i] / FPS, "spans": [[round(s0 + 0.15, 3), round(s1 + 0.15, 3)] for s0, s1 in spans[i]],
+              "words": words.get(i + 1, []), "events": events.get(i + 1, {}),
+              "impacts": [[round(ti, 3), tier] for ti, tier in impacts.get(i + 1, [])],
+              "warm": (i + 1) in plan.WARM_SCENES, "fadeIn": beat != prev_b, "fadeOut": beat != next_b,
+              "whipIn": prev_b == beat, "whipOut": next_b == beat}
+        if a.stills:
+            jobs.append({"scene": sc, "out": str(work / "stills" / f"s{i + 1:02d}"), "frames": frames[i],
+                         "stills": [float(x) * sc["dur"] if float(x) <= 1 else float(x) for x in a.stills.split(",")]})
+        elif not seg[i].exists():
+            jobs.append({"scene": sc, "out": str(seg[i]), "frames": frames[i]})
+    (work / "stills").mkdir(exist_ok=True)
+    print(f"  {len(idx) - len(jobs)} scène(s) 3D déjà rendue(s), {len(jobs)} à rendre", flush=True)
+    if not jobs:
+        return
+    groups = [[] for _ in range(max(1, a.jobs))]
+    loads = [0.0] * len(groups)
+    for j in sorted(jobs, key=lambda j: -j["frames"]):
+        k = loads.index(min(loads)); groups[k].append(j); loads[k] += j["frames"]
+    procs = []
+    w = 960 if a.preview else 1920
+    for k, g in enumerate(groups):
+        if not g:
+            continue
+        jf = work / f"jobs3d_{k}.json"
+        jf.write_text(json.dumps(g, ensure_ascii=False))
+        procs.append(subprocess.Popen(["node", str(Path(__file__).parent / "3d" / "render_studio.js"), str(jf), str(a.assets), str(w), str(FPS)]))
+    codes = [p.wait() for p in procs]
+    if any(codes):
+        raise SystemExit(f"Rendu 3D : erreur dans au moins une scène (codes {codes})")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--work", type=Path, required=True)
@@ -952,6 +1000,9 @@ def main(argv=None):
     ap.add_argument("--textures", type=Path, help="dossier des textures Terre (globe réaliste)")
     ap.add_argument("--preview", action="store_true", help="960x540 pour tester vite")
     ap.add_argument("--jobs", type=int, default=4)
+    ap.add_argument("--engine", choices=["2d", "3d"], default="2d", help="3d : studio three.js (3d/studio), style de référence")
+    ap.add_argument("--assets", type=Path, help="(3d) dossier : vendor/three.module.min.js, fonts/, textures, countries.geojson")
+    ap.add_argument("--stills", help="(3d) images de contrôle seulement, ex. 0.5,3 (une série par scène)")
     a = ap.parse_args(argv)
 
     w, h = (960, 540) if a.preview else (1920, 1080)
@@ -983,20 +1034,55 @@ def main(argv=None):
 
     # 2. Images
     suffix = "_p" if a.preview else ""
-    seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
+    if a.engine == "3d":
+        studio = Path(__file__).parent / "3d" / "studio"
+        code3d = b"".join(f.read_bytes() for f in sorted(studio.glob("*")))
+        import hashlib  # noqa: PLC0415
+        k3 = lambda i: hashlib.sha1(repr(SCENES[i]).encode() + code3d + repr(spans[i]).encode()).hexdigest()[:8]  # noqa: E731
+        seg = {i: work / "seg3d" / f"{i:02d}_{frames[i]}_{k3(i)}{suffix}.mp4" for i in idx}
+        (work / "seg3d").mkdir(exist_ok=True)
+    else:
+        seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
     starts, t_acc = [], 0.0
     for i in idx:
         starts.append(t_acc)
         t_acc += frames[i] / FPS
+    real, events, words = None, None, None
+    if a.engine == "3d":
+        import sfx_real  # noqa: PLC0415
+        words, events = {}, {}
+        for i in idx:
+            wf = tts_dir / f"{i:02d}_ed.words.json"
+            ws = json.loads(wf.read_text()) if wf.exists() else []
+            words[i + 1] = [{"w": x["w"], "a": round(x["a"] + 0.15, 3), "b": round(x["b"] + 0.15, 3)} for x in ws]
+            ev = {"err": 0.6}
+            key = plan.EVENT_WORD.get(i + 1)
+            hit = next((x for x in words[i + 1] if key and x["w"].lower().startswith(key.lower()[:6])), None)
+            if hit:
+                ev["err"] = round(max(0.3, hit["a"] - 0.1), 3)
+            if i + 1 == 2 and len(spans[i]) > 1:
+                ev["tap2"] = round(spans[i][1][1] + 0.15 + 0.35, 3)
+            events[i + 1] = ev
+        real = {}
+        for name, path in sfx_real.generate(work, None).items():
+            x = voice_edit.read_wav(path)[0].astype(np.float64) / 32768.0
+            if name.startswith("amb") or name in ("trucks_idle", "radio_fm"):
+                x = x / (np.abs(x).max() + 1e-9) * 0.5
+            real[name] = x
     music, sfx, amb, impacts = fx.build_soundtrack_v2(work, SCENES, idx, starts, [frames[i] / FPS for i in idx],
-                                                      [spans[i] for i in idx], plan)
-    shots = {i: fx.scene_shots(SCENES[i][4], spans[i], i + 1, plan) for i in idx}
-    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None,
-             shots[i], impacts.get(i + 1, [])) for i in idx if not seg[i].exists()]
-    print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
-    with ProcessPoolExecutor(a.jobs) as ex:
-        for done in ex.map(render_scene, jobs):
-            print(f"  scène {done + 1}/{len(SCENES)} rendue", flush=True)
+                                                      [spans[i] for i in idx], plan, real, events, words)
+    if a.engine == "3d":
+        render_3d(a, work, idx, frames, spans, words, events, impacts, seg)
+    else:
+        shots = {i: fx.scene_shots(SCENES[i][4], spans[i], i + 1, plan) for i in idx}
+        jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None,
+                 shots[i], impacts.get(i + 1, [])) for i in idx if not seg[i].exists()]
+        print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
+        with ProcessPoolExecutor(a.jobs) as ex:
+            for done in ex.map(render_scene, jobs):
+                print(f"  scène {done + 1}/{len(SCENES)} rendue", flush=True)
+    if a.stills:
+        return
 
     # 3. Son : voix calée sur les images + ambiance
     voice_track = work / f"voice{suffix}.wav"

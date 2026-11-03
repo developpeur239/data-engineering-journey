@@ -65,3 +65,26 @@ def ambience_for(kind: str, p: dict) -> str | None:
 
 # Humeur du drone par temps du script
 DRONE = {1: "neutral", 2: "neutral", 3: "neutral", 4: "neutral", 5: "dark", 6: "dark", 7: "dark", 8: "bright", 9: "neutral"}
+
+
+# ---------- moteur 3D : instant de l'événement visuel, calé sur le mot (l'image précède le mot de 0,1 s) ----------
+EVENT_WORD = {2: "refuse", 10: "indisponibles", 12: "encaisser", 15: "refusent", 19: "erreur", 20: "impossible", 21: "bip",
+              22: "refusée", 23: "Aucun", 25: "refus", 26: "saturé", 29: "invisibles", 31: "inaccessibles", 6: "huit"}
+
+# bruitages réels (sfx_real) : (nom, ancre, décalage s, gain) ; ancre = "err" (événement), "start" ou "w:<début de mot>"
+REAL_SFX = {
+    2: [("metro_refuse", "err", 0.0, 0.8)], 5: [("digital_clock", "start", 0.3, 0.5)], 6: [("monitors_off", "w:huit", -0.6, 0.6)],
+    7: [("departures_board", "w:annuler", -0.4, 0.6)], 10: [("notification", "err", 0.0, 0.5), ("notification", "err", 0.5, 0.4), ("notification", "err", 1.0, 0.35)],
+    12: [("card_declined", "err", 0.0, 0.75)], 15: [("atm_error", "err", -0.3, 0.7)], 17: [("monitors_off", "w:serveurs", -0.3, 0.55)],
+    19: [("computer_error", "err", -0.4, 0.6)], 20: [("metro_refuse", "err", 0.0, 0.6)], 21: [("card_declined", "err", 0.0, 0.8)],
+    22: [("metro_refuse", "err", 0.0, 0.6), ("child_crying", "w:pleure", -0.2, 0.45)], 23: [("notification", "err", 0.0, 0.45)],
+    25: [("atm_error", "err", -0.3, 0.7)], 26: [("phone_ring_fail", "start", 0.3, 0.5), ("phone_busy", "err", 0.0, 0.55)],
+    29: [("notification", "err", 0.0, 0.45)], 31: [("computer_error", "err", -0.4, 0.55)], 32: [("shop_bell", "start", 0.1, 0.6)],
+    33: [("pen_paper", "start", 0.4, 0.7)], 35: [("door_knock", "start", 0.2, 0.5)], 42: [("cash_coins", "start", 0.1, 0.6), ("pen_paper", "start", 1.6, 0.7)],
+    50: [("servers_up", "w:retir", -0.2, 0.6)], 51: [("typing_fast", "start", 0.2, 0.5)], 55: [("radio_tune", "start", 0.0, 0.5)],
+    56: [("terminals_on", "w:rallument", -0.2, 0.6)], 63: [("pen_paper", "w:notez", 0.0, 0.6)],
+}
+REAL_AMB = {1: "amb_apartment", 2: "amb_station", 20: "amb_station", 22: "amb_station", 7: "amb_queue", 12: "amb_store", 21: "amb_store",
+            15: "amb_street", 24: "amb_queue", 25: "amb_street", 17: "amb_servers", 30: "amb_servers", 50: "amb_servers", 51: "amb_servers",
+            19: "amb_apartment", 31: "amb_hospital", 33: "amb_hospital", 32: "amb_store", 36: "amb_apartment", 41: "amb_street",
+            42: "amb_store", 44: "trucks_idle", 45: "amb_supermarket", 54: "amb_apartment", 55: "radio_fm", 63: "amb_apartment"}

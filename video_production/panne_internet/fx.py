@@ -431,7 +431,7 @@ def reverb(x: np.ndarray, wet: float = 0.18, decay: float = 0.45) -> np.ndarray:
     return x * (1 - wet) + y * wet * 3
 
 
-def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan):
+def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan, real=None, events=None, words=None):
     """music.wav, sfx.wav, amb.wav et la liste des moments d'impact (pour la caméra et le contrôle du mixage)."""
     total = starts[-1] + durs[-1]
     n_total = int(total * SR) + SR
@@ -453,12 +453,34 @@ def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan):
         music_env[mood] += _fade_env(n_total, int(a * SR), int((t0 + d) * SR), int(3 * SR))
         # ambiance + pont sonore (démarre 1 s avant la coupe)
         amb_kind = plan.ambience_for(kind, p)
-        if amb_kind:
+        real_amb = real and real.get(getattr(plan, "REAL_AMB", {}).get(sc))
+        if real_amb is not None:
+            a0 = max(0.0, t0 - 1.0)
+            L = int((t0 + d - a0) * SR)
+            loop = np.concatenate([real_amb] * (L // len(real_amb) + 1))[:L] * _fade_env(L, 0, L, int(0.8 * SR))
+            _add(amb, loop, a0, 0.9)
+        elif amb_kind:
             a0 = max(0.0, t0 - 1.0)
             seg = ambience(amb_kind, t0 + d - a0, sc) * _fade_env(int((t0 + d - a0) * SR), 0, int((t0 + d - a0) * SR), int(0.8 * SR))
             _add(amb, seg, a0, 0.5 if amb_kind != "radio" else 0.9)
         if beat != prev_beat:
             _add(sfx, whoosh(), t0 - 0.35, 0.4)
+        elif events is not None and n > 0:
+            _add(sfx, whoosh(0.4), t0 - 0.2, 0.2)          # transition filée entre deux plans du même temps
+        if real and sc in getattr(plan, "REAL_SFX", {}):
+            ev = (events or {}).get(sc, {})
+            for name, anchor, off, gain in plan.REAL_SFX[sc]:
+                if name not in real:
+                    continue
+                if anchor == "err":
+                    at = ev.get("err", 0.6)
+                elif anchor == "start":
+                    at = 0.0
+                else:
+                    pre = anchor[2:].lower()
+                    at = next((w["a"] for w in (words or {}).get(sc, []) if w["w"].lower().startswith(pre)), 0.6)
+                x = real[name]
+                _add(foley, x, t0 + at + off - _onset(x), gain)
         # impacts dans le blanc après la phrase, aspiration inversée avant les impacts forts
         for (s_no, k, tier) in plan.IMPACTS:
             if s_no == sc and k < len(sp):
@@ -477,7 +499,7 @@ def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan):
                 g0, g1 = int((t0 + lead + sp[k][0] - 0.3) * SR), int((t0 + lead + sp[k][1] + 0.05) * SR)
                 gate[max(g0, 0):g1] = 0
         status = str(p.get("status", "")).upper()
-        if sc not in plan.KEY_SCENES and kind in ("device", "person") and (p.get("bad") or any(w in status for w in ERROR_WORDS)):
+        if not (real and sc in getattr(plan, "REAL_SFX", {})) and sc not in plan.KEY_SCENES and kind in ("device", "person") and (p.get("bad") or any(w in status for w in ERROR_WORDS)):
             _add(foley, glitch_v(sc), t0 + 0.5, 0.35)
         if kind == "number":
             for k in range(12):
@@ -512,6 +534,13 @@ def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan):
     for name, sig in (("music", music), ("sfx", sfx), ("amb", amb)):
         _write(work / f"{name}.wav", sig)
     return work / "music.wav", work / "sfx.wav", work / "amb.wav", impacts_by_scene
+
+
+def _onset(x: np.ndarray) -> float:
+    """Premier transitoire net d'un bruitage (pour caler le son exactement sur l'image)."""
+    k = int(0.01 * SR)
+    env = np.convolve(np.abs(x), np.ones(k) / k, mode="same")
+    return int(np.argmax(env > env.max() * 0.35)) / SR
 
 
 def mix_check(voice: np.ndarray, vsr: int, sfx: np.ndarray, gain_sfx: float, start_lead: float = 0.0) -> list[float]:
