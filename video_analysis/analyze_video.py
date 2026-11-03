@@ -103,8 +103,17 @@ def transcribe(path: Path, model_size: str, language: str | None) -> list[dict] 
         from faster_whisper import WhisperModel
     except ImportError:
         return None
+    import numpy as np
+
+    # Décodage audio par ffmpeg (16 kHz mono float32) plutôt que par PyAV : certaines
+    # versions de PyAV sont incompatibles avec faster-whisper (open() metadata_errors).
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", str(path), "-vn", "-ac", "1", "-ar", "16000", "-f", "f32le", "-"],
+        capture_output=True,
+    ).stdout
+    audio = np.frombuffer(raw, dtype=np.float32)
     model = WhisperModel(model_size, device="auto", compute_type="int8")
-    segments, _ = model.transcribe(str(path), language=language, vad_filter=True)
+    segments, _ = model.transcribe(audio, language=language, vad_filter=True)
     return [{"start": round(s.start, 1), "end": round(s.end, 1), "text": s.text.strip()} for s in segments]
 
 
