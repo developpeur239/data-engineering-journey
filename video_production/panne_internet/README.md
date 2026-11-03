@@ -23,7 +23,11 @@ python render.py ... --only 1-5 --preview   # aperçu rapide en 960x540
    cartes de choix, interfaces (terminal, distributeur, téléphone, ordinateur, tableau des départs, radio…).
 3. **Son** : voix + nappe d'ambiance générée par le programme (aucune musique sous droits), compression légère,
    normalisation à −15 LUFS.
-4. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
+4. **Globe réaliste** (option `--textures <dossier>`) : textures Terre de jour, lumières de nuit et nuages
+   (images NASA, domaine public, copies du dépôt three.js : `examples/textures/planets/earth_atmos_2048.jpg`,
+   `earth_lights_2048.png`, `earth_clouds_1024.png`), éclairage, halo d'atmosphère, lumières qui s'éteignent pendant la panne.
+   Panneaux de données (`hud`), coordonnées (`coords`) et mention « ILLUSTRATION » sous les scènes dessinées.
+5. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
 
 ## Voix MiniMax (option)
 

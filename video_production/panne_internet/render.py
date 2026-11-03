@@ -194,8 +194,27 @@ def overlay(img: Image.Image, cv: Canvas, label: str, onscreen: str, t: float, d
         d.rounded_rectangle((bx - tw / 2 - S(26), by - S(30), bx + tw / 2 + S(26), by + S(30)), radius=S(8), fill=(0, 0, 0, int(150 * a)))
         d.rectangle((bx - tw / 2 - S(26), by - S(30), bx - tw / 2 - S(20), by + S(30)), fill=col + (int(255 * a),))
         d.text((bx, by), onscreen, font=f, fill=TXT + (int(255 * a),), anchor="mm")
-    # fondu d'entrée / sortie
     return img
+
+
+def hud(img: Image.Image, cv: Canvas, t: float, p: dict, kind: str):
+    """Panneau de données, coordonnées et mention ILLUSTRATION, façon documentaire."""
+    d = ImageDraw.Draw(img, "RGBA")
+    S = cv.S
+    rows = p.get("hud", [])
+    if rows:
+        a = ease((t - 0.4) / 0.5)
+        x0, y0 = cv.w - S(470), cv.h - S(150) - len(rows) * S(36)
+        d.rectangle((x0 - S(20), y0 - S(20), cv.w - S(40), y0 + len(rows) * S(36)), fill=(0, 0, 0, int(140 * a)))
+        d.rectangle((x0 - S(20), y0 - S(20), x0 - S(16), y0 + len(rows) * S(36)), fill=MINT + (int(255 * a),))
+        for i, (k, v) in enumerate(rows):
+            y = y0 + i * S(36) + S(4)
+            d.text((x0, y), k.upper(), font=font(S(18), "SemiBold"), fill=GREY + (int(255 * a),), anchor="lt")
+            d.text((cv.w - S(60), y), v, font=font(S(20), mono=True), fill=TXT + (int(255 * a),), anchor="rt")
+    if p.get("coords"):
+        d.text((cv.w - S(56), cv.h - S(34)), p["coords"], font=font(S(18), mono=True), fill=GREY, anchor="rb")
+    if kind in ("device", "person") or p.get("illustration"):
+        d.text((S(56), cv.h - S(34)), "ILLUSTRATION", font=font(S(16), "SemiBold"), fill=GREY, anchor="lb")
 
 
 def fade(img: Image.Image, t: float, dur: float) -> Image.Image:
@@ -327,6 +346,100 @@ class MapLayer:
                 c = S(18)
                 d.line((mx - c, my - c, mx + c, my + c), fill=RED, width=S(6))
                 d.line((mx - c, my + c, mx + c, my - c), fill=RED, width=S(6))
+
+
+class TexGlobe:
+    """Globe texturé (textures Terre jour / lumières de nuit / nuages, issues des images NASA)."""
+
+    def __init__(self, tex_dir: Path, radius: int):
+        self.day = np.asarray(Image.open(tex_dir / "earth_atmos_2048.jpg").convert("RGB"), dtype=np.float32) / 255
+        self.night = np.asarray(Image.open(tex_dir / "earth_lights_2048.png").convert("RGB"), dtype=np.float32) / 255
+        cl = Image.open(tex_dir / "earth_clouds_1024.png").convert("RGBA").resize((2048, 1024), Image.BILINEAR)
+        self.clouds = np.asarray(cl, dtype=np.float32)[..., 3] / 255  # densité des nuages = transparence
+        self.R = radius
+        yy, xx = np.mgrid[-radius:radius, -radius:radius].astype(np.float32) + 0.5
+        x, y = xx / radius, -yy / radius
+        r2 = x * x + y * y
+        self.mask = r2 <= 1
+        self.x, self.y = x[self.mask], y[self.mask]
+        self.z = np.sqrt(np.clip(1 - self.x ** 2 - self.y ** 2, 0, 1))
+        light = np.array([-0.55, 0.45, 0.70])
+        light /= np.linalg.norm(light)
+        self.shade = np.clip(self.x * light[0] + self.y * light[1] + self.z * light[2], 0, 1)
+        self.limb = self.z ** 0.35
+        rng = np.random.default_rng(5)
+        self.off_rank = rng.random(self.day.shape[:2]).astype(np.float32)  # ordre d'extinction des lumières
+        # halo d'atmosphère
+        size = int(radius * 2.5)
+        gy, gx = np.mgrid[0:size, 0:size].astype(np.float32) - size / 2
+        rr = np.sqrt(gx * gx + gy * gy) / radius
+        glow = np.clip(1 - (rr - 1) / 0.22, 0, 1) * (rr > 0.98)
+        halo = np.zeros((size, size, 4), dtype=np.uint8)
+        halo[..., 0], halo[..., 1], halo[..., 2] = 90, 170, 255
+        halo[..., 3] = (glow ** 2 * 170).astype(np.uint8)
+        self.halo = Image.fromarray(halo, "RGBA")
+
+    def render(self, lon0: float, lat0: float, mode: str, off: float = 0.0, cloud_shift: float = 0.0) -> Image.Image:
+        p0, l0 = math.radians(lat0), math.radians(lon0)
+        x, y, z = self.x, self.y, self.z
+        lat = np.arcsin(np.clip(z * math.sin(p0) + y * math.cos(p0), -1, 1))
+        lon = l0 + np.arctan2(x, z * math.cos(p0) - y * math.sin(p0))
+        h, w = self.day.shape[:2]
+        u = ((lon / (2 * math.pi) + 0.5) % 1 * (w - 1)).astype(np.int32)
+        v = ((0.5 - lat / math.pi) * (h - 1)).astype(np.int32)
+        uc = ((lon / (2 * math.pi) + 0.5 + cloud_shift) % 1 * (w - 1)).astype(np.int32)
+        cl = self.clouds[v, uc][:, None]
+        if mode == "night":
+            lum = np.clip(self.night[v, u].mean(axis=1, keepdims=True) - 0.08, 0, 1)
+            lights = lum * np.array([1.0, 0.72, 0.38], dtype=np.float32)
+            base = self.day[v, u].mean(axis=1, keepdims=True) * np.array([0.03, 0.05, 0.09], dtype=np.float32)
+            base = base + np.clip(lights * 3.2, 0, 1) * (self.off_rank[v, u] >= off)[:, None]
+            base = base * (0.35 + 0.65 * self.limb[:, None]) + cl * 0.035
+        else:
+            base = self.day[v, u] * (0.18 + 0.95 * self.shade[:, None])
+            base = base * (1 - cl * 0.6) + cl * 0.6 * (0.2 + 0.85 * self.shade[:, None])
+            base *= (0.55 + 0.45 * self.limb[:, None])
+        out = np.zeros((2 * self.R, 2 * self.R, 4), dtype=np.uint8)
+        rgb = (np.clip(base, 0, 1) * 255).astype(np.uint8)
+        out[self.mask, :3] = rgb
+        out[self.mask, 3] = 255
+        return Image.fromarray(out, "RGBA")
+
+
+_globes: dict = {}
+
+
+def draw_texglobe(img, cv, t, dur, p, tex_dir: Path):
+    S = cv.S
+    R_ = S(400)
+    key = (R_, str(tex_dir))
+    if key not in _globes:
+        _globes[key] = TexGlobe(tex_dir, R_)
+    g = _globes[key]
+    cx, cy = int(cv.w / 2), int(cv.h / 2 - S(10))
+    lon0 = p.get("lon0", 0) + t * 4
+    lat0 = p.get("lat0", 20)
+    off = ease(t / max(dur - 1, 1)) if p.get("lights_off") or p.get("nodes_off") else 0.0
+    sphere = g.render(lon0, lat0, p.get("mode", "day"), off, cloud_shift=t * 0.002)
+    img.paste(g.halo, (cx - g.halo.width // 2, cy - g.halo.height // 2), g.halo)
+    img.paste(sphere, (cx - R_, cy - R_), sphere)
+    d = ImageDraw.Draw(img, "RGBA")
+    if p.get("cables"):
+        k = ease(t / 2.0)
+        for a, b in CABLES:
+            arc = great_circle(a, b, 50)
+            x, y, vis = ortho(arc, lon0, lat0)
+            n = max(2, int(len(arc) * k))
+            for i in range(n - 1):
+                if vis[i] and vis[i + 1]:
+                    d.line((cx + x[i] * R_, cy - y[i] * R_, cx + x[i + 1] * R_, cy - y[i + 1] * R_),
+                           fill=(RED if p.get("nodes_off") else MINT) + (230,), width=S(3))
+    for lo, la, name in p.get("points", []):
+        x, y, vis = ortho(np.array([[lo, la]]), lon0, lat0)
+        if vis[0]:
+            px, py = cx + x[0] * R_, cy - y[0] * R_
+            d.ellipse((px - S(8), py - S(8), px + S(8), py + S(8)), fill=RED)
+            d.text((px + S(18), py), name, font=font(S(28), "Bold"), fill=TXT, anchor="lm")
 
 
 def draw_globe(img, cv, t, dur, p, geo: Geo):
@@ -697,7 +810,8 @@ def tts_minimax(text: str, out: Path, voice_id: str, model: str, speed: float, e
 
 def scene_key(scene) -> str:
     import hashlib  # noqa: PLC0415
-    return hashlib.sha1(repr(scene).encode()).hexdigest()[:8]
+    code = Path(__file__).read_bytes()  # le cache se périme dès que le code de rendu change
+    return hashlib.sha1(repr(scene).encode() + code).hexdigest()[:8]
 
 
 def wav_duration(path: Path) -> float:
@@ -706,7 +820,7 @@ def wav_duration(path: Path) -> float:
 
 
 def render_scene(args):
-    i, scene, frames, w, h, geo_path, out = args
+    i, scene, frames, w, h, geo_path, out, tex_dir = args
     beat, label, voice, onscreen, kind, p = scene
     cv = Canvas(w, h)
     geo = Geo(Path(geo_path)) if kind in ("map", "globe") else None
@@ -728,7 +842,10 @@ def render_scene(args):
         elif kind == "map":
             layer.draw(img, t, dur)
         elif kind == "globe":
-            draw_globe(img, cv, t, dur, p, geo)
+            if tex_dir and Path(tex_dir).exists():
+                draw_texglobe(img, cv, t, dur, p, Path(tex_dir))
+            else:
+                draw_globe(img, cv, t, dur, p, geo)
         elif kind == "circles":
             draw_circles(img, cv, t, dur, p)
         elif kind == "choice":
@@ -746,6 +863,7 @@ def render_scene(args):
         if z > 1.001:
             W2, H2 = int(w / z), int(h / z)
             img = img.crop(((w - W2) // 2, (h - H2) // 2, (w - W2) // 2 + W2, (h - H2) // 2 + H2)).resize((w, h), Image.BILINEAR)
+        hud(img, cv, t, p, kind)
         overlay(img, cv, label, onscreen, t, dur, beat)
         img = fade(img, t, dur)
         proc.stdin.write(img.tobytes())
@@ -799,6 +917,7 @@ def main(argv=None):
     ap.add_argument("--minimax-speed", type=float, default=1.0)
     ap.add_argument("--minimax-emotion", help="ex. calm, fearful (facultatif)")
     ap.add_argument("--only", help="ex. 1-5")
+    ap.add_argument("--textures", type=Path, help="dossier des textures Terre (globe réaliste)")
     ap.add_argument("--preview", action="store_true", help="960x540 pour tester vite")
     ap.add_argument("--jobs", type=int, default=4)
     a = ap.parse_args(argv)
@@ -827,7 +946,8 @@ def main(argv=None):
     # 2. Images
     suffix = "_p" if a.preview else ""
     seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
-    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i]) for i in idx if not seg[i].exists()]
+    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None)
+            for i in idx if not seg[i].exists()]
     print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
     with ProcessPoolExecutor(a.jobs) as ex:
         for done in ex.map(render_scene, jobs):

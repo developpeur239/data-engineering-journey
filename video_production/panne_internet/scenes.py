@@ -13,14 +13,14 @@ S, R = "SIMULATION", "HISTOIRE RÉELLE"
 SCENES = [
     # --- 1. OUVERTURE ---
     (1, S, "Paris, un mardi de décembre, sept heures quarante-cinq. Marc a trente-quatre ans. Il prépare le petit-déjeuner de son fils de deux ans. Il doit le déposer à la crèche avant huit heures.",
-     "PARIS · 07:45", "person", {"clock": "07:45", "child": True, "status": "CRÈCHE AVANT 08:00"}),
+     "PARIS · 07:45", "person", {"clock": "07:45", "child": True, "status": "CRÈCHE AVANT 08:00", "coords": "48.86°N 2.35°E"}),
     (1, S, "Devant la station de métro, Marc veut acheter un ticket de secours à l'automate. La machine refuse sa carte bancaire. La lumière brille, mais les données ne passent plus.",
      "PAIEMENT IMPOSSIBLE", "device", {"what": "ticket", "status": "CARTE REFUSÉE", "bad": True}),
     # --- 2. CONTRAT ---
     (2, S, "Ce que vous allez voir est une simulation. Marc est inventé. Le déclencheur et la chronologie sont inventés.",
      "SIMULATION", "title", {"big": "SIMULATION", "sub": "PERSONNAGE ET CHRONOLOGIE INVENTÉS"}),
     (2, S, "Mais le fonctionnement des réseaux est réel. La panne vient du système d'adressage Domain Name System. Chaque conséquence repose sur des faits observés chez Orange, Rogers, Cloudflare et CrowdStrike. Et si Internet s'arrêtait soixante-douze heures ?",
-     "PANNE DNS · 72 HEURES", "map", {"region": "world", "lights_off": True}),
+     "PANNE DNS · 72 HEURES", "globe", {"mode": "night", "lights_off": True, "lon0": -20, "lat0": 30}),
     # --- 3. VRAIE HISTOIRE ---
     (3, R, "Dix-neuf juillet deux mille vingt-quatre. Quatre heures neuf du matin, temps universel. Une simple mise à jour de configuration du logiciel de sécurité CrowdStrike est diffusée sur les ordinateurs Windows.",
      "19 JUILLET 2024 · 04:09", "chrono", {"start": "04:08:40", "date": "19 JUILLET 2024 · UTC"}),
@@ -35,7 +35,7 @@ SCENES = [
     (3, R, "Dix-huit novembre deux mille vingt-cinq. Une erreur interne chez Cloudflare rend indisponibles l'application X, ChatGPT ou Spotify pendant plusieurs heures.",
      "SERVICES INDISPONIBLES", "device", {"what": "phone", "lines": ["X", "ChatGPT", "Spotify"], "status": "ERREUR"}),
     (3, R, "Huit juillet deux mille vingt-deux au Canada. La panne de l'opérateur Rogers paralyse plus de douze millions de personnes. Le réseau de paiement par carte de débit Interac s'arrête brusquement.",
-     "CANADA · ROGERS 2022", "map", {"region": "canada", "highlight": ["CAN"]}),
+     "CANADA · ROGERS 2022", "map", {"region": "canada", "highlight": ["CAN"], "hud": [("Opérateur", "Rogers"), ("Date", "08/07/2022"), ("Paiement", "Interac coupé")]}),
     (3, R, "Des mairies et des services municipaux ne peuvent plus encaisser le moindre règlement. Notre monde numérique repose sur une poignée d'acteurs.",
      "SERVICES BLOQUÉS", "device", {"what": "terminal", "status": "DÉBIT INDISPONIBLE", "bad": True}),
     # --- 4. LE CALCUL ---
@@ -49,7 +49,7 @@ SCENES = [
      "RETENEZ CE CHIFFRE : 78 MIN", "number", {"value": 78, "unit": "MINUTES", "sub": "RETENEZ CE CHIFFRE", "accent": True}),
     # --- 5. SIMULATION ---
     (5, S, "Minute zéro. Huit heures du matin. Une erreur de configuration se propage dans les résolveurs du système de nommage. Les serveurs ne se parlent plus.",
-     "MINUTE 00:00 · ERREUR DNS", "device", {"what": "servers", "mode": "fail", "clock": "08:00"}),
+     "MINUTE 00:00 · ERREUR DNS", "device", {"what": "servers", "mode": "fail", "clock": "08:00", "hud": [("Événement", "Erreur DNS"), ("Portée", "Mondiale"), ("Heure locale", "08:00")]}),
     (5, S, "Minute dix. La gravité dépend d'une seule chose : où vous êtes.",
      "OÙ ÊTES-VOUS ?", "circles", {"active": -1}),
     (5, S, "Premier cercle. Chez vous. L'électricité fonctionne. Mais votre ordinateur affiche une erreur de nom de domaine. Impossible de charger la moindre page web.",
@@ -108,13 +108,13 @@ SCENES = [
     (6, S, "Dans les grandes villes, la tension monte. Les rayons frais des magasins se vident. Sans carte, beaucoup d'habitants ne peuvent plus rien acheter.",
      "TENSION SUR LES STOCKS", "device", {"what": "shelves"}),
     (6, S, "Jour deux. Quarante-huit heures de panne. À l'échelle mondiale, le réseau physique est pourtant intact.",
-     "RÉSEAU PHYSIQUE INTACT", "globe", {"cables": True, "lon0": 10}),
+     "RÉSEAU PHYSIQUE INTACT", "globe", {"cables": True, "lon0": 10, "hud": [("Câbles en service", "570"), ("État physique", "Intact"), ("Source", "SubOptic 2025")]}),
     (6, R, "Les câbles sous-marins transportent plus de quatre-vingt-dix-neuf pour cent du trafic de données intercontinental, selon TeleGeography.",
      "99 % DU TRAFIC INTERCONTINENTAL", "map", {"region": "world", "cables": True}),
     (6, R, "En janvier deux mille vingt-deux, l'éruption du volcan Tonga a coupé le câble unique reliant l'archipel des Tonga au reste du monde. Le pays est resté privé d'Internet pendant trente-huit jours.",
-     "TONGA 2022 · 38 JOURS", "map", {"region": "pacific", "points": [(184.8, -21.2, "TONGA"), (178.4, -18.1, "FIDJI")], "cable_cut": True}),
+     "TONGA 2022 · 38 JOURS", "map", {"region": "pacific", "points": [(184.8, -21.2, "TONGA"), (178.4, -18.1, "FIDJI")], "cable_cut": True, "coords": "21.13°S 175.20°W", "hud": [("Câble", "Unique · 872 km"), ("Coupure", "38 jours")]}),
     (6, S, "Dans notre simulation, aucun câble n'est cassé. Les tuyaux sont là, mais la carte de navigation numérique globale est effacée. La chaîne de ravitaillement est bloquée. La lumière brille, mais les données ne passent plus.",
-     "STOCKS BLOQUÉS EN ENTREPÔT", "globe", {"cables": True, "nodes_off": True, "lon0": -40}),
+     "STOCKS BLOQUÉS EN ENTREPÔT", "globe", {"mode": "night", "cables": True, "nodes_off": True, "lon0": -40, "lat0": 30}),
     # --- 7. RETOURNEMENT ---
     (7, S, "Et voici le détail qui change tout. La mise à jour défectueuse a été retirée en moins de deux heures par les équipes informatiques.",
      "CORRECTIF DÉPLOYÉ", "device", {"what": "servers", "mode": "ok"}),
