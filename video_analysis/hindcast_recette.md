@@ -3,7 +3,7 @@
 Analyse de 3 vidéos de [Hindcast](https://www.youtube.com/@Hindcast26) (2,97K abonnés, 3 vidéos, première vidéo mi-octobre 2026),
 faite avec `analyze_video.py` : transcription, changements de plan, planches d'images et mesures du son.
 Les vidéos, transcriptions et planches ne sont **pas** dans le dépôt : elles appartiennent à leur créateur.
-Ce document sert à comprendre un format, **pas à le copier**. Version prête à l'emploi : [`format_bible.md`](format_bible.md).
+Ce document sert à comprendre un format, **pas à le copier**. Versions prêtes à l'emploi : [`format_bible.md`](format_bible.md) (prompt pour faire écrire le script par une IA) et [`production_guide.md`](production_guide.md) (visuel, son, règles YouTube).
 
 | Vidéo | Vues | Durée | Mots | Débit | Parole | Plans détectés* | Volume |
 |---|---|---|---|---|---|---|---|
