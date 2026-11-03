@@ -40,6 +40,23 @@ RED, MINT, PAPER = (255, 90, 54), (94, 230, 176), (232, 221, 196)
 TXT, GREY, DIM = (242, 242, 238), (138, 145, 143), (60, 78, 74)
 AMBER = (255, 184, 77)
 
+# Orthographe phonétique pour la voix de synthèse française, appliquée UNIQUEMENT au texte lu.
+# Le script, les sous-titres et le texte à l'écran restent inchangés. Vérifié par re-transcription (Whisper).
+PRONUNCIATION = {
+    "Domain Name System": "Daumeïne Neïme Sistème",
+    "Cloudflare": "Claoude-flère",
+    "l'application X, ChatGPT ou Spotify": "l'application Ixe, Tchatte G P T ou Spotifaille",
+    "Parametrix": "Paramétrix",
+    "Rogers": "Rodjeurse",
+}
+
+
+def spoken(text: str) -> str:
+    for a, b in PRONUNCIATION.items():
+        text = text.replace(a, b)
+    return text
+
+
 FONT_DIR = Path("/usr/share/fonts/opentype/inter")
 MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 _fonts: dict = {}
@@ -636,7 +653,12 @@ def tts(text: str, out: Path, voice: Path):
     if out.exists():
         return
     subprocess.run([sys.executable, "-m", "piper", "-m", str(voice), "--length-scale", str(LENGTH_SCALE), "-f", str(out)],
-                   input=text.encode("utf-8"), check=True, capture_output=True)
+                   input=spoken(text).encode("utf-8"), check=True, capture_output=True)
+
+
+def scene_key(scene) -> str:
+    import hashlib  # noqa: PLC0415
+    return hashlib.sha1(repr(scene).encode()).hexdigest()[:8]
 
 
 def wav_duration(path: Path) -> float:
@@ -755,7 +777,9 @@ def main(argv=None):
 
     # 2. Images
     suffix = "_p" if a.preview else ""
-    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), work / "seg" / f"{i:02d}{suffix}.mp4") for i in idx]
+    seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
+    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i]) for i in idx if not seg[i].exists()]
+    print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
     with ProcessPoolExecutor(a.jobs) as ex:
         for done in ex.map(render_scene, jobs):
             print(f"  scène {done + 1}/{len(SCENES)} rendue", flush=True)
@@ -784,7 +808,7 @@ def main(argv=None):
     ambient(amb, total_s)
 
     concat = work / f"concat{suffix}.txt"
-    concat.write_text("".join(f"file '{work / 'seg' / f'{i:02d}{suffix}.mp4'}'\n" for i in idx))
+    concat.write_text("".join(f"file '{seg[i]}'\n" for i in idx))
     out = work / f"video{suffix}.mp4"
     subprocess.run([
         "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(amb),

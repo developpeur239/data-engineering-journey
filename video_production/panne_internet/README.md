@@ -26,6 +26,6 @@ python render.py ... --only 1-5 --preview   # aperçu rapide en 960x540
 4. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
 
 ## Limites de cette version
-- La voix est une **synthèse vocale** : à remplacer idéalement par ta propre voix (même découpage par scène).
+- La voix est une **synthèse vocale** (les noms anglais sont réécrits phonétiquement pour la voix seulement, table `PRONUNCIATION` de render.py) : à remplacer idéalement par ta propre voix (même découpage par scène).
 - Les « scènes 3D » du script sont rendues en **illustrations 2D stylisées**, pas en 3D.
 - La miniature n'est pas générée (image photoréaliste : à déclarer « AI use : Yes » si elle est générée par IA).
