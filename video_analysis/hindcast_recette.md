@@ -149,14 +149,14 @@ Un fil est dit **provoqué** quand il réagit à un choix ou à une erreur du cr
 
 La vidéo Iran a **près de 2 fois plus d'engagement par spectateur**, et pourtant 9 fois moins de vues. Ses commentaires s'éteignent en 3 jours (141, puis 77, puis 22). Les commentaires **accompagnent** la diffusion plus qu'ils ne la **causent**. Ce qui fait exploser une vidéo, c'est surtout le taux de clic, la rétention et la taille du sujet, des chiffres visibles seulement dans le YouTube Studio du créateur.
 
-**Conclusion :** une erreur drôle fait parler, mais c'est un pari risqué. Elle nourrit aussi l'étiquette « AI slop », qui peut faire fuir les abonnés et attirer l'attention de la règle « inauthentic content ». **Les provocations honnêtes engagent autant** : une fin concrète et mémorable (la Nouvelle-Zélande), une référence culturelle, la peur assumée, une vraie question finale.
+**Conclusion :** une erreur drôle fait parler, mais c'est un pari risqué. Elle nourrit aussi l'étiquette « AI slop », qui peut faire fuir les abonnés. **Les provocations honnêtes engagent autant** : une fin concrète et mémorable (la Nouvelle-Zélande), une référence culturelle, la peur assumée, une vraie question finale.
 
 *Limites : les thèmes viennent de mots-clés (`comment_themes.json`), qui ratent l'ironie. Pour la vidéo Iran, le débat politique est sous-compté (« Israël » et « Iran » ne sont pas des marqueurs, puisque c'est le sujet). Enfin, l'API ne rend que 61 % des 2 736 commentaires de la vidéo Russie : les autres sont masqués, en attente ou supprimés.*
 
 **À appliquer :**
 - **Relire chaque date et chaque nombre dans le texte envoyé à la voix** : écrire « mille neuf cent quarante-cinq » ou « en 1945 » selon l'outil, et réécouter avant d'exporter.
 - **Relire le titre.**
-- **Ou enregistrer sa propre voix** : c'est le meilleur antidote à « AI slop », et c'est ce que demande la règle « inauthentic content ».
+- **Ou enregistrer sa propre voix** : c'est le meilleur antidote aux moqueries sur « AI slop ». Ce n'est pas une obligation de YouTube : une voix IA est autorisée.
 
 ## 5. Transposer la recette, sans copier
 
@@ -171,4 +171,4 @@ La vidéo Iran a **près de 2 fois plus d'engagement par spectateur**, et pourta
 | Et si la crue de 1910 revenait à Paris ? | Une agente RATP à Châtelet, 4 h du matin, l'eau dans l'escalier | 8,62 m au pont d'Austerlitz, en 1910 comme pour l'exercice européen EU Sequana 2016 | L'eau monte lentement ; ce qui tue la ville, c'est la coupure d'électricité |
 | Et si un astéroïde comme celui de Toungouska tombait sur Paris ? | Un matin de juin sur le périphérique | 10 à 15 Mt, 2 000 km² de forêt rasés en 1908 | On l'avait vu, mais trop tard pour dévier |
 
-**Rappel YouTube (« inauthentic content ») :** chaque vidéo doit être une vraie recherche, avec un vrai script et une vraie voix. Ce sont les sources, la structure et la mise en scène qui font le succès de Hindcast, pas un modèle répété à la chaîne.
+**Rappel YouTube (« inauthentic content ») :** la règle vise le contenu **produit en masse ou répétitif**, pas l'usage de l'IA ni d'une voix de synthèse. Chaque vidéo doit donc être une vraie recherche, avec un vrai script, et pas une variation d'un modèle. Ce sont les sources, la structure et la mise en scène qui font le succès de Hindcast, pas un modèle répété à la chaîne.
