@@ -650,10 +650,49 @@ def draw_person(img, cv, t, dur, p):
 # Rendu
 # --------------------------------------------------------------------------- #
 def tts(text: str, out: Path, voice: Path):
+    """Piper : synthèse locale gratuite."""
     if out.exists():
         return
     subprocess.run([sys.executable, "-m", "piper", "-m", str(voice), "--length-scale", str(LENGTH_SCALE), "-f", str(out)],
                    input=spoken(text).encode("utf-8"), check=True, capture_output=True)
+
+
+MINIMAX_URL = "https://api.minimax.io/v1/t2a_v2"
+
+
+def tts_minimax(text: str, out: Path, voice_id: str, model: str, speed: float, emotion: str | None):
+    """MiniMax (API payante, clé dans la variable d'environnement MINIMAX_API_KEY).
+
+    Pas de réécriture phonétique : le modèle est multilingue et lit les noms anglais.
+    """
+    if out.exists():
+        return
+    import os  # noqa: PLC0415
+    import requests  # noqa: PLC0415
+    key = os.environ.get("MINIMAX_API_KEY")
+    if not key:
+        sys.exit("Erreur : définis la variable d'environnement MINIMAX_API_KEY.")
+    voice = {"voice_id": voice_id, "speed": speed, "vol": 1.0, "pitch": 0}
+    if emotion:
+        voice["emotion"] = emotion
+    body = {
+        "model": model, "text": text, "stream": False, "language_boost": "French",
+        "voice_setting": voice,
+        "audio_setting": {"sample_rate": 32000, "format": "wav", "channel": 1},
+    }
+    r = requests.post(MINIMAX_URL, json=body, timeout=120,
+                      headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    r.raise_for_status()
+    data = r.json()
+    status = data.get("base_resp", {})
+    if status.get("status_code", 0) != 0 or not data.get("data", {}).get("audio"):
+        sys.exit(f"Erreur MiniMax : {status.get('status_code')} {status.get('status_msg')}")
+    raw = bytes.fromhex(data["data"]["audio"])
+    # normalise en WAV mono 16 bits via ffmpeg (quel que soit le conteneur renvoyé)
+    tmp = out.with_suffix(".raw")
+    tmp.write_bytes(raw)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(tmp), "-ac", "1", "-ar", "32000", "-sample_fmt", "s16", str(out)], check=True)
+    tmp.unlink()
 
 
 def scene_key(scene) -> str:
@@ -752,7 +791,13 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--geo", type=Path, required=True)
-    ap.add_argument("--voice", type=Path, required=True)
+    ap.add_argument("--voice", type=Path, help="modèle Piper .onnx (si --tts piper)")
+    ap.add_argument("--tts", choices=["piper", "minimax"], default="piper")
+    ap.add_argument("--minimax-voice", default="French_MaleNarrator",
+                    help="ex. French_MaleNarrator, French_Male_Speech_New, French_FemaleAnchor, French_MovieLeadFemale")
+    ap.add_argument("--minimax-model", default="speech-2.8-hd")
+    ap.add_argument("--minimax-speed", type=float, default=1.0)
+    ap.add_argument("--minimax-emotion", help="ex. calm, fearful (facultatif)")
     ap.add_argument("--only", help="ex. 1-5")
     ap.add_argument("--preview", action="store_true", help="960x540 pour tester vite")
     ap.add_argument("--jobs", type=int, default=4)
@@ -760,7 +805,8 @@ def main(argv=None):
 
     w, h = (960, 540) if a.preview else (1920, 1080)
     work = a.work
-    (work / "tts").mkdir(parents=True, exist_ok=True)
+    tts_dir = work / ("tts" if a.tts == "piper" else f"tts_minimax_{a.minimax_voice}_{a.minimax_speed}")
+    tts_dir.mkdir(parents=True, exist_ok=True)
     (work / "seg").mkdir(exist_ok=True)
     idx = list(range(len(SCENES)))
     if a.only:
@@ -770,8 +816,11 @@ def main(argv=None):
     # 1. Voix
     frames = {}
     for i in idx:
-        wav = work / "tts" / f"{i:02d}.wav"
-        tts(SCENES[i][2], wav, a.voice)
+        wav = tts_dir / f"{i:02d}.wav"
+        if a.tts == "minimax":
+            tts_minimax(SCENES[i][2], wav, a.minimax_voice, a.minimax_model, a.minimax_speed, a.minimax_emotion)
+        else:
+            tts(SCENES[i][2], wav, a.voice)
         frames[i] = int(math.ceil((wav_duration(wav) + PAD_S) * FPS))
     print(f"Voix prêtes : {len(idx)} scènes, {sum(frames.values()) / FPS / 60:.2f} min")
 
@@ -789,7 +838,7 @@ def main(argv=None):
     sr = 22050
     chunks = []
     for i in idx:
-        with wave.open(str(work / "tts" / f"{i:02d}.wav")) as wv:
+        with wave.open(str(tts_dir / f"{i:02d}.wav")) as wv:
             sr = wv.getframerate()
             data = np.frombuffer(wv.readframes(wv.getnframes()), dtype=np.int16)
         target = int(frames[i] / FPS * sr)

@@ -25,6 +25,20 @@ python render.py ... --only 1-5 --preview   # aperçu rapide en 960x540
    normalisation à −15 LUFS.
 4. **Sorties** : `video.mp4` (1920x1080, 24 i/s), `sous-titres.srt`, `chapitres.txt` (pour la description).
 
+## Voix MiniMax (option)
+
+```bash
+export MINIMAX_API_KEY="..."        # clé de ton compte MiniMax (platform.minimax.io → API Keys)
+python render.py --work build --geo countries.geojson --tts minimax --minimax-voice French_MaleNarrator
+```
+
+- Modèle par défaut : `speech-2.8-hd`, avec `language_boost` réglé sur le français.
+- Voix françaises disponibles : `French_MaleNarrator` (narrateur, par défaut), `French_Male_Speech_New` (homme posé),
+  `French_CasualMan`, `French_FemaleAnchor`, `French_Female_News Anchor`, `French_MovieLeadFemale`.
+- Options : `--minimax-speed 0.95` (débit), `--minimax-emotion calm` (facultatif).
+- Pas de réécriture phonétique : MiniMax est multilingue. La table `PRONUNCIATION` ne sert qu'à Piper.
+- Service payant, facturé au nombre de caractères (le script fait environ 9 000 caractères).
+
 ## Limites de cette version
 - La voix est une **synthèse vocale** (les noms anglais sont réécrits phonétiquement pour la voix seulement, table `PRONUNCIATION` de render.py) : à remplacer idéalement par ta propre voix (même découpage par scène).
 - Les « scènes 3D » du script sont rendues en **illustrations 2D stylisées**, pas en 3D.
