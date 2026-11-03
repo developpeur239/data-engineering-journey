@@ -47,3 +47,12 @@ python render.py --work build --geo countries.geojson --tts minimax --minimax-vo
 - La voix est une **synthèse vocale** (les noms anglais sont réécrits phonétiquement pour la voix seulement, table `PRONUNCIATION` de render.py) : à remplacer idéalement par ta propre voix (même découpage par scène).
 - Les « scènes 3D » du script sont rendues en **illustrations 2D stylisées**, pas en 3D.
 - La miniature n'est pas générée (image photoréaliste : à déclarer « AI use : Yes » si elle est générée par IA).
+
+## Scènes 3D (three.js)
+
+`3d/ville.html` : ville de nuit procédurale (fenêtres qui s'éteignent, lampadaires allumés, écrans en erreur).
+`3d/render3d.js` la filme image par image (navigateur sans écran, WebGL logiciel) :
+
+```bash
+NODE_PATH=$(npm root -g) node 3d/render3d.js 3d/ville.html ville.mp4 8 1280 24
+```
