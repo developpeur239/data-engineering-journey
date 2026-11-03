@@ -58,7 +58,18 @@ Résumé de tutoriels de montage (Film Editing Pro) et de deux skills MIT
 - Effet : continuité, on prépare le spectateur à la suite sans le surprendre malgré lui ; à utiliser sur les
   changements de lieu et de temps, pas sur chaque coupe.
 
-## 7. Caméra (mesures de mromidev/claude-animated-shorts)
+## 7. Drones (nappes tenues) plutôt qu'une musique mélodique
+Une mélodie en continu en dit souvent trop ; une nappe tenue soutient sans s'imposer. Trois humeurs :
+- **Sombre et menaçant** (grave, désaccordé, souffle filtré) : danger, tension. Pour la simulation et l'escalade
+  (temps 5 et 6). À ne pas surutiliser.
+- **Neutre, ambigu** (quintes ouvertes, timbre de cordes chaud avec un peu de tension) : peut mener vers n'importe quelle
+  émotion. Pour l'ouverture, la vraie histoire, le calcul (temps 1 à 4), et comme **pont** pour entrer dans un
+  passage plus musical sans que la musique « sorte de nulle part ».
+- **Clair et apaisé** (registre aigu, accord majeur avec neuvième) : espoir, soulagement. Réservé au moment clé
+  (temps 8), après la coupure de musique.
+Les trois sont générés en code (aucun droit), avec des fondus de plusieurs secondes entre eux.
+
+## 8. Caméra (mesures de mromidev/claude-animated-shorts)
 - Glissés lissés de 18 à 40 images, poussée lente pendant les plans fixes (jamais d'image figée),
   secousse sur 7 images et petite rotation sur les impacts, coupes franches seulement sur les grands sauts.
 - Contrôle qualité : `ffmpeg freezedetect` / `blackdetect` sur chaque rendu.
