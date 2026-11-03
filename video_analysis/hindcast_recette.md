@@ -118,6 +118,41 @@ Extraits avec `youtube_outliers/fetch_comments.py` : **990 commentaires** pour l
 3. **Les sujets géopolitiques attirent les débats partisans** (« hypocrisie », « propagande »), surtout sur la vidéo Iran. C'est un argument de plus pour les catastrophes naturelles.
 4. **Les commentaires proposent peu de suites**, mais il y en a (*« What if China used a nuke against Russia? »*).
 
+### Les commentaires « provoqués » font-ils vivre la vidéo ?
+
+Analyse complète avec `youtube_outliers/analyze_comments.py`, réponses comprises : 990 fils et 682 réponses (Russie), 264 fils et 247 réponses (Iran).
+Un fil est dit **provoqué** quand il réagit à un choix ou à une erreur du créateur : erreur de la voix, faute du titre, IA, fin sur la Nouvelle-Zélande.
+
+**Vidéo Russie : oui, ils pèsent lourd.**
+
+| Thème | Part des fils | Part des likes | Part des réponses | ♥ par fil |
+|---|---|---|---|---|
+| Erreur de la voix IA (« Sunday », « 1945 ») | 3,5 % | **22,0 %** | 9,5 % | **33,7** |
+| Fin : Nouvelle-Zélande | 7,2 % | **22,5 %** | **21,8 %** | 17,0 |
+| Peur / fin du monde | 2,8 % | 12,1 % | 14,7 % | 23,3 |
+| Référence culturelle (WarGames, Threads…) | 2,1 % | 11,8 % | 7,5 % | 30,1 |
+| IA / slop en général | 8,7 % | 5,1 % | 2,3 % | 3,2 |
+| Débat politique | 19,2 % | 3,1 % | 8,4 % | 0,9 |
+
+- **18 % des fils sont provoqués, et ils font 41 % de l'engagement** (commentaires, réponses et likes).
+- **Ce qui marche, ce sont les erreurs drôles et précises** (33,7 ♥ par fil). Les plaintes générales sur « l'IA slop » ne prennent pas (3,2 ♥ par fil).
+- **La fin sur la Nouvelle-Zélande génère autant de likes que les erreurs, et plus de réponses, sans aucune erreur** : c'est une provocation honnête.
+- La part de fils provoqués culmine entre J2 et J6 (20 à 27 %), au moment où les commentaires explosent (89, puis 154 par jour).
+
+**Mais la vidéo Iran contredit l'idée que l'engagement fait la vue :**
+
+| | Russie | Iran |
+|---|---|---|
+| Likes par vue | 0,53 % | **0,94 %** |
+| Commentaires par vue | 0,16 % | **0,31 %** |
+| Fils provoqués | 41 % de l'engagement | 2 % |
+
+La vidéo Iran a **près de 2 fois plus d'engagement par spectateur**, et pourtant 9 fois moins de vues. Ses commentaires s'éteignent en 3 jours (141, puis 77, puis 22). Les commentaires **accompagnent** la diffusion plus qu'ils ne la **causent**. Ce qui fait exploser une vidéo, c'est surtout le taux de clic, la rétention et la taille du sujet, des chiffres visibles seulement dans le YouTube Studio du créateur.
+
+**Conclusion :** une erreur drôle fait parler, mais c'est un pari risqué. Elle nourrit aussi l'étiquette « AI slop », qui peut faire fuir les abonnés et attirer l'attention de la règle « inauthentic content ». **Les provocations honnêtes engagent autant** : une fin concrète et mémorable (la Nouvelle-Zélande), une référence culturelle, la peur assumée, une vraie question finale.
+
+*Limites : les thèmes viennent de mots-clés (`comment_themes.json`), qui ratent l'ironie. Pour la vidéo Iran, le débat politique est sous-compté (« Israël » et « Iran » ne sont pas des marqueurs, puisque c'est le sujet). Enfin, l'API ne rend que 61 % des 2 736 commentaires de la vidéo Russie : les autres sont masqués, en attente ou supprimés.*
+
 **À appliquer :**
 - **Relire chaque date et chaque nombre dans le texte envoyé à la voix** : écrire « mille neuf cent quarante-cinq » ou « en 1945 » selon l'outil, et réécouter avant d'exporter.
 - **Relire le titre.**

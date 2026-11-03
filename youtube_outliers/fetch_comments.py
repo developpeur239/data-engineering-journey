@@ -25,20 +25,41 @@ from youtube_client import QuotaExceeded, YouTubeClient
 FIELDS = ["comment_id", "parent_id", "author", "published", "likes", "replies", "text"]
 
 
-def fetch_comments(client: YouTubeClient, video_id: str, max_comments: int) -> list[dict]:
+def fetch_replies(client: YouTubeClient, parent_id: str) -> list[dict]:
+    """Toutes les réponses d'un fil (comments.list), 1 unité par page de 100."""
     rows: list[dict] = []
     page_token = None
-    while len(rows) < max_comments:
+    while True:
+        params = dict(part="snippet", parentId=parent_id, maxResults=100, textFormat="plainText")
+        if page_token:
+            params["pageToken"] = page_token
+        data = client._get("comments", **params)
+        rows += [_row(c, parent_id=parent_id, replies=0) for c in data.get("items", [])]
+        page_token = data.get("nextPageToken")
+        if not page_token:
+            return rows
+
+
+def fetch_comments(
+    client: YouTubeClient, video_id: str, max_comments: int, all_replies: bool = False
+) -> list[dict]:
+    rows: list[dict] = []
+    page_token = None
+    while len(rows) < max_comments:  # compte les réponses : prévoir large avec --all-replies
         params = dict(part="snippet,replies", videoId=video_id, maxResults=100, order="relevance", textFormat="plainText")
         if page_token:
             params["pageToken"] = page_token
         data = client._get("commentThreads", **params)
         for thread in data.get("items", []):
             top = thread["snippet"]["topLevelComment"]
-            rows.append(_row(top, parent_id="", replies=thread["snippet"].get("totalReplyCount", 0)))
-            # l'API joint au plus 5 réponses par fil : suffisant pour voir les débats
-            for reply in thread.get("replies", {}).get("comments", []):
-                rows.append(_row(reply, parent_id=top["id"], replies=0))
+            total = thread["snippet"].get("totalReplyCount", 0)
+            rows.append(_row(top, parent_id="", replies=total))
+            # l'API joint au plus 5 réponses par fil ; --all-replies va chercher les autres
+            included = thread.get("replies", {}).get("comments", [])
+            if all_replies and total > len(included):
+                rows += fetch_replies(client, top["id"])
+            else:
+                rows += [_row(reply, parent_id=top["id"], replies=0) for reply in included]
         page_token = data.get("nextPageToken")
         if not page_token:
             break
@@ -71,6 +92,7 @@ def main(argv: list[str] | None = None, client: YouTubeClient | None = None) -> 
     p.add_argument("video_ids", nargs="+", help="IDs de vidéos, ex. y99SjQLmxmI")
     p.add_argument("--out", type=Path, default=Path("commentaires"), help="dossier des CSV")
     p.add_argument("--max", type=int, default=2000, help="commentaires max par vidéo (défaut 2000)")
+    p.add_argument("--all-replies", action="store_true", help="toutes les réponses (sinon 5 max par fil)")
     args = p.parse_args(argv)
 
     if client is None:
@@ -83,7 +105,7 @@ def main(argv: list[str] | None = None, client: YouTubeClient | None = None) -> 
     args.out.mkdir(parents=True, exist_ok=True)
     for video_id in args.video_ids:
         try:
-            rows = fetch_comments(client, video_id, args.max)
+            rows = fetch_comments(client, video_id, args.max, args.all_replies)
         except QuotaExceeded as exc:
             print(exc, file=sys.stderr)
             return 1
