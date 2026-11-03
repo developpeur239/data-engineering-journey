@@ -59,7 +59,7 @@ def smootherstep(x: float) -> float:
 DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1)]
 
 
-def camera_params(scene_no: int, t: float, frame: int, impact_t: float | None) -> tuple[float, float, float, float]:
+def camera_params(scene_no: int, t: float, frame: int, impact_t: float | None, dur: float = 10.0) -> tuple[float, float, float, float]:
     """(échelle, décalage x, décalage y, rotation en degrés), en fraction de la largeur pour x et y."""
     glide = 1.0                                   # glissé d'entrée sur 24 images
     g = smootherstep(t / glide)
@@ -67,8 +67,9 @@ def camera_params(scene_no: int, t: float, frame: int, impact_t: float | None) -
     s = 1.075 - 0.045 * g                         # 1,075 → 1,03 pendant le glissé
     x = dx0 * 0.018 * (1 - g)
     y = dy0 * 0.012 * (1 - g)
-    if t > glide:                                 # poussée lente : environ 0,06 % par image
-        s += min(0.12, 0.0006 * (t - glide) * FPS)
+    if t > glide:                                 # poussée lente continue jusqu'à la dernière image :
+        rate = min(0.0008, 0.13 / max((dur - glide) * FPS, 1))   # ~0,05-0,08 % par image, total ≤ 13 %
+        s += rate * (t - glide) * FPS
     rot = 0.0
     if impact_t is not None and t >= impact_t:
         k = (t - impact_t) * FPS                  # images écoulées depuis l'impact

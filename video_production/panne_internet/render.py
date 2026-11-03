@@ -860,7 +860,7 @@ def render_scene(args):
         elif kind == "person":
             draw_person(img, cv, t, dur, p)
         # caméra : glissé d'entrée, poussée lente, secousse et rotation sur l'impact (fx.py)
-        img = fx.apply_camera(img, *fx.camera_params(i + 1, t, f, impact_t))
+        img = fx.apply_camera(img, *fx.camera_params(i + 1, t, f, impact_t, dur))
         hud(img, cv, t, p, kind)
         overlay(img, cv, label, onscreen, t, dur, beat)
         img = fade(img, t, dur)
