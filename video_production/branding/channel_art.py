@@ -270,6 +270,14 @@ def banner(g: Globe, fonts: Path, out: Path):
     prev.resize((1280, 720), Image.LANCZOS).save(out / "apercu_zones_banniere.png")
 
 
+_last_avatar = [None]
+
+
+def avatar_img(g: Globe, out: Path):
+    avatar(g, out)
+    return _last_avatar[0]
+
+
 def avatar(g: Globe, out: Path):
     S = 800
     img = Image.new("RGBA", (S, S), NAVY + (255,))
@@ -315,6 +323,7 @@ def avatar(g: Globe, out: Path):
         d.ellipse(((cx - r) * ss, (dy - r) * ss, (cx + r) * ss, (dy + r) * ss), fill=AMBER + (255,))
     img = Image.alpha_composite(img, glow_layer((S, S), qmark, 7, ss=3))
     img.convert("RGB").save(out / "profil_whatifcastfr_800x800.png", optimize=True)
+    _last_avatar[0] = img
     # aperçus : recadrage rond et taille réelle sur YouTube
     m = Image.new("L", (S, S), 0)
     ImageDraw.Draw(m).ellipse((0, 0, S - 1, S - 1), fill=255)
@@ -330,6 +339,82 @@ def avatar(g: Globe, out: Path):
     sheet.save(out / "apercu_profil_rond.png")
 
 
+AVATAR_STYLES = {  # fond, point d'interrogation
+    "nuit": (NAVY, CYAN),
+    "cyan": (CYAN, NAVY),
+    "ambre": (AMBER, NAVY),
+}
+
+
+def avatar_bold(g: Globe, out: Path, style: str):
+    """Logo simple, reconnaissable en tout petit : un grand point d'interrogation dont le point est la Terre."""
+    S, ss = 800, 3
+    bg, fg = AVATAR_STYLES[style]
+    img = Image.new("RGBA", (S, S), bg + (255,))
+    cx, cy, rq, wq = 400, 300, 150, 88
+    pts = []
+    for k in range(0, 121):
+        a = math.radians(165 - k * 215 / 120)
+        pts.append((cx + rq * math.cos(a), cy - rq * math.sin(a)))
+    ex, ey = pts[-1]
+    a = math.radians(165 - 215)
+    tan = (math.sin(a), math.cos(a))
+    tx, ty = cx, 520
+    c1, c2 = (ex + tan[0] * 80, ey + tan[1] * 80), (tx, ty - 70)
+    for k in range(1, 61):
+        t = k / 60
+        pts.append(((1 - t) ** 3 * ex + 3 * (1 - t) ** 2 * t * c1[0] + 3 * (1 - t) * t * t * c2[0] + t ** 3 * tx,
+                    (1 - t) ** 3 * ey + 3 * (1 - t) ** 2 * t * c1[1] + 3 * (1 - t) * t * t * c2[1] + t ** 3 * ty))
+    def q(d, s):
+        # trait épais = disques posés le long du tracé (bords nets, pas de pointes aux jointures)
+        r = wq / 2
+        for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+            n = max(1, int(math.hypot(x1 - x0, y1 - y0)))
+            for k in range(n):
+                x, y = x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n
+                d.ellipse(((x - r) * s, (y - r) * s, (x + r) * s, (y + r) * s), fill=fg + (255,))
+        x, y = pts[-1]
+        d.ellipse(((x - r) * s, (y - r) * s, (x + r) * s, (y + r) * s), fill=fg + (255,))
+    big = Image.new("RGBA", (S * ss, S * ss), (0, 0, 0, 0))
+    q(ImageDraw.Draw(big), ss)
+    mark = big.resize((S, S), Image.LANCZOS)
+    if style == "nuit":
+        img = Image.alpha_composite(img, mark.filter(ImageFilter.GaussianBlur(14)))
+    img = Image.alpha_composite(img, mark)
+    # le point : la Terre de nuit, Europe et Afrique allumées, avec un liseré
+    R, gy = 84, 668
+    ring = Image.new("RGBA", (S * ss, S * ss), (0, 0, 0, 0))
+    rr = R + 10
+    ImageDraw.Draw(ring).ellipse(((cx - rr) * ss, (gy - rr) * ss, (cx + rr) * ss, (gy + rr) * ss),
+                                 fill=(AMBER if style == "nuit" else NAVY) + (255,))
+    img = Image.alpha_composite(img, ring.resize((S, S), Image.LANCZOS))
+    img.alpha_composite(g.render(R, 12, 22, light=(-0.9, 0.3, 0.3), night_gain=4.0), (cx - R, gy - R))
+    img.convert("RGB").save(out / f"profil_{style}_800x800.png", optimize=True)
+    return img
+
+
+def avatar_sheet(imgs: dict, out: Path):
+    """Planche de comparaison : chaque logo en rond, en grand puis aux tailles réelles de YouTube."""
+    S = 800
+    m = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(m).ellipse((0, 0, S - 1, S - 1), fill=255)
+    cols = len(imgs)
+    sheet = Image.new("RGB", (cols * 340 + 40, 600), (255, 255, 255))
+    d = ImageDraw.Draw(sheet)
+    f = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", 22)
+    for i, (name, im) in enumerate(imgs.items()):
+        c = Image.new("RGB", (S, S), (255, 255, 255))
+        c.paste(im.convert("RGB"), (0, 0), m)
+        x = 40 + i * 340
+        d.text((x, 12), name, font=f, fill=(30, 30, 30))
+        sheet.paste(c.resize((300, 300), Image.LANCZOS), (x, 50))
+        y = 380
+        for s in (98, 48, 32):
+            sheet.paste(c.resize((s, s), Image.LANCZOS), (x, y))
+            y += s + 12
+    sheet.save(out / "comparaison_profils.png")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--textures", type=Path, required=True)
@@ -339,7 +424,10 @@ def main():
     a.out.mkdir(parents=True, exist_ok=True)
     g = Globe(a.textures)
     banner(g, a.fonts, a.out)
-    avatar(g, a.out)
+    imgs = {"actuel": avatar_img(g, a.out)}
+    for st in AVATAR_STYLES:
+        imgs[st] = avatar_bold(g, a.out, st)
+    avatar_sheet(imgs, a.out)
 
 
 if __name__ == "__main__":
