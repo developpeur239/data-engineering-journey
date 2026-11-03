@@ -771,6 +771,31 @@ def tts(text: str, out: Path, voice: Path):
                    input=spoken(text).encode("utf-8"), check=True, capture_output=True)
 
 
+def tts_elevenlabs(text: str, out: Path, voice_id: str, model: str, stability: float = 0.7,
+                   similarity: float = 0.5) -> int:
+    """ElevenLabs (SDK officiel ; la clé est lue dans ELEVENLABS_API_KEY, jamais dans le code).
+
+    Modèle par défaut eleven_v4, langue forcée en français, réglages « narration » du skill ElevenLabs.
+    Pas de réécriture phonétique (modèle multilingue). Renvoie le nombre de caractères facturés.
+    """
+    if out.exists():
+        return 0
+    from elevenlabs import ElevenLabs, VoiceSettings  # noqa: PLC0415
+    client = ElevenLabs()
+    resp = client.text_to_speech.convert.with_raw_response(
+        text=text, voice_id=voice_id, model_id=model, language_code="fr",
+        output_format="mp3_44100_128",
+        voice_settings=VoiceSettings(stability=stability, similarity_boost=similarity),
+    )
+    mp3 = out.with_suffix(".mp3")
+    with open(mp3, "wb") as f:
+        for chunk in resp.parse():
+            f.write(chunk)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(mp3), "-ac", "1", "-ar", "44100", "-sample_fmt", "s16", str(out)], check=True)
+    mp3.unlink()
+    return int(resp.headers.get("x-character-count") or len(text))
+
+
 MINIMAX_URL = "https://api.minimax.io/v1/t2a_v2"
 
 
@@ -908,7 +933,9 @@ def main(argv=None):
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--geo", type=Path, required=True)
     ap.add_argument("--voice", type=Path, help="modèle Piper .onnx (si --tts piper)")
-    ap.add_argument("--tts", choices=["piper", "minimax"], default="piper")
+    ap.add_argument("--tts", choices=["piper", "minimax", "elevenlabs"], default="piper")
+    ap.add_argument("--eleven-voice", default="JBFqnCBsd6RMkjVDRZzb", help="voice_id ElevenLabs (défaut : George, narratif)")
+    ap.add_argument("--eleven-model", default="eleven_v4")
     ap.add_argument("--minimax-voice", default="French_MaleNarrator",
                     help="ex. French_MaleNarrator, French_Male_Speech_New, French_FemaleAnchor, French_MovieLeadFemale")
     ap.add_argument("--minimax-model", default="speech-2.8-hd")
@@ -922,7 +949,8 @@ def main(argv=None):
 
     w, h = (960, 540) if a.preview else (1920, 1080)
     work = a.work
-    tts_dir = work / ("tts" if a.tts == "piper" else f"tts_minimax_{a.minimax_voice}_{a.minimax_speed}")
+    tts_dir = work / {"piper": "tts", "minimax": f"tts_minimax_{a.minimax_voice}_{a.minimax_speed}",
+                      "elevenlabs": f"tts_eleven_{a.eleven_voice}_{a.eleven_model}"}[a.tts]
     tts_dir.mkdir(parents=True, exist_ok=True)
     (work / "seg").mkdir(exist_ok=True)
     idx = list(range(len(SCENES)))
@@ -936,6 +964,8 @@ def main(argv=None):
         wav = tts_dir / f"{i:02d}.wav"
         if a.tts == "minimax":
             tts_minimax(SCENES[i][2], wav, a.minimax_voice, a.minimax_model, a.minimax_speed, a.minimax_emotion)
+        elif a.tts == "elevenlabs":
+            tts_elevenlabs(SCENES[i][2], wav, a.eleven_voice, a.eleven_model)
         else:
             tts(SCENES[i][2], wav, a.voice)
         voice_dur[i] = wav_duration(wav)
