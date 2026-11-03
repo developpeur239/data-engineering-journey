@@ -80,6 +80,11 @@ Une panne **totale et mondiale** d'Internet pendant 72 heures n'a jamais eu lieu
   et le 112 d'aboutir, soit 11 % des appels, entre 16 h 45 et minuit environ. Cause : un bug logiciel lors
   d'une opération de maintenance, confirmé par l'ANSSI. (Rapport d'État du 19 juillet 2021 sur Vie-publique, Le Quotidien du Médecin)
 - 🟡 Selon les rapports, cinq à six décès sont potentiellement liés à cette panne. Le lien de causalité n'est pas établi.
+- ✅ Pendant cette panne, dans 90 départements, les préfectures ont diffusé des numéros de substitution
+  à 10 chiffres pour joindre les secours, **surtout par les réseaux sociaux**. Les lignes d'urgence ont été
+  rétablies vers 0 h 30. (economie.gouv.fr, préfecture de l'Aube)
+- ✅ Les numéros confidentiels (« numéros noirs ») de 55 SAMU, divulgués pendant la crise, ont ensuite
+  dû être changés. (ministère de la Santé, PEPS)
 - ✅ Pendant la panne Rogers de 2022, les appels au 911 depuis les mobiles Rogers ne passaient plus.
   Les polices de Winnipeg et d'Ottawa ont demandé d'utiliser une ligne fixe ou un autre opérateur. (CBC, Global News)
 
@@ -163,6 +168,9 @@ Une panne **totale et mondiale** d'Internet pendant 72 heures n'a jamais eu lieu
 - [Vie-publique : synthèse](https://www.vie-publique.fr/en-bref/280875-panne-des-numeros-durgence-quelle-responsabilite-dorange)
 - [Rapport d'État (PDF)](https://www.vie-publique.fr/sites/default/files/rapport/pdf/280855.pdf)
 - [Le Quotidien du Médecin](https://www.lequotidiendumedecin.fr/hopital/urgences/panne-des-numeros-durgence-un-rapport-accuse-orange-et-pointe-un-retard-de-reactivite-de-plusieurs)
+- [economie.gouv.fr : le point sur la panne](https://www.economie.gouv.fr/actualites/panne-des-numeros-durgence-le-point-sur-la-situation)
+- [Préfecture de l'Aube : communiqué (PDF)](https://www.aube.gouv.fr/contenu/telechargement/28229/180330/file/cp+communiqu%C3%A9+de+presse+panne+reseau.pdf)
+- [Ministère de la Santé : les numéros noirs des SAMU (PDF)](https://peps.sante.gouv.fr/actu/2022/22_minsante-ccs_2021-108_12122022.pdf)
 
 **Paiements et distributeurs**
 - [Banque de France : l'usage des espèces](https://www.banque-france.fr/fr/publications-et-statistiques/publications/les-francais-continuent-dapprecier-les-especes-meme-si-leur-usage-se-reduit-au-profit-des-paiements)
