@@ -167,6 +167,28 @@ Les chiffres viennent des mesures (transcriptions, changements de plan, images),
 
 ---
 
+## 7 bis. Les règles YouTube qui concernent ce format (vérifiées le 3 novembre 2026)
+
+**Monétisation (« inauthentic content », anciennement « repetitious content », renommée le 15 juillet 2025)**
+- La règle vise le contenu **produit en masse, générique ou répétitif**, qui *« looks like it's made with a template »*.
+- Est refusé : le contenu IA fait à partir de modèles génériques qui donne une impression de production en masse, *« without adding the creator's original, authentic insights or perspective »*.
+- Est autorisé : utiliser l'IA pour retravailler un script ou générer un visuel de fond, ou garder la même intro et la même outro si le reste change.
+- **La page ne dit rien des voix de synthèse.** Elle interdit en revanche les personnages IA qui se présentent comme des experts humains sur des sujets sensibles (santé, droit, finance, politique).
+- Elle cite aussi comme problématiques les **visuels réalistes qui font croire à une fausse catastrophe naturelle**.
+
+**Déclaration des contenus IA (« Disclosing use of GenAI content »)**
+- **À déclarer** (Studio → Attributs → « AI use : Yes ») : tout contenu **réaliste** généré ou modifié, par exemple *« a realistic depiction of a tornado… moving toward a real city that didn't actually happen »*, ou une scène réaliste qui n'a pas eu lieu.
+- **Pas à déclarer** : le contenu non réaliste ou entièrement animé (*« an AI-generated or altered animation of a missile in a fully animated video »*), l'aide au script, les sous-titres, le clonage de **sa propre** voix.
+- Déclarer **ne limite ni l'audience ni la monétisation**. Ne pas déclarer, de façon répétée, peut mener à des sanctions, jusqu'à l'exclusion du Programme Partenaire.
+
+**Pour ce format :**
+- Le style **motion design / low-poly** (cartes, globes, schémas) est **non réaliste** : pas de déclaration obligatoire.
+- Une **image photoréaliste générée** d'une catastrophe sur une vraie ville (miniature ou plan) **doit être déclarée**.
+- Les étiquettes « SIMULATION » et le contrat d'honnêteté ne sont pas qu'un style : ils empêchent que la vidéo passe pour une vraie catastrophe.
+- Chaque vidéo doit être une **vraie recherche avec ton angle**, et pas une variation d'un modèle : c'est ce que vise la règle.
+
+Sources : [Règles de monétisation des chaînes](https://support.google.com/youtube/answer/1311392?hl=en) · [Déclarer les contenus générés par IA](https://support.google.com/youtube/answer/14328491?hl=en)
+
 ## 8. La check-list avant publication
 
 - [ ] Durée 12 à 15 min, script ≈ durée × 150 mots
@@ -180,6 +202,7 @@ Les chiffres viennent des mesures (transcriptions, changements de plan, images),
 - [ ] Musique libre de droits, volume final entre −14 et −16 LUFS
 - [ ] Une fin qui se partage : un geste concret ou une vraie question
 - [ ] Sujet **naturel ou historique** plutôt que géopolitique (annonceurs, débats partisans)
+- [ ] Image photoréaliste générée d'un événement qui n'a pas eu lieu ? → « AI use : Yes » dans Studio
 
 ---
 
