@@ -782,18 +782,19 @@ def tts_elevenlabs(text: str, out: Path, voice_id: str, model: str, stability: f
         return 0
     from elevenlabs import ElevenLabs, VoiceSettings  # noqa: PLC0415
     client = ElevenLabs()
-    resp = client.text_to_speech.convert.with_raw_response(
-        text=text, voice_id=voice_id, model_id=model, language_code="fr",
-        output_format="mp3_44100_128",
-        voice_settings=VoiceSettings(stability=stability, similarity_boost=similarity),
-    )
     mp3 = out.with_suffix(".mp3")
-    with open(mp3, "wb") as f:
-        for chunk in resp.parse():
-            f.write(chunk)
+    # SDK 2.x : la réponse brute (en-têtes de coût) passe par with_raw_response, en gestionnaire de contexte
+    with client.text_to_speech.with_raw_response.convert(
+        voice_id, text=text, model_id=model, language_code="fr", output_format="mp3_44100_128",
+        voice_settings=VoiceSettings(stability=stability, similarity_boost=similarity),
+    ) as resp:
+        billed = resp.headers.get("x-character-count")
+        with open(mp3, "wb") as f:
+            for chunk in resp.data:
+                f.write(chunk)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(mp3), "-ac", "1", "-ar", "44100", "-sample_fmt", "s16", str(out)], check=True)
     mp3.unlink()
-    return int(resp.headers.get("x-character-count") or len(text))
+    return int(billed or len(text))
 
 
 MINIMAX_URL = "https://api.minimax.io/v1/t2a_v2"
