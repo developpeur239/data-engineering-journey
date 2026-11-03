@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 *.csv
 .env
+# Local secrets written by `elevenlabs onboard`
+/.env.local
