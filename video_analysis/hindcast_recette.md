@@ -87,7 +87,7 @@ Ce document sert à comprendre un format, **pas à le copier**.
 - **Voix off continue**, de 147 à 159 mots/min (rythme de documentaire), sur 96 à 99 % de la durée.
 - **Nappe musicale permanente** : aucun silence détecté.
 - **Volume** de −15 à −17 LUFS (YouTube normalise vers −14).
-- **Voix humaine ou synthétique ?** Les chiffres ne permettent pas de le savoir : **il faut écouter.**
+- **Voix synthétique (IA), confirmée par les commentaires** (voir section 4 bis) : le public repère ses erreurs de lecture.
 
 ---
 
@@ -100,6 +100,28 @@ Ce document sert à comprendre un format, **pas à le copier**.
 5. **⚠️ Le biais de date :** la vidéo Iran n'avait que 4 jours lors du relevé, contre 12. Elle peut encore monter.
 
 ---
+
+## 4 bis. Ce que disent les commentaires
+
+Extraits avec `youtube_outliers/fetch_comments.py` : **990 commentaires** pour la vidéo Russie, **264** pour la vidéo Iran, 1 pour la tempête solaire. Coût : 14 unités de quota.
+
+| Thème | Russie (1,6M) | Iran (178K) |
+|---|---|---|
+| **Moquerie de la voix IA / « slop »** | **10,6 %** des commentaires, **1 053 ♥** | 2,7 % |
+| Nouvelle-Zélande (blagues, « j'ai une chambre d'amis ») | 7,2 %, 995 ♥ | 0 % |
+| Contestation des faits / « propagande » | 2,9 % | **6,1 %** |
+| Félicitations sur la qualité | 1,8 % | 4,5 % |
+
+**Ce qu'on en retient :**
+1. **La voix est une synthèse vocale, et ses erreurs coûtent cher.** Le commentaire le plus aimé (670 ♥) se moque du TTS qui lit « 1945 » comme *« one thousand nine hundred and forty five »*. Deux autres (131 ♥ et 112 ♥) relèvent *« hotter than the center of the Sunday »* au lieu de « sun ». Le **titre contient aussi une faute** (« Agains »), relevée en commentaire. Le public pardonne l'IA… jusqu'à la première erreur.
+2. **La fin sur la Nouvelle-Zélande a créé un mème** : *« New Zealander here, I have a spare bedroom »* (512 ♥, 84 réponses), *« Made by the New Zealand tourist board »* (408 ♥). **Un lieu ou un personnage concret à la fin donne au public une blague à partager**, ce qui nourrit les commentaires et donc l'algorithme.
+3. **Les sujets géopolitiques attirent les débats partisans** (« hypocrisie », « propagande »), surtout sur la vidéo Iran. C'est un argument de plus pour les catastrophes naturelles.
+4. **Les commentaires proposent peu de suites**, mais il y en a (*« What if China used a nuke against Russia? »*).
+
+**À appliquer :**
+- **Relire chaque date et chaque nombre dans le texte envoyé à la voix** : écrire « mille neuf cent quarante-cinq » ou « en 1945 » selon l'outil, et réécouter avant d'exporter.
+- **Relire le titre.**
+- **Ou enregistrer sa propre voix** : c'est le meilleur antidote à « AI slop », et c'est ce que demande la règle « inauthentic content ».
 
 ## 5. Transposer la recette, sans copier
 
