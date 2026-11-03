@@ -50,12 +50,9 @@ Chaque chiffre est réel et sourcé, et l'histoire commence et finit sur un êtr
    tels qu'ils doivent être prononcés (« mille neuf cent dix », « huit mètres soixante-deux »).
    Évite les homonymes et abréviations ambiguës (« Mds », « km/h », « St »).
    Les chiffres en numérique vont dans la colonne TEXTE À L'ÉCRAN.
-9. PAS DE PERSONNAGE EXPERT : la voix ne se présente jamais comme un expert humain (médecin, ingénieur…).
-   Elle raconte et cite.
-10. PAS DE SENSATIONNALISME TROMPEUR : rien ne doit pouvoir passer pour une vraie catastrophe en cours.
-    Chaque plan porte l'étiquette SIMULATION ou HISTOIRE RÉELLE.
-11. ORIGINALITÉ : n'imite le texte d'aucune vidéo existante. Utilise les modèles de phrases ci-dessous
-    comme des structures, pas comme des citations.
+9. LA VOIX : elle dit « nous » et « dans notre simulation ». Elle raconte et cite ses sources,
+   sans se présenter comme un expert.
+10. ÉTIQUETTES : les plans portent l'étiquette SIMULATION ou HISTOIRE RÉELLE.
 
 # STRUCTURE OBLIGATOIRE EN 9 TEMPS
 Proportions de la durée (calcule les minutages et les budgets de mots à partir de la DURÉE CIBLE) :
@@ -103,7 +100,6 @@ Proportions de la durée (calcule les minutages et les budgets de mots à partir
 - CHOIX : cartes d'options numérotées 01 / 02 / 03
 - INTERFACE : fausse notification de téléphone, écran d'alerte, document d'archive
 - SCÈNE3D : scène 3D low-poly stylisée (lieu, personnage de dos, objet)
-Style non réaliste (motion design, low-poly) : aucun plan ne doit imiter une vraie vidéo d'actualité.
 
 # FORMAT DE SORTIE
 Rends exactement les 5 parties suivantes, dans cet ordre.
@@ -117,12 +113,18 @@ Un tableau, une ligne par plan (≈ 10 secondes ≈ 25 mots de voix), avec ces c
 - Minutage calculé à 150 mots/minute.
 - TEXTE À L'ÉCRAN : 2 à 6 mots maximum, ou un chiffre avec son unité.
 
-## PARTIE 3 : TITRES ET MINIATURE
+## PARTIE 3 : TITRES, MINIATURE ET DESCRIPTION
 - 3 titres, sur ces modèles :
   a) « Et si [événement extrême] ? [Promesse de méthode précise] »
   b) « [Événement réel] qui a frôlé [catastrophe]. Et si [ça avait eu lieu] ? »
   c) une variante libre de moins de 70 caractères
 - Miniature : 2 à 4 mots en très gros + une description de l'image (une seule idée visuelle).
+- Description YouTube :
+  - 2 ou 3 phrases d'accroche qui reprennent la question du titre et la méthode (« Nous avons construit
+    un scénario et l'avons suivi étape par étape… ») ;
+  - la phrase : « Ceci est une simulation. Ce n'est ni une prédiction, ni une prévision. » ;
+  - un rappel factuel en une phrase ;
+  - les chapitres (minutage + titre court, un par temps de la structure).
 
 ## PARTIE 4 : SOURCES ET VÉRIFICATIONS
 - Liste des sources utilisées, et pour chacune l'endroit du script où elle sert.

@@ -198,7 +198,7 @@ Sources : [Règles de monétisation des chaînes](https://support.google.com/you
 - [ ] Chronologie réelle à jour au mois de publication
 - [ ] Réel et inventé séparés au début et à la fin
 - [ ] Environ 5 changements de scène par minute, une information nouvelle toutes les 3 à 5 s
-- [ ] Étiquette « SIMULATION » ou « HISTOIRE RÉELLE » sur chaque plan
+- [ ] Étiquettes « SIMULATION » / « HISTOIRE RÉELLE » sur les plans, et l'avertissement « simulation » dans la description
 - [ ] Voix réécoutée en entier (dates, nombres, homonymes), titre relu
 - [ ] Musique libre de droits, volume final entre −14 et −16 LUFS
 - [ ] Une fin qui se partage : un geste concret ou une vraie question
