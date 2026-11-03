@@ -256,3 +256,277 @@ def _write(path: Path, sig: np.ndarray):
         w.setsampwidth(2)
         w.setframerate(SR)
         w.writeframes((sig * 32767).astype(np.int16).tobytes())
+
+
+# =========================================================================== #
+# Version 2 : guide de montage (../montage_guide.md) et plan de scènes (edit_plan.py)
+# =========================================================================== #
+TIERS = {  # secousse, coup de zoom, rotation, gain du son
+    "strong": (0.007, 0.03, 1.6, 1.0),
+    "medium": (0.004, 0.018, 0.9, 0.65),
+    "light": (0.002, 0.008, 0.0, 0.35),
+}
+
+
+def scene_shots(kind: str, spans, scene_no: int, plan) -> list[tuple[float, float, float, float]]:
+    """Cadrages successifs de la scène (couverture) : (début, échelle, décalage x, décalage y).
+
+    Large au départ, puis plus serré à chaque nouvelle phrase ; le cadrage le plus serré est réservé aux moments clés.
+    """
+    fx_, fy_ = (-0.05, -0.035) if kind == "person" else (0.0, -0.01)   # visage de Marc dans le cadre
+    shots = [(0.0, 1.0, 0.0, 0.0)]
+    key_k = plan.CLOSEUPS.get(scene_no)
+    framings = [(1.15, fx_ + (0.025 if scene_no % 2 else -0.025), fy_), (1.27, fx_, fy_ - 0.01)]
+    for k, (s0, _) in enumerate(spans[1:], start=1):
+        t = s0 + 0.15 - 0.05  # un peu avant la phrase (voix décalée de 0,15 s dans la scène)
+        if key_k == k:
+            shots.append((t, 1.42, fx_, fy_))
+        elif scene_no in plan.KEY_SCENES or kind in plan.NO_COVERAGE:
+            continue
+        else:
+            s, x, y = framings[(len(shots) - 1) % len(framings)]
+            shots.append((t, s, x, y))
+    if key_k == 0:
+        shots[0] = (0.0, 1.42, fx_, fy_)
+    return shots
+
+
+def camera_v2(beat: int, t: float, frame: int, dur: float, shots, impacts, still: bool):
+    i = max(j for j, sh in enumerate(shots) if sh[0] <= t)
+    t0, s, fx_, fy_ = shots[i]
+    x, y, rot = -fx_ * s, -fy_ * s, 0.0
+    if i == 0 and not still:                      # glissé d'entrée, direction cohérente par partie
+        g = smootherstep(t / 1.0)
+        dx0, dy0 = DIRS[beat % len(DIRS)]
+        s += 0.045 * (1 - g)
+        x += dx0 * 0.018 * (1 - g)
+        y += dy0 * 0.012 * (1 - g)
+    rate = 0.00015 if still else min(0.0008, 0.13 / max((dur - 1) * FPS, 1))
+    s += 0.03 + rate * t * FPS
+    for ti, tier in impacts:
+        if t < ti:
+            continue
+        shake, punch, roll, _ = TIERS[tier]
+        k = (t - ti) * FPS
+        if k < 7:
+            amp = shake * (1 - k / 7)
+            x += amp * (1 if frame % 2 else -1)
+            y += amp * 0.6 * (-1 if frame % 2 else 1)
+        s += punch * min(k, 12) / 12
+        rot += roll * math.exp(-k / 18) * (1 if beat % 2 else -1)
+    return s, x, y, rot
+
+
+def warm_grade(img: Image.Image) -> Image.Image:
+    a = np.asarray(img).astype(np.float32)
+    a = a * np.array([1.2, 0.97, 0.72], dtype=np.float32) + np.array([18, 6, 0], dtype=np.float32)
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGB")
+
+
+# ---- sons supplémentaires -------------------------------------------------- #
+def reverse_cymbal(d: float = 1.3) -> np.ndarray:
+    n = int(d * SR)
+    t = np.arange(n) / SR
+    x = _band(rng.normal(0, 1, n), 2500, 12000) * np.exp(-t / 0.35)
+    x = x[::-1] * (t / d)
+    return x / (np.abs(x).max() + 1e-9) * 0.5
+
+
+def ding(f: float = 1318.5) -> np.ndarray:
+    n = int(1.2 * SR)
+    t = np.arange(n) / SR
+    x = (np.sin(2 * np.pi * f * t) + 0.4 * np.sin(2 * np.pi * f * 2.01 * t)) * np.exp(-t / 0.35)
+    return x * 0.3
+
+
+def glitch_v(seed: int) -> np.ndarray:
+    r = np.random.default_rng(seed)
+    d = r.uniform(0.3, 0.5)
+    n = int(d * SR)
+    t = np.arange(n) / SR
+    base = r.choice([660, 740, 880, 990])
+    out = np.zeros(n)
+    k, start = 0, 0.0
+    while start < d - 0.08 and k < 4:
+        m = (t >= start) & (t < start + r.uniform(0.05, 0.1))
+        out[m] += np.sign(np.sin(2 * np.pi * base * r.choice([1, 0.75, 1.25]) * t[m])) * 0.22
+        start += r.uniform(0.09, 0.14)
+        k += 1
+    out += _band(r.normal(0, 1, n), 2000, 7000) * (r.random(n) < 0.02) * 0.35
+    return out
+
+
+def tick_v(seed: int) -> np.ndarray:
+    r = np.random.default_rng(seed)
+    n = int(0.03 * SR)
+    t = np.arange(n) / SR
+    return np.sin(2 * np.pi * r.uniform(1900, 2500) * t) * np.exp(-t / r.uniform(0.004, 0.008)) * 0.3
+
+
+def ambience(kind: str, d: float, seed: int) -> np.ndarray:
+    """Ambiances discrètes par lieu (bruit filtré + bourdonnements)."""
+    r = np.random.default_rng(seed)
+    n = int(d * SR)
+    t = np.arange(n) / SR
+    noise = r.normal(0, 1, n)
+    if kind == "room":
+        x = _band(noise, 80, 900) * 0.6 + 0.08 * np.sin(2 * np.pi * 50 * t)
+    elif kind == "street":
+        x = _band(noise, 60, 1500) * (0.7 + 0.3 * np.sin(2 * np.pi * 0.07 * t + r.uniform(0, 6)))
+    elif kind == "store":
+        x = _band(noise, 200, 3000) * 0.5 + 0.06 * np.sin(2 * np.pi * 100 * t)
+    elif kind == "servers":
+        x = _band(noise, 300, 6000) * 0.45 + 0.25 * np.sin(2 * np.pi * 120 * t) + 0.1 * np.sin(2 * np.pi * 240 * t)
+    elif kind == "hospital":
+        x = 0.25 * np.sin(2 * np.pi * 100 * t) + _band(noise, 3000, 9000) * 0.25 + _band(noise, 80, 600) * 0.3
+    elif kind == "radio":
+        crackle = (r.random(n) < 0.0015) * r.normal(0, 1, n) * 3
+        x = _band(noise, 300, 3500) * 0.35 + _band(crackle, 1000, 8000)
+    else:  # space : souffle grave
+        x = _band(noise, 30, 220) * (0.8 + 0.2 * np.sin(2 * np.pi * 0.05 * t))
+    return x / (np.abs(x).max() + 1e-9)
+
+
+def drone(mood: str, d: float) -> np.ndarray:
+    n = int(d * SR)
+    t = np.arange(n) / SR
+    out = np.zeros(n)
+    if mood == "dark":
+        voices = [(55.0, 0.5), (110.0, 0.3), (116.5, 0.18), (82.4, 0.2)]
+        for f, a in voices:
+            for det in (-0.8, 0.8):
+                out += a * np.sin(2 * np.pi * (f + det) * t)
+        out += _band(rng.normal(0, 1, n), 60, 400) * 0.25 * (0.6 + 0.4 * np.sin(2 * np.pi * 0.04 * t))
+    elif mood == "bright":
+        for f, a in [(220.0, 0.3), (277.2, 0.24), (329.6, 0.22), (493.9, 0.12), (659.3, 0.06)]:
+            for det in (-0.4, 0.4):
+                out += a * np.sin(2 * np.pi * (f + det) * t) * (0.85 + 0.15 * np.sin(2 * np.pi * 0.11 * t))
+    else:  # neutre : quintes ouvertes, timbre de cordes
+        for f, a in [(110.0, 0.35), (164.8, 0.28), (220.0, 0.2)]:
+            for h, ha in [(1, 1.0), (2, 0.25), (3, 0.1)]:
+                out += a * ha * np.sin(2 * np.pi * f * h * t + h) * (0.8 + 0.2 * np.sin(2 * np.pi * 0.07 * t))
+    return out / (np.abs(out).max() + 1e-9)
+
+
+def _fade_env(n: int, a: int, b: int, fade: int) -> np.ndarray:
+    env = np.zeros(n)
+    a, b = max(a, 0), min(b, n)
+    if b <= a:
+        return env
+    env[a:b] = 1
+    f = min(fade, (b - a) // 2)
+    if f > 0:
+        env[a:a + f] = np.linspace(0, 1, f)
+        env[b - f:b] = np.linspace(1, 0, f)
+    return env
+
+
+def reverb(x: np.ndarray, wet: float = 0.18, decay: float = 0.45) -> np.ndarray:
+    n = int(1.2 * SR)
+    t = np.arange(n) / SR
+    ir = rng.normal(0, 1, n) * np.exp(-t / decay)
+    ir /= np.sqrt((ir ** 2).sum())
+    L = len(x) + n
+    y = np.fft.irfft(np.fft.rfft(x, L) * np.fft.rfft(ir, L), L)[: len(x)]
+    return x * (1 - wet) + y * wet * 3
+
+
+def build_soundtrack_v2(work: Path, scenes, idx, starts, durs, spans, plan):
+    """music.wav, sfx.wav, amb.wav et la liste des moments d'impact (pour la caméra et le contrôle du mixage)."""
+    total = starts[-1] + durs[-1]
+    n_total = int(total * SR) + SR
+    sfx = np.zeros(n_total)
+    foley = np.zeros(n_total)    # petits bruitages : seuls eux passent dans la réverbération de pièce
+    amb = np.zeros(n_total)
+    music_env = {m: np.zeros(n_total) for m in ("neutral", "dark", "bright")}
+    gate = np.ones(n_total)
+    impacts_by_scene: dict[int, list] = {}
+    prev_beat = None
+    lead = 0.15
+    for n, i in enumerate(idx):
+        beat, label, voice, onscreen, kind, p = scenes[i]
+        sc, t0, d = i + 1, starts[n], durs[n]
+        sp = spans[n]
+        # drone par temps ; le drone clair du moment clé démarre 1,5 s avant (pont musical)
+        mood = plan.DRONE.get(beat, "neutral")
+        a = t0 - (1.5 if mood == "bright" and beat != prev_beat else 0.0)
+        music_env[mood] += _fade_env(n_total, int(a * SR), int((t0 + d) * SR), int(3 * SR))
+        # ambiance + pont sonore (démarre 1 s avant la coupe)
+        amb_kind = plan.ambience_for(kind, p)
+        if amb_kind:
+            a0 = max(0.0, t0 - 1.0)
+            seg = ambience(amb_kind, t0 + d - a0, sc) * _fade_env(int((t0 + d - a0) * SR), 0, int((t0 + d - a0) * SR), int(0.8 * SR))
+            _add(amb, seg, a0, 0.5 if amb_kind != "radio" else 0.9)
+        if beat != prev_beat:
+            _add(sfx, whoosh(), t0 - 0.35, 0.4)
+        # impacts dans le blanc après la phrase, aspiration inversée avant les impacts forts
+        for (s_no, k, tier) in plan.IMPACTS:
+            if s_no == sc and k < len(sp):
+                ti = t0 + lead + sp[k][1] + 0.06
+                impacts_by_scene.setdefault(sc, []).append((ti - t0, tier))
+                tail = {"strong": 1.8, "medium": 0.9, "light": 0.6}[tier]   # la résonance ne déborde pas sur la phrase suivante
+                hit = impact()[: int(tail * SR)]
+                hit = hit * np.linspace(1, 0, len(hit)) ** 0.5
+                _add(sfx, hit, ti, TIERS[tier][3])
+                if tier == "strong":
+                    rc = reverse_cymbal()
+                    _add(sfx, rc, ti - len(rc) / SR, 0.55)
+        # coupures de musique : la phrase est dite dans le silence
+        for (s_no, k) in plan.STOPDOWNS:
+            if s_no == sc and k < len(sp):
+                g0, g1 = int((t0 + lead + sp[k][0] - 0.3) * SR), int((t0 + lead + sp[k][1] + 0.05) * SR)
+                gate[max(g0, 0):g1] = 0
+        status = str(p.get("status", "")).upper()
+        if sc not in plan.KEY_SCENES and kind in ("device", "person") and (p.get("bad") or any(w in status for w in ERROR_WORDS)):
+            _add(foley, glitch_v(sc), t0 + 0.5, 0.35)
+        if kind == "number":
+            for k in range(12):
+                _add(foley, tick_v(sc * 100 + k), t0 + k * 0.12, 0.4 * (1 - k / 14))
+        if kind == "chrono":
+            for k in range(int(d * 2.2)):
+                _add(foley, tick_v(sc * 100 + k), t0 + k / 2.2, 0.45)
+        if sc == 50:
+            _add(sfx, riser(), t0 - 3.0, 0.5)
+        if beat == HEARTBEAT_BEAT:
+            k = 0.0
+            while k < d - 0.5:
+                _add(sfx, heartbeat(), t0 + k, 0.4)
+                k += 60 / 66
+        if sc == 56 and len(sp) > 1:          # les terminaux se rallument : sons doux
+            for j, f in enumerate((1046.5, 1318.5, 1568.0)):
+                _add(foley, ding(f), t0 + lead + sp[1][0] + j * 0.55, 0.5)
+        prev_beat = beat
+    # musique : trois drones mélangés, coupures adoucies (0,15 s)
+    music = np.zeros(n_total)
+    for mood, env in music_env.items():
+        if env.any():
+            music += drone(mood, n_total / SR) * np.clip(env, 0, 1)
+    k = int(0.15 * SR)
+    gate = np.convolve(gate, np.ones(k) / k, mode="same")
+    music *= gate
+    music[: 3 * SR] *= np.linspace(0, 1, 3 * SR)
+    music[-3 * SR:] *= np.linspace(1, 0, 3 * SR)
+    music = music / (np.abs(music).max() + 1e-9) * 0.6
+    sfx = sfx + reverb(foley)
+    amb = amb / (np.abs(amb).max() + 1e-9) * 0.5
+    for name, sig in (("music", music), ("sfx", sfx), ("amb", amb)):
+        _write(work / f"{name}.wav", sig)
+    return work / "music.wav", work / "sfx.wav", work / "amb.wav", impacts_by_scene
+
+
+def mix_check(voice: np.ndarray, vsr: int, sfx: np.ndarray, gain_sfx: float, start_lead: float = 0.0) -> list[float]:
+    """Instants où un effet arrive à moins de 3 dB de la voix pendant qu'elle parle (fenêtres de 50 ms)."""
+    def env(x, sr):
+        hop = int(sr * 0.05)
+        m = len(x) // hop
+        f = x[: m * hop].astype(np.float32).reshape(m, hop)
+        return 20 * np.log10(np.sqrt((f ** 2).mean(axis=1)) + 1e-9)
+    v = env(voice / 32768.0, vsr)
+    s = env(sfx * gain_sfx, SR)
+    m = min(len(v), len(s))
+    bad = [i * 0.05 for i in range(m) if v[i] > -35 and s[i] > v[i] - 3]
+    merged = []
+    for t in bad:
+        if not merged or t - merged[-1] > 0.5:
+            merged.append(t)
+    return merged

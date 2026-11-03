@@ -28,7 +28,9 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 sys.path.insert(0, str(Path(__file__).parent))
+import edit_plan as plan  # noqa: E402
 import fx  # noqa: E402
+import voice_edit  # noqa: E402
 from scenes import BEATS, SCENES  # noqa: E402
 
 FPS = 24
@@ -847,7 +849,9 @@ def wav_duration(path: Path) -> float:
 
 
 def render_scene(args):
-    i, scene, frames, w, h, geo_path, out, tex_dir, impact_t = args
+    i, scene, frames, w, h, geo_path, out, tex_dir, shots, impacts = args
+    still = (i + 1) in plan.KEY_SCENES
+    warm = (i + 1) in plan.WARM_SCENES
     beat, label, voice, onscreen, kind, p = scene
     cv = Canvas(w, h)
     geo = Geo(Path(geo_path)) if kind in ("map", "globe") else None
@@ -885,8 +889,10 @@ def render_scene(args):
             draw_device(img, cv, t, dur, p)
         elif kind == "person":
             draw_person(img, cv, t, dur, p)
-        # caméra : glissé d'entrée, poussée lente, secousse et rotation sur l'impact (fx.py)
-        img = fx.apply_camera(img, *fx.camera_params(i + 1, t, f, impact_t, dur))
+        # caméra : couverture (cadrages par phrase), glissé, poussée, impacts ; moment clé immobile et chaud
+        img = fx.apply_camera(img, *fx.camera_v2(beat, t, f, dur, shots, impacts, still))
+        if warm:
+            img = fx.warm_grade(img)
         hud(img, cv, t, p, kind)
         overlay(img, cv, label, onscreen, t, dur, beat)
         img = fade(img, t, dur)
@@ -960,7 +966,7 @@ def main(argv=None):
         idx = [i for i in idx if lo - 1 <= i <= hi - 1]
 
     # 1. Voix
-    frames, voice_dur = {}, {}
+    frames, voice_dur, spans = {}, {}, {}
     for i in idx:
         wav = tts_dir / f"{i:02d}.wav"
         if a.tts == "minimax":
@@ -969,16 +975,24 @@ def main(argv=None):
             tts_elevenlabs(SCENES[i][2], wav, a.eleven_voice, a.eleven_model)
         else:
             tts(SCENES[i][2], wav, a.voice)
-        voice_dur[i] = wav_duration(wav)
-        frames[i] = int(math.ceil((voice_dur[i] + PAD_S) * FPS))
+        ed = tts_dir / f"{i:02d}_ed.wav"
+        spans[i] = voice_edit.prepare(wav, ed, SCENES[i][2], plan.PAUSES.get(i + 1, {}))
+        voice_dur[i] = wav_duration(ed)
+        frames[i] = int(math.ceil((voice_dur[i] + plan.PAD.get(i + 1, PAD_S)) * FPS))
     print(f"Voix prêtes : {len(idx)} scènes, {sum(frames.values()) / FPS / 60:.2f} min")
 
     # 2. Images
     suffix = "_p" if a.preview else ""
     seg = {i: work / "seg" / f"{i:02d}_{frames[i]}_{scene_key(SCENES[i])}{suffix}.mp4" for i in idx}
-    impact_at = {i: fx.keyword_time(SCENES[i][2], fx.IMPACTS[i + 1], voice_dur[i]) for i in idx if i + 1 in fx.IMPACTS}
-    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None, impact_at.get(i))
-            for i in idx if not seg[i].exists()]
+    starts, t_acc = [], 0.0
+    for i in idx:
+        starts.append(t_acc)
+        t_acc += frames[i] / FPS
+    music, sfx, amb, impacts = fx.build_soundtrack_v2(work, SCENES, idx, starts, [frames[i] / FPS for i in idx],
+                                                      [spans[i] for i in idx], plan)
+    shots = {i: fx.scene_shots(SCENES[i][4], spans[i], i + 1, plan) for i in idx}
+    jobs = [(i, SCENES[i], frames[i], w, h, str(a.geo), seg[i], str(a.textures) if a.textures else None,
+             shots[i], impacts.get(i + 1, [])) for i in idx if not seg[i].exists()]
     print(f"  {len(idx) - len(jobs)} scène(s) déjà rendue(s), {len(jobs)} à rendre")
     with ProcessPoolExecutor(a.jobs) as ex:
         for done in ex.map(render_scene, jobs):
@@ -989,7 +1003,7 @@ def main(argv=None):
     sr = 22050
     chunks = []
     for i in idx:
-        with wave.open(str(tts_dir / f"{i:02d}.wav")) as wv:
+        with wave.open(str(tts_dir / f"{i:02d}_ed.wav")) as wv:
             sr = wv.getframerate()
             data = np.frombuffer(wv.readframes(wv.getnframes()), dtype=np.int16)
         target = int(frames[i] / FPS * sr)
@@ -1004,31 +1018,31 @@ def main(argv=None):
         wv.setframerate(sr)
         wv.writeframes(allv.tobytes())
     total_s = len(allv) / sr
-    starts, t_acc = [], 0.0
-    for i in idx:
-        starts.append(t_acc)
-        t_acc += frames[i] / FPS
-    music, sfx = fx.build_soundtrack(work, SCENES, starts, [frames[i] / FPS for i in idx], [voice_dur[i] for i in idx], idx)
+    clashes = fx.mix_check(allv, sr, np.frombuffer(open(sfx, "rb").read()[44:], dtype=np.int16) / 32768.0, 0.45)
+    print(f"Contrôle du mixage : {len(clashes)} moment(s) où un effet approche la voix à moins de 3 dB"
+          + (f" ({', '.join(fmt_ts(c) for c in clashes[:12])})" if clashes else ""))
 
     concat = work / f"concat{suffix}.txt"
     concat.write_text("".join(f"file '{seg[i]}'\n" for i in idx))
     out = work / f"video{suffix}.mp4"
     subprocess.run([
-        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(music), "-i", str(sfx),
+        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(music), "-i", str(sfx), "-i", str(amb),
         "-filter_complex",
         # voix nettoyée et compressée ; elle sert aussi de déclencheur pour baisser la musique
         "[1:a]aresample=48000,highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,asplit=2[v][key];"
         "[2:a]aresample=48000,volume=0.22[mraw];"
         "[mraw][key]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[m];"
         "[3:a]aresample=48000,volume=0.45[s];"
-        "[v][m][s]amix=inputs=3:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[a]",
+        "[4:a]aresample=48000,volume=0.16[am];"
+        "[v][m][s][am]amix=inputs=4:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[a]",
         "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", str(out)], check=True)
 
     # 4. Sous-titres et chapitres
     srt, chapters, t0, seen = [], [], 0.0, set()
     for n, i in enumerate(idx, 1):
         dur = frames[i] / FPS
-        srt.append(f"{n}\n{fmt_ts(t0 + 0.15, True)} --> {fmt_ts(t0 + dur - 0.2, True)}\n{SCENES[i][2]}\n")
+        for sent, (s0, s1) in zip(voice_edit.sentences(SCENES[i][2]), spans[i]):
+            srt.append(f"{len(srt) + 1}\n{fmt_ts(t0 + 0.15 + s0, True)} --> {fmt_ts(t0 + 0.15 + s1 + 0.1, True)}\n{sent}\n")
         if SCENES[i][0] not in seen:
             seen.add(SCENES[i][0])
             chapters.append(f"{fmt_ts(t0)} - {BEATS[SCENES[i][0]]}")
