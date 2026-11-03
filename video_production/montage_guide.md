@@ -39,7 +39,18 @@ Résumé de tutoriels de montage (Film Editing Pro) et de deux skills MIT
 - **Cohérence de direction (règle des 180°)** : Marc regarde toujours du même côté, le voisin reste du même côté,
   le globe tourne toujours dans le même sens, les glissés de caméra sont cohérents au sein d'une même partie.
 
-## 5. Caméra (mesures de mromidev/claude-animated-shorts)
+## 5. Questions et réponses (ce qui guide chaque coupe)
+- **Chaque plan pose une question ou y répond** (ou les deux). Une question naît de ce qu'on cache, une réponse de ce
+  qu'on montre : le gros plan dit *qui*, le très gros plan ce qu'il *ressent*, le plan moyen ce qu'il *fait*, le large *où*.
+- **Du moins vers le plus** : commencer serré (question) puis élargir (réponse). Un plan peut le faire sans coupe,
+  par un **mouvement de caméra qui révèle** (zoom arrière du détail vers le lieu), comme un plan-séquence.
+- **Jamais deux plans qui disent la même chose**, et l'image ne répète pas ce que dit déjà la voix : elle ajoute.
+- **Test** : écrire une phrase par plan. Si la liste est ennuyeuse, le montage l'est aussi.
+- **Début de scène = plus de questions, fin = plus de réponses**, en laissant une question ouverte pour la scène suivante.
+- Pour la panne d'Internet, ouverture : détail de l'écran « REFUSÉ » (*que se passe-t-il ?*) → Marc avec son fils
+  (*qui ?*) → la station, la ville éclairée (*où ?*), par un zoom arrière continu.
+
+## 6. Caméra (mesures de mromidev/claude-animated-shorts)
 - Glissés lissés de 18 à 40 images, poussée lente pendant les plans fixes (jamais d'image figée),
   secousse sur 7 images et petite rotation sur les impacts, coupes franches seulement sur les grands sauts.
 - Contrôle qualité : `ffmpeg freezedetect` / `blackdetect` sur chaque rendu.
