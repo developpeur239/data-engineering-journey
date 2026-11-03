@@ -32,7 +32,8 @@ class YouTubeClient:
         params["key"] = self.api_key
         resp = self.session.get(f"{API_URL}/{endpoint}", params=params, timeout=30)
         self.quota_used += cost
-        if resp.status_code == 403 and "quotaExceeded" in resp.text:
+        # 403 quotaExceeded : quota global ; 429 : limite séparée de recherches par jour
+        if (resp.status_code == 403 and "quotaExceeded" in resp.text) or resp.status_code == 429:
             raise QuotaExceeded("Quota quotidien YouTube épuisé (remis à zéro à minuit, heure du Pacifique).")
         if resp.status_code != 200:
             raise RuntimeError(f"{endpoint} -> HTTP {resp.status_code}: {resp.text[:300]}")
