@@ -1029,17 +1029,31 @@ def main(argv=None):
     concat = work / f"concat{suffix}.txt"
     concat.write_text("".join(f"file '{seg[i]}'\n" for i in idx))
     out = work / f"video{suffix}.mp4"
+    # passe 1 : mixage, normalisation et limiteur (crête plafonnée à -3 dB) dans un fichier intermédiaire
+    mixed = work / f"mix{suffix}.wav"
     subprocess.run([
-        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(voice_track), "-i", str(music), "-i", str(sfx), "-i", str(amb),
+        "ffmpeg", "-y", "-v", "error", "-i", str(voice_track), "-i", str(music), "-i", str(sfx), "-i", str(amb),
         "-filter_complex",
         # voix nettoyée et compressée ; elle sert aussi de déclencheur pour baisser la musique
-        "[1:a]aresample=48000,highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,asplit=2[v][key];"
-        "[2:a]aresample=48000,volume=0.22[mraw];"
+        "[0:a]aresample=48000,highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,asplit=2[v][key];"
+        "[1:a]aresample=48000,volume=0.22[mraw];"
         "[mraw][key]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[m];"
-        "[3:a]aresample=48000,volume=0.45[s];"
-        "[4:a]aresample=48000,volume=0.16[am];"
-        "[v][m][s][am]amix=inputs=4:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[a]",
-        "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", str(out)], check=True)
+        "[2:a]aresample=48000,volume=0.45[s];"
+        "[3:a]aresample=48000,volume=0.16[am];"
+        "[v][m][s][am]amix=inputs=4:duration=first:normalize=0,loudnorm=I=-14:TP=-2:LRA=11,"
+        "aresample=48000,alimiter=limit=0.708:attack=1:release=60:level=false[a]",
+        "-map", "[a]", "-c:a", "pcm_s24le", str(mixed)], check=True)
+    # passe 2 : gain fixe mesuré pour tomber exactement sur -14 LUFS (loudnorm seul reste ~1 dB en dessous)
+    meas = subprocess.run(["ffmpeg", "-nostats", "-i", str(mixed), "-af", "ebur128", "-f", "null", "-"],
+                          capture_output=True, text=True).stderr
+    lufs = float(meas.rsplit("I:", 1)[1].split("LUFS")[0])
+    gain = min(-14.0 - lufs, 1.5)          # la crête reste sous -1,5 dB
+    subprocess.run([
+        "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(mixed),
+        "-af", f"volume={gain:.2f}dB", "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+        "-shortest", str(out)], check=True)
+    mixed.unlink()
+    print(f"Volume : {lufs:.1f} LUFS avant correction, gain final {gain:+.2f} dB")
 
     # 4. Sous-titres et chapitres
     srt, chapters, t0, seen = [], [], 0.0, set()
