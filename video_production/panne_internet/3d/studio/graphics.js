@@ -66,29 +66,46 @@ export function pin3d(text, cls = "ok") {
 export function clear2d() { g2.setTransform(1, 0, 0, 1, 0, 0); g2.clearRect(0, 0, 1920, 1080); }
 
 // ---------- CHIFFRES ----------
+const NUMWORD = { 6: /^huit$/i, 8: /^cinq$/i, 14: /^quarante/i, 16: /^soixante/i, 27: /^onze$/i, 53: /^soixante/i, 60: /^onze$/i };
+const NUMEND = { 6: /^machines$/i, 8: /^dollars$/i, 14: /^distributeurs$/i, 16: /^minutes$/i, 27: /^cents$/i, 53: /^minutes$/i, 60: /^cents$/i };
 export function numberKind(S) {
   const p = S.p, dec = p.decimals || 0, acc = p.accent;
+  const head = el(`${S.onscreen}`, "caps bsub o", "left:150px;top:262px;font-size:19px");
   const big = el(`<div class="mono numv ${acc ? "acc" : ""}"></div><div class="caps unit">${p.unit}</div><div class="caps nsub">${p.sub || ""}</div>`, "number");
   const v = big.querySelector(".numv");
-  const sp = S.spans, a0 = (sp[0] || [0.3])[0];
-  // moment où le chiffre est prononcé : on vise la phrase qui le contient (heuristique simple : 2e phrase si elle existe)
-  const k = S.n === 16 ? 1 : S.n === 53 ? 1 : S.n === 14 ? 1 : S.n === 6 ? 2 : 0;
-  const tc = (sp[k] || sp[0] || [0.3])[0];
+  const sp = S.spans;
+  // le chiffre commence à compter sur le premier mot qui le prononce et se pose sur le dernier
+  const tc = S.at(NUMWORD[S.n] || /^$/, (sp[1] || sp[0] || [0.3])[0]);
+  const te = Math.max(tc + 0.5, S.atEnd(NUMEND[S.n] || /^$/, tc + 1.4));
+  const hosp = S.n === 8 ? el("HÔPITAUX AMÉRICAINS IMPACTÉS", "pin bad", "left:1180px;top:860px") : null;
+  if (hosp) hosp.innerHTML = "<i></i><span>HÔPITAUX AMÉRICAINS IMPACTÉS</span>";
   return (t) => {
-    reveal(big, t, Math.max(0.2, tc - 0.3), S.dur + 1);
-    const u = sstep(tc - 0.2, tc + 1.6, t);
-    let val = p.value * (S.n === 16 || S.n === 53 ? 1 : u);
+    reveal(head, t, 0.3, S.dur + 1);
+    reveal(big, t, Math.max(0.35, tc - 0.3), S.dur + 1);
+    const u = sstep(tc - 0.1, te, t);
     if (S.n === 53) {   // 78 minutes, puis 72 heures pour tout relancer
-      const sw = (sp[3] || sp[sp.length - 1])[0];
+      const sw = S.at(/^trois$/i, (sp[3] || sp[sp.length - 1])[0]);
       v.textContent = t < sw ? "78 MIN" : "72 H"; v.classList.toggle("acc2", t >= sw);
-    } else if (S.n === 16) v.textContent = `${Math.round(lerp(0, 78, sstep(tc - 0.2, tc + 1.0, t)))} MIN`;
-    else v.textContent = fmtNum(val, dec);
+    } else if (S.n === 16) v.textContent = `${Math.round(lerp(0, 78, u))} MIN`;
+    else v.textContent = fmtNum(p.value * u, dec);
     clear2d();
-    // illustrations : grilles d'icônes
-    if (S.n === 14) iconGrid(t, tc + 1.2, 53, 11, "atm");
-    if (S.n === 27 || S.n === 60) iconGrid(t, tc + 1.2, 100, 11, "phone");
-    if (S.n === 16 || S.n === 53) ring(t, tc, S.n === 53 ? (sp[3] || sp[sp.length - 1])[0] : null);
+    if (S.n === 14) iconGrid(t, te - 0.6, 53, 11, "atm");
+    if (S.n === 27 || S.n === 60) iconGrid(t, Math.min(0.6, tc), 100, 11, "phone");
+    if (S.n === 16 || S.n === 53) ring(t, Math.min(0.5, tc), S.n === 53 ? S.at(/^trois$/i, (sp[3] || sp[sp.length - 1])[0]) : null);
+    if (S.n === 8) { companies(t, 0.4, te); if (hosp) reveal(hosp, t, S.at(/^h[oô]pitaux$/i, S.dur - 3) - 0.1, S.dur + 1, 0.4, 0.3, 0); }
   };
+}
+// 500 points : les 500 plus grandes entreprises ; elles virent au rouge quand la perte tombe
+function companies(t, a, hit) {
+  const cols = 25, x0 = 1180, y0 = 300, gap = 22;
+  for (let i = 0; i < 500; i++) {
+    const x = x0 + (i % cols) * gap, y = y0 + Math.floor(i / cols) * gap;
+    const on = sstep(a + (i % 37) * 0.02, a + (i % 37) * 0.02 + 0.4, t); if (on <= 0) continue;
+    const red = sstep(hit - 1.2 + ((i * 7919) % 500) / 500 * 1.6, hit - 1.0 + ((i * 7919) % 500) / 500 * 1.6, t);
+    g2.globalAlpha = on; g2.fillStyle = red > 0.5 ? RED : "rgba(220,230,235,.55)";
+    g2.beginPath(); g2.arc(x, y, red > 0.5 ? 5 : 4, 0, Math.PI * 2); g2.fill();
+  }
+  g2.globalAlpha = 1;
 }
 function iconGrid(t, a, n, nbad, kind) {
   const cols = kind === "atm" ? 9 : 20, sz = kind === "atm" ? 54 : 30, gap = kind === "atm" ? 22 : 14;
@@ -149,7 +166,7 @@ export function circlesKind(S) {
   const labs = names.map((n, i) => el(n, "caps clab", `left:${cx + R[i] * 0.72 + 30}px;top:${cy - R[i] * 0.72 - 14}px`));
   return (t) => {
     reveal(head, t, 0.3, S.dur + 1); clear2d();
-    const a0 = (S.spans[1] || S.spans[0])[0];
+    const a0 = (S.spans[0] || [0.4])[1] + 0.1;
     R.forEach((r, i) => {
       const a = a0 + i * 0.35, k = sstep(a, a + 0.6, t); if (k <= 0) return;
       reveal(labs[i], t, a + 0.2, S.dur + 1, 0.4, 0.3, 0);
@@ -181,7 +198,7 @@ export function choiceKind(S) {
     reveal(head, t, 0.3, S.dur + 1); clear2d();
     opts.forEach((o, i) => {
       const a = act < 0 ? (S.spans[2] || S.spans[S.spans.length - 1])[0] + i * 0.3 : 0.25 + i * 0.12;
-      const v = reveal(cards[i], t, a, S.dur + 1, 0.45, 0.3, 24);
+      const v = Math.max(reveal(cards[i], t, a, S.dur + 1, 0.45, 0.3, 24), act < 0 ? 0.3 * sstep(0.4 + i * 0.15, 0.9 + i * 0.15, t) : 0);
       const on = act < 0 || act === i, dim = on ? 1 : 0.35;
       cards[i].style.opacity = (v * dim).toFixed(3);
       cards[i].classList.toggle("on", act === i && t > 0.6);

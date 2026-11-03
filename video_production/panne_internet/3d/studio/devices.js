@@ -410,11 +410,11 @@ export function chrono(S) {
 export function monitors(S) {
   const G = new THREE.Group(); scene.add(G); scene.background = new THREE.Color(0x040506);
   const ms = [];
-  for (let r = 0; r < 6; r++) for (let c = 0; c < 12; c++) { const m = box(0.6, 0.36, 0.03, E(0x0a0d12), -3.6 + c * 0.66, 0.4 + r * 0.42, -2 - Math.abs(c - 5.5) * 0.08, G, false); ms.push({ m, k: rnd() }); }
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 12; c++) { const m = box(0.6, 0.36, 0.03, E(0x1d3a44), -3.6 + c * 0.66, 0.4 + r * 0.42, -2 - Math.abs(c - 5.5) * 0.08, G, false); ms.push({ m, k: rnd() }); }
   const L = new THREE.PointLight(0x2a6aff, 0, 8, 1.5); L.position.set(0, 1.5, 0); G.add(L);
   return (t) => {
-    const d = S.dur, a = S.at(/huit|millions/i, d * 0.6);
-    let on = 0; ms.forEach(({ m, k }) => { const b = t > a - 1.2 + k * 1.6; m.material.color.set(b ? 0x0a4adf : 0x0a0d12); on += b; });
+    const d = S.dur, a = S.at(/^huit$/i, d * 0.6);
+    let on = 0; ms.forEach(({ m, k }) => { const b = t > a - 1.2 + k * 1.6; m.material.color.set(b ? 0x0a4adf : (Math.sin(t * 2 + k * 9) > 0.95 ? 0x2a5a66 : 0x1d3a44)); on += b; });
     L.intensity = on / ms.length * 4;
     const [P0, T0] = camPath(t, [[0, V(0, 1.4, 5.5), V(0, 1.4, -2)], [d + 1, V(0.4, 1.5, 3.0), V(0, 1.45, -2)]]);
     return { pos: P0.add(handheld(t, 0.3)), tgt: T0, fov: 40 };
