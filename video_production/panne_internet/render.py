@@ -960,7 +960,7 @@ def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
               "words": words.get(i + 1, []), "events": events.get(i + 1, {}),
               "impacts": [[round(ti, 3), tier] for ti, tier in impacts.get(i + 1, [])],
               "warm": (i + 1) in plan.WARM_SCENES, "fadeIn": beat != prev_b, "fadeOut": beat != next_b,
-              "whipIn": prev_b == beat, "whipOut": next_b == beat, "font": a.font}
+              "whipIn": prev_b == beat, "whipOut": next_b == beat, "font": a.font, "clean": a.clean}
         ws = words.get(i + 1, [])
         def at_word(prefix, after=0.0):
             pre = prefix.lower()[:7]
@@ -1029,6 +1029,7 @@ def main(argv=None):
     ap.add_argument("--assets", type=Path, help="(3d) dossier : vendor/three.module.min.js, fonts/, textures, countries.geojson")
     ap.add_argument("--font", default="bricolage", help="(3d) thème typographique : archivo, barlow, bricolage, shoulders, inter")
     ap.add_argument("--audit", action="store_true", help="(3d) contrôle des collisions seulement (personnages, meubles, caméra)")
+    ap.add_argument("--clean", action="store_true", help="(3d) images de contrôle sans textes ni logo (miniatures)")
     ap.add_argument("--stills", help="(3d) images de contrôle seulement, ex. 0.5,3 (une série par scène)")
     a = ap.parse_args(argv)
 

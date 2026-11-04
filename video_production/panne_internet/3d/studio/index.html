@@ -112,6 +112,7 @@ const FLAT = new Set(["number", "bars", "circles", "choice", "list", "title"]);
 window.init = async (scn) => {
   S = scn; reseed(S.n * 101 + 7);
   document.body.dataset.font = S.font || "bricolage";
+  if (S.clean) { document.getElementById("hud").style.display = "none"; document.getElementById("logo").style.display = "none"; }   // image propre (miniature)
   S.p = S.p || {}; S.onscreen = typo(S.onscreen); if (S.p.status) S.p.status = typo(S.p.status);
   const norm = (w) => w.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
   // instant (en s, dans la scène) du premier mot qui correspond, sinon valeur de repli
