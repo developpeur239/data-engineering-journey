@@ -53,6 +53,18 @@ canvas{display:block}
 .tcenter{left:0;width:1920px;top:400px;text-align:center}.tbig{font-size:120px;font-weight:800;letter-spacing:-.025em}.tsub{font-size:22px;color:#f5a524;margin-top:20px}
 .tcenter.q .tbig{font-size:96px}
 .cursor{left:1500px;top:440px;width:10px;height:100px;background:#f5a524}
+#logo{position:absolute;right:34px;top:30px;width:72px;height:72px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:.95}
+.panel{top:122px!important}.clock{top:120px!important}
+.cite{right:96px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:10px 14px 10px 18px;border-right:3px solid #5fd4dc;background:linear-gradient(270deg,rgba(10,14,16,.85),rgba(10,14,16,.15))}
+.cite .ck{font-size:12px;color:#5fd4dc;letter-spacing:.2em}.cite .cn{font-size:26px;font-weight:800;letter-spacing:.02em}.cite .cs{font-size:13px;color:#9aa3a8;letter-spacing:.12em}
+.citerow{left:0;width:1920px;top:860px;display:flex;justify-content:center;gap:28px}
+.citerow .c{padding:14px 26px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(10,14,16,.78);text-align:center;opacity:0}
+.citerow .cn{font-size:34px;font-weight:800;letter-spacing:.03em}.citerow .cs{font-size:13px;color:#9aa3a8;letter-spacing:.14em;margin-top:6px}
+.citerow .ck{font-size:11px;color:#5fd4dc;letter-spacing:.22em;margin-bottom:6px}
+.keyline{left:0;width:1920px;top:0;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;
+  background:radial-gradient(ellipse at 50% 50%,rgba(4,6,8,.78) 0%,rgba(4,6,8,.45) 55%,rgba(4,6,8,0) 80%)}
+.keyline .kl{display:flex;gap:26px;font-size:96px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.keyline .kw{opacity:0;display:inline-block;text-shadow:0 6px 40px rgba(0,0,0,.6)}.keyline .kw.acc{color:#f5a524}
 #grade,#grain{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;transform-origin:0 0}
 #grade{mix-blend-mode:soft-light}#grain{mix-blend-mode:overlay;opacity:.07}
 </style></head>
@@ -62,6 +74,7 @@ canvas{display:block}
   <div id="grade"></div>
   <canvas id="grain" width="480" height="270"></canvas>
   <div id="hud"></div>
+  <img id="logo" src="/assets/logo.png" alt="">
 </div>
 <script type="importmap">{"imports":{"three":"/assets/vendor/three.module.min.js"}}</script>
 <script type="module">
@@ -74,6 +87,7 @@ const stage = document.getElementById("stage"); stage.style.width = W + "px"; st
 stage.prepend(renderer.domElement);
 const sc = W / 1920;
 for (const id of ["g2d", "hud", "grade"]) document.getElementById(id).style.transform = `scale(${sc})`;
+{ const lg = document.getElementById("logo"); lg.style.transformOrigin = "100% 0"; lg.style.transform = `scale(${sc})`; lg.style.right = (34 * sc) + "px"; lg.style.top = (30 * sc) + "px"; }
 const grainC = document.getElementById("grain"); grainC.style.width = W + "px"; grainC.style.height = H + "px";
 const gctx = grainC.getContext("2d");
 
@@ -144,6 +158,24 @@ window.init = async (scn) => {
     // voile sombre : les chiffres et les titres restent lisibles sur le décor
     const dim = gfx.el("", "", `left:0;top:0;width:1920px;height:1080px;background:linear-gradient(90deg,rgba(6,8,10,.88) 0%,rgba(6,8,10,${n === 6 ? 0.55 : 0.75}) 60%,rgba(6,8,10,.6) 100%)`);
     document.getElementById("hud").prepend(dim); extra.push((t) => { dim.style.opacity = 1; });
+  }
+  // sources : sur le mot qui les nomme ; en ligne pour la scène 4 (les quatre pannes réelles), empilées ailleurs
+  const cites = S.cites || [];
+  if (n === 4 && cites.length) {
+    const row = gfx.el(cites.map(([, name, sub]) => `<div class="c"><div class="caps ck">Réel</div><div class="cn">${name}</div><div class="caps cs">${typo(sub)}</div></div>`).join(""), "citerow");
+    const cs = [...row.querySelectorAll(".c")];
+    extra.push((t) => { const kl = S.keyline ? S.keyline.lines[0][0][1] : S.dur; row.style.opacity = 1 - sstep(kl - 0.6, kl - 0.1, t);
+      cs.forEach((c, i) => { const v = sstep(cites[i][0], cites[i][0] + 0.35, t); c.style.opacity = v; c.style.transform = `translateY(${(1 - v) * 16}px)`; }); });
+  } else cites.forEach(([tc, name, sub], i) => {
+    const c = gfx.el(`<div class="caps ck">Source</div><div class="cn">${name}</div><div class="caps cs">${typo(sub)}</div>`, "cite", `bottom:${(k === "device" || k === "person" ? 300 : 120) + i * 96}px`);
+    extra.push((t) => gfx.reveal(c, t, tc, Math.min(S.dur + 1, tc + 4.5), 0.35, 0.4, 0));
+  });
+  // phrase clé : écrite en grand, mot à mot, exactement sur la voix
+  if (S.keyline) {
+    const box = gfx.el(S.keyline.lines.map((ln) => `<div class="kl">${ln.map(([w]) => `<span class="kw${/\d/.test(w) || /HEURES/.test(w) ? " acc" : ""}">${typo(w)}</span>`).join("")}</div>`).join(""), "keyline");
+    const ws = [...box.querySelectorAll(".kw")], times = S.keyline.lines.flat().map(([, tw]) => tw);
+    extra.push((t) => { box.style.opacity = sstep(times[0] - 0.25, times[0], t) * (1 - sstep(S.dur - 0.25, S.dur, t));
+      ws.forEach((w, i) => { const v = sstep(times[i] - 0.06, times[i] + 0.2, t); w.style.opacity = v; w.style.transform = `translateY(${(1 - v) * 22}px) scale(${1 + (1 - v) * 0.06})`; w.style.filter = v < 0.99 ? `blur(${(1 - v) * 8}px)` : "none"; }); });
   }
   const [gc, ga] = S.warm ? ["#ffa050", 0.24] : GRADE[S.beat] || ["#000", 0];
   document.getElementById("grade").style.background = gc; document.getElementById("grade").style.opacity = ga;

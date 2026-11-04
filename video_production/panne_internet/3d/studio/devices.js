@@ -1,7 +1,7 @@
 // Décors d'objets et de lieux : aéroport, téléphone, terminal, distributeur, serveurs, centre d'appels,
 // ordinateur, carnet, entrepôt, rayons, horloge, globe, mur d'écrans, fond graphique.
 import { THREE, scene, M, E, mesh, box, canvasTex, rep, screenTex, TEX, facade, rnd, reseed, clamp, sstep, lerp, V, room, counter, shelfUnit, bokeh, camPath, handheld } from "./core.js";
-import { person, face, blinkAt, walk, stand, sit } from "./people.js";
+import { person, face, blinkAt, walk, stand, sit, reach, local } from "./people.js";
 
 const INTER = "Inter, sans-serif";
 function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
@@ -134,6 +134,7 @@ export function terminal(S) {
   return (t) => {
     const d = S.dur, err = S.events.err ?? 0.6, bad = t > err;
     card.position.z = lerp(0.12, 0.08, sstep(err - 0.6, err - 0.2, t));
+    if (!shop || t < S.at(/abandonnent/i, S.dur * 0.7)) reach(cust, "R", term.localToWorld(card.position.clone().add(V(0, 0.01, 0.05))));
     scr.draw((g, w, h) => { g.fillStyle = bad ? "#9e1520" : "#163a55"; g.fillRect(0, 0, w, h); g.fillStyle = "#fff"; g.textAlign = "center";
       if (bad) { g.globalAlpha = 0.7 + 0.3 * Math.sign(Math.sin(t * 8)); g.font = `800 64px ${INTER}`; g.fillText("✕", w / 2, 92); g.globalAlpha = 1; g.font = `700 22px ${INTER}`; g.fillText(S.p.status || "ERREUR", w / 2, 150); }
       else { g.font = `700 26px ${INTER}`; g.fillText("CONNEXION…", w / 2, 100); } });
@@ -178,7 +179,8 @@ export function atm(S) {
         g.font = `700 26px ${INTER}`; g.fillText(S.p.status, w / 2, 230); } });
     gl.color.set(t > dark ? 0x000000 : st === "bad" ? 0xff3030 : 0x80c0ff); gl.intensity = t > dark ? 0 : 3;
     queue.forEach((p, i) => { stand(p, t, i); face(p, { worry: 0.4 + 0.4 * sstep(err, err + 1, t), blink: blinkAt(t, i) }); p.P.head.rotation.set(0.1, Math.sin(t * 0.4 + i) * 0.25, 0); });
-    if (queue[0]) { queue[0].P.armR.sh.rotation.set(-1.0, 0, -0.1); queue[0].P.armR.el.rotation.x = -0.6 + Math.sin(t * 5) * 0.05 * (t < err ? 1 : 0); }
+    if (queue[0]) { const key = Math.floor(t * 2.5) % 4, pr = t < err ? Math.max(0, Math.sin(t * 15.7)) : 0;
+      reach(queue[0], "R", mach.localToWorld(V(-0.06 + (key % 3) * 0.06, 1.15 - Math.floor(key / 3) * 0.05, 0.075 + 0.02 * (1 - pr)))); }
     const [P0, T0] = S.p.queue ? camPath(t, [[0, V(4.5, 1.8, 3.2), V(0.6, 1.4, -1.0)], [d + 1, V(3.4, 1.7, 1.2), V(0.3, 1.4, -2.0)]])
       : camPath(t, [[0, V(-1.8, 1.7, 0.8), V(0, 1.4, -3)], [err + 0.5, V(-1.0, 1.65, -1.2), V(0, 1.45, -3)], [d + 1, V(-0.75, 1.6, -1.9), V(0, 1.48, -3)]]);
     return { pos: P0.add(handheld(t)), tgt: T0, fov: 38 };
@@ -203,8 +205,11 @@ export function servers(S) {
   G.add(new THREE.HemisphereLight(0x5a6a80, 0x101010, 0.5));
   for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xbfd8ff, 4, 8, 1.6); l.position.set(0, 2.8, 1 - i * 4); G.add(l); }
   let tech = null;
-  if (mode === "sync") { tech = person({ coat: 0x2a2e36, inner: 0x4a6a8a, hair: 0x2a1a10, shoes: 0x222222, style: "shirt", glasses: true }); tech.g.position.set(0.3, 0, -1.5); tech.g.rotation.y = -Math.PI / 2 + 0.2;
-    box(0.5, 0.9, 0.4, M(0x333333, 0.5, 0.5), 0.9, 0.45, -1.5, G); const lap = screenTex(256, 160); const lm = mesh(new THREE.PlaneGeometry(0.34, 0.22), new THREE.MeshBasicMaterial({ map: lap.t }), 0.9, 1.06, -1.38, G, false); lm.rotation.set(-0.3, -Math.PI / 2 + 0.2, 0); tech.lap = lap; }
+  if (mode === "sync") { tech = person({ coat: 0x2a2e36, inner: 0x4a6a8a, hair: 0x2a1a10, shoes: 0x222222, style: "shirt", glasses: true }); tech.g.position.set(0.1, 0, -1.5); tech.g.rotation.y = Math.PI / 2;
+    box(0.55, 0.95, 0.45, M(0x333333, 0.5, 0.5), 0.72, 0.475, -1.5, G);                            // chariot
+    box(0.24, 0.015, 0.34, M(0x202226, 0.4, 0.5), 0.68, 0.958, -1.5, G);                           // clavier du portable
+    const lap = screenTex(256, 160); const lm = mesh(new THREE.PlaneGeometry(0.33, 0.21), new THREE.MeshBasicMaterial({ map: lap.t }), 0.86, 1.07, -1.5, G, false);
+    lm.rotation.set(0, -Math.PI / 2, 0); lm.rotateX(-0.25); box(0.012, 0.23, 0.35, M(0x202226, 0.4, 0.5), 0.875, 1.07, -1.5, G).rotation.z = 0.25; tech.lap = lap; }
   return (t) => {
     const d = S.dur, ok = S.at(/retirée|corriger|retir/i, d * 0.4);
     racks.forEach((r, i) => r.tx.draw((g, w, h) => {
@@ -220,8 +225,11 @@ export function servers(S) {
         } }
     }));
     beacon.intensity = mode === "fail" ? (Math.sin(t * 6) > 0 ? 8 : 0) : 0;
-    if (tech) { stand(tech, t); tech.P.armL.sh.rotation.set(-0.9, 0, 0.15); tech.P.armR.sh.rotation.set(-0.9, 0, -0.15); tech.P.armL.el.rotation.x = -0.6 + Math.sin(t * 14) * 0.05; tech.P.armR.el.rotation.x = -0.6 + Math.sin(t * 13 + 1) * 0.05;
-      face(tech, { worry: 0.4, blink: blinkAt(t), look: [0, 0.3] }); tech.P.head.rotation.set(0.4, 0, 0);
+    if (tech) { stand(tech, t); tech.P.body.rotation.x = 0.18;
+      const tap = (k) => Math.max(0, Math.sin(t * 15 + k * 2.1)) * 0.012;
+      reach(tech, "L", V(0.64, 0.975 + tap(0), -1.43 - 0.03 * Math.sin(t * 3)));
+      reach(tech, "R", V(0.64, 0.975 + tap(1), -1.57 + 0.03 * Math.sin(t * 2.6)));
+      face(tech, { worry: 0.4, blink: blinkAt(t), look: [0, 0.35] }); tech.P.head.rotation.set(0.45, 0, 0);
       tech.lap.draw((g, w, h) => { g.fillStyle = "#0b0f14"; g.fillRect(0, 0, w, h); g.fillStyle = "#3dff8a"; g.font = `14px "JetBrains Mono"`; for (let i = 0; i < 9; i++) g.fillText(`> reset db-${String(1000 + Math.floor(t * 4) * 9 + i).padStart(5, "0")} … ok`, 10, 20 + i * 16); }); }
     const [P0, T0] = camPath(t, [[0, V(0, 1.5, 4.5), V(0, 1.3, -10)], [d + 1, V(0.2, 1.4, 0.5), V(0, 1.3, -12)]]);
     return { pos: P0.add(handheld(t, 0.6)), tgt: T0, fov: 40 };
@@ -287,7 +295,8 @@ export function computer(S) {
       g.textAlign = "left";
     });
     stand(who, t); sit(who); who.g.position.y = 0.42;
-    who.P.armL.sh.rotation.set(-0.9, 0, 0.12); who.P.armR.sh.rotation.set(-0.9, 0, -0.12); who.P.armL.el.rotation.x = -0.5; who.P.armR.el.rotation.x = -0.5 + (t < err ? Math.sin(t * 12) * 0.05 : 0);
+    const kt = (k) => (t < err ? Math.max(0, Math.sin(t * 14 + k * 2)) * 0.012 : 0);
+    reach(who, "L", V(-0.11, 0.79 + kt(0), -1.33)); reach(who, "R", V(0.11, 0.79 + kt(1), -1.33));
     who.P.head.rotation.set(0.05, 0, 0); face(who, { worry: sstep(err, err + 1, t) * 0.8, blink: blinkAt(t) });
     const [P0, T0] = camPath(t, [[0, V(0.9, 1.35, 0.3), V(0, 1.15, -1.75)], [err + 0.4, V(0.35, 1.22, -0.95), V(0, 1.18, -1.75)], [d + 1, V(0.12, 1.2, -1.25), V(0, 1.18, -1.75)]]);
     return { pos: P0.add(handheld(t, 0.5)), tgt: T0, fov: 38 };

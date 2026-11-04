@@ -938,6 +938,10 @@ def fmt_ts(s: float, srt=False) -> str:
 
 def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
     """Scènes du studio three.js : une page par scène, plusieurs navigateurs en parallèle."""
+    import shutil  # noqa: PLC0415
+    logo = Path(__file__).parent.parent / "branding" / "whatifcastfr_logo.png"
+    if logo.exists() and a.assets:
+        shutil.copy(logo, Path(a.assets) / "logo.png")
     def plain(v):
         if isinstance(v, tuple):
             v = list(v)
@@ -957,6 +961,25 @@ def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
               "impacts": [[round(ti, 3), tier] for ti, tier in impacts.get(i + 1, [])],
               "warm": (i + 1) in plan.WARM_SCENES, "fadeIn": beat != prev_b, "fadeOut": beat != next_b,
               "whipIn": prev_b == beat, "whipOut": next_b == beat}
+        ws = words.get(i + 1, [])
+        def at_word(prefix, after=0.0):
+            pre = prefix.lower()[:7]
+            return next((w["a"] for w in ws if w["a"] >= after and w["w"].lower().startswith(pre)), None)
+        cites, last = [], 0.0
+        for prefix, name, sub in plan.CITES.get(i + 1, []):
+            tw = at_word(prefix, last)
+            if tw is not None:
+                cites.append([round(tw - 0.05, 3), name, sub]); last = tw
+        sc["cites"] = cites
+        if i + 1 in plan.KEYLINES and plan.KEYLINES[i + 1][0] < len(spans[i]):
+            k_s, text = plan.KEYLINES[i + 1]
+            s0, s1 = sc["spans"][k_s]
+            sw = [w for w in ws if s0 - 0.05 <= w["a"] <= s1 + 0.05] or [{"a": s0}]
+            toks = [line.split() for line in text.split("|")]
+            flat = [w for line in toks for w in line]
+            times = [sw[min(len(sw) - 1, round(j * (len(sw) - 1) / max(1, len(flat) - 1)))]["a"] for j in range(len(flat))]
+            it = iter(times)
+            sc["keyline"] = {"lines": [[[w, round(next(it), 3)] for w in line] for line in toks], "end": round(s1, 3)}
         if a.stills:
             jobs.append({"scene": sc, "out": str(work / "stills" / f"s{i + 1:02d}"), "frames": frames[i],
                          "stills": [float(x) * sc["dur"] if float(x) <= 1 else float(x) for x in a.stills.split(",")]})

@@ -185,12 +185,55 @@ export function carry(adult, kid) {
   kid.P.legL.rotation.x = -1.2; kid.P.legR.rotation.x = -1.1;
 }
 export function carryPose(adult, t) {
-  const P = adult.P;
-  P.armL.sh.rotation.set(-0.55, 0.3, 0.35); P.armL.el.rotation.set(-1.5, 0, 0);
-  P.armR.sh.rotation.set(-0.35, -0.2, -0.25); P.armR.el.rotation.set(-1.3, 0, 0);
+  // une main sous l'enfant, l'autre dans son dos (cinématique inverse : les mains touchent l'enfant)
+  reach(adult, "L", local(adult, -0.1, 1.02, 0.2));
+  reach(adult, "R", local(adult, -0.02, 1.3, 0.3 + Math.sin(t * 1.4) * 0.01));
 }
 export function cry(kid, t, k = 1) {
   face(kid, { worry: k, blink: 0.75 * k, open: (0.6 + 0.4 * Math.sin(t * 7)) * k });
   kid.P.head.rotation.set(Math.sin(t * 5) * 0.06 * k, Math.sin(t * 2.2) * 0.12, 0);
   for (const tr of kid.P.tears) { tr.material.opacity = 0.85 * k; tr.position.y = -0.012 - ((t * 0.04) % 0.05); }
 }
+
+// ---------- cinématique inverse : la main (ou le pied) va exactement sur la cible ----------
+// chaîne : épaule (sh) -> coude (el) -> main ; longueurs a (épaule-coude) et b (coude-poignet)
+const _v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+const DOWN = _v(0, -1, 0);
+function ik2(root, mid, target, a, b, pole) {
+  root.updateWorldMatrix(true, false);
+  const parent = root.parent; parent.updateWorldMatrix(true, false);
+  const inv = parent.matrixWorld.clone().invert();
+  const p0 = root.position.clone();                                  // épaule, repère du parent
+  const t = target.clone().applyMatrix4(inv);                         // cible, repère du parent
+  const pl = pole.clone().transformDirection(inv).normalize();        // direction du coude, repère du parent
+  const d = t.clone().sub(p0); let L = d.length(); d.normalize();
+  L = Math.min(Math.max(L, Math.abs(a - b) + 1e-3), a + b - 1e-3);
+  const alpha = Math.acos(clamp((a * a + L * L - b * b) / (2 * a * L), -1, 1));
+  const beta = Math.acos(clamp((a * a + b * b - L * L) / (2 * a * b), -1, 1));
+  let n = d.clone().cross(pl); if (n.lengthSq() < 1e-8) n = _v(1, 0, 0); n.normalize();
+  const upper = d.clone().applyAxisAngle(n, -alpha);                 // le segment haut s'écarte vers le coude
+  if (upper.clone().sub(d.clone().multiplyScalar(upper.dot(d))).dot(pl) < 0) upper.copy(d).applyAxisAngle(n, alpha);
+  root.quaternion.setFromUnitVectors(DOWN, upper);
+  // coude : plié dans le plan (épaule, cible, coude)
+  const fore = t.clone().sub(p0.clone().add(upper.clone().multiplyScalar(a))).normalize();
+  const qInv = root.quaternion.clone().invert();
+  const foreLocal = fore.applyQuaternion(qInv);
+  mid.quaternion.setFromUnitVectors(DOWN, foreLocal);
+  return beta;
+}
+// main gauche ou droite vers un point du monde ; le coude part vers l'arrière et l'extérieur
+export function reach(p, side, target, pole) {
+  const A = side === "L" ? p.P.armL : p.P.armR, s = side === "L" ? -1 : 1;
+  const pw = pole || _v(s * 0.6, -0.4, -1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
+  A.sh.rotation.set(0, 0, 0); A.el.rotation.set(0, 0, 0);
+  ik2(A.sh, A.el, target, 0.31, 0.3 * (p.g.scale.x || 1), pw);
+}
+// pied vers un point (escaliers, trottoir) ; le genou part vers l'avant
+export function plant(p, side, target) {
+  const Lg = side === "L" ? p.P.legL : p.P.legR;
+  const fwd = _v(0, 0, 1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
+  Lg.hip.rotation.set(0, 0, 0); Lg.knee.rotation.set(0, 0, 0);
+  ik2(Lg.hip, Lg.knee, target, 0.45, 0.43, fwd);
+}
+// position du monde d'un point exprimé dans le repère du personnage
+export function local(p, x, y, z) { p.g.updateWorldMatrix(true, true); return _v(x, y, z).applyMatrix4(p.g.matrixWorld); }

@@ -88,3 +88,28 @@ REAL_AMB = {1: "amb_apartment", 2: "amb_station", 20: "amb_station", 22: "amb_st
             15: "amb_street", 24: "amb_queue", 25: "amb_street", 17: "amb_servers", 30: "amb_servers", 50: "amb_servers", 51: "amb_servers",
             19: "amb_apartment", 31: "amb_hospital", 33: "amb_hospital", 32: "amb_store", 36: "amb_apartment", 41: "amb_street",
             42: "amb_store", 44: "trucks_idle", 45: "amb_supermarket", 54: "amb_apartment", 55: "radio_fm", 63: "amb_apartment"}
+
+# ---------- sources citées : la carte apparaît sur le mot qui la nomme (nom en toutes lettres, pas de logo de marque) ----------
+CITES = {
+    4: [("Orange", "ORANGE", "Panne · France · 2021"), ("Rogers", "ROGERS", "Panne · Canada · 2022"),
+        ("Cloudflare", "CLOUDFLARE", "Panne · monde · 2025"), ("CrowdStrike", "CROWDSTRIKE", "Panne · monde · 2024")],
+    5: [("CrowdStrike", "CROWDSTRIKE", "Logiciel de sécurité"), ("Windows", "MICROSOFT WINDOWS", "Ordinateurs touchés")],
+    6: [("Microsoft", "MICROSOFT", "Source du chiffre")],
+    7: [("Delta", "DELTA AIR LINES", "Plus de 5 000 vols annulés")],
+    8: [("Parametrix", "PARAMETRIX", "Assureur · estimation des pertes")],
+    9: [("Amazon", "AMAZON WEB SERVICES", "Panne du 20 octobre 2025")],
+    10: [("Cloudflare", "CLOUDFLARE", "Panne du 18 novembre 2025")],
+    11: [("Rogers", "ROGERS", "Panne du 8 juillet 2022"), ("Interac", "INTERAC", "Paiement par carte de débit")],
+    13: [("Européenne", "BANQUE CENTRALE EUROPÉENNE", "Enquête sur les paiements"), ("France", "BANQUE DE FRANCE", "Citée par")],
+    27: [("Orange", "ORANGE", "Panne du 2 juin 2021")],
+    33: [("Corbeil", "HÔPITAL DE CORBEIL-ESSONNES", "Cyberattaque · 2022")],
+    47: [("TeleGeography", "TELEGEOGRAPHY", "Source")],
+    52: [("CrowdStrike", "CROWDSTRIKE", "Juillet 2024")],
+}
+# phrases clés écrites en grand, mot à mot sur la voix : (phrase de la scène, texte affiché ; « | » = retour à la ligne)
+KEYLINES = {
+    4: (3, "ET SI INTERNET|S'ARRÊTAIT 72 HEURES ?"),
+    49: (3, "LA LUMIÈRE BRILLE,|MAIS LES DONNÉES NE PASSENT PLUS."),
+    50: (0, "LE DÉTAIL|QUI CHANGE TOUT."),
+    53: (2, "C'EST LA VITESSE|DE L'ERREUR."),
+}

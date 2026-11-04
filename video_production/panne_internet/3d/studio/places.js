@@ -1,6 +1,6 @@
 // Décors avec personnages : appartement de Marc, station de métro, pharmacie, cage d'escalier, rue.
 import { THREE, scene, M, E, mesh, box, canvasTex, rep, screenTex, TEX, facade, rnd, clamp, sstep, lerp, V, room, counter, shelfUnit, bokeh, camPath, handheld } from "./core.js";
-import { person, child, face, blinkAt, walk, stand, sit, carry, carryPose, cry } from "./people.js";
+import { person, child, face, blinkAt, walk, stand, sit, carry, carryPose, cry, reach, plant, local } from "./people.js";
 
 export const MARC = { coat: 0x1d2a44, inner: 0x8a8f96, pants: 0x232a36, hair: 0x3b2a20, shoes: 0xeeeeee };
 
@@ -145,7 +145,8 @@ export function apartment(S, variant) {
         [tc + 1.3, V(-1.6, 1.9, -0.4), V(-2.9, 1.92, -1.4)], [d, V(-1.95, 1.93, -0.9), V(-2.9, 1.95, -1.4)]]);
       const pour = Math.max(0, Math.sin(clamp((t - sp[2][0]) / 3.2) * Math.PI));
       marc.P.armR.sh.rotation.set(-0.9 - pour * 0.35, 0, -0.15); marc.P.armR.el.rotation.set(-0.7 + pour * 0.2, 0, 0); carton.rotation.set(0, 0, pour * 1.6);
-      marc.P.armL.sh.rotation.set(-0.3, 0, 0.08); marc.P.armL.el.rotation.set(-0.75, 0, 0);
+      reach(marc, "L", local(marc, -0.22, 0.95, 0.33));
+      reach(marc, "R", local(marc, 0.24, 1.08, 0.3).lerp(V(-0.2, 1.2, -0.75), pour));
       marc.P.head.rotation.set(0.25 + pour * 0.1, Math.sin(t * 0.6) * 0.08 + (t > sp[1][0] && t < sp[2][0] ? -0.5 : 0), 0);
       marc.g.rotation.y = 0.15 + Math.sin(t * 0.4) * 0.03;
       face(marc, { smile: 0.35, blink: blinkAt(t), worry: sstep(tc, tc + 1, t) * 0.4 });
@@ -168,8 +169,10 @@ export function apartment(S, variant) {
       const ok = (sp[1] || sp[sp.length - 1])[0];
       [pos, tgt] = camPath(t, [[0, V(2.0, 1.5, 1.2), V(0.8, 1.1, -0.5)], [ok, V(1.5, 1.35, 0.7), V(0.85, 1.15, -0.5)], [d, V(1.25, 1.3, 0.35), V(0.9, 1.2, -0.5)]]);
       stand(doc, t, 1); stand(marc, t, 2);
-      doc.P.body.rotation.x = 0.25; doc.P.armR.sh.rotation.set(-1.1, 0, 0.1); doc.P.armR.el.rotation.set(-0.5, 0, 0);
-      doc.P.armL.sh.rotation.set(-0.6, 0, -0.2); doc.P.armL.el.rotation.set(-0.8, 0, 0);
+      doc.P.body.rotation.x = 0.25;
+      // le stéthoscope se pose sur la poitrine de l'enfant, l'autre main sur son épaule
+      reach(doc, "R", kid.g.localToWorld(V(0.02, 0.24, 0.17 + 0.01 * Math.sin(t * 0.8))));
+      reach(doc, "L", kid.g.localToWorld(V(-0.14, 0.33, 0.04)));
       face(doc, { worry: 0.3 * (1 - sstep(ok, ok + 1, t)), smile: sstep(ok, ok + 1, t) * 0.5, blink: blinkAt(t, 1), look: [0, 0.3] });
       face(marc, { worry: 0.8 * (1 - sstep(ok, ok + 1.2, t)), smile: sstep(ok, ok + 1.2, t) * 0.6, blink: blinkAt(t, 4) });
       marc.P.armL.sh.rotation.set(-0.2, 0, 0.1); marc.P.armR.sh.rotation.set(-0.9, 0, -0.5); marc.P.armR.el.rotation.set(-1.4, 0, 0);
@@ -266,8 +269,10 @@ export function metro(S, variant) {
       if (variant === "refuse" && t < arrive) walk(marc, t * 7.5); else stand(marc, t);
       const tap = (a) => sstep(a - 0.35, a, t) * (1 - sstep(a + 0.7, a + 1.1, t));
       const k = Math.max(tap(err), ev.tap2 ? tap(ev.tap2) : 0);
-      if (kid) { carryPose(marc, t); marc.P.armR.sh.rotation.set(-0.35 - k * 0.9, -0.2, -0.25 + k * 0.2); marc.P.armR.el.rotation.set(-1.3 + k * 0.6, 0, 0); }
-      else { marc.P.armR.sh.rotation.set(-0.25 - k * 1.05, 0, -0.12 + k * 0.1); marc.P.armR.el.rotation.set(-0.3 - k * 0.45, 0, 0); }
+      const readerW = mach.localToWorld(V(0.2, 1.03, 0.36));
+      if (kid) carryPose(marc, t);
+      if (k > 0.01) reach(marc, "R", local(marc, 0.24, kid ? 1.1 : 0.95, 0.22).lerp(readerW, k));
+      else if (!kid) { marc.P.armR.sh.rotation.set(-0.25, 0, -0.12); marc.P.armR.el.rotation.set(-0.5, 0, 0); }
       card.rotation.set(Math.PI / 2 * k, 0, 0);
       const look = sstep(err + 0.3, err + 1.0, t);
       marc.P.head.rotation.set(0.12 + look * 0.2, look * -0.2 + Math.sin(t * 0.8) * 0.04, 0);
@@ -337,9 +342,10 @@ export function pharmacy(S) {
 export function stairwell(S) {
   const G = new THREE.Group(); scene.add(G); scene.fog = new THREE.FogExp2(0x1a1612, 0.05);
   room(G, { w: 4, d: 5, h: 5.6, wall: new THREE.MeshStandardMaterial({ map: rep(TEX.plaster, 2, 3), roughness: 0.95, color: 0xe9d9bf }), floor: new THREE.MeshStandardMaterial({ map: rep(TEX.wood, 2, 2), roughness: 0.5 }), ceil: null, open: ["front"] });
-  for (let i = 0; i < 16; i++) box(1.2, 0.18, 0.28, new THREE.MeshStandardMaterial({ map: rep(TEX.wood, 1, 1), roughness: 0.5 }), -1.2, 0.09 + i * 0.18, -2.3 + i * 0.28, G).scale.y = 1 + i * 0;
-  for (let i = 0; i < 16; i++) mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.9, 6), M(0x1a1a1a, 0.4, 0.7), -0.6, 0.6 + i * 0.18, -2.3 + i * 0.28, G);
-  const rail = box(0.06, 0.06, 4.6, M(0x4a2a1a, 0.4), -0.6, 1.1 + 1.4, -0.05, G); rail.rotation.x = -Math.atan2(0.18, 0.28);
+  const stepTop = (z) => { if (z > 0.34) return 0; const i = Math.min(15, Math.floor((0.34 - z) / 0.28)); return 0.18 * (i + 1); };
+  for (let i = 0; i < 16; i++) { box(1.2, 0.18 * (i + 1), 0.28, new THREE.MeshStandardMaterial({ map: rep(TEX.wood, 1, 1), roughness: 0.5 }), -1.2, 0.09 * (i + 1), 0.2 - i * 0.28, G);
+    mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.9, 6), M(0x1a1a1a, 0.4, 0.7), -0.6, 0.18 * (i + 1) + 0.45, 0.2 - i * 0.28, G); }
+  const rail = box(0.06, 0.06, 4.6, M(0x4a2a1a, 0.4), -0.6, 0.18 * 8 + 0.92, 0.2 - 7.5 * 0.28, G); rail.rotation.x = Math.atan2(0.18, 0.28);
   const door = new THREE.Group(); door.position.set(1.95, 0, -0.8); G.add(door);
   box(0.06, 2.2, 1.0, M(0x6a3a22, 0.5), 0, 1.1, 0, door); mesh(new THREE.SphereGeometry(0.03, 12, 10), M(0xd4af37, 0.3, 0.9), -0.05, 1.0, 0.35, door);
   const lamp = new THREE.PointLight(0xffc27a, 9, 7, 1.6); lamp.position.set(0, 3.2, 0); G.add(lamp);
@@ -351,10 +357,23 @@ export function stairwell(S) {
   const doc = person({ coat: 0x6b5a45, inner: 0xd8d2c4, pants: 0x3a3a3a, hair: 0xb9b5ad, shoes: 0x3a2a20, glasses: true, style: "shirt", bald: true, iris: 0x4a6a8a });
   return (t) => {
     const d = S.dur, sp = S.spans, meet = (sp[1] || sp[0])[0];
-    const u = sstep(meet - 1.5, meet + 0.8, t);
-    doc.g.position.set(lerp(-1.2, -0.3, u), lerp(1.8, 0, u), lerp(1.3, -0.1, u)); doc.g.rotation.y = lerp(Math.PI, 0.9, u);
-    if (u > 0 && u < 1) walk(doc, t * 6, 0.3); else stand(doc, t, 1);
-    stand(marc, t); carryPose(marc, t); marc.P.head.rotation.set(0.05, -0.4 * u, 0);
+    // descente : de la 9e marche au palier, puis trois pas vers Marc
+    const t0d = Math.max(0.2, meet - 3.6), t1d = t0d + 2.8, t2d = t1d + 1.2;
+    const zd = lerp(0.2 - 9 * 0.28, 0.6, clamp((t - t0d) / (t1d - t0d)));
+    let x = -1.2, z = zd, ry = 0;
+    if (t > t1d) { const u2 = sstep(t1d, t2d, t); x = lerp(-1.2, -0.35, u2); z = lerp(0.6, 0.15, u2); ry = lerp(0, 0.9, u2); }
+    doc.g.position.set(x, stepTop(z), z); doc.g.rotation.y = ry;
+    stand(doc, t, 1);
+    if (t > t0d && t < t2d) {
+      const ph = (t - t0d) * 2.6, f = ph % 1, lead = Math.floor(ph) % 2;
+      for (const [side, sgn] of [["L", -1], ["R", 1]]) {
+        const moving = (side === "L") === (lead === 0), fz = z + (moving ? 0.14 * (f - 0.5) * 2 : -0.1), fx = x + sgn * 0.1;
+        const lift = moving ? Math.sin(f * Math.PI) * 0.1 : 0;
+        plant(doc, side, V(fx, stepTop(fz) + 0.06 + lift, fz));
+      }
+      doc.P.armL.sh.rotation.set(0.2, 0, 0.1); doc.P.armR.sh.rotation.set(-0.1, 0, -0.35);
+    }
+    stand(marc, t); carryPose(marc, t); marc.P.head.rotation.set(0.05, -0.4 * sstep(meet - 1, meet, t), 0);
     face(marc, { worry: 0.9 - 0.3 * sstep(meet + 0.5, meet + 1.5, t), blink: blinkAt(t) });
     face(doc, { worry: 0.3, smile: 0.2, blink: blinkAt(t, 2) });
     face(kid, { worry: 0.6, blink: 0.6 }); kid.P.head.rotation.set(0.3, -0.5, 0.3);
