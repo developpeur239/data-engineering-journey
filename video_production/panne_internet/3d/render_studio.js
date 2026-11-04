@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 
 const TYPES = { ".html": "text/html", ".css": "text/css", ".wasm": "application/wasm", ".js": "text/javascript", ".json": "application/json", ".geojson": "application/json",
-  ".jpg": "image/jpeg", ".png": "image/png", ".woff2": "font/woff2" };
+  ".jpg": "image/jpeg", ".png": "image/png", ".woff2": "font/woff2", ".ttf": "font/ttf" };
 function serve(studio, assets) {
   return new Promise((ok) => {
     const srv = http.createServer((req, res) => {
