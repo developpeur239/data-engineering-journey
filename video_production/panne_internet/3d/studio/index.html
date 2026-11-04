@@ -1,15 +1,23 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
 <style>
 @font-face{font-family:"JetBrains Mono";src:url(/assets/fonts/JetBrainsMono.woff2) format("woff2");font-weight:100 800}
+/* thèmes typographiques : titres (--fh), texte et petites capitales (--fb), chiffres (--fm) */
+body{--fh:"Archivo";--fhs:72%;--fb:"Archivo";--fm:"IBM Plex Mono";--fhw:800;--fhl:-.005em}
+body[data-font="barlow"]{--fh:"Barlow Condensed";--fhs:100%;--fb:"Barlow";--fm:"IBM Plex Mono";--fhw:800;--fhl:.005em}
+body[data-font="bricolage"]{--fh:"Bricolage Grotesque";--fhs:100%;--fb:"Instrument Sans";--fm:"Fragment Mono";--fhw:800;--fhl:-.02em}
+body[data-font="shoulders"]{--fh:"Big Shoulders Display";--fhs:100%;--fb:"Barlow";--fm:"Space Mono";--fhw:800;--fhl:.01em}
+body[data-font="inter"]{--fh:"Inter";--fhs:100%;--fb:"Inter";--fm:"JetBrains Mono";--fhw:800;--fhl:-.015em}
 html,body{margin:0;background:#07090b;overflow:hidden}
 canvas{display:block}
 #stage{position:absolute;left:0;top:0;overflow:hidden}
 #g2d{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
-#hud{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none;font-family:Inter,"Inter Display",sans-serif;color:#f2f4f5;
+#hud{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none;font-family:var(--fb),sans-serif;color:#f2f4f5;
   font-feature-settings:"ss01","cv11","tnum";-webkit-font-smoothing:antialiased}
 .el{position:absolute;opacity:0;will-change:opacity,transform,filter}
-.mono{font-family:"JetBrains Mono","DejaVu Sans Mono",monospace;letter-spacing:-.01em}
+.mono{font-family:var(--fm),"DejaVu Sans Mono",monospace;letter-spacing:-.01em}
+.big,.btitle,.tbig,.sbig,.simline,.keyline .kl,.card .ct,.cite .cn,.citerow .cn{font-family:var(--fh),sans-serif!important;font-stretch:var(--fhs);font-weight:var(--fhw)!important;letter-spacing:var(--fhl)!important}
 .caps{text-transform:uppercase;letter-spacing:.16em;font-weight:600}
 .tag{left:58px;top:40px;border:2px solid;border-radius:7px;padding:7px 16px 7px 14px;font-size:21px;font-weight:800;letter-spacing:.08em;background:rgba(10,12,14,.5);display:flex;align-items:center;gap:10px}
 .tag i{width:10px;height:10px;border-radius:50%;display:block}
@@ -100,6 +108,7 @@ const GRADE = { 1: ["#3a5a7a", 0.10], 2: ["#202830", 0.0], 3: ["#3a6a8a", 0.10],
 let S = null, upd3d = null, upd2d = null, H0 = null, extra = [];
 window.init = async (scn) => {
   S = scn; reseed(S.n * 101 + 7);
+  document.body.dataset.font = S.font || "archivo";
   S.p = S.p || {}; S.onscreen = typo(S.onscreen); if (S.p.status) S.p.status = typo(S.p.status);
   const norm = (w) => w.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
   // instant (en s, dans la scène) du premier mot qui correspond, sinon valeur de repli
