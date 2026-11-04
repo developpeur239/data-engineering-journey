@@ -118,7 +118,7 @@ function personHandmade(o = {}) {
 
 // expression : inquiétude (sourcils, bouche), sourire, clignement, bouche ouverte
 export function face(p, { worry = 0, smile = 0, blink = 0, open = 0, look = [0, 0] } = {}) {
-  if (p.kind === "mx") return;
+  if (p.kind === "mx" || p.mx) return;
   const P = p.P;
   for (const b of P.brows) { b.m.rotation.z = Math.PI / 2 + b.s * (worry * 0.35 - smile * 0.1); b.m.position.y = (p.kind === "child" ? 0.052 : 0.058) + worry * 0.005; }
   const curve = clamp(smile - worry * 0.8, -1, 1);
@@ -158,6 +158,14 @@ export function sit(p) {
 }
 
 export function child(o = {}) {
+  if (mxReady() && !o.handmade) {
+    const k = mxPerson("child"); k.kind = "child"; k.mx = true; k.idle = "Sitting_Idle";
+    for (const n of ["armL", "armR", "legL", "legR"]) k.P[n] = new THREE.Object3D();   // les scènes y écrivent des poses : sans effet ici
+    PEOPLE.push(k); return k;
+  }
+  return childHandmade(o);
+}
+function childHandmade(o = {}) {
   const { suit = 0xe9b12c, hat = 0xd2672a } = o;
   const g = new THREE.Group(), P = {};
   const mSuit = new THREE.MeshStandardMaterial({ color: suit, roughness: 0.55, metalness: 0.02 }), mSkin = skinMat(0xeec0a2);
@@ -201,7 +209,7 @@ export function child(o = {}) {
 }
 // enfant porté dans les bras (côté gauche de l'adulte)
 export function carry(adult, kid) {
-  adult.P.body.add(kid.g); kid.g.position.set(-0.12, 1.08, 0.16); kid.g.rotation.set(0, 0.5, 0); kid.g.scale.setScalar(0.92);
+  adult.P.body.add(kid.g); kid.g.position.set(kid.mx ? -0.2 : -0.12, kid.mx ? 0.74 : 1.08, kid.mx ? 0.12 : 0.16); kid.g.rotation.set(0, kid.mx ? 0.6 : 0.5, 0); if (!kid.mx) kid.g.scale.setScalar(0.92);
   kid.P.legL.rotation.x = -1.2; kid.P.legR.rotation.x = -1.1;
 }
 export function carryPose(adult, t) {
@@ -211,6 +219,7 @@ export function carryPose(adult, t) {
   reach(adult, "R", local(adult, -0.02, 1.3, 0.3 + Math.sin(t * 1.4) * 0.01));
 }
 export function cry(kid, t, k = 1) {
+  if (kid.mx) { kid.idle = "Sitting_Idle"; return; }
   face(kid, { worry: k, blink: 0.75 * k, open: (0.6 + 0.4 * Math.sin(t * 7)) * k });
   kid.P.head.rotation.set(Math.sin(t * 5) * 0.06 * k, Math.sin(t * 2.2) * 0.12, 0);
   for (const tr of kid.P.tears) { tr.material.opacity = 0.85 * k; tr.position.y = -0.012 - ((t * 0.04) % 0.05); }

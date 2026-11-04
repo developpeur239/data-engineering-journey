@@ -100,7 +100,7 @@ export function apartment(S, variant) {
   const carton = new THREE.Group(); marc.P.armR.hand.add(carton); carton.position.set(0, -0.06, 0.04);
   box(0.07, 0.19, 0.07, M(0xf4f4f0, 0.5), 0, 0, 0, carton); box(0.072, 0.05, 0.072, M(0x3b78a8, 0.5), 0, -0.04, 0, carton);
   carton.visible = variant === "morning";
-  if (variant === "morning") { K.add(marc.g); marc.g.position.set(-0.55, 0, -1.55); chair.add(kid.g); kid.g.position.set(0, 0.8, 0); }
+  if (variant === "morning") { K.add(marc.g); marc.g.position.set(-0.55, 0, -1.55); chair.add(kid.g); kid.g.position.set(0, kid.mx ? 0.5 : 0.8, kid.mx ? 0.06 : 0); }
   if (variant === "day3" || variant === "radio") {
     // Marc debout près de la fenêtre, son fils dans les bras, la radio allumée sur l'îlot
     K.add(marc.g); marc.g.position.set(0.8, 0, -0.3); marc.g.rotation.y = 0.55; carry(marc, kid); chair.visible = false;
@@ -109,7 +109,7 @@ export function apartment(S, variant) {
   if (variant === "neighbor") {
     doc = person({ coat: 0x5b4b3a, inner: 0xd8d2c4, pants: 0x3a3a3a, hair: 0xb9b5ad, shoes: 0x3a2a20, glasses: true, style: "shirt", iris: 0x4a6a8a });
     K.add(doc.g); doc.g.position.set(0.47, 0, -0.15); doc.g.rotation.y = 2.24;
-    chair.add(kid.g); kid.g.position.set(0, 0.8, 0);
+    chair.add(kid.g); kid.g.position.set(0, kid.mx ? 0.5 : 0.8, kid.mx ? 0.06 : 0);
     K.add(marc.g); marc.g.position.set(1.45, 0, -0.12); marc.g.rotation.y = -2.24;
     const steth = new THREE.Group(); doc.P.armR.hand.add(steth);
     mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.012, 20), M(0xd0d4d8, 0.2, 0.9), 0, -0.08, 0.02, steth);
@@ -154,7 +154,7 @@ export function apartment(S, variant) {
       kid.P.armL.rotation.x = -0.6 + Math.sin(t * 3.1) * 0.35; kid.P.armR.rotation.x = -0.4 + Math.sin(t * 2.3 + 1) * 0.3;
     } else if (variant === "day3" || variant === "radio") {
       const close = (sp[3] || sp[sp.length - 1])[0];
-      if (variant === "day3") [pos, tgt] = camPath(t, [[0, V(2.75, 1.6, 2.05), V(0.75, 1.4, -0.35)], [close - 0.3, V(2.15, 1.62, 1.35), V(0.75, 1.5, -0.3)], [close + 2.5, V(1.6, 1.62, 0.75), V(0.72, 1.55, -0.27)], [d + 2, V(1.5, 1.62, 0.65), V(0.72, 1.55, -0.27)]]);
+      if (variant === "day3") [pos, tgt] = camPath(t, [[0, V(2.75, 1.6, 2.05), V(0.75, 1.4, -0.35)], [close - 0.3, V(2.15, 1.62, 1.35), V(0.75, 1.5, -0.3)], [close + 2.5, V(1.75, 1.78, 0.55), V(0.72, 1.5, -0.3)], [d + 2, V(1.68, 1.78, 0.48), V(0.72, 1.52, -0.3)]]);
       else [pos, tgt] = camPath(t, [[0, V(-0.55, 1.12, 0.05), V(-1.05, 1.0, -0.62)], [d, V(-0.75, 1.08, -0.1), V(-1.05, 1.0, -0.62)]]), fov = 32;
       stand(marc, t); carryPose(marc, t);
       marc.P.head.rotation.set(0.22, -0.35 + 0.08 * Math.sin(t * 0.5), 0);

@@ -4,8 +4,8 @@ import { THREE, scene } from "./core.js";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 
-const CHARS = { marc: "Ch23_nonPBR.fbx", doctor: "Ch01_nonPBR.fbx", remy: "Remy.fbx", womanA: "Ch21_nonPBR.fbx", womanB: "Ch37_nonPBR.fbx" };
-const HEIGHT = { marc: 1.78, doctor: 1.74, remy: 1.8, womanA: 1.68, womanB: 1.66 };
+const CHARS = { child: "Timmy.fbx", marc: "Ch23_nonPBR.fbx", doctor: "Ch01_nonPBR.fbx", remy: "Remy.fbx", womanA: "Ch21_nonPBR.fbx", womanB: "Ch37_nonPBR.fbx" };
+const HEIGHT = { child: 0.9, marc: 1.78, doctor: 1.74, remy: 1.8, womanA: 1.68, womanB: 1.66 };
 export const ANIMS = ["Breathing_Idle", "Walking", "Running", "Descending_Stairs", "Ascending_Stairs", "Typing", "Writing", "Carrying", "Box_Idle",
   "Nervously_Look_Around", "Reaching_Out", "Relieved_Sigh", "Shaking_Head_No", "Sitting_Idle", "Talking_On_A_Cell_Phone", "Texting_While_Standing"];
 const base = {}, clips = {};
@@ -23,6 +23,11 @@ export async function loadMixamo(roles = Object.keys(CHARS)) {
     const m = models[i];
     m.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false;
       for (const mt of [].concat(o.material)) { if (mt) { mt.side = THREE.FrontSide; if (mt.shininess !== undefined) mt.shininess = Math.min(mt.shininess, 12); } } } });
+    if (r === "child") {   // export « PBR » : textures intégrées non reliées au matériau, on les relie à la main
+      const tl = new THREE.TextureLoader(), map = tl.load("/assets/mixamo/timmy_diffuse.jpg"), nrm = tl.load("/assets/mixamo/timmy_normal.jpg");
+      map.colorSpace = THREE.SRGBColorSpace; map.flipY = true; nrm.flipY = true;
+      m.traverse((o) => { if (o.isMesh) o.material = new THREE.MeshStandardMaterial({ map, normalMap: nrm, roughness: 0.75, metalness: 0 }); });
+    }
     m.updateMatrixWorld(true);
     const bb = new THREE.Box3().setFromObject(m, true);
     m.scale.multiplyScalar(HEIGHT[r] / (bb.max.y - bb.min.y));

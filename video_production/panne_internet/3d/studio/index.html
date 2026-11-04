@@ -199,6 +199,7 @@ window.init = async (scn) => {
 
 window.renderAt = (t) => {
   const ctx = upd3d(t) || {};
+  for (const p of PEOPLE) if (p.mx) p.play(p.idle || "Sitting_Idle", t);   // l'enfant Mixamo
   const [sh, roll] = shake(t, S.impacts || []);
   place(ctx.pos.clone().add(sh), ctx.tgt, roll, ctx.fov || 38);
   renderer.render(scene, camera);
@@ -227,7 +228,7 @@ window.audit = (t) => {
   for (const p of PEOPLE) { if (p.g.parent && p.g.parent !== scene && PEOPLE.some((q) => q.P && q.P.body === p.g.parent)) continue;   // enfant porté
     let vis = true, q = p.g; while (q) { if (!q.visible) vis = false; q = q.parent; } if (!vis) continue;
     const c = p.g.getWorldPosition(new THREE.Vector3()); const r = p.kind === "child" ? 0.12 : 0.16;
-    const seated = p.kind === "mx" ? /Sitting|Typing/.test(p.cur || "") : false;
+    const seated = (p.kind === "mx" || p.mx) ? /Sitting|Typing/.test(p.cur || "") : false;
     const body = new THREE.Box3(new THREE.Vector3(c.x - r, c.y + (seated ? 0.75 : 0.25), c.z - r), new THREE.Vector3(c.x + r, c.y + 1.45, c.z + r));
     bodies.push([p, body]);
     for (const b of solids) if (b.intersectsBox(body)) { const i = b.clone().intersect(body).getSize(new THREE.Vector3()); if (i.x > 0.04 && i.z > 0.04 && i.y > 0.05) out.push(`personnage (${p.role || p.kind}) dans un objet ${b.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join("x")} à ${b.getCenter(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join(",")}`); }
