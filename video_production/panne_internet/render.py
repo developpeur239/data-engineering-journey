@@ -1163,7 +1163,7 @@ def main(argv=None):
     gain = min(-14.0 - lufs, 1.5)          # la crête reste sous -1,5 dB
     subprocess.run([
         "ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-i", str(mixed),
-        "-af", f"volume={gain:.2f}dB", "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+        "-af", f"volume={gain:.2f}dB", "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-ac", "2",
         "-shortest", str(out)], check=True)
     mixed.unlink()
     print(f"Volume : {lufs:.1f} LUFS avant correction, gain final {gain:+.2f} dB")
