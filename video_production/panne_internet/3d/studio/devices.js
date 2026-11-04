@@ -300,7 +300,7 @@ export function computer(S) {
     const kt = (k) => (t < err ? Math.max(0, Math.sin(t * 14 + k * 2)) * 0.012 : 0);
     reach(who, "L", V(-0.11, 0.79 + kt(0), -1.33)); reach(who, "R", V(0.11, 0.79 + kt(1), -1.33));
     who.P.head.rotation.set(0.05, 0, 0); face(who, { worry: sstep(err, err + 1, t) * 0.8, blink: blinkAt(t) });
-    const [P0, T0] = camPath(t, [[0, V(0.9, 1.35, 0.3), V(0, 1.15, -1.75)], [err + 0.4, V(0.35, 1.22, -0.95), V(0, 1.18, -1.75)], [d + 1, V(0.12, 1.2, -1.25), V(0, 1.18, -1.75)]]);
+    const [P0, T0] = camPath(t, [[0, V(1.0, 1.42, 0.2), V(0, 1.15, -1.75)], [err + 0.4, V(0.62, 1.36, -0.5), V(0, 1.18, -1.75)], [d + 1, V(0.5, 1.32, -0.8), V(0, 1.18, -1.75)]]);
     return { pos: P0.add(handheld(t, 0.5)), tgt: T0, fov: 38 };
   };
 }

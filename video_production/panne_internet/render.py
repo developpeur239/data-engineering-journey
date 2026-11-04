@@ -980,7 +980,9 @@ def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
             times = [sw[min(len(sw) - 1, round(j * (len(sw) - 1) / max(1, len(flat) - 1)))]["a"] for j in range(len(flat))]
             it = iter(times)
             sc["keyline"] = {"lines": [[[w, round(next(it), 3)] for w in line] for line in toks], "end": round(s1, 3)}
-        if a.stills:
+        if a.audit:
+            jobs.append({"scene": sc, "out": "", "frames": frames[i], "audit": [round(sc["dur"] * k / 12, 2) for k in range(1, 12)]})
+        elif a.stills:
             jobs.append({"scene": sc, "out": str(work / "stills" / f"s{i + 1:02d}"), "frames": frames[i],
                          "stills": [float(x) * sc["dur"] if float(x) <= 1 else float(x) for x in a.stills.split(",")]})
         elif not seg[i].exists():
@@ -1026,6 +1028,7 @@ def main(argv=None):
     ap.add_argument("--engine", choices=["2d", "3d"], default="2d", help="3d : studio three.js (3d/studio), style de référence")
     ap.add_argument("--assets", type=Path, help="(3d) dossier : vendor/three.module.min.js, fonts/, textures, countries.geojson")
     ap.add_argument("--font", default="bricolage", help="(3d) thème typographique : archivo, barlow, bricolage, shoulders, inter")
+    ap.add_argument("--audit", action="store_true", help="(3d) contrôle des collisions seulement (personnages, meubles, caméra)")
     ap.add_argument("--stills", help="(3d) images de contrôle seulement, ex. 0.5,3 (une série par scène)")
     a = ap.parse_args(argv)
 
@@ -1105,7 +1108,7 @@ def main(argv=None):
         with ProcessPoolExecutor(a.jobs) as ex:
             for done in ex.map(render_scene, jobs):
                 print(f"  scène {done + 1}/{len(SCENES)} rendue", flush=True)
-    if a.stills:
+    if a.stills or a.audit:
         return
 
     # 3. Son : voix calée sur les images + ambiance

@@ -40,6 +40,12 @@ function serve(studio, assets) {
     await page.waitForFunction(() => window.ready === true, null, { timeout: 120000 });
     try { await page.evaluate((s) => window.init(s), job.scene); } catch (e) { failed = e.message.split("\n").slice(0, 3).join(" | "); }
     if (failed) { console.error(`Erreur scène ${job.scene.n} :`, failed); process.exitCode = 2; await page.close(); continue; }
+    if (job.audit) {
+      const found = [];
+      for (const t of job.audit) { try { const r = await page.evaluate((x) => window.audit(x), t); for (const m of r) found.push(`${t.toFixed(1)} s : ${m}`); } catch (e) { found.push(`erreur ${e.message.split("\n")[0]}`); } }
+      console.log(`AUDIT scène ${job.scene.n} : ${found.length ? "\n  " + found.join("\n  ") : "ok"}`);
+      await page.close(); continue;
+    }
     if (job.stills) {
       for (const t of job.stills) { try { await page.evaluate((x) => window.renderAt(x), t); } catch (e) { console.error(`Erreur scène ${job.scene.n} à ${t} s :`, e.message.split("\n")[0]); process.exitCode = 2; break; }
         await page.screenshot({ path: `${job.out}_${t.toFixed(2)}.jpg`, type: "jpeg", quality: 88 }); }

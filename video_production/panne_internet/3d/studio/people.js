@@ -19,9 +19,10 @@ function roleFor(o) {
   if (o.long) return (_crowd++ % 2) ? "womanA" : "womanB";
   return ["remy", "doctor", "womanA", "womanB"][_crowd++ % 4];
 }
+export const PEOPLE = [];   // tous les personnages de la scène (contrôle des collisions)
 export function person(o = {}) {
-  if (mxReady() && !o.handmade) { const role = roleFor(o); return mxPerson(role, o.role ? null : ((_crowd * 0.137) % 1) * 0.5 - 0.25); }
-  return personHandmade(o);
+  const p = (mxReady() && !o.handmade) ? mxPerson(roleFor(o), o.role ? null : ((_crowd * 0.137) % 1) * 0.5 - 0.25) : personHandmade(o);
+  PEOPLE.push(p); return p;
 }
 function personHandmade(o = {}) {
   const {

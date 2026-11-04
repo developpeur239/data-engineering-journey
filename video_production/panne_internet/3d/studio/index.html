@@ -91,6 +91,7 @@ import * as places from "./places.js";
 import * as dev from "./devices.js";
 import * as gfx from "./graphics.js";
 import { loadMixamo } from "./mixamo.js";
+import { PEOPLE } from "./people.js";
 
 const stage = document.getElementById("stage"); stage.style.width = W + "px"; stage.style.height = H + "px";
 stage.prepend(renderer.domElement);
@@ -117,7 +118,7 @@ window.init = async (scn) => {
   S.atEnd = (re, fb) => { const w = (S.words || []).find((x) => re.test(x.w) || re.test(norm(x.w))); return w ? w.b : fb; };
   const n = S.n, k = S.kind, p = S.p;
   // personnages Mixamo : chargés seulement si la scène en a (décors avec personnages)
-  if (S.mixamo !== false && ((k === "person") || (k === "device" && !["phone", "notebook", "radio"].includes(p.what)) || [1, 2, 20, 22, 32, 35, 36, 41, 54, 7, 44, 45].includes(n)))
+  if (S.mixamo !== false && ((k === "person") || (k === "device" && !["phone", "notebook", "radio"].includes(p.what)) || [1, 2, 20, 22, 32, 35, 36, 41, 54, 55, 7, 44, 45].includes(n)))
     await loadMixamo();
   // ---- décor 3D ----
   const T = {
@@ -212,6 +213,31 @@ window.renderAt = (t) => {
   const cv = renderer.domElement, d = S.dur, wi = S.whipIn ? 1 - sstep(0, 0.2, t) : 0, wo = S.whipOut ? sstep(d - 0.2, d, t) : 0, k2 = Math.max(wi, wo);
   cv.style.filter = k2 > 0.01 ? `blur(${(k2 * 14).toFixed(1)}px)` : "none";
   cv.style.transform = k2 > 0.01 ? `translateX(${((wo - wi) * -90 * sc).toFixed(1)}px) scale(${1 + k2 * 0.04})` : "none";
+};
+// contrôle de cohérence : personnage dans un meuble, personnages qui se chevauchent, caméra dans un objet
+window.audit = (t) => {
+  const ctx = upd3d(t) || {}; place(ctx.pos, ctx.tgt, 0, ctx.fov || 38); scene.updateMatrixWorld(true);
+  const isPersonPart = (o) => { while (o) { if (PEOPLE.some((p) => p.g === o)) return true; o = o.parent; } return false; };
+  const solids = [];
+  scene.traverse((o) => { if (!o.isMesh || !o.visible || isPersonPart(o)) return; const m = [].concat(o.material)[0];
+    if (m && (m.transparent && m.opacity < 0.5)) return; let vis = true, q = o; while (q) { if (!q.visible) vis = false; q = q.parent; } if (!vis) return;
+    const b = new THREE.Box3().setFromObject(o), s = b.getSize(new THREE.Vector3());
+    if (Math.max(s.x, s.y, s.z) > 3.2 || Math.min(s.x, s.y, s.z) < 0.004 || s.x * s.z < 0.002) return; solids.push(b); });
+  const out = [], bodies = [];
+  for (const p of PEOPLE) { if (p.g.parent && p.g.parent !== scene && PEOPLE.some((q) => q.P && q.P.body === p.g.parent)) continue;   // enfant porté
+    let vis = true, q = p.g; while (q) { if (!q.visible) vis = false; q = q.parent; } if (!vis) continue;
+    const c = p.g.getWorldPosition(new THREE.Vector3()); const r = p.kind === "child" ? 0.12 : 0.16;
+    const seated = p.kind === "mx" ? /Sitting|Typing/.test(p.cur || "") : false;
+    const body = new THREE.Box3(new THREE.Vector3(c.x - r, c.y + (seated ? 0.75 : 0.25), c.z - r), new THREE.Vector3(c.x + r, c.y + 1.45, c.z + r));
+    bodies.push([p, body]);
+    for (const b of solids) if (b.intersectsBox(body)) { const i = b.clone().intersect(body).getSize(new THREE.Vector3()); if (i.x > 0.04 && i.z > 0.04 && i.y > 0.05) out.push(`personnage (${p.role || p.kind}) dans un objet ${b.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join("x")} à ${b.getCenter(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join(",")}`); }
+  }
+  for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) { const a = bodies[i][1], b = bodies[j][1];
+    if (a.intersectsBox(b)) { const s = a.clone().intersect(b).getSize(new THREE.Vector3()); if (s.x > 0.08 && s.z > 0.08) out.push(`deux personnages se chevauchent (${bodies[i][0].role || "?"} / ${bodies[j][0].role || "?"})`); } }
+  const cam = camera.position.clone();
+  for (const b of solids) if (b.containsPoint(cam)) out.push("caméra dans un objet " + b.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join("x"));
+  for (const [p, body] of bodies) if (body.clone().expandByScalar(0.05).containsPoint(cam)) out.push(`caméra dans un personnage (${p.role || p.kind})`);
+  return [...new Set(out)];
 };
 window.ready = true;
 </script>

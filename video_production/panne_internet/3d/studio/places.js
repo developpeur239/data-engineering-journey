@@ -103,14 +103,14 @@ export function apartment(S, variant) {
   if (variant === "morning") { K.add(marc.g); marc.g.position.set(-0.55, 0, -1.55); chair.add(kid.g); kid.g.position.set(0, 0.8, 0); }
   if (variant === "day3" || variant === "radio") {
     // Marc debout près de la fenêtre, son fils dans les bras, la radio allumée sur l'îlot
-    K.add(marc.g); marc.g.position.set(0.55, 0, -0.75); marc.g.rotation.y = 0.55; carry(marc, kid);
+    K.add(marc.g); marc.g.position.set(0.8, 0, -0.3); marc.g.rotation.y = 0.55; carry(marc, kid); chair.visible = false;
     chair.visible = false;
   }
   if (variant === "neighbor") {
     doc = person({ coat: 0x5b4b3a, inner: 0xd8d2c4, pants: 0x3a3a3a, hair: 0xb9b5ad, shoes: 0x3a2a20, glasses: true, style: "shirt", iris: 0x4a6a8a });
-    K.add(doc.g); doc.g.position.set(0.58, 0, -0.25); doc.g.rotation.y = 2.24;
+    K.add(doc.g); doc.g.position.set(0.47, 0, -0.15); doc.g.rotation.y = 2.24;
     chair.add(kid.g); kid.g.position.set(0, 0.8, 0);
-    K.add(marc.g); marc.g.position.set(0.05, 0, -0.85); marc.g.rotation.y = 1.28;
+    K.add(marc.g); marc.g.position.set(1.45, 0, -0.12); marc.g.rotation.y = -2.24;
     const steth = new THREE.Group(); doc.P.armR.hand.add(steth);
     mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.012, 20), M(0xd0d4d8, 0.2, 0.9), 0, -0.08, 0.02, steth);
     const kit = box(0.34, 0.2, 0.18, M(0x6a2a1e, 0.6), -0.1, 0.99, -0.6, K); kit.rotation.y = 0.4;
@@ -154,7 +154,7 @@ export function apartment(S, variant) {
       kid.P.armL.rotation.x = -0.6 + Math.sin(t * 3.1) * 0.35; kid.P.armR.rotation.x = -0.4 + Math.sin(t * 2.3 + 1) * 0.3;
     } else if (variant === "day3" || variant === "radio") {
       const close = (sp[3] || sp[sp.length - 1])[0];
-      if (variant === "day3") [pos, tgt] = camPath(t, [[0, V(2.5, 1.6, 1.6), V(0.5, 1.4, -0.8)], [close - 0.3, V(1.9, 1.62, 0.9), V(0.5, 1.55, -0.75)], [close + 2.5, V(1.35, 1.66, 0.3), V(0.45, 1.65, -0.72)], [d + 2, V(1.25, 1.66, 0.2), V(0.45, 1.66, -0.72)]]);
+      if (variant === "day3") [pos, tgt] = camPath(t, [[0, V(2.75, 1.6, 2.05), V(0.75, 1.4, -0.35)], [close - 0.3, V(2.15, 1.62, 1.35), V(0.75, 1.5, -0.3)], [close + 2.5, V(1.6, 1.62, 0.75), V(0.72, 1.55, -0.27)], [d + 2, V(1.5, 1.62, 0.65), V(0.72, 1.55, -0.27)]]);
       else [pos, tgt] = camPath(t, [[0, V(-0.55, 1.12, 0.05), V(-1.05, 1.0, -0.62)], [d, V(-0.75, 1.08, -0.1), V(-1.05, 1.0, -0.62)]]), fov = 32;
       stand(marc, t); carryPose(marc, t);
       marc.P.head.rotation.set(0.22, -0.35 + 0.08 * Math.sin(t * 0.5), 0);
@@ -218,7 +218,7 @@ export function metro(S, variant) {
     const p = mesh(new THREE.PlaneGeometry(2.0, 1.15), new THREE.MeshStandardMaterial({ map: pm, emissive: 0xffffff, emissiveMap: pm, emissiveIntensity: 0.25, roughness: 0.4 }), -HR + 0.12, 1.55, z, G, false); p.rotation.y = Math.PI / 2; }
   for (let i = 0; i < 4; i++) { const x = -2.1 + i * 1.4;
     box(0.28, 1.0, 1.1, M(0x9aa4a8, 0.3, 0.8), x, 0.5, -9, G);
-    box(0.9, 0.7, 0.03, new THREE.MeshStandardMaterial({ color: 0xbfe4ff, transparent: true, opacity: 0.25, roughness: 0.1 }), x + 0.62, 0.85, -9, G, false); }
+    box(0.3, 0.7, 0.03, new THREE.MeshStandardMaterial({ color: 0xbfe4ff, transparent: true, opacity: 0.25, roughness: 0.1 }), x + 0.3, 0.85, -9, G, false); }
   // automate
   const MX = HR - 0.33;
   const mach = new THREE.Group(); mach.position.set(MX, 0, 0.6); mach.rotation.y = -Math.PI / 2; G.add(mach);
@@ -254,7 +254,7 @@ export function metro(S, variant) {
   for (let i = 0; i < (variant === "coins" ? 9 : 6); i++) {
     const p = person({ coat: [0x3a3330, 0x2b3a45, 0x4a3b2a, 0x262626, 0x51463d, 0x34424a, 0x5a2e2e, 0x2e4a3a, 0x3d3d52][i], inner: 0x6b6b6b, pants: 0x1f2328,
       hair: [0x1a1410, 0x5a4030, 0x2a2420, 0x8a7a6a, 0x151515, 0x40301f, 0x6a3a1a, 0x222222, 0x9a8a70][i], shoes: 0x202020, bag: i % 2 == 0, long: i % 3 == 1 });
-    crowd.push({ p, x: -2.4 + (i % 3) * 0.9 + rnd() * 0.3, z0: -20 + rnd() * 6 + (i % 2) * 14, dir: i % 2 ? -1 : 1, sp: 1.1 + rnd() * 0.3, ph: rnd() * 6 });
+    crowd.push({ p, x: [-1.4, 0.0, 1.4][i % 3] + (rnd() - 0.5) * 0.15, z0: -20 + rnd() * 6 + (i % 2) * 14, dir: i % 2 ? -1 : 1, sp: 1.1 + rnd() * 0.3, ph: rnd() * 6 });
   }
   const ev = S.events || {};
   return (t) => {
