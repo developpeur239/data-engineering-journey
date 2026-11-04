@@ -1,7 +1,8 @@
 // Décors d'objets et de lieux : aéroport, téléphone, terminal, distributeur, serveurs, centre d'appels,
 // ordinateur, carnet, entrepôt, rayons, horloge, globe, mur d'écrans, fond graphique.
 import { THREE, scene, M, E, mesh, box, canvasTex, rep, screenTex, TEX, facade, rnd, reseed, clamp, sstep, lerp, V, room, counter, shelfUnit, bokeh, camPath, handheld } from "./core.js";
-import { person, face, blinkAt, walk, stand, sit, reach, local } from "./people.js";
+import { person, face, blinkAt, walk, stand, sit, reach, local, act } from "./people.js";
+import { mxReady } from "./mixamo.js";
 
 const INTER = "Inter, sans-serif";
 function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
@@ -118,11 +119,14 @@ export function terminal(S) {
     const sign = canvasTex(512, 128, (g, w, h) => { g.fillStyle = "#1d4f7a"; g.fillRect(0, 0, w, h); g.fillStyle = "#fff"; g.font = `bold 56px ${INTER}`; g.textAlign = "center"; g.fillText("RÉGIE · CAISSE", w / 2, 84); });
     mesh(new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshStandardMaterial({ map: sign, emissive: 0xffffff, emissiveMap: sign, emissiveIntensity: 0.4 }), 0, 2.6, -3.4, G, false); }
   counter(G, 0, -0.6, 3.6, 0.8, 1.0, M(shop ? 0x6a4a32 : 0x8a9196, 0.6), new THREE.MeshStandardMaterial({ map: rep(TEX.wood, 2, 1), roughness: 0.4 }));
-  const term = new THREE.Group(); term.position.set(0.2, 1.0, -0.4); term.rotation.set(-0.5, -0.25, 0); G.add(term);
-  box(0.09, 0.03, 0.19, M(0x1a1d21, 0.3, 0.3), 0, 0.015, 0, term);
-  const scr = screenTex(240, 180); const sm = mesh(new THREE.PlaneGeometry(0.07, 0.052), new THREE.MeshBasicMaterial({ map: scr.t }), 0, 0.031, -0.045, term, false); sm.rotation.x = -Math.PI / 2;
-  for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) box(0.018, 0.006, 0.014, M(r === 3 ? [0xd04040, 0xe0c040, 0x40b060][c] : 0xd0d4d8, 0.4), -0.025 + c * 0.025, 0.033, 0.015 + r * 0.02, term);
-  const card = box(0.054, 0.0015, 0.085, M(0x2d6fb7, 0.3, 0.4), 0, 0.03, 0.12, term);
+  // terminal de paiement debout sur son socle, incliné vers le client : écran en haut, clavier dessous, carte insérée en bas
+  const stand0 = new THREE.Group(); stand0.position.set(0.2, 1.0, -0.4); stand0.rotation.y = -0.25; G.add(stand0);
+  mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.02, 28), M(0x1a1d21, 0.35, 0.3), 0, 0.01, 0, stand0);
+  const term = new THREE.Group(); term.position.set(0, 0.03, 0); term.rotation.x = -1.05; stand0.add(term);
+  mesh(new THREE.CapsuleGeometry(0.035, 0.11, 6, 16), M(0x1f2329, 0.35, 0.25), 0, 0.09, 0, term).scale.set(1.25, 1, 0.45);
+  const scr = screenTex(240, 180); const sm = mesh(new THREE.PlaneGeometry(0.066, 0.05), new THREE.MeshBasicMaterial({ map: scr.t }), 0, 0.135, 0.017, term, false);
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) box(0.016, 0.011, 0.004, M(r === 3 ? [0xd04040, 0xe0c040, 0x40b060][c] : 0xd0d4d8, 0.4), -0.022 + c * 0.022, 0.085 - r * 0.016, 0.017, term);
+  const card = box(0.054, 0.085, 0.0015, M(0x2d6fb7, 0.3, 0.4), 0, -0.005, 0.012, term); card.scale.y = 0.55;
   const tl = new THREE.PointLight(0x80c0ff, 0.6, 0.6, 2); tl.position.set(0.2, 1.08, -0.4); G.add(tl);
   if (shop) { box(0.25, 0.3, 0.12, M(0xd8b070, 0.7), -0.6, 1.15, -0.55, G); mesh(new THREE.CapsuleGeometry(0.035, 0.5, 6, 12), M(0xd59a4a, 0.7), -0.25, 1.04, -0.7, G).rotation.z = Math.PI / 2;
     mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.24, 14), M(0x3a7a4a, 0.3), 0.75, 1.12, -0.55, G); box(0.16, 0.08, 0.1, M(0xe85a3a, 0.6), 0.55, 1.04, -0.75, G); }
@@ -133,8 +137,9 @@ export function terminal(S) {
   const clerk = person({ coat: 0x2f5d50, inner: 0xe0e0e0, hair: 0x151515, style: "apron", shoes: 0x222222, beard: true }); clerk.g.position.set(-0.2, 0, -1.4); clerk.g.rotation.y = 0.1;
   return (t) => {
     const d = S.dur, err = S.events.err ?? 0.6, bad = t > err;
-    card.position.z = lerp(0.12, 0.08, sstep(err - 0.6, err - 0.2, t));
-    if (!shop || t < S.at(/abandonnent/i, S.dur * 0.7)) reach(cust, "R", term.localToWorld(card.position.clone().add(V(0, 0.01, 0.05))));
+    card.position.y = lerp(-0.005, 0.03, sstep(err - 0.6, err - 0.2, t)); card.position.z = 0.012;
+    if (!shop || t < S.at(/abandonnent/i, S.dur * 0.7)) reach(cust, "R", term.localToWorld(card.position.clone().add(V(0, -0.03, 0.03))));
+    if (cust.kind === "mx" && t > err - 1.4 && t < err + 1.2) act(cust, "Reaching_Out", t - err + 1.0);
     scr.draw((g, w, h) => { g.fillStyle = bad ? "#9e1520" : "#163a55"; g.fillRect(0, 0, w, h); g.fillStyle = "#fff"; g.textAlign = "center";
       if (bad) { g.globalAlpha = 0.7 + 0.3 * Math.sign(Math.sin(t * 8)); g.font = `800 64px ${INTER}`; g.fillText("✕", w / 2, 92); g.globalAlpha = 1; g.font = `700 22px ${INTER}`; g.fillText(S.p.status || "ERREUR", w / 2, 150); }
       else { g.font = `700 26px ${INTER}`; g.fillText("CONNEXION…", w / 2, 100); } });
@@ -144,7 +149,7 @@ export function terminal(S) {
     clerk.P.armL.sh.rotation.set(-0.5 * sstep(err + 0.6, err + 1.2, t), 0, 0.2); clerk.P.armL.el.rotation.x = -0.8 * sstep(err + 0.6, err + 1.2, t);
     if (shop) { const leave = S.at(/abandonnent/i, d * 0.7); cust.g.rotation.y = Math.PI + 0.4 + sstep(leave, leave + 0.8, t) * 2.4;
       cust.g.position.x = 0.9 + sstep(leave + 0.6, leave + 3, t) * 2.2; if (t > leave + 0.6) walk(cust, t * 6); }
-    const [P0, T0] = camPath(t, [[0, V(0.45, 1.25, -0.15), V(0.2, 1.02, -0.4)], [err + 0.8, V(0.3, 1.32, -0.05), V(0.2, 1.03, -0.42)], [d + 1, V(-1.3, 1.65, 1.5), V(0.3, 1.15, -0.6)]]);
+    const [P0, T0] = camPath(t, [[0, V(0.42, 1.2, -0.05), V(0.2, 1.08, -0.4)], [err + 0.8, V(0.32, 1.22, -0.1), V(0.2, 1.09, -0.42)], [d + 1, V(-1.3, 1.65, 1.5), V(0.3, 1.15, -0.6)]]);
     return { pos: P0.add(handheld(t, 0.7)), tgt: T0, fov: 36 };
   };
 }
@@ -180,7 +185,8 @@ export function atm(S) {
     gl.color.set(t > dark ? 0x000000 : st === "bad" ? 0xff3030 : 0x80c0ff); gl.intensity = t > dark ? 0 : 3;
     queue.forEach((p, i) => { p.idle = i ? "Nervously_Look_Around" : "Breathing_Idle"; stand(p, t, i); face(p, { worry: 0.4 + 0.4 * sstep(err, err + 1, t), blink: blinkAt(t, i) }); p.P.head.rotation.set(0.1, Math.sin(t * 0.4 + i) * 0.25, 0); });
     if (queue[0]) { const key = Math.floor(t * 2.5) % 4, pr = t < err ? Math.max(0, Math.sin(t * 15.7)) : 0;
-      reach(queue[0], "R", mach.localToWorld(V(-0.06 + (key % 3) * 0.06, 1.15 - Math.floor(key / 3) * 0.05, 0.075 + 0.02 * (1 - pr)))); }
+      reach(queue[0], "R", mach.localToWorld(V(-0.06 + (key % 3) * 0.06, 1.15 - Math.floor(key / 3) * 0.05, 0.075 + 0.02 * (1 - pr))));
+      if (queue[0].kind === "mx" && t < err + 0.8) act(queue[0], "Reaching_Out", (t % 2.2) + 0.4); }
     const [P0, T0] = S.p.queue ? camPath(t, [[0, V(4.5, 1.8, 3.2), V(0.6, 1.4, -1.0)], [d + 1, V(3.4, 1.7, 1.2), V(0.3, 1.4, -2.0)]])
       : camPath(t, [[0, V(-1.8, 1.7, 0.8), V(0, 1.4, -3)], [err + 0.5, V(-1.0, 1.65, -1.2), V(0, 1.45, -3)], [d + 1, V(-0.75, 1.6, -1.9), V(0, 1.48, -3)]]);
     return { pos: P0.add(handheld(t)), tgt: T0, fov: 38 };
@@ -205,11 +211,13 @@ export function servers(S) {
   G.add(new THREE.HemisphereLight(0x5a6a80, 0x101010, 0.5));
   for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xbfd8ff, 4, 8, 1.6); l.position.set(0, 2.8, 1 - i * 4); G.add(l); }
   let tech = null;
-  if (mode === "sync") { tech = person({ coat: 0x2a2e36, inner: 0x4a6a8a, hair: 0x2a1a10, shoes: 0x222222, style: "shirt", glasses: true }); tech.g.position.set(0.1, 0, -1.5); tech.g.rotation.y = Math.PI / 2;
-    box(0.55, 0.95, 0.45, M(0x333333, 0.5, 0.5), 0.72, 0.475, -1.5, G);                            // chariot
-    box(0.24, 0.015, 0.34, M(0x202226, 0.4, 0.5), 0.68, 0.958, -1.5, G);                           // clavier du portable
-    const lap = screenTex(256, 160); const lm = mesh(new THREE.PlaneGeometry(0.33, 0.21), new THREE.MeshBasicMaterial({ map: lap.t }), 0.86, 1.07, -1.5, G, false);
-    lm.rotation.set(0, -Math.PI / 2, 0); lm.rotateX(-0.25); box(0.012, 0.23, 0.35, M(0x202226, 0.4, 0.5), 0.875, 1.07, -1.5, G).rotation.z = 0.25; tech.lap = lap; }
+  if (mode === "sync") { const mxOn = mxReady(); tech = person({ coat: 0x2a2e36, inner: 0x4a6a8a, hair: 0x2a1a10, shoes: 0x222222, style: "shirt", glasses: true }); tech.g.position.set(0.1, 0, -1.5); tech.g.rotation.y = Math.PI / 2;
+    const ch = mxOn ? 0.74 : 0.95;
+    box(0.55, ch, 0.45, M(0x333333, 0.5, 0.5), 0.72, ch / 2, -1.5, G);                            // chariot (hauteur de bureau si le technicien est assis)
+    if (mxOn) box(0.45, 0.45, 0.45, M(0x1e2024, 0.6), 0.12, 0.225, -1.5, G);                      // tabouret
+    box(0.24, 0.015, 0.34, M(0x202226, 0.4, 0.5), 0.62, ch + 0.008, -1.5, G);                           // clavier du portable
+    const lap = screenTex(256, 160); const lm = mesh(new THREE.PlaneGeometry(0.33, 0.21), new THREE.MeshBasicMaterial({ map: lap.t }), 0.86, ch + 0.12, -1.5, G, false);
+    lm.rotation.set(0, -Math.PI / 2, 0); lm.rotateX(-0.25); box(0.012, 0.23, 0.35, M(0x202226, 0.4, 0.5), 0.875, ch + 0.12, -1.5, G).rotation.z = 0.25; tech.lap = lap; if (mxOn) tech.g.position.x = 0.02; }
   return (t) => {
     const d = S.dur, ok = S.at(/retirée|corriger|retir/i, d * 0.4);
     racks.forEach((r, i) => r.tx.draw((g, w, h) => {
@@ -225,7 +233,9 @@ export function servers(S) {
         } }
     }));
     beacon.intensity = mode === "fail" ? (Math.sin(t * 6) > 0 ? 8 : 0) : 0;
-    if (tech) { stand(tech, t); tech.P.body.rotation.x = 0.18;
+    if (tech && tech.kind === "mx") { tech.seatAnim = "Typing"; tech.t = t; sit(tech);
+      tech.lap.draw((g, w, h) => { g.fillStyle = "#0b0f14"; g.fillRect(0, 0, w, h); g.fillStyle = "#3dff8a"; g.font = `14px "JetBrains Mono"`; for (let i = 0; i < 9; i++) g.fillText(`> reset db-${String(1000 + Math.floor(t * 4) * 9 + i).padStart(5, "0")} … ok`, 10, 20 + i * 16); }); }
+    else if (tech) { stand(tech, t); tech.P.body.rotation.x = 0.18;
       const tap = (k) => Math.max(0, Math.sin(t * 15 + k * 2.1)) * 0.012;
       reach(tech, "L", V(0.64, 0.975 + tap(0), -1.43 - 0.03 * Math.sin(t * 3)));
       reach(tech, "R", V(0.64, 0.975 + tap(1), -1.57 + 0.03 * Math.sin(t * 2.6)));

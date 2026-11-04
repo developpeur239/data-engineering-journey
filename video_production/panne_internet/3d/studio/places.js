@@ -1,6 +1,6 @@
 // Décors avec personnages : appartement de Marc, station de métro, pharmacie, cage d'escalier, rue.
 import { THREE, scene, M, E, mesh, box, canvasTex, rep, screenTex, TEX, facade, rnd, clamp, sstep, lerp, V, room, counter, shelfUnit, bokeh, camPath, handheld } from "./core.js";
-import { person, child, face, blinkAt, walk, stand, sit, carry, carryPose, cry, reach, plant, local } from "./people.js";
+import { person, child, face, blinkAt, walk, stand, sit, carry, carryPose, cry, reach, plant, local, act } from "./people.js";
 
 export const MARC = { role: "marc", coat: 0x1d2a44, inner: 0x8a8f96, pants: 0x232a36, hair: 0x3b2a20, shoes: 0xeeeeee };
 
@@ -99,7 +99,7 @@ export function apartment(S, variant) {
   box(0.36, 0.05, 0.36, M(0xd8c3a0, 0.6), 0, 0.78, 0, chair); box(0.36, 0.4, 0.04, M(0xd8c3a0, 0.6), 0, 1.0, -0.17, chair); box(0.42, 0.04, 0.2, M(0xf2efe8, 0.4), 0, 1.0, 0.26, chair);
   const carton = new THREE.Group(); marc.P.armR.hand.add(carton); carton.position.set(0, -0.06, 0.04);
   box(0.07, 0.19, 0.07, M(0xf4f4f0, 0.5), 0, 0, 0, carton); box(0.072, 0.05, 0.072, M(0x3b78a8, 0.5), 0, -0.04, 0, carton);
-  carton.visible = variant === "morning";
+  carton.visible = variant === "morning" && marc.kind !== "mx";
   if (variant === "morning") { K.add(marc.g); marc.g.position.set(-0.55, 0, -1.55); chair.add(kid.g); kid.g.position.set(0, kid.mx ? 0.5 : 0.8, kid.mx ? 0.06 : 0); }
   if (variant === "day3" || variant === "radio") {
     // Marc debout près de la fenêtre, son fils dans les bras, la radio allumée sur l'îlot
@@ -271,6 +271,7 @@ export function metro(S, variant) {
       const readerW = mach.localToWorld(V(0.2, 1.03, 0.36));
       if (kid) carryPose(marc, t);
       if (k > 0.01) reach(marc, "R", local(marc, 0.24, kid ? 1.1 : 0.95, 0.22).lerp(readerW, k));
+      if (marc.kind === "mx" && !kid && t > err - 1.2 && t < err + 1.6) act(marc, "Reaching_Out", t - err + 1.0);
       else if (!kid) { marc.P.armR.sh.rotation.set(-0.25, 0, -0.12); marc.P.armR.el.rotation.set(-0.5, 0, 0); }
       card.rotation.set(Math.PI / 2 * k, 0, 0);
       const look = sstep(err + 0.3, err + 1.0, t);
@@ -408,7 +409,7 @@ export function street(S) {
   for (let k = 0; k < 2; k++) { const n = mesh(new THREE.PlaneGeometry(0.13, 0.068), new THREE.MeshStandardMaterial({ map: noteTex, side: THREE.DoubleSide, roughness: 0.8 }), 0.01 * k, -0.07, 0.05 + k * 0.004, marc.P.armR.hand, false); n.rotation.set(0.3, 0, 0.2 + k * 0.3); }
   const people = [];
   for (let i = 0; i < 5; i++) { const p = person({ coat: [0x5a4a3a, 0x2b3a45, 0x6a2e2e, 0x3a4a3a, 0x444444][i], hair: [0x2a2420, 0x8a7a6a, 0x151515, 0x6a3a1a, 0x444444][i], shoes: 0x222222, long: i % 2 == 1 });
-    people.push({ p, x: (i % 2 ? 5.0 : -5.2) + rnd() * 0.6, z: -6 - i * 7, dir: i % 2 ? 1 : -1 }); }
+    people.push({ p, x: (i % 2 ? 4.15 : -5.2) + rnd() * 0.25, z: -6 - i * 7, dir: i % 2 ? 1 : -1 }); }
   return (t) => {
     const d = S.dur, z = 2 - t * 3.6;
     marc.g.position.set(5.0, 0.14, z); marc.g.rotation.y = Math.PI; walk(marc, t * 11, 0.75);

@@ -199,7 +199,20 @@ window.init = async (scn) => {
 
 window.renderAt = (t) => {
   const ctx = upd3d(t) || {};
-  for (const p of PEOPLE) if (p.mx) p.play(p.idle || "Sitting_Idle", t);   // l'enfant Mixamo
+  for (const p of PEOPLE) if (p.mx) {   // l'enfant Mixamo
+    p.play(p.idle || "Sitting_Idle", t);
+    const A = p.carriedBy;
+    if (A) {   // assis sur les avant-bras du père : ses hanches exactement entre les deux mains
+      A.g.updateWorldMatrix(true, true);
+      const hl = A.bones.LeftHand.getWorldPosition(new THREE.Vector3()), hr = A.bones.RightHand.getWorldPosition(new THREE.Vector3());
+      const mid = hl.clone().add(hr).multiplyScalar(0.5);
+      const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(A.g.getWorldQuaternion(new THREE.Quaternion()));
+      mid.add(fwd.multiplyScalar(-0.02)); mid.y -= 0.1;
+      p.g.rotation.set(0, A.g.rotation.y + Math.PI / 2, 0); p.g.position.set(0, 0, 0); p.g.updateWorldMatrix(true, true);
+      const h = p.bones.Hips.getWorldPosition(new THREE.Vector3());
+      p.g.position.copy(mid.sub(h)); p.g.updateWorldMatrix(true, true);
+    }
+  }
   const [sh, roll] = shake(t, S.impacts || []);
   place(ctx.pos.clone().add(sh), ctx.tgt, roll, ctx.fov || 38);
   renderer.render(scene, camera);

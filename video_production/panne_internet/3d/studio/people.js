@@ -15,9 +15,10 @@ let _crowd = 0;
 function roleFor(o) {
   if (o.role) return o.role;
   if (o.style === "whitecoat") return o.long ? "womanB" : "remy";
+  if (o.style === "apron") return "remy";                 // Remy (en short) seulement derrière un comptoir
   if (o.glasses && (o.bald || o.hair === 0xb9b5ad)) return "doctor";
   if (o.long) return (_crowd++ % 2) ? "womanA" : "womanB";
-  return ["remy", "doctor", "womanA", "womanB"][_crowd++ % 4];
+  return ["doctor", "womanA", "womanB"][_crowd++ % 3];
 }
 export const PEOPLE = [];   // tous les personnages de la scène (contrôle des collisions)
 export function person(o = {}) {
@@ -209,11 +210,12 @@ function childHandmade(o = {}) {
 }
 // enfant porté dans les bras (côté gauche de l'adulte)
 export function carry(adult, kid) {
+  if (kid.mx && adult.kind === "mx") { kid.carriedBy = adult; scene.add(kid.g); return; }   // placé entre les mains à chaque image
   adult.P.body.add(kid.g); kid.g.position.set(kid.mx ? -0.2 : -0.12, kid.mx ? 0.74 : 1.08, kid.mx ? 0.12 : 0.16); kid.g.rotation.set(0, kid.mx ? 0.6 : 0.5, 0); if (!kid.mx) kid.g.scale.setScalar(0.92);
   kid.P.legL.rotation.x = -1.2; kid.P.legR.rotation.x = -1.1;
 }
 export function carryPose(adult, t) {
-  if (adult.kind === "mx") adult.play("Carrying", t);
+  if (adult.kind === "mx") { adult.play("Box_Idle", t); return; }
   // une main sous l'enfant, l'autre dans son dos (cinématique inverse : les mains touchent l'enfant)
   reach(adult, "L", local(adult, -0.1, 1.02, 0.2));
   reach(adult, "R", local(adult, -0.02, 1.3, 0.3 + Math.sin(t * 1.4) * 0.01));
@@ -252,8 +254,10 @@ function ik2(root, mid, target, a, b, pole) {
   return beta;
 }
 // main gauche ou droite vers un point du monde ; le coude part vers l'arrière et l'extérieur
+// geste capturé (Mixamo) joué à un instant local : remplace les bras calculés, qui cassaient sur ces personnages
+export function act(p, name, localT) { if (p.kind === "mx") p.play(name, Math.max(0, localT)); }
 export function reach(p, side, target, pole) {
-  if (p.kind === "mx") { p.ik(side, target, pole); return; }
+  if (p.kind === "mx") return;
   const A = side === "L" ? p.P.armL : p.P.armR, s = side === "L" ? -1 : 1;
   const pw = pole || _v(s * 0.6, -0.4, -1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
   A.sh.rotation.set(0, 0, 0); A.el.rotation.set(0, 0, 0);
@@ -261,7 +265,7 @@ export function reach(p, side, target, pole) {
 }
 // pied vers un point (escaliers, trottoir) ; le genou part vers l'avant
 export function plant(p, side, target) {
-  if (p.kind === "mx") { p.leg(side, target); return; }
+  if (p.kind === "mx") return;
   const Lg = side === "L" ? p.P.legL : p.P.legR;
   const fwd = _v(0, 0, 1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
   Lg.hip.rotation.set(0, 0, 0); Lg.knee.rotation.set(0, 0, 0);
