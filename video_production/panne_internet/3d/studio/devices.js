@@ -492,9 +492,9 @@ export function backdrop(S) {
   const G = new THREE.Group(); scene.add(G); scene.background = new THREE.Color(0x0a0c0e);
   const n = 500, pos = [];
   for (let i = 0; i < n; i++) pos.push((rnd() - 0.5) * 16, rnd() * 8, -rnd() * 14);
-  const dust = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)), new THREE.PointsMaterial({ color: 0x9fb0c0, size: 0.025, transparent: true, opacity: 0.5 }));
+  const dust = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)), new THREE.PointsMaterial({ color: 0xaebfcf, size: 0.04, transparent: true, opacity: 0.75 }));
   G.add(dust);
   const grid = new THREE.GridHelper(40, 40, 0x1e2a30, 0x14191c); grid.position.y = -0.5; G.add(grid);
-  return (t) => { dust.rotation.y = t * 0.01; dust.position.y = -t * 0.02;
-    return { pos: V(Math.sin(t * 0.1) * 0.3, 2 + Math.sin(t * 0.13) * 0.1, 6 - t * 0.04), tgt: V(0, 1.6, -4), fov: 40 }; };
+  return (t) => { dust.rotation.y = t * 0.03; dust.position.y = -t * 0.06;
+    return { pos: V(Math.sin(t * 0.25) * 0.6, 2 + Math.sin(t * 0.3) * 0.2, 6 - t * 0.12), tgt: V(0, 1.6, -4), fov: 40 }; };
 }

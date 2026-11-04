@@ -2,7 +2,8 @@
 // Tout est dessiné en 1920x1080 logiques, puis mis à l'échelle de la vidéo.
 import { sstep, clamp, lerp, reseed, rnd } from "./core.js";
 
-const hudEl = document.getElementById("hud");
+let hudEl = document.getElementById("hud");
+export function setLayer(e) { hudEl = e; }   // calque des contenus animés (les repères fixes restent sur #hud)
 const cv = document.getElementById("g2d"); cv.width = 1920; cv.height = 1080;
 export const g2 = cv.getContext("2d");
 const RED = "#ff5a5f", CYAN = "#5fd4dc", ORANGE = "#f5a524", GREY = "#9aa3a8", WHITE = "#f2f4f5", LIME = "#c6f36b";
