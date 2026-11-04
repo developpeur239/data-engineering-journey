@@ -33,3 +33,9 @@ scène 32 (pharmacie avec son fils fiévreux). Rappeler la déclaration « AI us
 Idée liée à la vidéo longue, par exemple « Et si Internet s'arrêtait 10 secondes ? » (vérifier d'abord sur YouTube
 qu'elle n'existe pas). Suivre le `SKILL.md` du skill : script → voix → plan → **planche des plans montrée à
 l'utilisateur avant l'animation** → animation → son → master. Personnages originaux (pas Pip ni Mo).
+
+## À appliquer dès la prochaine vidéo longue (décision du 4 novembre 2026)
+Les enseignements de « 1 MINUTE » / « 1 HOUR » (Last Soul) sont à appliquer dès l'écriture, pas en retouche :
+analyse dans `../video_analysis/lastsoul_recette.md`, règles dans `montage_guide.md` (sections 9 et 10),
+réglages déjà branchés dans le moteur (`panne_internet/raconter_sans_voix.md` : pensées, boucle accélérée,
+silences complets). La vidéo « panne Internet » est publiée : on n'y touche plus.
