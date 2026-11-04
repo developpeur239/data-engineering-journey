@@ -45,6 +45,23 @@ avoir l'impression qu'on lui fait la morale.
 7. **Un sujet universel.** Le spectateur doit se reconnaître dans les 20 premières secondes, quel que soit son pays
    ou son âge.
 
+## Techniques de narration visuelle (obligatoires)
+1. **L'accroche (les 10 premières secondes)** : en même temps, un **contexte** clair (qui, où), une **question** que
+   le spectateur veut voir résolue, et une **émotion**. Le point de départ choisi peut faire ou défaire le film :
+   propose **deux débuts possibles** et garde le plus fort, en expliquant pourquoi.
+2. **Des vagues de tension** : la tension monte, se relâche, puis remonte plus haut, plusieurs fois. Jamais une
+   seule montée continue, jamais un plat. Chaque relâchement prépare une montée plus forte.
+3. **Le son raconte** : une montée sonore qui s'arrête net, comme un mur, au moment où il se heurte à la réalité.
+   Et quand un sentiment ne peut pas se filmer (anxiété, culpabilité, solitude), crée-le par le son : une
+   « bulle » sonore autour de lui (grondement sourd, bruits du monde étouffés, un son qui revient).
+4. **Le rythme** : plans rapides pour ce qui n'est pas essentiel (la vie qui passe, les journées qui défilent),
+   plans longs pour ce qui compte vraiment (le moment où il réalise, ce qu'il découvre chez sa mère). Si un
+   passage traîne, insère deux ou trois plans courts après un plan long.
+5. **Deux couches en même temps** : le **voyage physique** (ce qu'il fait, où il va) et le **voyage intérieur**
+   (ce qu'il ressent, ce qui change en lui). Sans voix off, la couche intérieure passe par une **métaphore visuelle**
+   (un objet vivant qui dépérit puis renaît, par exemple une plante offerte par sa mère), par le son et par la
+   lumière. Le spectateur doit sentir que le film ne parle pas d'appels téléphoniques, mais d'amour et de temps.
+
 ## Structure de montage à respecter
 1. **L'amour d'abord (environ 15 %)** : une scène courte qui montre le lien entre eux, sans un mot de trop.
 2. **La boucle qui accélère (environ 25 %)** : la même petite séquence revient plusieurs fois (elle appelle, il
@@ -85,9 +102,10 @@ plan du script final doit pouvoir être rattaché à l'une de ces 5 lignes ; s'i
    - le son (bruitage, musique, silence) ;
    - le texte à l'écran s'il y en a (6 mots au maximum) ;
    - l'émotion visée chez le spectateur et son intensité, de 1 à 10 ;
-   - la ligne de l'histoire (1 à 5) que ce plan sert.
-4. **La courbe de l'émotion** : une ligne qui décrit comment l'intensité évolue du début à la fin, et où se
-   trouve le sommet.
+   - la ligne de l'histoire (1 à 5) que ce plan sert ;
+   - la couche intérieure : ce qu'il ressent à ce moment (en quelques mots).
+4. **La courbe de la tension** : les vagues successives (où ça monte, où ça relâche, où ça coupe net), et où se
+   trouve le sommet de l'émotion.
 5. **Le titre** (1 à 3 mots) et la phrase finale (3 à 6 mots).
 6. **Ton autocritique** : relis ton script et réponds honnêtement à ces questions, puis corrige-le si besoin :
    - Un spectateur se reconnaît-il dans les 20 premières secondes ?
@@ -95,4 +113,7 @@ plan du script final doit pouvoir être rattaché à l'une de ces 5 lignes ; s'i
    - Y a-t-il une scène qui ne sert pas l'émotion principale ?
    - Le retournement surprend-il tout en paraissant évident après coup ?
    - Chaque plan se rattache-t-il à l'une des 5 lignes ?
+   - Les 10 premières secondes posent-elles un contexte, une question et une émotion ?
+   - La tension avance-t-elle par vagues (montée, relâche, remontée plus forte) ?
+   - Sent-on le voyage intérieur, et pas seulement les actions ?
    - La fin donne-t-elle envie d'appeler sa mère, sans faire la morale ?

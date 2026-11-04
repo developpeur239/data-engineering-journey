@@ -43,3 +43,7 @@ silences complets). La vidéo « panne Internet » est publiée : on n'y touche 
 Avant tout script (vidéo longue, Short ou court-métrage) : écrire d'abord **l'histoire en 5 lignes**
 (situation, désir, conflit, changement, résultat), la faire valider, puis la développer en 10 lignes, puis
 seulement découper en plans. Chaque plan doit se rattacher à l'une des 5 lignes.
+Narration visuelle (tous les formats) : accroche des 10 premières secondes = contexte + question + émotion ; tension
+par vagues (monter, relâcher, remonter plus haut) ; montée sonore coupée net ; « bulle » sonore pour ce qui ne se
+filme pas ; plans rapides pour l'accessoire, longs pour l'essentiel ; deux couches (voyage physique et voyage
+intérieur, porté par une métaphore visuelle, le son et la lumière quand il n'y a pas de voix).
