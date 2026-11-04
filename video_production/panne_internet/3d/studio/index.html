@@ -84,12 +84,13 @@ canvas{display:block}
   <div id="hud"></div>
   <img id="logo" src="/assets/logo.png" alt="">
 </div>
-<script type="importmap">{"imports":{"three":"/assets/vendor/three.module.min.js"}}</script>
+<script type="importmap">{"imports":{"three":"/assets/vendor/three.module.min.js","three/addons/":"/assets/vendor/addons/"}}</script>
 <script type="module">
 import { THREE, renderer, scene, camera, W, H, place, shake, sstep, clamp, reseed, rnd } from "./core.js";
 import * as places from "./places.js";
 import * as dev from "./devices.js";
 import * as gfx from "./graphics.js";
+import { loadMixamo } from "./mixamo.js";
 
 const stage = document.getElementById("stage"); stage.style.width = W + "px"; stage.style.height = H + "px";
 stage.prepend(renderer.domElement);
@@ -115,6 +116,9 @@ window.init = async (scn) => {
   S.at = (re, fb) => { const w = (S.words || []).find((x) => re.test(x.w) || re.test(norm(x.w))); return w ? w.a : fb; };
   S.atEnd = (re, fb) => { const w = (S.words || []).find((x) => re.test(x.w) || re.test(norm(x.w))); return w ? w.b : fb; };
   const n = S.n, k = S.kind, p = S.p;
+  // personnages Mixamo : chargés seulement si la scène en a (décors avec personnages)
+  if (S.mixamo !== false && ((k === "person") || (k === "device" && !["phone", "notebook", "radio"].includes(p.what)) || [1, 2, 20, 22, 32, 35, 36, 41, 54, 7, 44, 45].includes(n)))
+    await loadMixamo();
   // ---- décor 3D ----
   const T = {
     1: () => places.apartment(S, "morning"), 2: () => places.metro(S, "refuse"), 20: () => places.metro(S, "coins"), 22: () => places.metro(S, "stuck"),

@@ -39,7 +39,7 @@ export function airport(S) {
       });
     });
     boardL.color.set(t > a0 ? 0xff7070 : 0xffd27a);
-    people.forEach((p, i) => { stand(p, t, i); p.P.head.rotation.set(-0.25, Math.sin(t * 0.3 + i) * 0.2, 0); face(p, { worry: sstep(a0, a0 + 2, t) * 0.7, blink: blinkAt(t, i) }); });
+    people.forEach((p, i) => { p.idle = t > a0 + i * 0.2 ? "Nervously_Look_Around" : "Breathing_Idle"; stand(p, t, i); p.P.head.rotation.set(-0.25, Math.sin(t * 0.3 + i) * 0.2, 0); face(p, { worry: sstep(a0, a0 + 2, t) * 0.7, blink: blinkAt(t, i) }); });
     const [P0, T0] = camPath(t, [[0, V(-3, 1.7, 7), V(0, 3.2, -9)], [d + 1, V(1.5, 2.2, 2.5), V(0.5, 3.6, -9)]]);
     return { pos: P0.add(handheld(t)), tgt: T0, fov: 42 };
   };
@@ -178,7 +178,7 @@ export function atm(S) {
       else { g.save(); g.translate(w / 2, 120); g.rotate(t * 4); g.strokeStyle = "#fff"; g.lineWidth = 10; g.lineCap = "round"; g.beginPath(); g.arc(0, 0, 44, 0, Math.PI * 1.4); g.stroke(); g.restore();
         g.font = `700 26px ${INTER}`; g.fillText(S.p.status, w / 2, 230); } });
     gl.color.set(t > dark ? 0x000000 : st === "bad" ? 0xff3030 : 0x80c0ff); gl.intensity = t > dark ? 0 : 3;
-    queue.forEach((p, i) => { stand(p, t, i); face(p, { worry: 0.4 + 0.4 * sstep(err, err + 1, t), blink: blinkAt(t, i) }); p.P.head.rotation.set(0.1, Math.sin(t * 0.4 + i) * 0.25, 0); });
+    queue.forEach((p, i) => { p.idle = i ? "Nervously_Look_Around" : "Breathing_Idle"; stand(p, t, i); face(p, { worry: 0.4 + 0.4 * sstep(err, err + 1, t), blink: blinkAt(t, i) }); p.P.head.rotation.set(0.1, Math.sin(t * 0.4 + i) * 0.25, 0); });
     if (queue[0]) { const key = Math.floor(t * 2.5) % 4, pr = t < err ? Math.max(0, Math.sin(t * 15.7)) : 0;
       reach(queue[0], "R", mach.localToWorld(V(-0.06 + (key % 3) * 0.06, 1.15 - Math.floor(key / 3) * 0.05, 0.075 + 0.02 * (1 - pr)))); }
     const [P0, T0] = S.p.queue ? camPath(t, [[0, V(4.5, 1.8, 3.2), V(0.6, 1.4, -1.0)], [d + 1, V(3.4, 1.7, 1.2), V(0.3, 1.4, -2.0)]])
@@ -244,7 +244,8 @@ function callCenter(S, G) {
     const mon = box(0.55, 0.35, 0.03, M(0x0a0a0a), x, 1.1, z - 0.2, G);
     const lamp = mesh(new THREE.SphereGeometry(0.03, 12, 10), E(0xff2020), x + 0.6, 0.8, z - 0.1, G, false); lamps.push(lamp);
     const op = person({ coat: [0x3a4a6a, 0x6a3a3a, 0x3a5a4a, 0x5a4a3a, 0x444a5a, 0x6a5a3a][i], inner: 0xddd, hair: [0x151515, 0x5a3a20, 0x2a2420, 0x8a6a4a, 0x111111, 0x3a2a1a][i], style: "shirt", long: i % 2 == 0, shoes: 0x222222 });
-    op.g.position.set(x, 0.0, z + 0.6); op.g.rotation.y = Math.PI; sit(op); op.g.position.y = 0.45; ops.push(op);
+    op.g.position.set(x, 0.0, z + 0.6); op.g.rotation.y = Math.PI; sit(op); if (op.kind !== "mx") op.g.position.y = 0.45; op.seatAnim = "Typing"; ops.push(op);
+    if (op.kind === "mx") { const ch = box(0.5, 0.45, 0.5, M(0x222428, 0.6), x, 0.225, z + 0.75, G); }
     const hs = mesh(new THREE.TorusGeometry(0.115, 0.01, 8, 24, Math.PI), M(0x111111, 0.4), 0, 0.03, 0, op.P.head, false); hs.rotation.z = 0;
     mesh(new THREE.CapsuleGeometry(0.005, 0.08, 4, 8), M(0x111111), 0.08, -0.07, 0.07, op.P.head, false).rotation.z = 1.1;
   }
@@ -255,7 +256,7 @@ function callCenter(S, G) {
     const d = S.dur;
     lamps.forEach((l, i) => l.material.color.set(Math.sin(t * 8 + i * 1.7) > 0 ? 0xff2020 : 0x330000));
     red.intensity = 2 + Math.sin(t * 6) * 1.2;
-    ops.forEach((o, i) => { o.P.armR.sh.rotation.set(-1.5, 0, -0.3); o.P.armR.el.rotation.set(-1.6, 0, 0); o.P.armL.sh.rotation.set(-0.8, 0, 0.1); o.P.armL.el.rotation.x = -0.8;
+    ops.forEach((o, i) => { if (o.kind === "mx") { o.t = t + i * 0.7; sit(o); } o.P.armR.sh.rotation.set(-1.5, 0, -0.3); o.P.armR.el.rotation.set(-1.6, 0, 0); o.P.armL.sh.rotation.set(-0.8, 0, 0.1); o.P.armL.el.rotation.x = -0.8;
       face(o, { worry: 0.8, blink: blinkAt(t, i), open: 0.3 * Math.max(0, Math.sin(t * 4 + i)) }); o.P.head.rotation.set(0.1, Math.sin(t * 0.6 + i) * 0.2, 0); });
     const [P0, T0] = camPath(t, [[0, V(-4.5, 1.8, 3.5), V(0, 1.0, -1.5)], [d + 1, V(-2.0, 1.6, 1.8), V(0, 1.1, -1.8)]]);
     return { pos: P0.add(handheld(t)), tgt: T0, fov: 40 };
@@ -279,7 +280,8 @@ export function computer(S) {
   G.add(new THREE.HemisphereLight(hosp ? 0xcfe8e4 : 0xffe0c0, 0x2a2420, 0.55));
   const who = person(hosp ? { coat: 0xf3f4f2, inner: 0x7fb0c8, pants: 0x6a8aa0, hair: 0x2a1a14, style: "whitecoat", long: true, shoes: 0xeeeeee, iris: 0x3a5a3a }
     : { ...{ coat: 0x2a3a4a, inner: 0xd8d8d8, pants: 0x232a36, hair: 0x6a3a1a, shoes: 0x333333, style: "shirt" } });
-  who.g.position.set(0.15, 0, -0.75); who.g.rotation.y = Math.PI + 0.15; sit(who); who.g.position.y = 0.42;
+  who.g.position.set(0.15, 0, -0.75); who.g.rotation.y = Math.PI + 0.15; sit(who); if (who.kind !== "mx") who.g.position.y = 0.42;
+  if (who.kind === "mx") { box(0.5, 0.45, 0.5, M(0x2a2c30, 0.6), 0.15, 0.225, -0.6, G); who.g.position.z = -0.95; }
   return (t) => {
     const d = S.dur, err = S.events.err ?? 0.6, bad = t > err;
     scr.draw((g, w, h) => {
@@ -294,7 +296,7 @@ export function computer(S) {
         rr(g, w / 2 - 80, 310, 160, 40, 20); g.fillStyle = "#2f6fd6"; g.fill(); g.fillStyle = "#fff"; g.font = `600 18px ${INTER}`; g.fillText("Réessayer", w / 2, 336); }
       g.textAlign = "left";
     });
-    stand(who, t); sit(who); who.g.position.y = 0.42;
+    stand(who, t); who.seatAnim = t < err ? "Typing" : "Sitting_Idle"; sit(who); if (who.kind !== "mx") who.g.position.y = 0.42;
     const kt = (k) => (t < err ? Math.max(0, Math.sin(t * 14 + k * 2)) * 0.012 : 0);
     reach(who, "L", V(-0.11, 0.79 + kt(0), -1.33)); reach(who, "R", V(0.11, 0.79 + kt(1), -1.33));
     who.P.head.rotation.set(0.05, 0, 0); face(who, { worry: sstep(err, err + 1, t) * 0.8, blink: blinkAt(t) });
@@ -381,7 +383,7 @@ export function shelves(S) {
     p.g.position.set(-0.8 + (i % 2) * 1.4, 0, -1 - i * 3); p.g.rotation.y = i % 2 ? -Math.PI / 2 : Math.PI / 2; shoppers.push(p); }
   return (t) => {
     const d = S.dur;
-    shoppers.forEach((p, i) => { stand(p, t, i); p.P.head.rotation.set(0.15, Math.sin(t * 0.5 + i) * 0.4, 0); face(p, { worry: 0.8, blink: blinkAt(t, i) });
+    shoppers.forEach((p, i) => { p.idle = "Nervously_Look_Around"; stand(p, t, i); p.P.head.rotation.set(0.15, Math.sin(t * 0.5 + i) * 0.4, 0); face(p, { worry: 0.8, blink: blinkAt(t, i) });
       p.P.armR.sh.rotation.set(-0.9 * (Math.sin(t * 0.7 + i) > 0.6 ? 1 : 0.2), 0, -0.1); });
     const [P0, T0] = camPath(t, [[0, V(0, 1.6, 6), V(0, 1.3, -10)], [d + 1, V(0.2, 1.5, 1.5), V(-0.5, 1.2, -12)]]);
     return { pos: P0.add(handheld(t)), tgt: T0, fov: 42 };

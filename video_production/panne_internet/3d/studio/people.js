@@ -1,5 +1,6 @@
 // Personnages 3D (formes lisses, éclairage réaliste) : adulte, enfant, poses et expressions.
 import { THREE, M, mesh, scene, clamp } from "./core.js";
+import { mxReady, mxPerson } from "./mixamo.js";
 
 const SKIN = 0xe2b08f;
 function skinMat(c = SKIN) { return new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.55, sheen: 0.4, sheenColor: new THREE.Color(0xffd2b8) }); }
@@ -10,7 +11,19 @@ function lathe(points, mat, parent, y = 0, sz = 0.74) {
   m.scale.z = sz; return m;
 }
 
+let _crowd = 0;
+function roleFor(o) {
+  if (o.role) return o.role;
+  if (o.style === "whitecoat") return o.long ? "womanB" : "remy";
+  if (o.glasses && (o.bald || o.hair === 0xb9b5ad)) return "doctor";
+  if (o.long) return (_crowd++ % 2) ? "womanA" : "womanB";
+  return ["remy", "doctor", "womanA", "womanB"][_crowd++ % 4];
+}
 export function person(o = {}) {
+  if (mxReady() && !o.handmade) { const role = roleFor(o); return mxPerson(role, o.role ? null : ((_crowd * 0.137) % 1) * 0.5 - 0.25); }
+  return personHandmade(o);
+}
+function personHandmade(o = {}) {
   const {
     coat = 0x1d2a44, inner = 0x8a8f96, pants = 0x232a36, hair = 0x3b2a20, shoes = 0xeeeeee, bag = false,
     skin = SKIN, style = "coat", glasses = false, beard = false, long = false, bald = false, scale = 1, iris = 0x5a3b22,
@@ -104,6 +117,7 @@ export function person(o = {}) {
 
 // expression : inquiétude (sourcils, bouche), sourire, clignement, bouche ouverte
 export function face(p, { worry = 0, smile = 0, blink = 0, open = 0, look = [0, 0] } = {}) {
+  if (p.kind === "mx") return;
   const P = p.P;
   for (const b of P.brows) { b.m.rotation.z = Math.PI / 2 + b.s * (worry * 0.35 - smile * 0.1); b.m.position.y = (p.kind === "child" ? 0.052 : 0.058) + worry * 0.005; }
   const curve = clamp(smile - worry * 0.8, -1, 1);
@@ -118,6 +132,7 @@ export function face(p, { worry = 0, smile = 0, blink = 0, open = 0, look = [0, 
 export const blinkAt = (t, seed = 0) => { const k = (t + seed * 1.3) % 3.6; return k < 0.12 ? Math.sin(k / 0.12 * Math.PI) : 0; };
 
 export function walk(p, phase, amp = 0.42) {
+  if (p.kind === "mx") { const run = amp > 0.6; p.play(run ? "Running" : "Walking", phase / (2 * Math.PI) * (run ? 0.7 : 1.05)); return; }
   const s = Math.sin(phase), P = p.P;
   P.legL.hip.rotation.x = s * amp; P.legR.hip.rotation.x = -s * amp;
   P.legL.knee.rotation.x = Math.max(0, -s) * amp * 1.3; P.legR.knee.rotation.x = Math.max(0, s) * amp * 1.3;
@@ -126,6 +141,7 @@ export function walk(p, phase, amp = 0.42) {
   P.body.position.y = Math.abs(Math.cos(phase)) * 0.022;
 }
 export function stand(p, t = 0, seed = 0) {
+  if (p.kind === "mx") { p.play(p.idle || "Breathing_Idle", t + seed * 1.7); return; }
   const P = p.P;
   for (const L of [P.legL, P.legR]) { L.hip.rotation.x = 0; L.knee.rotation.x = 0; }
   P.armL.sh.rotation.set(0.03, 0, 0.07); P.armR.sh.rotation.set(0.03, 0, -0.07);
@@ -134,6 +150,7 @@ export function stand(p, t = 0, seed = 0) {
   P.body.scale.set(1, 1 + Math.sin(t * 1.6 + seed) * 0.004, 1);
 }
 export function sit(p) {
+  if (p.kind === "mx") { p.play(p.seatAnim || "Sitting_Idle", p.t); return; }
   const P = p.P;
   for (const L of [P.legL, P.legR]) { L.hip.rotation.x = -1.45; L.knee.rotation.x = 1.45; }
   P.body.position.y = -0.45;
@@ -142,7 +159,7 @@ export function sit(p) {
 export function child(o = {}) {
   const { suit = 0xe9b12c, hat = 0xd2672a } = o;
   const g = new THREE.Group(), P = {};
-  const mSuit = M(suit, 0.75), mSkin = skinMat(0xf0c3a4);
+  const mSuit = new THREE.MeshStandardMaterial({ color: suit, roughness: 0.55, metalness: 0.02 }), mSkin = skinMat(0xeec0a2);
   const torso = mesh(new THREE.CapsuleGeometry(0.13, 0.16, 8, 18), mSuit, 0, 0.18, 0, g); torso.scale.set(1, 1, 0.9);
   for (const s of [-1, 1]) {
     const a = new THREE.Group(); a.position.set(s * 0.14, 0.3, 0); g.add(a); P[s < 0 ? "armL" : "armR"] = a;
@@ -154,22 +171,24 @@ export function child(o = {}) {
   }
   const head = new THREE.Group(); head.position.set(0, 0.47, 0); g.add(head); P.head = head;
   mesh(new THREE.SphereGeometry(0.112, 32, 24), mSkin, 0, 0, 0, head).scale.set(1, 1, 0.98);
-  for (const s of [-1, 1]) mesh(new THREE.SphereGeometry(0.034, 14, 10), skinMat(0xf2a78f), s * 0.058, -0.035, 0.075, head);
+  for (const s of [-1, 1]) mesh(new THREE.SphereGeometry(0.03, 14, 10), skinMat(0xf0b49c), s * 0.058, -0.032, 0.07, head).scale.set(1, 0.8, 0.7);
   P.eyes = []; P.lids = []; P.brows = [];
   for (const s of [-1, 1]) {
-    const eye = new THREE.Group(); eye.position.set(s * 0.04, 0.008, 0.094); head.add(eye);
-    mesh(new THREE.SphereGeometry(0.021, 16, 12), M(0xf6f3ee, 0.25), 0, 0, 0, eye, false);
-    mesh(new THREE.SphereGeometry(0.013, 14, 10), M(0x3a2618, 0.2), 0, 0, 0.012, eye, false);
-    mesh(new THREE.SphereGeometry(0.006, 10, 8), M(0x050505, 0.1), 0, 0, 0.0205, eye, false);
-    const lid = mesh(new THREE.SphereGeometry(0.0225, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), mSkin, 0, 0, 0, eye, false);
+    const eye = new THREE.Group(); eye.position.set(s * 0.036, 0.006, 0.098); head.add(eye);
+    mesh(new THREE.SphereGeometry(0.0155, 16, 12), M(0xf2eee8, 0.2), 0, 0, 0, eye, false);
+    mesh(new THREE.SphereGeometry(0.0095, 14, 10), M(0x4a3020, 0.15), 0, 0, 0.009, eye, false);
+    mesh(new THREE.SphereGeometry(0.0048, 10, 8), M(0x050505, 0.05), 0, 0, 0.0145, eye, false);
+    mesh(new THREE.SphereGeometry(0.0016, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), 0.004, 0.004, 0.0158, eye, false);
+    const lid = mesh(new THREE.SphereGeometry(0.0168, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), mSkin, 0, 0, 0, eye, false);
     lid.rotation.x = -1.25; P.lids.push(lid); P.eyes.push(eye);
     const brow = mesh(new THREE.CapsuleGeometry(0.004, 0.026, 4, 8), M(0x9a7350, 0.9), s * 0.042, 0.052, 0.098, head, false);
     brow.rotation.z = Math.PI / 2; P.brows.push({ m: brow, s });
   }
   mesh(new THREE.SphereGeometry(0.016, 12, 8), mSkin, 0, -0.02, 0.11, head);
-  const mouth = mesh(new THREE.TorusGeometry(0.018, 0.0042, 8, 20, Math.PI * 0.75), M(0xb5605a, 0.5), 0, -0.055, 0.1, head, false);
+  const mouth = mesh(new THREE.TorusGeometry(0.013, 0.0035, 8, 20, Math.PI * 0.75), M(0xc07468, 0.5), 0, -0.05, 0.104, head, false);
   mouth.rotation.z = Math.PI + Math.PI * 0.125; P.mouth = mouth;
   const mouthO = mesh(new THREE.SphereGeometry(0.014, 14, 10), M(0x4a1a16, 0.6), 0, -0.058, 0.1, head, false); mouthO.scale.set(1.2, 0.2, 0.5); P.mouthO = mouthO;
+  for (let i = 0; i < 7; i++) { const a = -0.9 + i * 0.3; mesh(new THREE.SphereGeometry(0.03, 10, 8), M(0x8a6040, 0.9), Math.sin(a) * 0.1, -0.005, Math.cos(a) * 0.07 + 0.01, head).scale.set(1.2, 0.7, 0.8); }
   const beanie = mesh(new THREE.SphereGeometry(0.12, 28, 16, 0, Math.PI * 2, 0, Math.PI * 0.5), M(hat, 0.95), 0, 0.03, -0.005, head);
   beanie.rotation.x = -0.18;
   mesh(new THREE.TorusGeometry(0.113, 0.022, 10, 28), M(0xc65d24, 0.95), 0, 0.035, 0.005, head).rotation.x = Math.PI / 2 - 0.18;
@@ -185,6 +204,7 @@ export function carry(adult, kid) {
   kid.P.legL.rotation.x = -1.2; kid.P.legR.rotation.x = -1.1;
 }
 export function carryPose(adult, t) {
+  if (adult.kind === "mx") adult.play("Carrying", t);
   // une main sous l'enfant, l'autre dans son dos (cinématique inverse : les mains touchent l'enfant)
   reach(adult, "L", local(adult, -0.1, 1.02, 0.2));
   reach(adult, "R", local(adult, -0.02, 1.3, 0.3 + Math.sin(t * 1.4) * 0.01));
@@ -223,6 +243,7 @@ function ik2(root, mid, target, a, b, pole) {
 }
 // main gauche ou droite vers un point du monde ; le coude part vers l'arrière et l'extérieur
 export function reach(p, side, target, pole) {
+  if (p.kind === "mx") { p.ik(side, target, pole); return; }
   const A = side === "L" ? p.P.armL : p.P.armR, s = side === "L" ? -1 : 1;
   const pw = pole || _v(s * 0.6, -0.4, -1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
   A.sh.rotation.set(0, 0, 0); A.el.rotation.set(0, 0, 0);
@@ -230,6 +251,7 @@ export function reach(p, side, target, pole) {
 }
 // pied vers un point (escaliers, trottoir) ; le genou part vers l'avant
 export function plant(p, side, target) {
+  if (p.kind === "mx") { p.leg(side, target); return; }
   const Lg = side === "L" ? p.P.legL : p.P.legR;
   const fwd = _v(0, 0, 1).applyQuaternion(p.g.getWorldQuaternion(new THREE.Quaternion()));
   Lg.hip.rotation.set(0, 0, 0); Lg.knee.rotation.set(0, 0, 0);

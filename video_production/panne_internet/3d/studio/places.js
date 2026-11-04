@@ -2,7 +2,7 @@
 import { THREE, scene, M, E, mesh, box, canvasTex, rep, screenTex, TEX, facade, rnd, clamp, sstep, lerp, V, room, counter, shelfUnit, bokeh, camPath, handheld } from "./core.js";
 import { person, child, face, blinkAt, walk, stand, sit, carry, carryPose, cry, reach, plant, local } from "./people.js";
 
-export const MARC = { coat: 0x1d2a44, inner: 0x8a8f96, pants: 0x232a36, hair: 0x3b2a20, shoes: 0xeeeeee };
+export const MARC = { role: "marc", coat: 0x1d2a44, inner: 0x8a8f96, pants: 0x232a36, hair: 0x3b2a20, shoes: 0xeeeeee };
 
 // ---------- appartement : cuisine et fenêtre sur Paris ----------
 export function apartment(S, variant) {
@@ -108,12 +108,11 @@ export function apartment(S, variant) {
   }
   if (variant === "neighbor") {
     doc = person({ coat: 0x5b4b3a, inner: 0xd8d2c4, pants: 0x3a3a3a, hair: 0xb9b5ad, shoes: 0x3a2a20, glasses: true, style: "shirt", iris: 0x4a6a8a });
-    K.add(doc.g); doc.g.position.set(0.55, 0, -0.05); doc.g.rotation.y = -1.9;
+    K.add(doc.g); doc.g.position.set(0.58, 0, -0.25); doc.g.rotation.y = 2.24;
     chair.add(kid.g); kid.g.position.set(0, 0.8, 0);
-    K.add(marc.g); marc.g.position.set(1.6, 0, -1.3); marc.g.rotation.y = -2.3;
+    K.add(marc.g); marc.g.position.set(0.05, 0, -0.85); marc.g.rotation.y = 1.28;
     const steth = new THREE.Group(); doc.P.armR.hand.add(steth);
     mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.012, 20), M(0xd0d4d8, 0.2, 0.9), 0, -0.08, 0.02, steth);
-    mesh(new THREE.TorusGeometry(0.09, 0.006, 8, 30, Math.PI * 1.3), M(0x1a1a1a, 0.5), 0, 0.05, 0, steth);
     const kit = box(0.34, 0.2, 0.18, M(0x6a2a1e, 0.6), -0.1, 0.99, -0.6, K); kit.rotation.y = 0.4;
     box(0.1, 0.02, 0.06, M(0xf2f2f2, 0.4), -0.1, 1.1, -0.6, K);
   }
@@ -167,12 +166,12 @@ export function apartment(S, variant) {
         g.fillStyle = "#c0392b"; g.fillRect(150 + Math.sin(t * 0.3) * 4, 6, 3, h - 12); });
     } else if (variant === "neighbor") {
       const ok = (sp[1] || sp[sp.length - 1])[0];
-      [pos, tgt] = camPath(t, [[0, V(2.0, 1.5, 1.2), V(0.8, 1.1, -0.5)], [ok, V(1.5, 1.35, 0.7), V(0.85, 1.15, -0.5)], [d, V(1.25, 1.3, 0.35), V(0.9, 1.2, -0.5)]]);
+      [pos, tgt] = camPath(t, [[0, V(2.2, 1.85, -2.1), V(0.3, 1.25, -0.3)], [ok, V(2.0, 1.8, -1.95), V(0.25, 1.35, -0.4)], [d, V(1.9, 1.78, -1.85), V(0.2, 1.42, -0.45)]]);
+      marc.idle = t > ok ? "Relieved_Sigh" : "Nervously_Look_Around"; doc.idle = t < ok + 1.5 ? "Reaching_Out" : "Breathing_Idle";
       stand(doc, t, 1); stand(marc, t, 2);
       doc.P.body.rotation.x = 0.25;
       // le stéthoscope se pose sur la poitrine de l'enfant, l'autre main sur son épaule
-      reach(doc, "R", kid.g.localToWorld(V(0.02, 0.24, 0.17 + 0.01 * Math.sin(t * 0.8))));
-      reach(doc, "L", kid.g.localToWorld(V(-0.14, 0.33, 0.04)));
+      if (doc.kind !== "mx") reach(doc, "R", kid.g.localToWorld(V(0.02, 0.24, 0.17 + 0.01 * Math.sin(t * 0.8))));
       face(doc, { worry: 0.3 * (1 - sstep(ok, ok + 1, t)), smile: sstep(ok, ok + 1, t) * 0.5, blink: blinkAt(t, 1), look: [0, 0.3] });
       face(marc, { worry: 0.8 * (1 - sstep(ok, ok + 1.2, t)), smile: sstep(ok, ok + 1.2, t) * 0.6, blink: blinkAt(t, 4) });
       marc.P.armL.sh.rotation.set(-0.2, 0, 0.1); marc.P.armR.sh.rotation.set(-0.9, 0, -0.5); marc.P.armR.el.rotation.set(-1.4, 0, 0);
@@ -321,6 +320,7 @@ export function pharmacy(S) {
   const kid = child(); carry(marc, kid);
   return (t) => {
     const d = S.dur, sp = S.spans, no = (sp[2] || sp[sp.length - 1])[0];
+    ph.idle = t > no ? "Shaking_Head_No" : "Breathing_Idle"; marc.idle = "Nervously_Look_Around";
     stand(ph, t, 1); stand(marc, t, 2); carryPose(marc, t);
     const shakeH = sstep(no, no + 0.4, t) * Math.sin((t - no) * 6) * (1 - sstep(no + 2, no + 2.6, t));
     ph.P.head.rotation.set(0.1, shakeH * 0.35, 0);
@@ -363,7 +363,8 @@ export function stairwell(S) {
     let x = -1.2, z = zd, ry = 0;
     if (t > t1d) { const u2 = sstep(t1d, t2d, t); x = lerp(-1.2, -0.35, u2); z = lerp(0.6, 0.15, u2); ry = lerp(0, 0.9, u2); }
     doc.g.position.set(x, stepTop(z), z); doc.g.rotation.y = ry;
-    stand(doc, t, 1);
+    doc.idle = t > t0d && t < t1d ? "Descending_Stairs" : t < t2d && t > t1d ? null : "Breathing_Idle";
+    if (doc.kind === "mx" && t > t1d && t < t2d) walk(doc, (t - t1d) * 6); else stand(doc, t, 1);
     if (t > t0d && t < t2d) {
       const ph = (t - t0d) * 2.6, f = ph % 1, lead = Math.floor(ph) % 2;
       for (const [side, sgn] of [["L", -1], ["R", 1]]) {
