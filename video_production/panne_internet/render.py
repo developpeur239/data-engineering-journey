@@ -1025,7 +1025,7 @@ def main(argv=None):
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--engine", choices=["2d", "3d"], default="2d", help="3d : studio three.js (3d/studio), style de référence")
     ap.add_argument("--assets", type=Path, help="(3d) dossier : vendor/three.module.min.js, fonts/, textures, countries.geojson")
-    ap.add_argument("--font", default="archivo", help="(3d) thème typographique : archivo, barlow, bricolage, shoulders, inter")
+    ap.add_argument("--font", default="bricolage", help="(3d) thème typographique : archivo, barlow, bricolage, shoulders, inter")
     ap.add_argument("--stills", help="(3d) images de contrôle seulement, ex. 0.5,3 (une série par scène)")
     a = ap.parse_args(argv)
 

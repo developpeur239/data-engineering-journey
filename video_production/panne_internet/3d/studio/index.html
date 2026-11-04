@@ -108,7 +108,7 @@ const GRADE = { 1: ["#3a5a7a", 0.10], 2: ["#202830", 0.0], 3: ["#3a6a8a", 0.10],
 let S = null, upd3d = null, upd2d = null, H0 = null, extra = [];
 window.init = async (scn) => {
   S = scn; reseed(S.n * 101 + 7);
-  document.body.dataset.font = S.font || "archivo";
+  document.body.dataset.font = S.font || "bricolage";
   S.p = S.p || {}; S.onscreen = typo(S.onscreen); if (S.p.status) S.p.status = typo(S.p.status);
   const norm = (w) => w.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
   // instant (en s, dans la scène) du premier mot qui correspond, sinon valeur de repli
