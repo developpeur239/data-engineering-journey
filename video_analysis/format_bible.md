@@ -129,7 +129,9 @@ Un tableau, une ligne par plan (≈ 10 secondes ≈ 25 mots de voix), avec ces c
   (ex. « Marc comprend que sa carte ne marche plus »). Si tu ne peux rien écrire, change le VISUEL.
 - SON : musique (pleine / basse / coupée / silence), ambiance du lieu, bruitage clé s'il y en a un.
 - Les plans de la BOUCLE ACCÉLÉRÉE peuvent avoir une VOIX vide : indique leur durée en secondes.
-- TEXTE À L'ÉCRAN : 2 à 6 mots maximum, ou un chiffre avec son unité.
+- TEXTE À L'ÉCRAN : 2 à 6 mots maximum, ou un chiffre avec son unité. En casse normale avec ponctuation,
+  jamais une phrase entière en majuscules. Précise s'il s'agit d'une pensée du personnage, d'une carte
+  (chapitre, source) ou d'un texte d'objet (écran, pancarte).
 
 ## PARTIE 3 : TITRES, MINIATURE ET DESCRIPTION
 - 3 titres, sur ces modèles :

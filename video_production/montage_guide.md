@@ -107,3 +107,20 @@ façon de penser, pas son style (pas de silhouettes noires, pas ses histoires).
 - Exemple pour la panne d'Internet : le terminal de paiement (« ACCEPTÉ » → « REFUSÉ » → pancarte « ESPÈCES
   UNIQUEMENT » → « ACCEPTÉ ») ; la batterie du téléphone de Marc (78 % → 12 % → éteint) ; la station de métro
   au début et à la fin.
+
+## 10. Texte à l'écran épuré
+Ce qu'on voit chez Last Soul : peu de texte, petit, en casse normale, avec une police choisie pour chaque usage,
+et posé sans cadre. Code : [`panne_internet/typo.py`](panne_internet/typo.py).
+
+| Usage | Police | Règles |
+|---|---|---|
+| Pensée ou réplique d'un personnage | arrondie (Comic Neue Bold) | 2 à 6 mots, casse normale avec ponctuation (« Elle marchait ce matin… »), environ 44 px en 1080p, près du personnage, halo sombre flou derrière, contour fin, pas de cadre. Blanc pour le personnage, bleu pour un autre, ocre discret pour une pensée ou une excuse. |
+| Carte de chapitre, de source ou de citation | à empattements (EB Garamond) | phrase en casse normale, centrée ; l'étiquette (« Histoire réelle », « Jour 2 · 48 heures ») et la signature (« — Rapport d'État, juillet 2021 ») en petites capitales très espacées. Fond noir ou image assombrie. |
+| Carte titre | EB Garamond | le titre en capitales très espacées, une seule ligne en italique dessous. |
+
+- **Jamais de phrase entière en majuscules.** Les majuscules sont réservées aux étiquettes et aux signatures, en petit.
+- **Les chiffres géants** (CHIFFRE, CHRONO) gardent notre police de données, mais avec une unité en casse normale
+  (« 11 800 appels », pas « 11 800 APPELS »).
+- **Le texte des objets** (écran du terminal, téléphone, pancarte) appartient à la scène : il suit l'objet
+  (interface d'un vrai terminal, écriture à la main sur une pancarte).
+- Un seul texte à la fois à l'écran, et au moins 1,5 s de lecture pour 3 mots.
