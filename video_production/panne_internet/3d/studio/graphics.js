@@ -80,9 +80,12 @@ export function numberKind(S) {
   const te = Math.max(tc + 0.5, S.atEnd(NUMEND[S.n] || /^$/, tc + 1.4));
   const hosp = S.n === 8 ? el("HÔPITAUX AMÉRICAINS IMPACTÉS", "pin bad", "left:1180px;top:860px") : null;
   if (hosp) hosp.innerHTML = "<i></i><span>HÔPITAUX AMÉRICAINS IMPACTÉS</span>";
+  // scène 14 : la première phrase (« près d'un achat sur deux ») a son propre visuel, puis laisse place au chiffre
+  const pre = S.n === 14 ? el(`<div class="mono numv acc">≈ 1 SUR 2</div><div class="caps unit">Achats en magasin payés par carte</div><div class="caps nsub">48 % · Banque de France</div>`, "number") : null;
   return (t) => {
-    reveal(head, t, 0.3, S.dur + 1);
-    reveal(big, t, Math.max(0.35, tc - 0.3), S.dur + 1);
+    reveal(head, t, pre ? tc - 0.2 : 0.3, S.dur + 1);
+    if (pre) reveal(pre, t, 0.25, tc - 0.35, 0.4, 0.35);
+    reveal(big, t, Math.max(pre ? tc - 0.2 : 0.35, tc - 0.3), S.dur + 1);
     const u = sstep(tc - 0.1, te, t);
     if (S.n === 53) {   // 78 minutes, puis 72 heures pour tout relancer
       const sw = S.at(/^trois$/i, (sp[3] || sp[sp.length - 1])[0]);
