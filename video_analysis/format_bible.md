@@ -77,6 +77,20 @@ Proportions de la durée (calcule les minutages et les budgets de mots à partir
 - Une FIN qui se partage : un lieu, une image ou un geste concret et mémorable.
 - Aucune minute sans chiffre, et aucun plan de plus de 15 secondes sans nouvelle information visuelle.
 
+# RACONTER AUSSI SANS LA VOIX (l'image porte l'émotion, la voix porte les faits)
+- UNE IDÉE PAR PLAN : un seul centre d'intérêt par plan. Si la description du VISUEL contient « et », coupe en deux plans.
+- OBJETS-TÉMOINS : choisis 1 ou 2 objets concrets liés au personnage (ex. un écran de paiement, une batterie de
+  téléphone, un calendrier). Ils reviennent dans au moins 4 plans et leur ÉTAT change à chaque fois
+  (ex. « ACCEPTÉ » → « REFUSÉ » → « ESPÈCES UNIQUEMENT »). On doit pouvoir suivre l'histoire en ne regardant qu'eux.
+- BOUCLE ACCÉLÉRÉE : au temps 5 ou 6, une série de 3 à 6 plans très courts qui répètent la même situation avec
+  un seul détail qui change (l'heure, le lieu, le chiffre), de plus en plus courts. Elle finit sur un plan long
+  et une coupure de musique.
+- PLAN LONG : au temps 8, un plan fixe d'au moins 6 secondes, sans nouveau chiffre, qui laisse l'émotion arriver.
+- LE MÊME LIEU au temps 1 et au temps 8, avec le même cadrage, changé.
+- COULEUR : froide pendant la panne ou la catastrophe, chaude au temps 8. Une couleur réservée au danger.
+- SILENCE : au moins 2 silences complets (1 seconde ou plus), juste avant une relance importante.
+- La VOIX ne décrit jamais ce que montre l'image. Elle ajoute le chiffre, la cause ou la conséquence.
+
 # MODÈLES DE PHRASES (structures à adapter, ne pas recopier telles quelles)
 - Ouverture : « [Ville], [date], [heure]. [Prénom] a [âge] ans. [Détail intime]. [Ce qui cloche]. »
 - Contrat : « Ce que vous allez voir est une simulation. [Prénom] est inventé·e. Mais [lieu] est réel.
@@ -109,8 +123,12 @@ Un tableau des 9 temps avec minutage de début, durée et budget de mots calcul�
 
 ## PARTIE 2 : SCRIPT
 Un tableau, une ligne par plan (≈ 10 secondes ≈ 25 mots de voix), avec ces colonnes :
-| Minutage | Temps (1-9) | Étiquette (SIMULATION / HISTOIRE RÉELLE) | VOIX | VISUEL (code + description) | TEXTE À L'ÉCRAN |
+| Minutage | Temps (1-9) | Étiquette (SIMULATION / HISTOIRE RÉELLE) | VOIX | VISUEL (code + description) | SANS LE SON | SON | TEXTE À L'ÉCRAN |
 - Minutage calculé à 150 mots/minute.
+- SANS LE SON : en 5 à 10 mots, ce qu'un spectateur comprend en regardant ce plan son coupé
+  (ex. « Marc comprend que sa carte ne marche plus »). Si tu ne peux rien écrire, change le VISUEL.
+- SON : musique (pleine / basse / coupée / silence), ambiance du lieu, bruitage clé s'il y en a un.
+- Les plans de la BOUCLE ACCÉLÉRÉE peuvent avoir une VOIX vide : indique leur durée en secondes.
 - TEXTE À L'ÉCRAN : 2 à 6 mots maximum, ou un chiffre avec son unité.
 
 ## PARTIE 3 : TITRES, MINIATURE ET DESCRIPTION
@@ -143,6 +161,12 @@ Un tableau avec les valeurs réellement mesurées sur ton script, puis OK / À C
 - Personnage présent aux temps 1, 5 et 8
 - Réel / inventé dit au début ET à la fin
 - Dates et nombres écrits en lettres dans VOIX
+- Objets-témoins (lesquels ? dans combien de plans ? quels états ?) : ≥ 4 plans chacun
+- Boucle accélérée présente (temps 5 ou 6), terminée par un plan long et une coupure de musique
+- Plan long d'au moins 6 s au temps 8
+- Même lieu et même cadrage aux temps 1 et 8
+- Silences complets (≥ 2)
+- Colonne SANS LE SON remplie à chaque plan
 Si un critère est À CORRIGER, corrige le script avant de le rendre, puis refais le tableau.
 
 === FIN DU PROMPT ===
@@ -169,6 +193,8 @@ Vérifie-le et rends :
 5. STRUCTURE : les 9 temps sont-ils présents et dans l'ordre ? La boucle est-elle plantée puis payée ?
    Le retournement est-il préparé ?
 6. TITRES : fautes d'orthographe, promesse tenue par le script ?
+6 bis. SANS LE SON : en lisant seulement les colonnes VISUEL et SANS LE SON, peut-on suivre l'histoire du personnage
+   et sentir la gravité ? Les plans où la voix décrit ce que l'image montre déjà. Les plans qui disent deux choses.
 7. Les 5 corrections les plus importantes, par ordre de priorité, avec le texte de remplacement.
 
 Ne réécris pas tout le script : seulement les corrections.

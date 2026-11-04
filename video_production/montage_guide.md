@@ -73,3 +73,37 @@ Les trois sont générés en code (aucun droit), avec des fondus de plusieurs se
 - Glissés lissés de 18 à 40 images, poussée lente pendant les plans fixes (jamais d'image figée),
   secousse sur 7 images et petite rotation sur les impacts, coupes franches seulement sur les grands sauts.
 - Contrôle qualité : `ffmpeg freezedetect` / `blackdetect` sur chaque rendu.
+
+## 9. Raconter sans la voix (logique de Last Soul, « 1 MINUTE », 1 M de vues sans voix off)
+Analyse complète : [`../video_analysis/lastsoul_recette.md`](../video_analysis/lastsoul_recette.md). On reprend sa
+façon de penser, pas son style (pas de silhouettes noires, pas ses histoires).
+
+**Sa question à chaque plan : « qu'est-ce que le spectateur comprend sans le son ? »**
+
+1. **Une idée par plan.** Un seul centre d'intérêt, décor simple, beaucoup de vide autour. Le personnage se
+   détache du fond (sombre sur clair, ou l'inverse). Si un plan dit deux choses, on le coupe en deux.
+2. **Des objets-témoins qui changent d'état.** Le calendrier barré puis coché, les chaussures avec l'étiquette,
+   l'alarme renommée « RUN 10K » puis « RUN 1 MIN ». L'objet reste, son état change, et on lit l'histoire
+   dessus. Il en faut 1 ou 2 par vidéo, présents du début à la fin.
+3. **Répéter pour faire passer le temps.** La même boucle de 2 ou 3 plans (réveil → croix → chaussures), avec un
+   seul détail qui change (la date, l'excuse, le nombre de croix). Le spectateur comprend « des semaines
+   passent » sans explication.
+4. **La durée du plan est un langage.** Plans courts et de plus en plus courts (2 s → 0,5 s) = la chute, l'habitude,
+   l'emballement. Plan long et fixe (7 à 15 s) = l'émotion, le constat. On termine une accélération par un plan long.
+5. **Le texte est une pensée, pas une explication.** Deux à quatre mots (« Too cold. », « Just start. »), au plus
+   une bulle par plan.
+6. **Une seule phrase-clé au retournement.** Toute l'histoire tourne autour de « Can you run one minute? ».
+7. **Le même lieu au début, au milieu et à la fin**, avec les mêmes cadrages : on voit le changement.
+8. **La couleur dit l'état** : froide et grise quand ça va mal, chaude et claire à la fin. Une couleur forte réservée
+   à un seul usage (le rouge pour les croix).
+9. **Le son change de niveau à chaque partie** : musique pleine, puis presque rien (−11 dB d'un coup), un silence
+   complet avant chaque relance, et la musique seule (sans bruitages) pour la récompense.
+
+**Chez nous, la voix porte les faits. L'image doit porter l'émotion.**
+- **Test du son coupé** : on regarde la vidéo sans le son. On doit suivre ce qui arrive au personnage et sentir
+  la gravité, même sans comprendre les chiffres.
+- La voix ne décrit pas ce que l'image montre déjà (voir la section 5). Si l'objet-témoin montre « REFUSÉ »,
+  la voix donne le chiffre ou la cause, pas « le paiement est refusé ».
+- Exemple pour la panne d'Internet : le terminal de paiement (« ACCEPTÉ » → « REFUSÉ » → pancarte « ESPÈCES
+  UNIQUEMENT » → « ACCEPTÉ ») ; la batterie du téléphone de Marc (78 % → 12 % → éteint) ; la station de métro
+  au début et à la fin.
