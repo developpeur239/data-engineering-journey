@@ -39,3 +39,7 @@ Les enseignements de « 1 MINUTE » / « 1 HOUR » (Last Soul) sont à appliquer
 analyse dans `../video_analysis/lastsoul_recette.md`, règles dans `montage_guide.md` (sections 9 et 10),
 réglages déjà branchés dans le moteur (`panne_internet/raconter_sans_voix.md` : pensées, boucle accélérée,
 silences complets). La vidéo « panne Internet » est publiée : on n'y touche plus.
+
+Avant tout script (vidéo longue, Short ou court-métrage) : écrire d'abord **l'histoire en 5 lignes**
+(situation, désir, conflit, changement, résultat), la faire valider, puis la développer en 10 lignes, puis
+seulement découper en plans. Chaque plan doit se rattacher à l'une des 5 lignes.

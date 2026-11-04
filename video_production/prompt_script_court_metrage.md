@@ -63,21 +63,36 @@ avoir l'impression qu'on lui fait la morale.
 - Les visages sont peu expressifs : l'émotion doit passer surtout par la posture, les gestes, le cadrage, la
   lumière, le son et les objets.
 
+## Méthode obligatoire : le cœur de l'histoire en 5 lignes, avant tout le reste
+Avant de penser aux plans, aux objets ou au son, trouve le cœur de l'histoire en **5 phrases**, une par étape :
+1. **Situation** : où sommes-nous, qui est-il, à quoi ressemble sa vie au départ ?
+2. **Désir** : que veut-il, au fond (ce qu'il croit vouloir, et ce dont il a vraiment besoin) ?
+3. **Conflit** : qu'est-ce qui l'en empêche ? D'où vient la tension ?
+4. **Changement** : quel déclic, quel événement ou quel regard nouveau fait tout basculer ?
+5. **Résultat** : comment ça se termine ? En quoi sa vie et son lien avec sa mère sont-ils différents du début ?
+
+Si ces 5 lignes ne te touchent pas déjà à la lecture, aucune image ne sauvera le film : réécris-les avant de
+continuer. Développe ensuite chaque ligne en deux phrases (version en 10 lignes), sans changer le cœur. Chaque
+plan du script final doit pouvoir être rattaché à l'une de ces 5 lignes ; s'il ne se rattache à rien, supprime-le.
+
 ## Ce que tu dois rendre
-1. **Trois idées d'histoire** différentes en 3 lignes chacune (le point de départ, l'objet qui change, le
-   retournement). Puis choisis la plus forte et explique pourquoi en 3 phrases.
-2. **Le script complet** de l'histoire choisie, sous forme de tableau, une ligne par plan, avec ces colonnes :
+1. **Trois idées d'histoire** différentes, chacune écrite selon la méthode des 5 lignes. Puis choisis la plus forte
+   et explique pourquoi en 3 phrases.
+2. **La version en 10 lignes** de l'histoire choisie.
+3. **Le script complet** de l'histoire choisie, sous forme de tableau, une ligne par plan, avec ces colonnes :
    - minutage approximatif ;
    - ce qu'on voit (cadrage, action, geste précis) ;
    - le son (bruitage, musique, silence) ;
    - le texte à l'écran s'il y en a (6 mots au maximum) ;
-   - l'émotion visée chez le spectateur et son intensité, de 1 à 10.
-3. **La courbe de l'émotion** : une ligne qui décrit comment l'intensité évolue du début à la fin, et où se
+   - l'émotion visée chez le spectateur et son intensité, de 1 à 10 ;
+   - la ligne de l'histoire (1 à 5) que ce plan sert.
+4. **La courbe de l'émotion** : une ligne qui décrit comment l'intensité évolue du début à la fin, et où se
    trouve le sommet.
-4. **Le titre** (1 à 3 mots) et la phrase finale (3 à 6 mots).
-5. **Ton autocritique** : relis ton script et réponds honnêtement à ces questions, puis corrige-le si besoin :
+5. **Le titre** (1 à 3 mots) et la phrase finale (3 à 6 mots).
+6. **Ton autocritique** : relis ton script et réponds honnêtement à ces questions, puis corrige-le si besoin :
    - Un spectateur se reconnaît-il dans les 20 premières secondes ?
    - Y a-t-il un seul détail que personne ne ferait dans la vraie vie ?
    - Y a-t-il une scène qui ne sert pas l'émotion principale ?
    - Le retournement surprend-il tout en paraissant évident après coup ?
+   - Chaque plan se rattache-t-il à l'une des 5 lignes ?
    - La fin donne-t-elle envie d'appeler sa mère, sans faire la morale ?
