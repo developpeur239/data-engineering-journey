@@ -113,3 +113,34 @@ KEYLINES = {
     50: (0, "LE DÉTAIL|QUI CHANGE TOUT."),
     53: (2, "C'EST LA VITESSE|DE L'ERREUR."),
 }
+
+
+# --------------------------------------------------------------------------- #
+# Raconter sans la voix (../montage_guide.md, sections 9 et 10 ; analyse de « 1 MINUTE » de Last Soul)
+# --------------------------------------------------------------------------- #
+# Pensées de Marc à l'écran : (phrase après laquelle elles apparaissent, texte, qui). Elles n'ajoutent rien que la
+# voix dise déjà : elles donnent l'émotion. Police arrondie, casse normale, halo sombre, pas de cadre.
+# Qui : "marc" (blanc), "autre" (bleu), "pensee" (ocre, pensée intérieure discrète).
+# Position facultative (x, y) du centre du texte en 1920x1080 ; par défaut en haut au centre. À vérifier sur les
+# images de contrôle (--stills) : la pensée ne doit cacher ni un visage ni un écran.
+THOUGHTS = {
+    2: [(1, "Allez… passe.", "marc")],
+    22: [(2, "Pas maintenant…", "marc")],
+    26: [(1, "Décroche…", "marc", (1480, 330))],
+    32: [(2, "S'il vous plaît.", "marc")],
+    41: [(1, "Ça suffira ?", "pensee")],
+}
+
+# Boucle accélérée : après la scène « after », les mêmes refus en plans de plus en plus courts (aucune voix),
+# puis un plan long et immobile dans le silence complet. Les plans viennent des scènes déjà rendues :
+# (scène, position dans la scène entre 0 et 1). « hold » : (scène, position, durée en secondes).
+LOOPS = [
+    {"after": 26,
+     "clips": [(19, 0.75), (20, 0.75), (21, 0.7), (24, 0.8), (25, 0.6), (26, 0.75), (21, 0.6), (20, 0.85)],
+     "durs": [1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.32, 0.26],
+     "hold": (22, 0.62, 2.8)},
+]
+
+# Silences complets (ni musique, ni bruitage, ni ambiance) juste avant une relance : secondes ajoutées
+# à la fin de la scène précédente, puis la scène commence.
+SILENCE_BEFORE = {50: 1.0, 57: 1.2}

@@ -3,6 +3,10 @@
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
 <style>
 @font-face{font-family:"JetBrains Mono";src:url(/assets/fonts/JetBrainsMono.woff2) format("woff2");font-weight:100 800}
+/* texte épuré (montage_guide.md, section 10) : cartes en EB Garamond, pensées en Comic Neue (polices libres OFL) */
+@font-face{font-family:"EB Garamond";src:url(/assets/fonts/EBGaramond.ttf);font-weight:400 800;font-style:normal}
+@font-face{font-family:"EB Garamond";src:url(/assets/fonts/EBGaramond-Italic.ttf);font-weight:400 800;font-style:italic}
+@font-face{font-family:"Comic Neue";src:url(/assets/fonts/ComicNeue-Bold.ttf);font-weight:700}
 /* thèmes typographiques : titres (--fh), texte et petites capitales (--fb), chiffres (--fm) */
 body{--fh:"Archivo";--fhs:72%;--fb:"Archivo";--fm:"IBM Plex Mono";--fhw:800;--fhl:-.005em}
 body[data-font="barlow"]{--fh:"Barlow Condensed";--fhs:100%;--fb:"Barlow";--fm:"IBM Plex Mono";--fhw:800;--fhl:.005em}
@@ -19,7 +23,7 @@ canvas{display:block}
 .mono{font-family:var(--fm),"DejaVu Sans Mono",monospace;letter-spacing:-.01em}
 .big,.btitle,.tbig,.sbig,.simline,.keyline .kl,.card .ct,.cite .cn,.citerow .cn{font-family:var(--fh),sans-serif!important;font-stretch:var(--fhs);font-weight:var(--fhw)!important;letter-spacing:var(--fhl)!important}
 .caps{text-transform:uppercase;letter-spacing:.16em;font-weight:600}
-.tag{left:58px;top:40px;border:2px solid;border-radius:7px;padding:7px 16px 7px 14px;font-size:21px;font-weight:800;letter-spacing:.08em;background:rgba(10,12,14,.5);display:flex;align-items:center;gap:10px}
+.tag{left:58px;top:40px;border:1px solid;border-radius:6px;padding:6px 14px 6px 12px;font-size:16px;font-weight:600;letter-spacing:.2em;background:rgba(10,12,14,.5);display:flex;align-items:center;gap:10px}
 .tag i{width:10px;height:10px;border-radius:50%;display:block}
 .tag.sim{border-color:#ff5a5f}.tag.sim i{background:#ff5a5f;box-shadow:0 0 10px #ff5a5f}
 .tag.real{border-color:#5fd4dc}.tag.real i{background:#5fd4dc;box-shadow:0 0 10px #5fd4dc}
@@ -73,6 +77,17 @@ canvas{display:block}
   background:radial-gradient(ellipse at 50% 50%,rgba(4,6,8,.78) 0%,rgba(4,6,8,.45) 55%,rgba(4,6,8,0) 80%)}
 .keyline .kl{display:flex;gap:26px;font-size:96px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
 .keyline .kw{opacity:0;display:inline-block;text-shadow:0 6px 40px rgba(0,0,0,.6)}.keyline .kw.acc{color:#f5a524}
+.tcenter .tbig{font-family:"EB Garamond",serif!important;font-weight:400!important;letter-spacing:.3em!important;text-transform:uppercase;font-size:104px}
+.tcenter .tsub{font-family:"EB Garamond",serif;font-style:italic;font-size:36px;color:#cdc8bf;letter-spacing:0;margin-top:28px}
+.tcenter.q .tbig{text-transform:none;letter-spacing:.01em!important;font-style:italic;font-size:110px}
+.keyline .kl{font-family:"EB Garamond",serif!important;font-style:italic;font-weight:500!important;letter-spacing:0!important;font-size:96px;gap:24px}
+.keyline .kw.acc{color:#f5c67a}
+.tcenter,.keyline,.thought{font-feature-settings:normal!important;font-variant:normal}
+.unit{letter-spacing:0}
+.thought{left:0;width:1920px;text-align:center;font-family:"Comic Neue",sans-serif;font-weight:700;font-size:46px;color:#fff;
+  text-shadow:0 0 2px #121318,0 0 2px #121318,0 2px 4px rgba(0,0,0,.7)}
+.thought span{display:inline-block;padding:34px 120px;background:radial-gradient(ellipse at center,rgba(0,0,0,.62) 0%,rgba(0,0,0,.4) 40%,rgba(0,0,0,0) 72%)}
+.thought.pensee{color:#dcaa78;font-size:42px}.thought.autre{color:#82c3ff}.thought.alerte{color:#ff8a72}
 #grade,#grain{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;transform-origin:0 0}
 #grade{mix-blend-mode:soft-light}#grain{mix-blend-mode:overlay;opacity:.07}
 </style></head>
@@ -152,13 +167,13 @@ window.init = async (scn) => {
     const rest = S.onscreen.split(" · ").length > 1 && n !== 2 ? S.onscreen.split(" · ").slice(1).join(" · ") : "";
     const sub = [rest, p.status && !S.onscreen.includes(p.status) ? p.status : ""].filter(Boolean).join(" · ");
     const col = p.bad ? "r" : p.good ? "c" : "o";
-    const first = (S.onscreen.match(/[A-ZÀ-Ü]{4,}/) || [""])[0].toLowerCase();
+    const first = (S.onscreen.match(/[A-Za-zÀ-ÖØ-öø-ÿ]{4,}/) || [""])[0].toLowerCase();
     const tIn = Math.max(0.35, (first ? S.at(new RegExp("^" + first.slice(0, 5)), null) : null) ?? (S.spans[0] || [0.3])[0] + 0.25);
     if (n !== 1) { const lt = gfx.lowerTitle(S, big, sub, col); extra.push((t) => lt(t, tIn)); }
   }
   // ---- éléments propres à certaines scènes ----
   if (n === 1) {
-    const tP = gfx.lowerTitle(S, "PARIS", "Mardi · décembre · 48.86°N 2.35°E"), tM = gfx.lowerTitle(S, "MARC, 34", "Paris 11e · un fils de deux ans", "");
+    const tP = gfx.lowerTitle(S, "Paris", "Mardi · décembre · 48.86°N 2.35°E"), tM = gfx.lowerTitle(S, "Marc, 34 ans", "Paris 11e · un fils de deux ans", "");
     const clock = gfx.el(`<div class="lbl caps">Heure locale · Paris</div><div class="v mono">07:45</div>`, "clock");
     const cnt = gfx.el(`<div class="lbl caps">Crèche dans</div><div class="v mono">00:15:00</div>`, "count");
     const sp = S.spans;
@@ -167,7 +182,7 @@ window.init = async (scn) => {
       const left = Math.max(0, 15 * 60 - t); cnt.querySelector(".v").textContent = `00:${String(Math.floor(left / 60)).padStart(2, "0")}:${String(Math.floor(left % 60)).padStart(2, "0")}`; });
   }
   if (n === 2) {
-    const pw = gfx.pin3d("ÉLECTRICITÉ · OK", "ok"), da = gfx.pin3d("DONNÉES · 0", "bad");
+    const pw = gfx.pin3d("Électricité · OK", "ok"), da = gfx.pin3d("Données · 0", "bad");
     extra.push((t, ctx) => { if (!ctx.project) return; const v1 = ctx.project.ceiling.clone().project(camera), v2 = ctx.project.screen.clone().project(camera);
       pw(t, S.at(/lumi/i, S.spans[2][0]) + 0.1, S.dur + 1, (v1.x + 1) / 2 * 1920, (1 - v1.y) / 2 * 1080);
       da(t, S.at(/donn/i, S.spans[2][0] + 1.3), S.dur + 1, (v2.x + 1) / 2 * 1920, (1 - v2.y) / 2 * 1080); });
@@ -190,11 +205,16 @@ window.init = async (scn) => {
   });
   // phrase clé : écrite en grand, mot à mot, exactement sur la voix
   if (S.keyline) {
-    const box = gfx.el(S.keyline.lines.map((ln) => `<div class="kl">${ln.map(([w]) => `<span class="kw${/\d/.test(w) || /HEURES/.test(w) ? " acc" : ""}">${typo(w)}</span>`).join("")}</div>`).join(""), "keyline");
+    const box = gfx.el(S.keyline.lines.map((ln) => `<div class="kl">${ln.map(([w]) => `<span class="kw${/\d/.test(w) || /^heures/i.test(w) ? " acc" : ""}">${typo(w)}</span>`).join("")}</div>`).join(""), "keyline");
     const ws = [...box.querySelectorAll(".kw")], times = S.keyline.lines.flat().map(([, tw]) => tw);
     extra.push((t) => { box.style.opacity = sstep(times[0] - 0.25, times[0], t) * (1 - sstep(S.dur - 0.25, S.dur, t));
       ws.forEach((w, i) => { const v = sstep(times[i] - 0.06, times[i] + 0.2, t); w.style.opacity = v; w.style.transform = `translateY(${(1 - v) * 22}px) scale(${1 + (1 - v) * 0.06})`; w.style.filter = v < 0.99 ? `blur(${(1 - v) * 8}px)` : "none"; }); });
   }
+  (S.thoughts || []).forEach(([a, b, txt, who, pos]) => {
+    const st = pos ? `left:${pos[0] - 600}px;width:1200px;top:${pos[1] - 60}px` : "top:150px";
+    const e = gfx.el(`<span>${typo(txt)}</span>`, "thought " + (who || "marc"), st);
+    extra.push((t) => gfx.reveal(e, t, a, b, 0.35, 0.4, 10));
+  });
   const [gc, ga] = S.warm ? ["#ffa050", 0.24] : GRADE[S.beat] || ["#000", 0];
   document.getElementById("grade").style.background = gc; document.getElementById("grade").style.opacity = ga;
   await document.fonts.ready;

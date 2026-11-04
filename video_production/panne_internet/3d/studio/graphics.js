@@ -72,13 +72,13 @@ const NUMEND = { 6: /^machines$/i, 8: /^dollars$/i, 14: /^distributeurs$/i, 16: 
 export function numberKind(S) {
   const p = S.p, dec = p.decimals || 0, acc = p.accent;
   const head = el(`${S.onscreen}`, "caps bsub o", "left:150px;top:262px;font-size:19px");
-  const big = el(`<div class="mono numv ${acc ? "acc" : ""}"></div><div class="caps unit">${p.unit}</div><div class="caps nsub">${p.sub || ""}</div>`, "number");
+  const big = el(`<div class="mono numv ${acc ? "acc" : ""}"></div><div class="unit">${p.unit}</div><div class="caps nsub">${p.sub || ""}</div>`, "number");
   const v = big.querySelector(".numv");
   const sp = S.spans;
   // le chiffre commence à compter sur le premier mot qui le prononce et se pose sur le dernier
   const tc = S.at(NUMWORD[S.n] || /^$/, (sp[1] || sp[0] || [0.3])[0]);
   const te = Math.max(tc + 0.5, S.atEnd(NUMEND[S.n] || /^$/, tc + 1.4));
-  const hosp = S.n === 8 ? el("HÔPITAUX AMÉRICAINS IMPACTÉS", "pin bad", "left:1180px;top:860px") : null;
+  const hosp = S.n === 8 ? el("Hôpitaux américains touchés", "pin bad", "left:1180px;top:860px") : null;
   if (hosp) hosp.innerHTML = "<i></i><span>HÔPITAUX AMÉRICAINS IMPACTÉS</span>";
   // scène 14 : la première phrase (« près d'un achat sur deux ») a son propre visuel, puis laisse place au chiffre
   const pre = S.n === 14 ? el(`<div class="mono numv acc">≈ 1 SUR 2</div><div class="caps unit">Achats en magasin payés par carte</div><div class="caps nsub">48 % · Banque de France</div>`, "number") : null;
@@ -165,7 +165,7 @@ export function barsKind(S) {
 // ---------- CERCLES ----------
 export function circlesKind(S) {
   const cx = 1180, cy = 560, R = [110, 205, 300, 395];
-  const names = ["CERCLE 1 · CHEZ VOUS", "CERCLE 2 · LA RUE", "CERCLE 3 · LES COMMERCES", "CERCLE 4 · MARC"];
+  const names = ["Cercle 1 · Chez vous", "Cercle 2 · La rue", "Cercle 3 · Les commerces", "Cercle 4 · Marc"];
   const head = el(`<div class="btitle">OÙ ÊTES-VOUS ?</div><div class="caps bsub r">Minute 10 · la gravité dépend de l'endroit</div>`, "bars");
   const labs = names.map((n, i) => el(n, "caps clab", `left:${cx + R[i] * 0.72 + 30}px;top:${cy - R[i] * 0.72 - 14}px`));
   return (t) => {
@@ -194,7 +194,7 @@ const ICON = {
     g.strokeRect(x - 55, y - 25, 110, 50); },
 };
 export function choiceKind(S) {
-  const opts = [["radio", "OPTION 01", "RESTER CHEZ SOI", "Écouter la radio FM"], ["pump", "OPTION 02", "FAIRE LE PLEIN", "Pompes bloquées sans banque"], ["cash", "OPTION 03", "ACHETER EN ESPÈCES", "Avec le peu de liquide"]];
+  const opts = [["radio", "Option 01", "Rester chez soi", "Écouter la radio FM"], ["pump", "Option 02", "Faire le plein", "Pompes bloquées sans banque"], ["cash", "Option 03", "Acheter en espèces", "Avec le peu de liquide"]];
   const head = el(`<div class="caps bsub o">Jour 01 · 24 heures de coupure</div><div class="btitle">CHOIX IMPOSSIBLE</div>`, "bars");
   const cards = opts.map((o, i) => el(`<div class="caps ck">${o[1]}</div><div class="ct">${o[2]}</div><div class="caps cd">${o[3]}</div>`, "card", `left:${190 + i * 540}px;top:560px`));
   const act = S.p.active;
@@ -218,7 +218,7 @@ export function choiceKind(S) {
 // ---------- LISTES (cartes « réel ») ----------
 export function listKind(S) {
   const items = S.p.items, n = items.length, big = n <= 2;
-  const head = el(`<div class="caps bsub c">Ce qui s'est vraiment produit</div><div class="btitle">${big ? "DEUX PANNES RÉELLES" : "TOUT EST DÉJÀ ARRIVÉ"}</div>`, "bars");
+  const head = el(`<div class="caps bsub c">Ce qui s'est vraiment produit</div><div class="btitle">${big ? "Deux pannes réelles" : "Tout est déjà arrivé"}</div>`, "bars");
   const cols = big ? 2 : 4;
   const cards = items.map((it, i) => {
     const [a, b] = it.includes(" · ") ? it.split(" · ") : [it, ""];
@@ -237,7 +237,7 @@ export function titleKind(S) {
   const p = S.p, sp = S.spans;
   if (S.n === 3) {
     const head = el("Ce qui est inventé", "caps simhead");
-    const lines = [["MARC", "INVENTÉ"], ["LE DÉCLENCHEUR", "INVENTÉ"], ["LA CHRONOLOGIE", "INVENTÉE"]].map(([a, b], i) => el(`${a} — <em>${b}</em>`, "simline", `top:${470 + i * 66}px`));
+    const lines = [["Marc", "inventé"], ["Le déclencheur", "inventé"], ["La chronologie", "inventée"]].map(([a, b], i) => el(`${a} — <em>${b}</em>`, "simline", `top:${470 + i * 66}px`));
     const chip = el(`<i></i>SIMULATION`, "tag sim bigchip");
     return (t) => {
       reveal(chip, t, (sp[0] || [0.2])[0], S.dur + 1); reveal(head, t, (sp[1] || [1])[0] - 0.2, S.dur + 1);
@@ -245,11 +245,11 @@ export function titleKind(S) {
     };
   }
   if (S.n === 61) {
-    const l = el(`<div class="caps cd">L'électricité</div><div class="sbig c">LUMIÈRE OK</div>`, "split", "left:0;background:rgba(10,40,44,.85)");
-    const r = el(`<div class="caps cd">Le réseau</div><div class="sbig r">DONNÉES KO</div>`, "split", "left:960px;background:rgba(60,10,14,.85)");
+    const l = el(`<div class="caps cd">L'électricité</div><div class="sbig c">Lumière OK</div>`, "split", "left:0;background:rgba(10,40,44,.85)");
+    const r = el(`<div class="caps cd">Le réseau</div><div class="sbig r">Données KO</div>`, "split", "left:960px;background:rgba(60,10,14,.85)");
     return (t) => { reveal(l, t, (sp[0] || [0.2])[0], S.dur + 1, 0.5, 0.3, 0); reveal(r, t, (sp[0] || [0.2])[1] - 1.2, S.dur + 1, 0.5, 0.3, 0); };
   }
-  const box = el(`<div class="tbig">${p.big}</div><div class="caps tsub">${p.sub}</div>`, "tcenter" + (S.n === 64 ? " q" : ""));
+  const box = el(`<div class="tbig">${p.big}</div><div class="tsub">${p.sub}</div>`, "tcenter" + (S.n === 64 ? " q" : ""));
   const cur = S.n === 64 ? el("", "cursor") : null;
   return (t) => {
     reveal(box, t, (sp[0] || [0.2])[0] + 0.1, S.dur + 1, 0.6);

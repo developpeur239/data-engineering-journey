@@ -103,3 +103,48 @@ class Typo:
             ws = d.textlength(subtitle, font=fs)
             d.text(((W - ws) / 2, y + int(size * 1.45 * self.k)), subtitle, font=fs, fill=(200, 196, 188, 255))
         return out
+
+
+# --------------------------------------------------------------------------- #
+# Casse normale pour le texte écrit en capitales dans scenes.py (le texte n'est pas modifié, seulement son affichage)
+# --------------------------------------------------------------------------- #
+KEEP_UPPER = {"DNS", "AWS", "UTC", "FM", "US", "SAMU", "KO", "OK", "UE", "BCE", "ANSSI", "NOTAM", "FAA", "TV"}
+PROPER = {
+    "paris": "Paris", "delta": "Delta", "microsoft": "Microsoft", "windows": "Windows", "parametrix": "Parametrix",
+    "canada": "Canada", "rogers": "Rogers", "orange": "Orange", "corbeil-essonnes": "Corbeil-Essonnes", "tonga": "Tonga",
+    "crowdstrike": "CrowdStrike", "marc": "Marc", "france": "France", "banque": "Banque", "internet": "Internet",
+    "interac": "Interac", "europe": "Europe",
+}
+SMALL_UNITS = {"h": "h", "min": "min"}
+
+
+def sentence_case(text: str) -> str:
+    """« PANNE DNS · 72 HEURES » → « Panne DNS · 72 heures ». Chaque segment séparé par « · » ou « : »
+    commence par une majuscule ; sigles et noms propres gardés."""
+    import re  # noqa: PLC0415
+    if not text or text != text.upper():
+        return text                      # déjà en casse normale : on n'y touche pas
+    out = []
+    start = not text.lstrip().startswith("…")
+    for tok in re.split(r"(\s+|·|:|&|\?|!|\|)", text):
+        if not tok or tok.isspace() or tok in "·:&?!|":
+            out.append(tok)
+            if tok in ("·", ":", "?", "!"):
+                start = True
+            continue
+        core = tok.strip(".,;()…'\"«»")
+        low = tok.lower()
+        if core in KEEP_UPPER or any(ch.isdigit() for ch in core) and core.upper() == core and not core.isalpha():
+            word = tok if core in KEEP_UPPER else low       # « 72 H » → « 72 h », « 5,4 » inchangé
+        elif core.lower() in PROPER:
+            word = low.replace(core.lower(), PROPER[core.lower()])
+        else:
+            word = low
+        if start and word[:1].isalpha():
+            word = word[0].upper() + word[1:]
+        if any(ch.isalnum() for ch in word):
+            start = False
+        out.append(word)
+    s = "".join(out)
+    s = re.sub(r"\b(\d+) H\b", r"\1 h", s)
+    return s

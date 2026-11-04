@@ -62,3 +62,23 @@ python render.py --work build --geo countries.geojson --tts minimax --minimax-vo
 ```bash
 NODE_PATH=$(npm root -g) node 3d/render3d.js 3d/ville.html ville.mp4 8 1280 24
 ```
+
+## Raconter sans la voix (logique de Last Soul, voir `../montage_guide.md`, sections 9 et 10)
+
+Réglages dans `edit_plan.py`, appliqués par les deux moteurs (2D et 3D) sauf mention :
+- **Texte épuré** : les textes d'habillage de `scenes.py` (écrits en capitales) sont affichés en casse normale
+  (`typo.sentence_case`, sigles et noms propres gardés). `scenes.py` n'est pas modifié. Le texte des objets
+  (écran du terminal, téléphone) reste tel quel. En 3D : cartes titre et phrases clés en EB Garamond, étiquettes
+  plus discrètes.
+- **Pensées des personnages** (`THOUGHTS`, moteur 3D) : 2 à 4 mots en police arrondie (Comic Neue), halo sombre,
+  sans cadre, à la fin d'une phrase de la voix. Position réglable par pensée ; à vérifier avec `--stills`.
+- **Boucle accélérée** (`LOOPS`) : après la scène 26, les refus déjà vus reviennent en plans de plus en plus courts
+  (1,1 s → 0,26 s), avec un bruitage par plan sur une montée, puis Marc en plan long (2,8 s) dans le silence
+  complet. Aucune voix. Fabriquée à partir des scènes déjà rendues (`build_loops`), sous-titres et chapitres décalés.
+- **Silences complets** (`SILENCE_BEFORE`) : 1 s avant la scène 50 et 1,2 s avant la scène 57, sans musique,
+  ni bruitage, ni ambiance.
+
+Polices et fichiers à ajouter au dossier `--assets` du moteur 3D (libres, depuis github.com/google/fonts et le
+paquet npm three@0.160.0) : `fonts/EBGaramond.ttf` (ofl/ebgaramond/EBGaramond[wght].ttf),
+`fonts/EBGaramond-Italic.ttf`, `fonts/ComicNeue-Bold.ttf` (ofl/comicneue), et
+`vendor/addons/utils/SkeletonUtils.js` (examples/jsm/utils).

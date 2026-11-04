@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import edit_plan as plan  # noqa: E402
 import fx  # noqa: E402
 import voice_edit  # noqa: E402
+from typo import sentence_case  # noqa: E402
 from scenes import BEATS, SCENES  # noqa: E402
 
 FPS = 24
@@ -838,6 +839,16 @@ def tts_minimax(text: str, out: Path, voice_id: str, model: str, speed: float, e
     tmp.unlink()
 
 
+TEXT_KEYS = ("big", "sub", "unit", "title")   # textes d'habillage (pas le texte des objets : status, écrans)
+
+
+def display_scene(scene):
+    """Le même plan, avec ses textes d'habillage en casse normale (scenes.py reste inchangé)."""
+    beat, label, voice, onscreen, kind, p = scene
+    p = {k: (sentence_case(v) if k in TEXT_KEYS and isinstance(v, str) else v) for k, v in p.items()}
+    return beat, label, voice, sentence_case(onscreen), kind, p
+
+
 def scene_key(scene) -> str:
     import hashlib  # noqa: PLC0415
     code = Path(__file__).read_bytes() + (Path(__file__).parent / "fx.py").read_bytes()  # cache périmé si le code change
@@ -853,7 +864,7 @@ def render_scene(args):
     i, scene, frames, w, h, geo_path, out, tex_dir, shots, impacts = args
     still = (i + 1) in plan.KEY_SCENES
     warm = (i + 1) in plan.WARM_SCENES
-    beat, label, voice, onscreen, kind, p = scene
+    beat, label, voice, onscreen, kind, p = display_scene(scene)
     cv = Canvas(w, h)
     geo = Geo(Path(geo_path)) if kind in ("map", "globe") else None
     layer = MapLayer(geo, cv, p) if kind == "map" else None
@@ -936,6 +947,95 @@ def fmt_ts(s: float, srt=False) -> str:
     return f"{m:02d}:{int(sec):02d}"
 
 
+def gate_silences(idx, starts, stems):
+    """Silence complet (musique, bruitages, ambiance) dans les secondes ajoutées avant une relance (SILENCE_BEFORE)."""
+    sil = getattr(plan, "SILENCE_BEFORE", {})
+    wins = []
+    for n, i in enumerate(idx):
+        if i + 1 in sil and n > 0:
+            t1 = starts[n] + 0.12
+            wins.append((t1 - sil[i + 1] - 0.1, t1))
+    if not wins:
+        return
+    for path in stems:
+        x = voice_edit.read_wav(path)[0].astype(np.float64) / 32768.0
+        g = np.ones(len(x))
+        r = int(0.04 * fx.SR)
+        for t0, t1 in wins:
+            a, b = int(t0 * fx.SR), min(len(x), int(t1 * fx.SR))
+            if a >= len(x):
+                continue
+            g[a:b] = 0.0
+            g[max(0, a - r):a] = np.minimum(g[max(0, a - r):a], np.linspace(1, 0, a - max(0, a - r)))
+            g[b:b + r] = np.minimum(g[b:b + r], np.linspace(0, 1, len(g[b:b + r])))
+        fx._write(path, x * g)
+    print(f"Silences complets : {len(wins)}")
+
+
+def build_loops(a, work, idx, frames, seg, suffix, w, h):
+    """Boucles accélérées (edit_plan.LOOPS) : plans de plus en plus courts tirés des scènes déjà rendues,
+    puis un plan long. Renvoie {indice de la scène « after » : (fichier, durée en s)}."""
+    out = {}
+    for k, L in enumerate(getattr(plan, "LOOPS", [])):
+        i_after = L["after"] - 1
+        parts = [(n - 1, pos, d) for (n, pos), d in zip(L["clips"], L["durs"])] + [(L["hold"][0] - 1, L["hold"][1], L["hold"][2])]
+        if i_after not in idx or any(j not in idx or not seg[j].exists() for j, _, _ in parts):
+            continue
+        n_fr = [max(6, round(d * FPS)) for _, _, d in parts]
+        dst = work / f"loop{k}_{'_'.join(str(j) for j, _, _ in parts)}_{sum(n_fr)}{suffix}.mp4"
+        if not dst.exists():
+            cmd, flt = ["ffmpeg", "-y", "-v", "error"], []
+            for m, ((j, pos, _), nf) in enumerate(zip(parts, n_fr)):
+                start = max(0, min(frames[j] - nf, int(pos * frames[j]) - nf // 2))
+                cmd += ["-i", str(seg[j])]
+                flt.append(f"[{m}:v]trim=start_frame={start}:end_frame={start + nf},setpts=PTS-STARTPTS,"
+                           f"scale={w}:{h},setsar=1,fps={FPS}[v{m}]")
+            flt.append("".join(f"[v{m}]" for m in range(len(parts))) + f"concat=n={len(parts)}:v=1:a=0[v]")
+            preset = ["-preset", "medium", "-crf", "17"] if a.engine == "3d" else ["-preset", "veryfast", "-crf", "20"]
+            cmd += ["-filter_complex", ";".join(flt), "-map", "[v]", "-c:v", "libx264", *preset, "-pix_fmt", "yuv420p",
+                    "-r", str(FPS), str(dst)]
+            subprocess.run(cmd, check=True)
+        out[i_after] = (dst, sum(n_fr) / FPS, n_fr)
+        print(f"Boucle accélérée après la scène {L['after']} : {len(parts)} plans, {sum(n_fr) / FPS:.1f} s")
+    return out
+
+
+def insert_loop_audio(loops, idx, starts, frames, music, sfx, amb):
+    """Pendant la boucle : un bruitage par plan (de plus en plus serrés) sur une montée, la musique et l'ambiance
+    coupées ; puis le plan long dans le silence complet. La musique reprend ensuite en fondu court."""
+    if not loops:
+        return
+    for i, (_, dur, n_fr) in sorted(loops.items(), reverse=True):     # de la fin vers le début : les instants restent justes
+        t_ins = starts[idx.index(i)] + frames[i] / FPS
+        n_ins = int(dur * fx.SR)
+        hits = np.zeros(n_ins)
+        t, cuts = 0.0, []
+        for nf in n_fr[:-1]:
+            cuts.append(t)
+            t += nf / FPS
+        hold_at = t
+        for c, at in enumerate(cuts):
+            g = 0.35 + 0.65 * c / max(1, len(cuts) - 1)
+            fx._add(hits, fx.glitch_v(100 + c)[: int(0.25 * fx.SR)] * 0.8 * g, at)
+            fx._add(hits, fx.tick_v(200 + c) * 1.4 * g, at)
+        r = fx.riser(hold_at)[: int(hold_at * fx.SR)]
+        hits[: len(r)] += r * np.linspace(0.1, 0.55, len(r))
+        cut = int(hold_at * fx.SR)
+        hits[cut:] = 0.0                                   # coupure nette : le plan long est silencieux
+        hits[max(0, cut - 120):cut] *= np.linspace(1, 0, cut - max(0, cut - 120))
+        for path, ins in ((music, np.zeros(n_ins)), (sfx, hits), (amb, np.zeros(n_ins))):
+            x = voice_edit.read_wav(path)[0].astype(np.float64) / 32768.0
+            a = min(len(x), int(t_ins * fx.SR))
+            head, tail = x[:a].copy(), x[a:].copy()
+            fo = min(len(head), int(0.03 * fx.SR))
+            if path != sfx and fo:
+                head[-fo:] *= np.linspace(1, 0, fo)
+            fi = min(len(tail), int(0.5 * fx.SR))
+            if path != sfx and fi:
+                tail[:fi] *= np.linspace(0, 1, fi)
+            fx._write(path, np.concatenate([head, ins, tail]))
+
+
 def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
     """Scènes du studio three.js : une page par scène, plusieurs navigateurs en parallèle."""
     import shutil  # noqa: PLC0415
@@ -952,7 +1052,7 @@ def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
         return v
     jobs = []
     for n, i in enumerate(idx):
-        beat, label, voice, onscreen, kind, p = SCENES[i]
+        beat, label, voice, onscreen, kind, p = display_scene(SCENES[i])
         prev_b = SCENES[idx[n - 1]][0] if n > 0 else None
         next_b = SCENES[idx[n + 1]][0] if n + 1 < len(idx) else None
         sc = {"n": i + 1, "beat": beat, "beatName": BEATS[beat], "label": label, "onscreen": onscreen, "kind": kind, "p": plain(p),
@@ -971,8 +1071,16 @@ def render_3d(a, work, idx, frames, spans, words, events, impacts, seg):
             if tw is not None:
                 cites.append([round(tw - 0.05, 3), name, sub]); last = tw
         sc["cites"] = cites
+        # pensées des personnages (edit_plan.THOUGHTS) : à la fin de la phrase indiquée, environ 3 s
+        th = []
+        for k_s, text, who, *pos in plan.THOUGHTS.get(i + 1, []):
+            if k_s < len(spans[i]):
+                t_in = spans[i][k_s][1] + 0.15 + 0.12
+                th.append([round(t_in, 3), round(min(sc["dur"] - 0.25, t_in + 3.2), 3), text, who, list(pos[0]) if pos else None])
+        sc["thoughts"] = th
         if i + 1 in plan.KEYLINES and plan.KEYLINES[i + 1][0] < len(spans[i]):
             k_s, text = plan.KEYLINES[i + 1]
+            text = sentence_case(text)
             s0, s1 = sc["spans"][k_s]
             sw = [w for w in ws if s0 - 0.05 <= w["a"] <= s1 + 0.05] or [{"a": s0}]
             toks = [line.split() for line in text.split("|")]
@@ -1057,7 +1165,8 @@ def main(argv=None):
         ed = tts_dir / f"{i:02d}_ed.wav"
         spans[i] = voice_edit.prepare(wav, ed, SCENES[i][2], plan.PAUSES.get(i + 1, {}))
         voice_dur[i] = wav_duration(ed)
-        frames[i] = int(math.ceil((voice_dur[i] + plan.PAD.get(i + 1, PAD_S)) * FPS))
+        pad = plan.PAD.get(i + 1, PAD_S) + getattr(plan, "SILENCE_BEFORE", {}).get(i + 2, 0.0)
+        frames[i] = int(math.ceil((voice_dur[i] + pad) * FPS))
     print(f"Voix prêtes : {len(idx)} scènes, {sum(frames.values()) / FPS / 60:.2f} min")
 
     # 2. Images
@@ -1099,6 +1208,7 @@ def main(argv=None):
             real[name] = x
     music, sfx, amb, impacts = fx.build_soundtrack_v2(work, SCENES, idx, starts, [frames[i] / FPS for i in idx],
                                                       [spans[i] for i in idx], plan, real, events, words)
+    gate_silences(idx, starts, [music, sfx, amb])
     if a.engine == "3d":
         render_3d(a, work, idx, frames, spans, words, events, impacts, seg)
     else:
@@ -1111,6 +1221,7 @@ def main(argv=None):
                 print(f"  scène {done + 1}/{len(SCENES)} rendue", flush=True)
     if a.stills or a.audit:
         return
+    loops = build_loops(a, work, idx, frames, seg, suffix, w, h)
 
     # 3. Son : voix calée sur les images + ambiance
     voice_track = work / f"voice{suffix}.wav"
@@ -1125,7 +1236,10 @@ def main(argv=None):
         buf = np.zeros(target, dtype=np.int16)
         buf[lead:lead + min(len(data), target - lead)] = data[: target - lead]
         chunks.append(buf)
+        if i in loops:   # boucle accélérée : aucune voix
+            chunks.append(np.zeros(int(loops[i][1] * sr), dtype=np.int16))
     allv = np.concatenate(chunks)
+    insert_loop_audio(loops, idx, starts, frames, music, sfx, amb)
     with wave.open(str(voice_track), "w") as wv:
         wv.setnchannels(1)
         wv.setsampwidth(2)
@@ -1141,7 +1255,7 @@ def main(argv=None):
           + (f" ({', '.join(fmt_ts(c) for c in clashes[:12])})" if clashes else ""))
 
     concat = work / f"concat{suffix}.txt"
-    concat.write_text("".join(f"file '{seg[i]}'\n" for i in idx))
+    concat.write_text("".join(f"file '{seg[i]}'\n" + (f"file '{loops[i][0]}'\n" if i in loops else "") for i in idx))
     out = work / f"video{suffix}.mp4"
     # passe 1 : mixage, normalisation et limiteur (crête plafonnée à -3 dB) dans un fichier intermédiaire
     mixed = work / f"mix{suffix}.wav"
@@ -1178,7 +1292,7 @@ def main(argv=None):
         if SCENES[i][0] not in seen:
             seen.add(SCENES[i][0])
             chapters.append(f"{fmt_ts(t0)} - {BEATS[SCENES[i][0]]}")
-        t0 += dur
+        t0 += dur + (loops[i][1] if i in loops else 0.0)
     (work / f"sous-titres{suffix}.srt").write_text("\n".join(srt), encoding="utf-8")
     (work / f"chapitres{suffix}.txt").write_text("\n".join(chapters) + "\n", encoding="utf-8")
     print(f"Terminé : {out} ({t0 / 60:.2f} min)")
