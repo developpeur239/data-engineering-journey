@@ -71,3 +71,27 @@ L'échec occupe les deux premières minutes : le spectateur reconnaît son propr
 ## À ne pas copier
 - Son style visuel (silhouettes noires) ni ses histoires : les commentaires le confondent déjà avec une autre chaîne.
 - Le titre à la fin marche pour une fiction sans voix. Chez nous, la question « Et si… ? » doit rester au début.
+
+## Comparaison avec « 1 HOUR » (61 000 vues, même créateur, même style)
+Analyse de la vidéo envoyée en fichier (3 min 13, non conservée dans le dépôt). Une seule comparaison ne prouve
+pas la cause du succès. Ce sont les différences mesurables entre les deux.
+
+| | 1 MINUTE (1,07 M) | 1 HOUR (61 k) |
+|---|---|---|
+| Sujet | Tenir une résolution : tout le monde l'a vécu | Un ado basketteur qui dort trop peu à cause du téléphone : plus ciblé |
+| Accroche | Un but concret dès 0:11 (« 10K. Every day. ») | Une phrase de narration la nuit (« Every night, I swore I'd sleep earlier »), puis une citation à 0:38 |
+| Coupes par minute | 24, 12, 5, 11, 7 | 11, 6, 11 |
+| Plans les plus longs | 13 s, 11 s, en dehors de l'accélération | 26 s (discussion avec la mère), 23 s, 17 s |
+| Écart de volume entre parties | 11 dB (−14 puis −25), coupure nette | environ 7 dB, volume presque constant (−20 à −22 dB) sauf le match gagné (−15) |
+| Silences complets | 2 (avant chaque nouveau départ) | aucun |
+| Motif visuel qui revient | le calendrier : on voit les croix s'accumuler | l'heure (2:14, 1:23, 9:37, 11:32) : il faut la lire |
+| Texte à lire | quelques mots par plan | plus de répliques, parfois deux bulles par plan |
+| Promesse du titre | « 1 minute » : un effort minuscule, très attirant | « 1 heure » : moins clair (une heure de quoi ?) |
+
+Ce qui ressort :
+1. **Un sujet universel** plutôt qu'un personnage très particulier.
+2. **Une accroche par l'image et le but**, pas par une phrase de narration.
+3. **Des contrastes forts** : accélération puis coupure, musique pleine puis presque rien, silences avant les relances.
+   Dans « 1 HOUR », le son reste au même niveau presque tout le temps.
+4. **Un motif qui se lit d'un coup d'œil** (des croix rouges) plutôt qu'un chiffre à lire (une heure).
+5. **Un titre qui promet quelque chose de minuscule et d'utile.**
