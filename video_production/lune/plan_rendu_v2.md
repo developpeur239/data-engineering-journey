@@ -9,7 +9,7 @@ schémas faits en 2D. Le découpage scène par scène et les choix de style de l
 | | v1 | v2 | Gain |
 |---|---|---|---|
 | Décors ou effets à créer | 10 (dont 2 G) | **5 (dont 1 G)** | environ 40 % de fabrication en moins |
-| Durée de voix | environ 14 min 10 (2 182 mots à 154 mots/min), non tranché | **environ 12 min (environ 1 860 mots)** | une seule génération ElevenLabs (environ 11 000 crédits au lieu de 13 000, sans regénération) |
+| Durée de voix | environ 13 min 43 (2 112 mots à 154 mots/min), non tranché | **environ 11 min 41 (1 799 mots, texte V13)** | une seule génération ElevenLabs (environ 11 000 crédits au lieu de 13 000, sans regénération) |
 | Validation | sur vidéo rendue | **sur animatique** (une image par plan + voix) | les erreurs de cadre et de rythme coûtent une image, pas un rendu |
 | Schémas (orbite, laser, marées, carte, compteurs) | studio 3D | **2D Tesseract** (rendu en secondes) | 10 blocs sortis du rendu 3D image par image |
 | Angles de caméra | libres par plan | **3 angles fixes par décor**, réutilisés | réglage fait une fois ; le cache resservira |
@@ -46,8 +46,10 @@ schémas faits en 2D. Le découpage scène par scène et les choix de style de l
 
 ## 2. Coupes pour tenir 12:40 (environ 320 mots et 7 raccords)
 
-À 154 mots/min, 2 182 mots donnent environ 14 min 10 de voix. Avec les silences protégés, il faut couper 300 à 350
-mots. **Règle : la voix ne décrit jamais l'image.** On coupe les phrases qui racontent ce que l'image montre déjà, ou
+À 154 mots/min, les 2 112 mots du V12 donnent environ 13 min 43 de voix. C'est compté comme dans
+`compare_voices.py`, qui a donné les 154 mots/min (ni ponctuation, ni noms des voix). Un premier comptage, qui
+incluait la ponctuation, donnait par erreur 2 182 mots et 14 min 10. Les nombres de mots du tableau ci-dessous
+viennent de ce premier comptage. **Règle : la voix ne décrit jamais l'image.** On coupe les phrases qui racontent ce que l'image montre déjà, ou
 ce qu'un texte à l'écran dit déjà. **Aucune réplique n'est touchée**, et l'histoire non plus. Les blocs à couper en
 priorité sont justement les fils humains : on y retire la description et on garde les répliques et les silences.
 
@@ -88,9 +90,12 @@ contexte, en tenant compte des phrases voisines retirées, y compris d'un bloc �
 - **09:27 :** « 0,06 seconde. » arrive juste après « Léa lance une dernière impulsion. », en même temps que le
   compteur à l'écran.
 
-Bilan avec les raccords : 318 mots en moins. Il reste environ 1 864 mots, soit environ 12 min 06 de voix et 34 s
-pour les silences et le noir final. Toutes les phrases ont été vérifiées mot pour mot dans le dossier V12. Coupes et
-raccords restent **à valider par l'auteur** : je ne réécris rien sans accord.
+**Bilan, mesuré sur le texte appliqué (`texte_voix_V13.md`)** : 313 mots en moins. Il reste 1 799 mots, soit environ
+11 min 41 de voix et environ 59 s pour les silences et le noir final. Les silences protégés en demandent environ 25.
+La marge restante (environ 35 s) absorbe un Nicolas plus lent avec la direction « posée, proche » : à 145 mots/min,
+on arrive à 12 min 24. Si la planche-contact montre qu'un bloc manque d'appui, on peut remettre quelques
+phrases (d'abord « Il regarde l'eau. » à 03:47). Toutes les phrases ont été vérifiées mot pour mot dans le dossier V12.
+Coupes et raccords restent **à valider par toi** : je ne réécris rien sans accord.
 
 ## 3. Décors : 5 à créer au lieu de 10
 
@@ -138,7 +143,7 @@ Simplifications qui ne se voient pas à l'écran :
 
 ## 6. Points ouverts
 
-1. **Coupes** : valider la liste de la section 2 (324 mots coupés, 7 raccords, aucune réplique touchée).
+1. **Coupes** : valider le texte `texte_voix_V13.md` (313 mots en moins, 7 raccords, aucune réplique touchée).
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
