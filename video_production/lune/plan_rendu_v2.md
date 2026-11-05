@@ -79,7 +79,7 @@ contexte, en tenant compte des phrases voisines retirées, y compris d'un bloc �
 | 05:00 | « Et sa vitesse de rapprochement augmente. » : « sa » renvoie au « changement » | « Et **la** vitesse de rapprochement **de la Lune** augmente. » |
 | 09:00 | « Puis elle enregistre un message vocal. » : « Puis » n'a plus rien avant lui | « **Elle** enregistre un message vocal. » |
 | 09:27 | « Et retourne vers le laser. » : sans sujet (« Léa fixe l'écran. Puis elle le pose. » est retiré en fin de 09:00) | « **Elle** retourne vers le laser. » |
-| 09:48 | « Les zones sombres qui traversent sa surface… » : « sa » renvoie à « la mesure » | « … qui traversent **la surface de la Lune**… » |
+| 09:48 | « Les zones sombres qui traversent sa surface… » : « sa » renvoie à « la mesure », et « zones sombres » se confond avec les mers lunaires naturelles | « **Les immenses fractures sont désormais visibles à l'œil nu.** » (après l'audit V13) |
 | 10:47 | « Et lui répond doucement : » : sans sujet | **Coupé** (ligne ajoutée au tableau ci-dessus) |
 
 **À surveiller, sans changement pour l'instant :**
@@ -143,7 +143,7 @@ Simplifications qui ne se voient pas à l'écran :
 
 ## 6. Points ouverts
 
-1. **Coupes** : valider le texte `texte_voix_V13.md` (313 mots en moins, 7 raccords, aucune réplique touchée).
+1. **Texte V13** : 1 792 mots, 8 phrases réécrites, une coupe en plus, aucune réplique touchée. Les deux corrections de l'audit (08:31, 09:48) sont appliquées. À valider avant de générer.
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
@@ -191,6 +191,12 @@ D'accord avec l'audit. Les débords par bloc (02:47 : + 9 s, 08:31 : + 10 s, etc
 la marge globale d'environ 59 s. Méthode économe : la **voix définitive est générée bloc par bloc** et sert aussi de
 voix témoin. Si un bloc change après l'animatique, on ne regénère que ce bloc (quelques centaines de crédits). Les
 timecodes du découpage sont recalés sur l'animatique, puis gelés.
+
+Blocs à laisser respirer dans l'animatique, **sans accélérer la voix** : 08:31 (Roche, comète de 1994, fractures)
+passe à environ 40 s ; 02:47 à environ 22 s. La marge globale ne garantit pas à elle seule les débords locaux. On
+protège donc d'abord les pauses, les SMS et les transitions, et ce sont les plans muets qui raccourcissent.
+Correction de l'audit V13 à 08:31 : « En 1994, les fragments d'une comète déchirée par Jupiter se sont écrasés sur la
+planète. » La comète s'est fragmentée en 1992, et ses fragments ont frappé Jupiter en juillet 1994.
 
 ### 7.3 Décision : les personnages parlent (option A, voix ElevenLabs)
 Retenue le 5 novembre 2026 : **Léa, le collègue et la mère ont de vraies voix générées sur ElevenLabs.** Cela fait

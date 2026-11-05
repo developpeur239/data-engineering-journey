@@ -1,12 +1,14 @@
 # Le Dernier Écho : texte de la voix, version V13
 
 Texte du dossier V12, avec les coupes et les raccords de `plan_rendu_v2.md` (section 2) appliqués. C'est la version à
-relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 7 phrases
-réécrites : 6 raccords, plus la correction du compte à rebours (02:00 : 4 j 20 h est la durée totale de la chute).
-Une autre correction est une coupe (« Et lui répond doucement : », à 10:47). Les SMS de la sœur et le statut
+relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 8 phrases
+réécrites : 5 raccords après coupe, le compte à rebours (02:00 : 4 j 20 h est la durée totale de la chute), la comète
+de 1994 (08:31 : ce sont ses fragments qui frappent Jupiter en 1994) et les fractures (09:48 : on parle des fractures,
+pas des zones sombres naturelles de la Lune). Une autre correction est une coupe (« Et lui répond doucement : », à
+10:47). Les SMS de la sœur et le statut
 « Écouté » ne sont plus lus : ils sont écrits à l'écran.
 
-Total : **1796 mots** (V12 : 2112), soit environ **11 min 40 s** de voix à 154 mots/min (même compteur que
+Total : **1792 mots** (V12 : 2112), soit environ **11 min 38 s** de voix à 154 mots/min (même compteur que
 `compare_voices.py`, sans la ponctuation ni les noms des voix), pour 12:40 avec les silences et le noir final. Les durées par bloc sont des estimations : le montage les recale.
 Statut : **à valider par toi**, avant toute génération ElevenLabs.
 
@@ -136,7 +138,7 @@ Mais à une heure et demie du contact, les forces responsables des marées attei
 
 **08:31–09:00** · 100 mots (V12 : 100) · environ 39 s pour un créneau de 29 s
 
-La Terre attire plus fortement sa face proche que sa face éloignée. À très courte distance, cette différence peut devenir destructrice. Les astronomes connaissent ce phénomène. Il est lié à ce qu’on appelle la limite de Roche. En 1994, les astronomes ont vu une comète déchirée par Jupiter s’écraser sur la planète. Mais la Lune est un monde rocheux, pas une boule de liquide. Rien ne garantit qu’elle se brisera. Pourtant, les fractures s’étendent. Et une question apparaît. Que se passera-t-il si la Lune commence à se disloquer avant de toucher la Terre ? La réponse arrive plus vite que prévu.
+La Terre attire plus fortement sa face proche que sa face éloignée. À très courte distance, cette différence peut devenir destructrice. Les astronomes connaissent ce phénomène. Il est lié à ce qu’on appelle la limite de Roche. **En 1994, les fragments d’une comète déchirée par Jupiter se sont écrasés sur la planète.** Mais la Lune est un monde rocheux, pas une boule de liquide. Rien ne garantit qu’elle se brisera. Pourtant, les fractures s’étendent. Et une question apparaît. Que se passera-t-il si la Lune commence à se disloquer avant de toucher la Terre ? La réponse arrive plus vite que prévu.
 
 
 ## 09:00–10:00 · Le dernier écho
@@ -153,9 +155,9 @@ NARR : Elle l’envoie. Quelques secondes passent.
 
 **Elle retourne vers le laser.** Contre toute attente, malgré les secousses et les coupures de courant, le système fonctionne encore. Le réflecteur lunaire est toujours accessible. Léa lance une dernière impulsion. 0,06 seconde. Il y a cinq jours, le même trajet prenait environ deux secondes et demie. À présent, la lumière ne parcourt plus qu’environ neuf mille kilomètres à l’aller, entre l’observatoire et la surface lunaire.
 
-**09:48–10:00** · 40 mots (V12 : 54) · environ 16 s pour un créneau de 12 s
+**09:48–10:00** · 36 mots (V12 : 54) · environ 14 s pour un créneau de 12 s
 
-D’après les calculs, il reste une vingtaine de minutes avant le contact des deux astres. Léa sauvegarde la mesure. Les zones sombres **qui traversent la surface de la Lune** sont désormais visibles. Une partie du bord lunaire change de forme.
+D’après les calculs, il reste une vingtaine de minutes avant le contact des deux astres. Léa sauvegarde la mesure. **Les immenses fractures sont désormais visibles à l’œil nu.** Une partie du bord lunaire change de forme.
 
 
 ## 10:00–11:00 · La lune se brise
