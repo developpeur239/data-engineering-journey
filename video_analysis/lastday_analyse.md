@@ -75,3 +75,57 @@ scientifique) ou d'une **phrase morale** que tout le monde peut reprendre.
 Pour analyser le montage, le son et la voix comme pour Hindcast et Last Soul, il faut les fichiers. Les plus
 utiles : « What would happen If the Moon Crashed Into Earth? » (le plus gros succès du format) et
 « What Would Happen If Every Nuclear Weapon Went Off at Once? » (l'échec), pour comparer.
+
+## Script de « What would happen If the Moon Crashed Into Earth? » (1,98 M de vues, 21 min 24)
+Analyse faite sur la transcription fournie par l'utilisateur. Durées des parties non mesurées (pas de minutage
+dans la transcription) : l'ordre et le rôle de chaque partie sont donnés, pas les pourcentages.
+
+### Découpage
+| # | Partie | Ce qui se passe | Équivalent chez nous (`format_bible.md`) |
+|---|---|---|---|
+| 1 | Ouverture choc | Fausse alerte : « Breaking news… Get indoors. Seek shelter now. » | temps 1 (ouverture) |
+| 2 | Ce qui est normal | La Lune en chiffres (largeur de l'Australie), puis comment marche une orbite : « une chute qui ne finit jamais » | temps 3-4 (contexte, calcul) |
+| 3 | Trois questions | « Combien de temps aurions-nous ? Que verrions-nous ? Quelque chose survivrait-il ? Voyons. » | question du titre |
+| 4 | Contrat d'honnêteté | « Ce que nous allons faire est physiquement impossible… donc nous allons tricher. » | temps 2 (contrat) |
+| 5 | La règle du jeu | Chute en un peu moins de 5 jours, qui accélère : la dernière heure couvre plus que les deux premiers jours | temps 4 (boucle plantée) |
+| 6 | Jour 1 | Rien de visible ; les observatoires (lasers sur les miroirs d'Apollo) voient l'anomalie ; un scientifique vérifie, revérifie, appelle un collègue | temps 5 |
+| 7 | Explication | Les marées vraiment expliquées ; force qui croît avec le cube de la distance : moitié = 8 fois, quart = 64 fois, dixième = 1 000 fois | temps 4 (calcul) |
+| 8 | Jour 2 | Marées plus hautes, « marées terrestres » de 30 cm (« peu de gens le savent »), la roche accumule la tension | temps 6 |
+| 9 | Jour 3 | À mi-distance, la règle tombe : 8 fois la force. La Lune immense, marées de dizaines de mètres, séismes, volcans | temps 6 (palier) |
+| 10 | Pourrait-on l'arrêter ? | « Non. » Comparaison : toutes les armes nucléaires ne la dévieraient pas | choix impossible (variante) |
+| 11 | Jour 4 | Bulles d'océan qui balaient les continents ; échauffement par les marées, comparé à Io (cas réel) | temps 6 |
+| 12 | Dernières heures | La limite de Roche (un astronome français, 1848) ; « notre scénario diffère de l'image classique » : pas d'anneau | temps 7 (retournement) |
+| 13 | L'impact | Fragments d'abord, 11 km/s, 10 millions de fois l'astéroïde des dinosaures, océan de magma, fin de la vie | temps 7 |
+| 14 | 2e question | « Et la planète ? Étonnamment, oui. » La Terre absorbe la Lune, brille des milliers d'années, nouveaux océans, ciel sans Lune | retournement bis |
+| 15 | C'est déjà arrivé | L'impact de Théia il y a 4,5 milliards d'années : « la naissance de la Lune, jouée à l'envers » | temps 9 (vérité) |
+| 16 | La vérité | En réalité la Lune s'éloigne de 3,8 cm par an, « la vitesse à laquelle poussent vos ongles » ; les jours s'allongent | temps 9 |
+| 17 | Fin | « Ce soir, si le ciel est clair, regardez. » La Lune « tombe vers nous comme toujours… et nous rate comme toujours ». « Ours is simply one of the lucky ones. » Question en commentaire | temps 9 (fin, geste) |
+
+### Mécaniques (ce qui le rend efficace)
+1. **Une règle plantée tôt, payée à chaque palier.** La loi du cube est expliquée au début, puis chaque jour
+   en montre l'effet (« la moitié de la distance, donc 8 fois la force »). Le spectateur peut prévoir, donc il
+   suit. C'est plus fort qu'une seule boucle « retenez ce chiffre ».
+2. **Une image-motif au début et à la fin** : « une chute qui ne finit jamais » ouvre la vidéo et la referme.
+3. **Chaque chiffre est rendu concret** : la largeur de l'Australie, les ongles qui poussent, 350 fois l'astéroïde
+   des dinosaures, toutes les armes nucléaires du monde.
+4. **Des faits surprenants annoncés** : « peu de gens le savent », « voici la partie importante », « voici le plus
+   remarquable ».
+5. **Les questions du spectateur sont posées à sa place** : « Pourrait-on l'arrêter ? », « Et la planète ? ».
+6. **Un cas réel par palier** : les miroirs d'Apollo, Io, la limite de Roche (1848), Théia.
+7. **Une seule scène humaine, minuscule** : le scientifique qui vérifie son matériel. Pas de personnage suivi.
+8. **Fin apaisée** : on finit sur l'émerveillement (« regardez ce soir ») et une phrase qu'on retient, pas sur la peur.
+9. **La consigne absurde du début** (« Seek shelter now ») a fait le commentaire le plus aimé (516 likes) :
+   une petite phrase à contredire suffit à lancer les commentaires.
+
+### Différences avec Hindcast et notre format
+- **Pas de personnage fil rouge.** Le héros, c'est le phénomène. Notre format garde Marc : c'est notre
+  différence émotionnelle, à conserver.
+- **Plus d'explication scientifique** : des pauses « comprenons d'abord… » au milieu de la chronologie.
+- **Deux retournements** (l'impact, puis « la planète survit ») au lieu d'un.
+- **La vérité finale corrige le scénario** (« en réalité, elle s'éloigne ») et donne une émotion positive.
+
+### À ajouter à notre prompt de script (proposition, non appliquée)
+- Une **règle physique simple** expliquée au temps 4 et vérifiée à chaque palier du temps 6.
+- Au moins une **question du spectateur posée à voix haute** (« Pourrait-on l'arrêter ? »).
+- Un **fait surprenant annoncé** par palier (« peu de gens le savent »).
+- Une **petite phrase à contredire** dans l'ouverture, pour lancer les commentaires.
