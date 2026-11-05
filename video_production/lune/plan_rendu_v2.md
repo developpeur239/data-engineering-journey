@@ -9,16 +9,17 @@ schémas faits en 2D. Le découpage scène par scène et les choix de style de l
 | | v1 | v2 | Gain |
 |---|---|---|---|
 | Décors ou effets à créer | 10 (dont 2 G) | **5 (dont 1 G)** | environ 40 % de fabrication en moins |
-| Durée de voix | environ 14 min 30, non tranché | **12 min, mesurée avant génération** | une seule génération ElevenLabs (environ 11 000 crédits au lieu de 13 000, sans regénération) |
+| Durée de voix | environ 14 min 10 (2 182 mots à 154 mots/min), non tranché | **environ 12 min (environ 1 860 mots)** | une seule génération ElevenLabs (environ 11 000 crédits au lieu de 13 000, sans regénération) |
 | Validation | sur vidéo rendue | **sur animatique** (une image par plan + voix) | les erreurs de cadre et de rythme coûtent une image, pas un rendu |
 | Schémas (orbite, laser, marées, carte, compteurs) | studio 3D | **2D Tesseract** (rendu en secondes) | 10 blocs sortis du rendu 3D image par image |
 | Angles de caméra | libres par plan | **3 angles fixes par décor**, réutilisés | réglage fait une fois ; le cache resservira |
 
 ## 1. Règles de production
 
-1. **Verrouiller avant de générer.** Aucune voix finale tant que le texte n'est pas à environ 1 800 mots (section 2).
-   Le débit réel de Nicolas se mesure sur **un seul bloc** (environ 70 mots, environ 400 crédits) avant de couper.
-   La v1 supposait 150 mots/min sans l'avoir mesuré.
+1. **Verrouiller avant de générer.** Aucune voix finale tant que le texte n'est pas coupé (section 2). Le débit de
+   Nicolas est connu : **environ 154 mots/min**, mesuré lors de la comparaison des 4 voix sur le script de la panne
+   d'Internet. Un test sur un bloc (environ 400 crédits) reste possible si la direction « posée, proche » le ralentit.
+   Ce serait une confirmation, pas une étape obligatoire.
 2. **Animatique d'abord** (livrable demandé par le dossier) : `render.py --stills` donne une image par plan. On la
    monte sur la voix témoin avec les sons temporaires. On valide le rythme, les cadres et les silences protégés, puis
    seulement on anime. Relecture par **planche-contact** : une image regroupe environ 12 plans, ce qui économise du
@@ -32,29 +33,42 @@ schémas faits en 2D. Le découpage scène par scène et les choix de style de l
    avec le cache par segment et `--audit` (collisions).
 6. **2D pour tout ce qui explique** : aller-retour du laser, compteurs « 2,51 s » et « 0,066 s », orbite et chute,
    marées (face proche et face éloignée), énergie comparée, carte, multiplicateurs « × 60 » et « × 940 ». Ces
-   schémas se font dans Tesseract (projet modifiable, export MP4 en quelques secondes), aux couleurs de la chaîne et en
-   Bricolage. À vérifier d'abord : insérer un MP4 dans `render.py` (P).
+   schémas se font dans Tesseract (projet modifiable, export MP4 en quelques secondes). Deux conditions avant d'en
+   produire un seul des 10 :
+   - **Intégration testée** : un schéma d'essai inséré dans `render.py` (P). Aujourd'hui, `render.py` assemble ses
+     propres segments et boucles MP4, mais n'insère pas encore de MP4 venu d'ailleurs.
+   - **Même typographie que le studio** (thème `bricolage` de `index.html`, même casse normale) :
+     titres en Bricolage Grotesque, textes et étiquettes en Instrument Sans, **chiffres en Fragment Mono**, cartes
+     en EB Garamond, bulles en Comic Neue. Ces fichiers sont importés dans chaque projet Tesseract, avec un modèle
+     unique (couleurs, tailles, marges) copié pour chaque schéma.
+   - **Solution de repli** si l'un des deux échoue : faire les schémas dans le HUD HTML du studio. Ils ont alors les
+     mêmes polices par construction, mais coûtent plus cher à rendre.
 
-## 2. Coupes pour tenir 12:40 (environ 380 mots)
+## 2. Coupes pour tenir 12:40 (environ 320 mots)
 
-Calcul à 150 mots/min, à corriger avec le débit mesuré. Les blocs suivants débordent de leur créneau. On coupe
-d'abord là où l'émotion a besoin d'air :
+À 154 mots/min, 2 182 mots donnent environ 14 min 10 de voix. Avec les silences protégés, il faut couper 300 à 350
+mots. **Règle : la voix ne décrit jamais l'image.** On coupe les phrases qui racontent ce que l'image montre déjà, ou
+ce qu'un texte à l'écran dit déjà. **Aucune réplique n'est touchée**, et l'histoire non plus. Les blocs à couper en
+priorité sont justement les fils humains : on y retire la description et on garde les répliques et les silences.
 
-| Bloc | Mots | Débord | Priorité |
-|---|---|---|---|
-| 10:47–11:00 (mère et garçon sur la hauteur) | 95 | +25 s | **1** : moment-clé, il faut de la place pour « Je suis là » et la pause |
-| 03:47–04:00 (seau, première réplique) | 71 | +15 s | 1 |
-| 04:28–05:00 (voiture, « pourquoi elle grossit ? ») | 118 | +15 s | 1 |
-| 05:25–05:47 (collègue, Léa reste) | 93 | +15 s | 1 |
-| 11:26–11:50 (planète incandescente) | 94 | +14 s | 2 : l'image suffit |
-| 06:30–07:00 (sirènes, course) | 107 | +13 s | 2 |
-| 08:31–09:00 (limite de Roche, 1994) | 101 | +11 s | 2 |
-| 09:27–09:48 (dernier tir laser) | 80 | +11 s | 2 |
-| 00:42–01:00, 02:47–03:00, 09:48–10:00 | 71, 57, 54 | +10 s chacun | 3 |
-| 05:00–05:25, 09:00–09:27 | 84, 85 | +9 s, +7 s | 3 |
+| Bloc | Phrases retirées (l'image ou l'écran les montrent) | Mots |
+|---|---|---|
+| 00:42 | « Sur les trottoirs, des centaines de personnes regardent vers le haut. » « Personne ne parle. » « Certains filment. » (la phrase suivante commence alors par « Certains » au lieu de « D'autres ») | 16 |
+| 03:47 plage | « Il tient encore son seau en plastique. » « Il regarde l'eau. » « Sa mère ne répond pas immédiatement. » « Parce que c'est justement ce qui rend la situation si difficile à comprendre. » Le silence après « Mais elle est comme d'habitude » le dit déjà. | 29 |
+| 04:28 voiture | « Il regarde par la vitre. » « Il prend une photographie avec le téléphone de sa mère. » « Puis il ouvre celle qu'il avait prise la veille. » « Il rapproche les deux images. » « Sa mère regarde le ciel. » Les deux photos à l'écran disent tout. | 34 |
+| 05:00 | « La Lune occupe désormais une place inhabituelle dans le ciel. » « On distingue ses reliefs avec une netteté troublante. » | 18 |
+| 05:25 collègue | « Léa regarde l'écran… » « Son collègue est déjà près de la porte. » « Elle ne répond pas. » La lecture du SMS de la sœur, que le dossier veut écrit à l'écran et non lu. « Léa commence à écrire une réponse. » « Puis elle efface. » | 50 |
+| 06:30 | Les deux sirènes (le son les fait entendre), les conducteurs qui sortent, « Quelqu'un pointe l'horizon », la main prise, la voiture abandonnée, la course | 33 |
+| 09:00 | « Elle regarde son téléphone. » La lecture du dernier SMS (écrit à l'écran). « Léa ferme les yeux une seconde. » « Sous le message, un mot apparaît. « Écouté. » » (le statut est à l'écran, et le silence qui suit est protégé). « Léa fixe l'écran. » « Puis elle le pose. » | 44 |
+| 09:27 | « La lumière part. » « Elle atteint la Lune. » « Et revient. » « Sur l'écran, un nombre apparaît. » (le compteur le montre) | 14 |
+| 09:48 | « Puis elle se lève. » « Dehors, la Lune occupe une portion immense du ciel. » « Léa ne bouge plus. » | 17 |
+| 10:47 colline | « Derrière eux, la route a disparu sous l'eau. » « Devant eux, la Lune semble se déchirer. » « Elle s'agenouille devant lui. » « Le prend dans ses bras. » « Au-dessus d'eux, les fragments continuent de tomber. » « Son contour est déchiré. » « Elle est immense. » La place libérée va à « Je suis là » et à la pause qui suit. | 38 |
+| 11:26 | « Depuis l'espace, on voit le nuage de débris… » « La surface que nous connaissons disparaît… derrière une immense enveloppe de matière brûlante. » | 27 |
+| **Total** | | **320** |
 
-Les blocs 00:00–00:42, 07:00–07:30 et le final ont de la marge : on les garde, la marge sert aux silences. Les coupes
-sont à valider par l'auteur : je propose des versions courtes, je ne réécris rien sans accord.
+On obtient environ 1 860 mots, soit environ 12 min 05 de voix et 35 s pour les silences et le noir final. Toutes les
+phrases ont été vérifiées mot pour mot dans le dossier V12. Elles restent **à valider par l'auteur** : je ne réécris
+rien sans accord. Seul raccord nécessaire : « D'autres » devient « Certains » à 00:42.
 
 ## 3. Décors : 5 à créer au lieu de 10
 
@@ -91,8 +105,8 @@ Simplifications qui ne se voient pas à l'écran :
 
 ## 5. Ordre de fabrication
 
-1. Mesurer le débit sur un bloc, valider les coupes, puis générer la voix finale (une fois) et les 2 répliques
-   féminines (test, puis génération).
+1. Valider les coupes, puis générer la voix finale une fois. Tester puis générer les 2 répliques féminines. En
+   parallèle, faire l'essai d'intégration d'un schéma Tesseract dans `render.py`, avec les polices du studio.
 2. Construire les décors 1 et 2, sortir les images fixes des blocs Calern, puis l'animatique partielle.
 3. Construire les décors 3 et 4, puis l'animatique complète. **Point de validation avec toi.**
 4. Faire les schémas 2D (Tesseract).
@@ -102,7 +116,7 @@ Simplifications qui ne se voient pas à l'écran :
 
 ## 6. Points ouverts
 
-1. **Coupes** : valider la liste de la section 2 (environ 380 mots).
+1. **Coupes** : valider la liste de la section 2 (320 mots, aucune réplique touchée).
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
