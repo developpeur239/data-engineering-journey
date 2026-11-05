@@ -147,6 +147,93 @@ Simplifications qui ne se voient pas à l'écran :
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
-4. **Voix de Léa et de la mère** : choisir deux voix féminines (test de 2 répliques).
+4. **Voix des personnages** : option A ou B (section 7.3), tranchée par le prototype (7.7).
+6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
+
+## 7. Après l'audit croisé (V1, V2, V13)
+
+### 7.1 Fiche Lune unique (recalculée)
+Calcul fait en chute libre depuis le repos à 384 400 km, avec la masse de la Terre et celle de la Lune.
+L'observateur est sous la Lune. La chute dure **4 j 19 h 36 min** jusqu'au contact. Tous les visuels
+(taille, compteurs, infographies) lisent cette fiche, et rien d'autre.
+
+| Moment | Distance (centres) | Taille apparente | Force de marée | Écho laser |
+|---|---|---|---|---|
+| Anomalie (début + 17 h) | 379 000 km | × 1,0 | × 1 | 2,48 s |
+| Début + 2 j | 342 000 km | × 1,1 | × 1,3 | 2,23 s |
+| Début + 4 j | 185 000 km | × 2,1 | × 9 | 1,18 s |
+| 6 h avant | 91 000 km | **× 4,5** | **× 75** | 0,56 s |
+| 1 h 30 avant | 39 000 km | × 11,5 | × 940 | 0,21 s |
+| Dernier écho (environ 19 min avant) | 17 100 km | × 35 | × 11 000 | **0,060 s** |
+
+Corrections qui en découlent :
+- **06:00 : « × 60 » devient « × 75 »** (plan V1, et valeur retenue dans nos calculs précédents).
+- **La taille × 4 devient × 4,5** à six heures. Le × 12 de 1 h 30 avant est juste (× 11,5).
+- **Compteur du dernier écho : « 0,060 s » au lieu de « 0,066 s ».** La voix dit « 0,06 seconde » et « environ neuf
+  mille kilomètres » : cela correspond à 0,060 s (8 990 km) et à « une vingtaine de minutes » (19 min). La Lune est
+  alors à × 35, pas × 32.
+- **Erreur non relevée par l'audit, dans le texte (02:00) :** « Quatre jours et vingt heures. C'est tout ce qu'il
+  reste ». Or la chute commence à 5 h 24 et l'anomalie apparaît à 22 h 14 : **il ne reste alors qu'environ 4 j 3 h**.
+  « 4 j 20 h » est la durée totale de la chute, pas le temps restant. Deux corrections possibles, à choisir par toi :
+  dire « environ quatre jours » (compteur « 4 j 3 h »), ou présenter 4 j 20 h comme la durée de la chute. Le compteur
+  du plan V1 (« 4 j 20 h ») suit ce choix.
+- Notes scientifiques de production : la fragmentation est **une hypothèse de mise en scène**. Le texte le dit déjà
+  (« Rien ne garantit qu'elle se brisera », « un monde rocheux, pas une boule de liquide »). La comète de 1994 illustre
+  les forces de marée ; elle ne prouve rien pour la Lune. Les multiplicateurs mesurent une force, jamais une hauteur
+  d'eau ou de sol.
+
+### 7.2 Timecodes : résultat du montage, pas contrainte
+D'accord avec l'audit. Les débords par bloc (02:47 : + 9 s, 08:31 : + 10 s, etc., environ 33 s au total) tiennent dans
+la marge globale d'environ 59 s. Méthode économe : la **voix définitive est générée bloc par bloc** et sert aussi de
+voix témoin. Si un bloc change après l'animatique, on ne regénère que ce bloc (quelques centaines de crédits). Les
+timecodes du découpage sont recalés sur l'animatique, puis gelés.
+
+### 7.3 Décision à prendre : les personnages parlent-ils ?
+| Option | Effet | Coût |
+|---|---|---|
+| A. Voix réelles pour tous (Léa, collègue, mère, garçon) | Plus d'émotion, surtout « Maman… pourquoi elle grossit ? » | Environ 10 répliques, quelques centaines de crédits ; durées presque inchangées (les répliques sont déjà comptées) |
+| B. V1 : bulles, sauf le message vocal de Léa et « Je suis là » | Style plus muet, cohérent avec les silhouettes | Aucun |
+
+Avec l'option A, la voix du garçon pose un point particulier. Il faut soit l'enregistrement d'un enfant réel, avec
+l'accord de ses parents, soit une voix générée dont les règles de la plateforme autorisent l'usage. Sans bouche à
+animer, les plans restent de dos, en contrechamp ou larges. **Les SMS de la sœur restent écrits dans les deux cas.**
+
+### 7.4 SMS et « Écouté » : la place à l'écran
+- **05:25** (11 s de voix pour 22 s) : collègue « On doit partir. » → téléphone qui s'allume (notification) → SMS en
+  gros plan (au moins 3 s de lecture) → Léa écrit (saisie) → elle efface (silence) → « Tu ne peux plus rien changer. »
+- **09:00** (12 s de voix pour 27 s) : dernier SMS (3 s) → message vocal de Léa → « Écouté » qui apparaît, puis **au
+  moins 2 s de silence**. Le narrateur ne reprend qu'au bloc suivant.
+
+### 7.5 Continuité de la mère et du garçon
+Le plateau Littoral garde un décor technique unique. Mais il a **4 zones distinctes** : plage, autoroute, zone
+inondée, colline. Chacune a son repère visuel (phare, pont, pylônes, arbre isolé), sa lumière et son angle. Une carte
+du parcours, pour l'équipe seulement, fixe l'ordre et les distances. **Le garçon garde le seau à la main** en quittant
+la voiture et pendant la course.
+
+### 7.6 Le final, synchronisé à partir de la fin de la collision (T)
+| T | Image | Voix | Son |
+|---|---|---|---|
+| 0 | Collision, lumière blanche | « C'est la fin de notre monde. » | Apogée |
+| + 1 s | Noir ; l'étiquette « Simulation » disparaît | — | Coupure totale |
+| + 1 à + 5 s | Noir | — | Silence absolu |
+| + 5 s | Calern en plein jour, Léa au travail (coupe franche, sans fondu) | — | Clavier, ventilation |
+| + 9 s | Le collègue passe et sourit | — | Ambiance |
+| + 12 s | Plage ensoleillée | — | Ressac |
+| + 15 s | Le garçon court vers l'eau avec son seau | — | Vagues, pas |
+| + 18 s | La mère le rejoint | « Heureusement… » | Ambiance |
+| + 20 s | Plan large de la plage | « … tout cela n'était qu'une simulation. » | Musique douce |
+
+Pour que le noir suivi du plein jour ne ressemble pas à une erreur de montage, le premier plan de jour est très
+lumineux et sonore dès sa première image.
+
+### 7.7 Prototype avant fabrication (30 à 45 s)
+Il se place à l'étape 2 de l'ordre de fabrication, avant les décors 3 à 5. Il comprend deux passages :
+1. **Le dialogue de 05:25**, avec Léa, le collègue et le SMS. Il teste les silhouettes avec des voix réelles
+   (option A) ou des bulles (option B). Il n'utilise que les décors 1 et 2, déjà prévus en premier.
+2. **Collision puis retour à la réalité.** La collision est provisoire (`globe` + flash blanc) : on teste le
+   contraste du son et du montage, pas les effets visuels. La plage de jour est provisoire elle aussi (`street` de
+   jour, ou une image fixe).
+
+Coût : environ une journée, sans construire les décors lourds. C'est ce prototype qui tranche 7.3.
