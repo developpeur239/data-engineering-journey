@@ -147,7 +147,7 @@ Simplifications qui ne se voient pas à l'écran :
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
-4. **Voix des personnages** : option A retenue (ElevenLabs pour les adultes). Reste la solution pour le garçon (section 7.3).
+4. **Voix des personnages** : option A retenue. Adultes sur ElevenLabs (3 voix à choisir) ; garçon sur MiniMax `French_MovieLeadFemale`, hauteur +4 (section 7.3).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
 6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
@@ -209,6 +209,11 @@ choisir par toi :
    répliques avec 2 ou 3 voix candidates, puis on compare avec les bulles dans le prototype de la voiture.
 3. Réécrire ses 3 répliques pour les faire porter par la mère (« Il me demande pourquoi elle grossit… »). C'est
    déconseillé : on perd l'innocence de la question.
+
+**Retenu le 5 novembre 2026 : solution 4, voix MiniMax `French_MovieLeadFemale`**, modèle `speech-2.8-hd`, hauteur
++4, vitesse 0,95, `language_boost` French (essai : `essais_voix_garcon/garcon_French_MovieLeadFemale_pitch+4.mp3`).
+Ses 3 répliques gardent exactement ces réglages, pour que la voix reste la même. Les voix adultes restent sur
+ElevenLabs ; on harmonise le volume et l'acoustique au mixage.
 
 Le prototype de 05:25 (7.7) teste les voix adultes. Il faut lui ajouter le plan de la voiture (04:28) pour tester la
 solution retenue pour le garçon.
