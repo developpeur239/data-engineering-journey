@@ -252,7 +252,7 @@ choisir par toi :
 
 | Rôle | Fournisseur | Voix | Réglages |
 |---|---|---|---|
-| Narrateur | ElevenLabs | Nicolas – Narrator (`aQROLel5sQbj1vuIVi6B`) | `eleven_v4`, réglages connus de la vidéo Internet |
+| Narrateur | ElevenLabs | Nicolas – Narrator (`aQROLel5sQbj1vuIVi6B`), **confirmé** après comparaison avec 3 voix de bibliothèque et une voix Voice Design (`essais_narrateur/`) | `eleven_v4`, réglages connus de la vidéo Internet. À régler sur un bloc entier : vitesse un peu plus basse (vers 0,90) et pauses, car l'essai sur phrases courtes donnait environ 197 mots/min |
 | Léa | ElevenLabs | Jeanne – Narrator (`txtf1EDouKke753vN8SL`) | `eleven_v4`, stabilité 0,5, similarité 0,75 ; filtre téléphone sur le message vocal |
 | Collègue | ElevenLabs | Léo – Reassuring and Dynamic (`AfbuxQ9DVtS4azaxN1W7`) | `eleven_v4`, stabilité 0,5, similarité 0,75 |
 | Mère | ElevenLabs | Caroline – Warm, Sweet and Soft (`kwhMCf63M8O3rCfnQ3oQ`) | `eleven_v4`, stabilité 0,5, similarité 0,75 |
