@@ -1,11 +1,12 @@
 # Le Dernier Écho : texte de la voix, version V13
 
 Texte du dossier V12, avec les coupes et les raccords de `plan_rendu_v2.md` (section 2) appliqués. C'est la version à
-relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 6 raccords
-réécrits ; le septième est une coupe (« Et lui répond doucement : », à 10:47). Les SMS de la sœur et le statut
+relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 7 phrases
+réécrites : 6 raccords, plus la correction du compte à rebours (02:00 : 4 j 20 h est la durée totale de la chute).
+Une autre correction est une coupe (« Et lui répond doucement : », à 10:47). Les SMS de la sœur et le statut
 « Écouté » ne sont plus lus : ils sont écrits à l'écran.
 
-Total : **1799 mots** (V12 : 2112), soit environ **11 min 41 s** de voix à 154 mots/min (même compteur que
+Total : **1796 mots** (V12 : 2112), soit environ **11 min 40 s** de voix à 154 mots/min (même compteur que
 `compare_voices.py`, sans la ponctuation ni les noms des voix), pour 12:40 avec les silences et le noir final. Les durées par bloc sont des estimations : le montage les recale.
 Statut : **à valider par toi**, avant toute génération ElevenLabs.
 
@@ -37,9 +38,9 @@ Mais cette nuit-là, le signal revient légèrement plus tôt que prévu. Léa r
 
 ## 02:00–03:00 · Le compte à rebours
 
-**02:00–02:26** · 72 mots (V12 : 72) · environ 28 s pour un créneau de 26 s
+**02:00–02:26** · 69 mots (V12 : 72) · environ 27 s pour un créneau de 26 s
 
-Un événement inconnu vient de supprimer brutalement la vitesse orbitale de la Lune par rapport à la Terre. Normalement, cette vitesse lui permet de tomber continuellement autour de notre planète sans jamais la toucher. Mais sans ce mouvement latéral, plus rien ne l’empêche de se rapprocher directement de nous. Les calculs donnent un résultat terrifiant. Quatre jours et vingt heures. C’est tout ce qu’il reste avant que la Lune percute la Terre.
+Un événement inconnu vient de supprimer brutalement la vitesse orbitale de la Lune par rapport à la Terre. Normalement, cette vitesse lui permet de tomber continuellement autour de notre planète sans jamais la toucher. Mais sans ce mouvement latéral, plus rien ne l’empêche de se rapprocher directement de nous. Les calculs donnent un résultat terrifiant. Quatre jours et vingt heures. **C’est la durée totale de sa chute, jusqu’à l’impact.**
 
 **02:26–02:47** · 39 mots (V12 : 39) · environ 15 s pour un créneau de 21 s
 

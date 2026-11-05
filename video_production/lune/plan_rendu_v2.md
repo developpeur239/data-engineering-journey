@@ -150,7 +150,7 @@ Simplifications qui ne se voient pas à l'écran :
 4. **Voix des personnages** : option A retenue. Adultes sur ElevenLabs (3 voix à choisir) ; garçon sur MiniMax `French_MovieLeadFemale`, hauteur +4 (section 7.3).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
-6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
+6. **Compte à rebours de 02:00** : réglé, 4 j 20 h est présenté comme la durée totale de la chute (section 7.1).
 
 ## 7. Après l'audit croisé (V1, V2, V13)
 
@@ -176,9 +176,11 @@ Corrections qui en découlent :
   alors à × 35, pas × 32.
 - **Erreur non relevée par l'audit, dans le texte (02:00) :** « Quatre jours et vingt heures. C'est tout ce qu'il
   reste ». Or la chute commence à 5 h 24 et l'anomalie apparaît à 22 h 14 : **il ne reste alors qu'environ 4 j 3 h**.
-  « 4 j 20 h » est la durée totale de la chute, pas le temps restant. Deux corrections possibles, à choisir par toi :
-  dire « environ quatre jours » (compteur « 4 j 3 h »), ou présenter 4 j 20 h comme la durée de la chute. Le compteur
-  du plan V1 (« 4 j 20 h ») suit ce choix.
+  « 4 j 20 h » est la durée totale de la chute, pas le temps restant. **Décision : 4 j 20 h est
+  présenté comme la durée totale de la chute.** Dans V13, « C'est tout ce qu'il reste avant que la Lune percute la
+  Terre. » devient « C'est la durée totale de sa chute, jusqu'à l'impact. ». L'infographie de 02:00 montre une barre
+  « Durée de la chute : 4 j 20 h », avec un repère « déjà écoulé : 17 h » au moment de l'anomalie. Le compteur à
+  rebours qui suit part donc de 4 j 3 h.
 - Notes scientifiques de production : la fragmentation est **une hypothèse de mise en scène**. Le texte le dit déjà
   (« Rien ne garantit qu'elle se brisera », « un monde rocheux, pas une boule de liquide »). La comète de 1994 illustre
   les forces de marée ; elle ne prouve rien pour la Lune. Les multiplicateurs mesurent une force, jamais une hauteur
