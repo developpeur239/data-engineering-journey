@@ -124,7 +124,7 @@ dans la transcription) : l'ordre et le rôle de chaque partie sont donnés, pas 
 - **Deux retournements** (l'impact, puis « la planète survit ») au lieu d'un.
 - **La vérité finale corrige le scénario** (« en réalité, elle s'éloigne ») et donne une émotion positive.
 
-### À ajouter à notre prompt de script (proposition, non appliquée)
+### Ajouté à notre prompt de script (`format_bible.md`, 5 novembre 2026)
 - Une **règle physique simple** expliquée au temps 4 et vérifiée à chaque palier du temps 6.
 - Au moins une **question du spectateur posée à voix haute** (« Pourrait-on l'arrêter ? »).
 - Un **fait surprenant annoncé** par palier (« peu de gens le savent »).

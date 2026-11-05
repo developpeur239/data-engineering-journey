@@ -76,6 +76,13 @@ Proportions de la durée (calcule les minutages et les budgets de mots à partir
 - Un RETOURNEMENT préparé par un indice plus tôt.
 - Une FIN qui se partage : un lieu, une image ou un geste concret et mémorable.
 - Aucune minute sans chiffre, et aucun plan de plus de 15 secondes sans nouvelle information visuelle.
+- Une RÈGLE SIMPLE expliquée au temps 4 (un mécanisme ou une loi en une ou deux phrases, ex. « la force double
+  quand la distance… », « chaque heure sans réseau, les stocks baissent de… »), puis VÉRIFIÉE à chaque palier
+  du temps 6 (« à mi-chemin, la règle donne… »). Le spectateur doit pouvoir prévoir la suite.
+- Au moins une QUESTION DU SPECTATEUR posée à voix haute, puis sa réponse (ex. « Pourrait-on l'arrêter ? Non. »).
+- Un FAIT SURPRENANT annoncé à chaque palier du temps 6 (« Peu de gens le savent : … »), toujours sourcé.
+- Une PETITE PHRASE À CONTREDIRE dans l'ouverture : une consigne ou une réaction que le spectateur aura envie de
+  commenter (ex. une consigne officielle dérisoire face à l'événement). Elle doit rester vraisemblable.
 
 # RACONTER AUSSI SANS LA VOIX (l'image porte l'émotion, la voix porte les faits)
 - UNE IDÉE PAR PLAN : un seul centre d'intérêt par plan. Si la description du VISUEL contient « et », coupe en deux plans.
@@ -159,6 +166,10 @@ Un tableau avec les valeurs réellement mesurées sur ton script, puis OK / À C
 - Chiffres par minute (≥ 3)
 - Les 9 temps présents dans l'ordre
 - Boucle plantée (temps 4) ET payée (temps 7)
+- Règle simple expliquée au temps 4 (laquelle ?) et vérifiée à chaque palier du temps 6 (combien de fois ?)
+- Question du spectateur posée à voix haute (laquelle ?)
+- Fait surprenant annoncé à chaque palier du temps 6 (combien ?)
+- Petite phrase à contredire dans l'ouverture (laquelle ?)
 - Motif répété 3 fois (lequel ?)
 - Personnage présent aux temps 1, 5 et 8
 - Réel / inventé dit au début ET à la fin
@@ -193,6 +204,8 @@ Vérifie-le et rends :
 4. RYTHME : les passages de plus de 15 s sans chiffre ni nouvelle information visuelle,
    et les phrases de plus de 20 mots.
 5. STRUCTURE : les 9 temps sont-ils présents et dans l'ordre ? La boucle est-elle plantée puis payée ?
+   La règle simple est-elle vérifiée à chaque palier ? Y a-t-il une question du spectateur, un fait surprenant
+   par palier et une petite phrase à contredire dans l'ouverture ?
    Le retournement est-il préparé ?
 6. TITRES : fautes d'orthographe, promesse tenue par le script ?
 6 bis. SANS LE SON : en lisant seulement les colonnes VISUEL et SANS LE SON, peut-on suivre l'histoire du personnage
