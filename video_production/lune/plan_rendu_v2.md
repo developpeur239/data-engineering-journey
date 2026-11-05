@@ -44,7 +44,7 @@ schémas faits en 2D. Le découpage scène par scène et les choix de style de l
    - **Solution de repli** si l'un des deux échoue : faire les schémas dans le HUD HTML du studio. Ils ont alors les
      mêmes polices par construction, mais coûtent plus cher à rendre.
 
-## 2. Coupes pour tenir 12:40 (environ 320 mots)
+## 2. Coupes pour tenir 12:40 (environ 320 mots et 7 raccords)
 
 À 154 mots/min, 2 182 mots donnent environ 14 min 10 de voix. Avec les silences protégés, il faut couper 300 à 350
 mots. **Règle : la voix ne décrit jamais l'image.** On coupe les phrases qui racontent ce que l'image montre déjà, ou
@@ -64,11 +64,33 @@ priorité sont justement les fils humains : on y retire la description et on gar
 | 09:48 | « Puis elle se lève. » « Dehors, la Lune occupe une portion immense du ciel. » « Léa ne bouge plus. » | 17 |
 | 10:47 colline | « Derrière eux, la route a disparu sous l'eau. » « Devant eux, la Lune semble se déchirer. » « Elle s'agenouille devant lui. » « Le prend dans ses bras. » « Au-dessus d'eux, les fragments continuent de tomber. » « Son contour est déchiré. » « Elle est immense. » La place libérée va à « Je suis là » et à la pause qui suit. | 38 |
 | 11:26 | « Depuis l'espace, on voit le nuage de débris… » « La surface que nous connaissons disparaît… derrière une immense enveloppe de matière brûlante. » | 27 |
-| **Total** | | **320** |
+| 10:47 colline (en plus) | « Et lui répond doucement : ». On entend la question du garçon, un temps, puis « Je suis là. » | 4 |
+| **Total** | | **324** |
 
-On obtient environ 1 860 mots, soit environ 12 min 05 de voix et 35 s pour les silences et le noir final. Toutes les
-phrases ont été vérifiées mot pour mot dans le dossier V12. Elles restent **à valider par l'auteur** : je ne réécris
-rien sans accord. Seul raccord nécessaire : « D'autres » devient « Certains » à 00:42.
+**Raccords obligatoires.** Sans eux, une phrase perd son sujet ou son antécédent. Chaque coupe a été relue dans son
+contexte, en tenant compte des phrases voisines retirées, y compris d'un bloc à l'autre.
+
+| Bloc | Après la coupe | Raccord |
+|---|---|---|
+| 00:42 | « D'autres restent immobiles… » (sans « Certains filment ») | « **Certains** restent immobiles… » |
+| 04:28 | « Elle connaît la réponse. », juste après la réplique sur la Lune : « Elle » peut s'entendre comme la Lune | « **Sa mère** connaît la réponse. » |
+| 05:00 | « Et sa vitesse de rapprochement augmente. » : « sa » renvoie au « changement » | « Et **la** vitesse de rapprochement **de la Lune** augmente. » |
+| 09:00 | « Puis elle enregistre un message vocal. » : « Puis » n'a plus rien avant lui | « **Elle** enregistre un message vocal. » |
+| 09:27 | « Et retourne vers le laser. » : sans sujet (« Léa fixe l'écran. Puis elle le pose. » est retiré en fin de 09:00) | « **Elle** retourne vers le laser. » |
+| 09:48 | « Les zones sombres qui traversent sa surface… » : « sa » renvoie à « la mesure » | « … qui traversent **la surface de la Lune**… » |
+| 10:47 | « Et lui répond doucement : » : sans sujet | **Coupé** (ligne ajoutée au tableau ci-dessus) |
+
+**À surveiller, sans changement pour l'instant :**
+- **03:47 :** sans « Il regarde l'eau. », le « elle » de « Mais elle est comme d'habitude » n'a plus d'antécédent à
+  l'oral. L'image de la mer et la bulle suffisent. Si la planche-contact montre une hésitation, on remet ces 4 mots.
+- **05:25 :** les deux répliques du collègue se suivent sans narration entre elles. Le temps qui les sépare est porté
+  par l'image : le SMS à l'écran, puis Léa qui écrit et efface.
+- **09:27 :** « 0,06 seconde. » arrive juste après « Léa lance une dernière impulsion. », en même temps que le
+  compteur à l'écran.
+
+Bilan avec les raccords : 318 mots en moins. Il reste environ 1 864 mots, soit environ 12 min 06 de voix et 34 s
+pour les silences et le noir final. Toutes les phrases ont été vérifiées mot pour mot dans le dossier V12. Coupes et
+raccords restent **à valider par l'auteur** : je ne réécris rien sans accord.
 
 ## 3. Décors : 5 à créer au lieu de 10
 
@@ -116,7 +138,7 @@ Simplifications qui ne se voient pas à l'écran :
 
 ## 6. Points ouverts
 
-1. **Coupes** : valider la liste de la section 2 (320 mots, aucune réplique touchée).
+1. **Coupes** : valider la liste de la section 2 (324 mots coupés, 7 raccords, aucune réplique touchée).
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
