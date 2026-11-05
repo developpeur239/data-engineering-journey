@@ -148,9 +148,9 @@ Simplifications qui ne se voient pas à l'écran :
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
 4. **Voix des personnages** : option A ou B (section 7.3), tranchée par le prototype (7.7).
-6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
+6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
 
 ## 7. Après l'audit croisé (V1, V2, V13)
 
