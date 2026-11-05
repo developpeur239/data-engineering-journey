@@ -151,6 +151,11 @@ Simplifications qui ne se voient pas à l'écran :
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
 6. **Compte à rebours de 02:00** : réglé, 4 j 20 h est présenté comme la durée totale de la chute (section 7.1).
+7. **Carte « Cinq jours plus tôt »** (00:42) : la garder sur le matin du début de la chute, ou la passer à « Quatre
+   jours plus tôt » (section 7.1 bis).
+8. **Étiquette « Simulation » permanente** : le dossier V12 l'impose pour l'honnêteté. L'audit propose une mention
+   discrète au début, pour que la révélation finale garde sa force. Variante intermédiaire : une étiquette très
+   petite et peu visible, gardée jusqu'à la collision. Décision à prendre par toi.
 
 ## 7. Après l'audit croisé (V1, V2, V13)
 
@@ -185,6 +190,34 @@ Corrections qui en découlent :
   (« Rien ne garantit qu'elle se brisera », « un monde rocheux, pas une boule de liquide »). La comète de 1994 illustre
   les forces de marée ; elle ne prouve rien pour la Lune. Les multiplicateurs mesurent une force, jamais une hauteur
   d'eau ou de sol.
+
+### 7.1 bis Chronologie de référence (heure de France ; J0 = jour du début de la chute)
+| Repère | Date et heure | Écoulé depuis le début | Reste avant contact | Texte V13 |
+|---|---|---|---|---|
+| **Début de la chute** | J0 05:24 | 0 | 4 j 19 h 36 | « Quatre jours et vingt heures… durée totale de sa chute » (02:00) |
+| **Détection par Léa** | J0 22:14 | 16 h 50 | 4 j 2 h 46 | Ouverture du récit (01:00) |
+| Plage | J2 05:24 | 48 h | 2 j 19 h 36 | « Quarante-huit heures après le début de la chute » (04:00) |
+| Quatrième jour | J4 05:24 | 4 j | 19 h 36 | « Au quatrième jour » (05:00) |
+| Six heures avant | J4 19:00 | 4 j 13 h 36 | 6 h | « environ quatre fois plus proche » (06:00) |
+| Une heure et demie avant | J4 23:30 | 4 j 18 h 06 | 1 h 30 | « presque mille fois » (07:30) ; Lune de l'ouverture (00:00) |
+| Dernier écho | J5 00:41 | 4 j 19 h 17 | 19 min | « une vingtaine de minutes » (09:48) |
+| **Contact** | J5 01:00 | 4 j 19 h 36 | 0 | (11:00) |
+
+Règles de montage : les cartes de temps disent toujours depuis quel repère on compte (« 48 h après le début de la
+chute », jamais « 48 h plus tard »). Le compteur à l'écran affiche le temps **restant avant le contact**.
+
+**Distance et taille apparente ne se confondent pas :**
+- La voix dit « environ quatre fois plus proche » (06:00). C'est une **distance** : 384 400 km divisés par 91 000 km,
+  soit 4,2.
+- La **taille apparente** affichée se lit dans la fiche Lune : × 4,5 à ce moment-là.
+- Aucun multiplicateur prononcé ne sert de réglage visuel.
+
+À surveiller : l'ouverture (00:42) dit « revenir cinq jours en arrière ». Or la Lune de l'ouverture est celle d'une
+heure et demie avant le contact, et le récit reprend à la détection : l'écart réel est de **4 jours et 1 heure**.
+« Cinq jours » n'est juste que si l'on compte depuis le début de la chute. Il faut choisir : soit on garde la phrase,
+et la carte « Cinq jours plus tôt » montre le matin du début de la chute ; soit la carte devient « Quatre jours plus
+tôt ». La phrase de 09:27 (« Il y a cinq jours, le même trajet prenait environ deux secondes et demie ») reste
+juste (4 j 19 h).
 
 ### 7.2 Timecodes : résultat du montage, pas contrainte
 D'accord avec l'audit. Les débords par bloc (02:47 : + 9 s, 08:31 : + 10 s, etc., environ 33 s au total) tiennent dans
@@ -238,11 +271,37 @@ ElevenLabs ; on harmonise le volume et l'acoustique au mixage.
 Le prototype de 05:25 (7.7) teste les voix adultes. Il faut lui ajouter le plan de la voiture (04:28) pour tester la
 solution retenue pour le garçon.
 
+**Convention unique, qui remplace les bulles du plan V1 :** toutes les répliques sont **prononcées**, sans animation
+des lèvres (silhouettes, plans de dos, contrechamps). Les messages de la sœur sont **lus par le spectateur** : texte à
+l'écran et son de notification, sans voix.
+
+| Bloc | Réplique | Rendu |
+|---|---|---|
+| 03:47 | « Mais elle est comme d'habitude. » | Voix du garçon (MiniMax) |
+| 04:28 | « Maman… pourquoi elle grossit ? » | Voix du garçon |
+| 05:25 | « On doit partir. » / « Tu ne peux plus rien changer. » | Voix du collègue (Léo) |
+| 05:25 | « Je sais. Mais on peut encore comprendre ce qui nous arrive. » | Voix de Léa (Jeanne) |
+| 05:25 | « On est sur la route. Tu nous rejoins ? » | SMS à l'écran |
+| 09:00 | « On est arrêtés. Je ne sais pas où aller. » | SMS à l'écran |
+| 09:00 | « Je suis désolée. Je t'aime. » | Voix de Léa, filtre téléphone |
+| 10:47 | « Est-ce qu'on est assez loin ? » | Voix du garçon |
+| 10:47 | « Je suis là. » | Voix de la mère (Caroline) |
+
 ### 7.4 SMS et « Écouté » : la place à l'écran
 - **05:25** (11 s de voix pour 22 s) : collègue « On doit partir. » → téléphone qui s'allume (notification) → SMS en
   gros plan (au moins 3 s de lecture) → Léa écrit (saisie) → elle efface (silence) → « Tu ne peux plus rien changer. »
-- **09:00** (12 s de voix pour 27 s) : dernier SMS (3 s) → message vocal de Léa → « Écouté » qui apparaît, puis **au
-  moins 2 s de silence**. Le narrateur ne reprend qu'au bloc suivant.
+- **09:00** (12 s de voix pour 27 s) : la scène se joue par l'image, pas par l'interface.
+
+| Action | Son |
+|---|---|
+| Le dernier SMS arrive (au moins 3 s de lecture) | Notification |
+| Léa lit | Ambiance de l'observatoire, alarme lointaine |
+| Elle lance l'enregistrement | Bip discret |
+| « Je suis désolée. Je t'aime. » | Voix de Léa seule, **sans musique** |
+| Elle envoie | Son d'envoi discret |
+| « Écouté » apparaît | **Silence, au moins 2 s** |
+| « Elle retourne vers le laser. » (09:27) | L'ambiance revient peu à peu |
+
 
 ### 7.5 Continuité de la mère et du garçon
 Le plateau Littoral garde un décor technique unique. Mais il a **4 zones distinctes** : plage, autoroute, zone
@@ -263,7 +322,8 @@ la voiture et pendant la course.
 | + 18 s | La mère le rejoint | « Heureusement… » | Ambiance |
 | + 20 s | Plan large de la plage | « … tout cela n'était qu'une simulation. » | Musique douce |
 
-Pour que le noir suivi du plein jour ne ressemble pas à une erreur de montage, le premier plan de jour est très
+Au retour à Calern et sur la plage, il n'y a **aucune musique**, seulement les bruits ordinaires du lieu. La musique
+douce ne commence qu'après « … simulation. ». Pour que le noir suivi du plein jour ne ressemble pas à une erreur de montage, le premier plan de jour est très
 lumineux et sonore dès sa première image.
 
 ### 7.7 Prototype avant fabrication (30 à 45 s)
