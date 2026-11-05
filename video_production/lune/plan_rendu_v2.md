@@ -147,7 +147,7 @@ Simplifications qui ne se voient pas à l'écran :
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
-4. **Voix des personnages** : option A retenue. Adultes sur ElevenLabs (3 voix à choisir) ; garçon sur MiniMax `French_MovieLeadFemale`, hauteur +4 (section 7.3).
+4. **Voix des personnages** : réglé, le casting est complet (section 7.3).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
 6. **Compte à rebours de 02:00** : réglé, 4 j 20 h est présenté comme la durée totale de la chute (section 7.1).
@@ -211,6 +211,18 @@ choisir par toi :
    répliques avec 2 ou 3 voix candidates, puis on compare avec les bulles dans le prototype de la voiture.
 3. Réécrire ses 3 répliques pour les faire porter par la mère (« Il me demande pourquoi elle grossit… »). C'est
    déconseillé : on perd l'innocence de la question.
+
+**Casting complet (5 novembre 2026)**
+
+| Rôle | Fournisseur | Voix | Réglages |
+|---|---|---|---|
+| Narrateur | ElevenLabs | Nicolas – Narrator (`aQROLel5sQbj1vuIVi6B`) | `eleven_v4`, réglages connus de la vidéo Internet |
+| Léa | ElevenLabs | Jeanne – Narrator (`txtf1EDouKke753vN8SL`) | `eleven_v4`, stabilité 0,5, similarité 0,75 ; filtre téléphone sur le message vocal |
+| Collègue | ElevenLabs | Léo – Reassuring and Dynamic (`AfbuxQ9DVtS4azaxN1W7`) | `eleven_v4`, stabilité 0,5, similarité 0,75 |
+| Mère | ElevenLabs | Caroline – Warm, Sweet and Soft (`kwhMCf63M8O3rCfnQ3oQ`) | `eleven_v4`, stabilité 0,5, similarité 0,75 |
+| Garçon | MiniMax | `French_MovieLeadFemale` | `speech-2.8-hd`, hauteur +4, vitesse 0,95 |
+
+Essais : `essais_voix_adultes/` et `essais_voix_garcon/`.
 
 **Retenu le 5 novembre 2026 : solution 4, voix MiniMax `French_MovieLeadFemale`**, modèle `speech-2.8-hd`, hauteur
 +4, vitesse 0,95, `language_boost` French (essai : `essais_voix_garcon/garcon_French_MovieLeadFemale_pitch+4.mp3`).
