@@ -1,16 +1,16 @@
 # Le Dernier Écho : texte de la voix, version V13
 
 Texte du dossier V12, avec les coupes et les raccords de `plan_rendu_v2.md` (section 2) appliqués. C'est la version à
-relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 8 phrases
-réécrites : 5 raccords après coupe, le compte à rebours (02:00 : 4 j 20 h est la durée totale de la chute), la comète
+relire d'un bloc avant de générer la voix. **Aucune réplique n'est modifiée.** Les mots en gras sont les 9 phrases
+réécrites : 5 raccords après coupe, le retour en arrière (00:42 : quatre jours, comme la carte), le compte à rebours (02:00 : 4 j 20 h est la durée totale de la chute), la comète
 de 1994 (08:31 : ce sont ses fragments qui frappent Jupiter en 1994) et les fractures (09:48 : on parle des fractures,
 pas des zones sombres naturelles de la Lune). Une autre correction est une coupe (« Et lui répond doucement : », à
 10:47). Les SMS de la sœur et le statut
 « Écouté » ne sont plus lus : ils sont écrits à l'écran.
 
-Total : **1792 mots** (V12 : 2112), soit environ **11 min 38 s** de voix à 154 mots/min (même compteur que
+Total : **1793 mots** (V12 : 2112), soit environ **11 min 39 s** de voix à 154 mots/min (même compteur que
 `compare_voices.py`, sans la ponctuation ni les noms des voix), pour 12:40 avec les silences et le noir final. Les durées par bloc sont des estimations : le montage les recale.
-Statut : **à valider par toi**, avant toute génération ElevenLabs.
+Statut : **validé le 5 novembre 2026** (feu vert pour le prototype puis pour la génération des voix, bloc par bloc).
 
 ## 00:00–01:00 · Le dernier ciel
 
@@ -22,9 +22,9 @@ Imaginez que vous vous réveilliez au milieu de la nuit. Votre chambre est écla
 
 Vous vous approchez de la fenêtre. Et ce que vous découvrez dehors semble impossible. La Lune est devenue gigantesque. Elle domine le ciel. Ses cratères sont visibles à l’œil nu, et sa lumière blanche transforme les rues en paysages presque irréels.
 
-**00:42–01:00** · 55 mots (V12 : 71) · environ 21 s pour un créneau de 18 s
+**00:42–01:00** · 56 mots (V12 : 71) · environ 22 s pour un créneau de 18 s
 
-**Certains restent immobiles**, comme s’ils attendaient que quelqu’un leur explique ce qu’ils voient. Mais une chose est déjà certaine. Dans quelques heures, la Lune va percuter la Terre. [PAUSE] Pour comprendre comment nous en sommes arrivés là, il faut revenir cinq jours en arrière. À un moment où personne, sur Terre, ne se doutait de rien.
+**Certains restent immobiles**, comme s’ils attendaient que quelqu’un leur explique ce qu’ils voient. Mais une chose est déjà certaine. Dans quelques heures, la Lune va percuter la Terre. [PAUSE] Pour comprendre comment nous en sommes arrivés là, **il faut revenir quatre jours en arrière. À un moment où personne, sur Terre, ne se doutait encore de rien.**
 
 
 ## 01:00–02:00 · Le premier signal

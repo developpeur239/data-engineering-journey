@@ -151,11 +151,8 @@ Simplifications qui ne se voient pas à l'écran :
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
 6. **Compte à rebours de 02:00** : réglé, 4 j 20 h est présenté comme la durée totale de la chute (section 7.1).
-7. **Carte « Cinq jours plus tôt »** (00:42) : la garder sur le matin du début de la chute, ou la passer à « Quatre
-   jours plus tôt » (section 7.1 bis).
-8. **Étiquette « Simulation » permanente** : le dossier V12 l'impose pour l'honnêteté. L'audit propose une mention
-   discrète au début, pour que la révélation finale garde sa force. Variante intermédiaire : une étiquette très
-   petite et peu visible, gardée jusqu'à la collision. Décision à prendre par toi.
+7. **Carte de retour en arrière** : réglé, « Quatre jours plus tôt » (section 7.8).
+8. **Étiquette** : réglé, « Simulation hypothétique », petite et lisible (section 7.8).
 
 ## 7. Après l'audit croisé (V1, V2, V13)
 
@@ -335,3 +332,17 @@ Il se place à l'étape 2 de l'ordre de fabrication, avant les décors 3 à 5. I
    jour, ou une image fixe).
 
 Coût : environ une journée, sans construire les décors lourds. C'est ce prototype qui tranche 7.3.
+
+### 7.8 Décisions verrouillées (5 novembre 2026)
+| Point | Décision |
+|---|---|
+| Carte de retour en arrière | « Quatre jours plus tôt », à la transition vers Calern de nuit (détection à J0, 22 h 14). Elle remplace « Cinq jours plus tôt » du plan V1. Carte en EB Garamond, **casse normale** comme toutes nos cartes (règle de `typo.py`). |
+| Phrase du narrateur (00:42) | « … il faut revenir quatre jours en arrière. À un moment où personne, sur Terre, ne se doutait encore de rien. » (appliquée dans V13) |
+| Compteur à la détection | Environ **4 j 3 h** restantes (4 j 2 h 46). |
+| Étiquette | « Simulation hypothétique » en petites capitales espacées (le seul usage des capitales autorisé par `typo.py`). En haut à gauche, blanc atténué, sans animation, lisible sur smartphone (au moins 22 px en 1080p). Elle remplace « Simulation » du plan V1. |
+| Présence de l'étiquette | De 00:00 jusqu'à la collision ; elle disparaît avec le noir. Aucune étiquette au retour à Calern ni sur la plage. |
+| Fonction de la phrase finale | Un retour émotionnel au monde réel, pas un rebondissement. |
+| Prototype | Feu vert (section 7.7). |
+
+Le texte V13 est validé. `build_v13.py` le regénère à partir du dossier V12 (texte extrait du .docx) avec la liste des
+coupes et des phrases réécrites.
