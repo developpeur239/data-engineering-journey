@@ -202,6 +202,11 @@ choisir par toi :
 1. **Bulles pour le garçon seulement**, avec un silence et un gros plan sur la mère qui écoute. Coût nul, et c'est
    cohérent avec l'enfant qui ne comprend pas ce qui arrive. C'est ma recommandation.
 2. **Enregistrer un vrai enfant**, avec l'accord écrit de ses parents, puis l'intégrer comme un son.
+4. **Une voix d'enfant synthétique MiniMax.** Son catalogue a une catégorie « Child » (des voix de synthèse
+   intégrées, pas des clones), et notre moteur sait déjà appeler MiniMax (`tts_minimax` dans `render.py`, testé avec
+   `compare_voices.py`). À vérifier d'abord : qu'il existe une voix de garçon en français, et ce que permettent les
+   conditions d'utilisation. Il faut aussi la clé `MINIMAX_API_KEY`, absente de cette session. On teste les 3
+   répliques avec 2 ou 3 voix candidates, puis on compare avec les bulles dans le prototype de la voiture.
 3. Réécrire ses 3 répliques pour les faire porter par la mère (« Il me demande pourquoi elle grossit… »). C'est
    déconseillé : on perd l'innocence de la question.
 
