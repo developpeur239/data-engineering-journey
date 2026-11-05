@@ -147,7 +147,7 @@ Simplifications qui ne se voient pas à l'écran :
 2. **Point d'impact** (déclinaison de la Lune) : à fixer avant le décor 5.
 3. **Archives de 1994** : les images NASA sont en général libres. Celles d'ESA/Hubble sont sous CC BY 4.0, donc
    crédit obligatoire. À vérifier image par image.
-4. **Voix des personnages** : option A ou B (section 7.3), tranchée par le prototype (7.7).
+4. **Voix des personnages** : option A retenue (ElevenLabs pour les adultes). Reste la solution pour le garçon (section 7.3).
 5. **Style des personnages** : tu m'avais dit de ne pas copier les silhouettes noires de Last Soul. Ce plan les garde
    parce que l'essai `perso_marc.html` a été validé. À confirmer.
 6. **Compte à rebours de 02:00** : « 4 j 20 h » est la durée de la chute, pas le temps restant (section 7.1).
@@ -190,15 +190,23 @@ la marge globale d'environ 59 s. Méthode économe : la **voix définitive est g
 voix témoin. Si un bloc change après l'animatique, on ne regénère que ce bloc (quelques centaines de crédits). Les
 timecodes du découpage sont recalés sur l'animatique, puis gelés.
 
-### 7.3 Décision à prendre : les personnages parlent-ils ?
-| Option | Effet | Coût |
-|---|---|---|
-| A. Voix réelles pour tous (Léa, collègue, mère, garçon) | Plus d'émotion, surtout « Maman… pourquoi elle grossit ? » | Environ 10 répliques, quelques centaines de crédits ; durées presque inchangées (les répliques sont déjà comptées) |
-| B. V1 : bulles, sauf le message vocal de Léa et « Je suis là » | Style plus muet, cohérent avec les silhouettes | Aucun |
+### 7.3 Décision : les personnages parlent (option A, voix ElevenLabs)
+Retenue le 5 novembre 2026 : **Léa, le collègue et la mère ont de vraies voix générées sur ElevenLabs.** Cela fait
+environ 8 répliques adultes, pour quelques centaines de crédits ; les durées changent peu, car les répliques sont déjà
+comptées. Avant de générer, on choisit 3 voix (une par rôle) et on fait un test de 2 répliques chacune. Les SMS de la
+sœur restent écrits.
 
-Avec l'option A, la voix du garçon pose un point particulier. Il faut soit l'enregistrement d'un enfant réel, avec
-l'accord de ses parents, soit une voix générée dont les règles de la plateforme autorisent l'usage. Sans bouche à
-animer, les plans restent de dos, en contrechamp ou larges. **Les SMS de la sœur restent écrits dans les deux cas.**
+**Limite pour le garçon :** ElevenLabs refuse les voix d'enfant et les voix d'adulte qui imitent un enfant dans sa
+Voice Library, au nom de sa politique d'usage. Il ne faut donc pas en fabriquer une pour ce rôle. Trois solutions, à
+choisir par toi :
+1. **Bulles pour le garçon seulement**, avec un silence et un gros plan sur la mère qui écoute. Coût nul, et c'est
+   cohérent avec l'enfant qui ne comprend pas ce qui arrive. C'est ma recommandation.
+2. **Enregistrer un vrai enfant**, avec l'accord écrit de ses parents, puis l'intégrer comme un son.
+3. Réécrire ses 3 répliques pour les faire porter par la mère (« Il me demande pourquoi elle grossit… »). C'est
+   déconseillé : on perd l'innocence de la question.
+
+Le prototype de 05:25 (7.7) teste les voix adultes. Il faut lui ajouter le plan de la voiture (04:28) pour tester la
+solution retenue pour le garçon.
 
 ### 7.4 SMS et « Écouté » : la place à l'écran
 - **05:25** (11 s de voix pour 22 s) : collègue « On doit partir. » → téléphone qui s'allume (notification) → SMS en
