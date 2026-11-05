@@ -1,0 +1,32 @@
+{
+ "A1_narr": {
+  "texte": "À Calern, l’observatoire reçoit un ordre d’évacuation.",
+  "voix": "aQROLel5sQbj1vuIVi6B",
+  "duree_s": 3.28
+ },
+ "A2_collegue": {
+  "texte": "On doit partir.",
+  "voix": "AfbuxQ9DVtS4azaxN1W7",
+  "duree_s": 1.2
+ },
+ "A3_collegue": {
+  "texte": "Tu ne peux plus rien changer.",
+  "voix": "AfbuxQ9DVtS4azaxN1W7",
+  "duree_s": 2.0
+ },
+ "A4_lea": {
+  "texte": "Je sais. Mais on peut encore comprendre ce qui nous arrive.",
+  "voix": "txtf1EDouKke753vN8SL",
+  "duree_s": 3.52
+ },
+ "B1_narr": {
+  "texte": "Ce n’est pas la fin de la Terre. C’est la fin de notre monde.",
+  "voix": "aQROLel5sQbj1vuIVi6B",
+  "duree_s": 3.36
+ },
+ "B2_narr": {
+  "texte": "Heureusement… tout cela n’était qu’une simulation.",
+  "voix": "aQROLel5sQbj1vuIVi6B",
+  "duree_s": 3.04
+ }
+}

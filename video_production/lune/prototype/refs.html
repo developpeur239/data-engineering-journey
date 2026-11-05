@@ -1,0 +1,355 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Images de référence du design (audit visuel du prototype) : refs.html?shot=1..4&w=1920
+     1 Léa en gros plan · 2 la mère et le garçon sur la plage · 3 Léa à son poste · 4 le téléphone.
+     Principe : silhouettes sans bouche aux yeux expressifs, mais cheveux, sourcils, vêtements et accessoires lisibles ;
+     éclairage en trois niveaux (forme, vêtements et cheveux, petits détails). -->
+<style>
+@font-face{font-family:"Instrument Sans";src:url(fonts/InstrumentSans-Regular.ttf);font-weight:400}
+@font-face{font-family:"Instrument Sans";src:url(fonts/InstrumentSans-Bold.ttf);font-weight:700}
+html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}
+#tag{position:absolute;left:3.0%;top:4.2%;font:600 1.3vw/1 "Instrument Sans",sans-serif;letter-spacing:.2em;color:rgba(242,244,245,.78);
+  text-transform:uppercase;padding:.45vw .7vw;background:rgba(8,10,14,.42);border-radius:.35vw}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+</head><body>
+<div id="tag">Simulation hypothétique</div>
+<script type="module">
+import * as THREE from "three";
+const Q = new URLSearchParams(location.search);
+const W = +(Q.get("w") || 1920), H = Math.round(W * 9 / 16), SHOT = +(Q.get("shot") || 1);
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace; document.body.appendChild(renderer.domElement);
+const camera = new THREE.PerspectiveCamera(36, W / H, 0.01, 300);
+const grad = new THREE.DataTexture(new Uint8Array([60, 60, 60, 255, 140, 140, 140, 255, 255, 255, 255, 255]), 3, 1);
+grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+const toon = (c, o = {}) => new THREE.MeshToonMaterial({ color: c, gradientMap: grad, ...o });
+const basic = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, ...o });
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const mk = (geo, mat) => new THREE.Mesh(geo, mat);
+const add = (p, o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; p.add(o); return o; };
+function canvasTex(w, h, draw) { const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const g = cv.getContext("2d");
+  draw && draw(g, w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.g = g; return t; }
+let _s = 7; const rnd = () => (_s = (_s * 16807) % 2147483647) / 2147483647;
+const FONT = "'Instrument Sans', sans-serif", MONO = "'DejaVu Sans Mono', monospace";
+
+// ---------- personnages ----------
+const SKIN = 0x2b2e34;   // noir anthracite, mat : la silhouette reste la signature, sans effacer les détails
+const EXPR = {
+  normal:  { top: 0.06, slant: 0.0, low: 0.0, eye: 1.0, pupil: 1.0, brow: [0.0, 0.0] },
+  inquiet: { top: 0.3, slant: 0.45, low: 0.0, eye: 1.02, pupil: 0.88, brow: [0.32, 0.02] },
+  resolu:  { top: 0.26, slant: -0.1, low: 0.1, eye: 0.96, pupil: 1.0, brow: [-0.18, -0.012] },
+  doux:    { top: 0.12, slant: 0.1, low: 0.28, eye: 0.96, pupil: 1.0, brow: [0.12, 0.01] },
+  joie:    { top: 0.02, slant: 0.0, low: 0.55, eye: 0.95, pupil: 1.0, brow: [0.05, 0.03] },
+};
+// o : jacket (couleur du haut), pants, hair (style), hairCol, browCol, scale, wide (carrure), badge, scarf, glasses
+function person(o) {
+  const g = new THREE.Group(), r = new THREE.Group(); g.add(r); r.scale.setScalar(o.scale || 1); const P = { g, r };
+  const wide = o.wide || 1;
+  // jambes et chaussures
+  P.legs = [-1, 1].map((sx) => { const hip = new THREE.Group(); hip.position.set(sx * 0.11 * wide, 0.5, 0); r.add(hip);
+    add(hip, mk(new THREE.CapsuleGeometry(0.08, 0.38, 6, 12), toon(o.pants || 0x30343c)), 0, -0.23, 0);
+    const sh = add(hip, mk(new THREE.SphereGeometry(0.095, 16, 10), toon(o.shoes || 0x15171b)), 0, -0.45, 0.05); sh.scale.set(1, 0.55, 1.5); return hip; });
+  // buste : le vêtement habille le corps anthracite
+  const torso = add(r, mk(new THREE.CapsuleGeometry(0.28, 0.42, 8, 24), toon(o.jacket)), 0, 0.88, 0); torso.scale.x = wide;
+  if (o.zip !== false) add(r, mk(new THREE.BoxGeometry(0.012, 0.5, 0.01), toon(0x15181d)), 0, 0.86, 0.276 * 1.0);
+  if (o.scarf) { const s = add(r, mk(new THREE.TorusGeometry(0.2, 0.068, 12, 32), toon(o.scarf)), 0, 1.27, 0); s.rotation.x = Math.PI / 2;
+    const tl = add(r, mk(new THREE.BoxGeometry(0.1, 0.34, 0.05), toon(o.scarf)), 0.1, 1.07, 0.25); tl.rotation.z = 0.12; }
+  else add(r, mk(new THREE.CylinderGeometry(0.13, 0.15, 0.1, 20), toon(o.collar || o.jacket)), 0, 1.27, 0);
+  if (o.badge) {  // badge d'observatoire sur cordon bleu
+    const lan = add(r, mk(new THREE.TorusGeometry(0.16, 0.012, 6, 30, Math.PI), toon(0x2f6fd0)), 0, 1.2, 0.2); lan.rotation.set(0.25, 0, Math.PI);
+    const bt = canvasTex(128, 180, (c) => { c.fillStyle = "#f4f6f8"; c.fillRect(0, 0, 128, 180); c.fillStyle = "#2f6fd0"; c.fillRect(0, 0, 128, 40);
+      c.fillStyle = "#9aa3ad"; c.fillRect(24, 60, 80, 70); c.fillStyle = "#1c2430"; c.font = `700 22px ${FONT}`; c.fillText("OCA", 40, 160); });
+    add(r, mk(new THREE.BoxGeometry(0.085, 0.12, 0.008), new THREE.MeshToonMaterial({ map: bt, gradientMap: grad })), 0, 1.02, 0.29);
+  }
+  // tête
+  const head = new THREE.Group(); head.position.y = 1.56; r.add(head); P.head = head;
+  const sk = add(head, mk(new THREE.SphereGeometry(0.31, 32, 24), toon(SKIN))); sk.scale.set(1, 1.04, 0.96);
+  const HC = o.hairCol, hm = (c = HC) => toon(c);
+  const cap = (s = 0.33, k = 0.34, tilt = -0.42) => { const h = add(head, mk(new THREE.SphereGeometry(s, 32, 16, 0, Math.PI * 2, 0, Math.PI * k), hm())); h.rotation.x = tilt; return h; };
+  if (o.hair === "bob") {         // Léa : cheveux courts, volumineux, coupe au carré
+    cap(0.34, 0.27, -0.15);
+    const back = add(head, mk(new THREE.SphereGeometry(0.31, 28, 18), hm()), 0, 0.03, -0.12); back.scale.set(1.12, 0.98, 0.9);
+    for (const sx of [-1, 1]) { const side = add(head, mk(new THREE.CapsuleGeometry(0.09, 0.14, 6, 12), hm()), sx * 0.275, -0.04, -0.09); side.rotation.z = sx * 0.12; }
+    const fr = add(head, mk(new THREE.CapsuleGeometry(0.05, 0.22, 6, 12), hm(0x9a5a32)), -0.07, 0.25, 0.17); fr.rotation.set(0.55, 0, 1.3);
+  } else if (o.hair === "long") { // la mère : cheveux longs, mèches séparées de deux tons
+    cap(0.335, 0.4, -0.48);
+    for (let i = 0; i < 9; i++) { const a = -2.3 + i * (4.6 / 8), c = i % 2 ? 0x7a4a2e : 0x8b5a38;
+      const st = add(head, mk(new THREE.CapsuleGeometry(0.055, 0.42, 6, 10), hm(c)), Math.sin(a) * 0.29, -0.2, Math.cos(a) * 0.29 - 0.02);
+      st.rotation.set(-Math.cos(a) * 0.12, 0, Math.sin(a) * 0.12); if (Math.cos(a) > 0.55) st.visible = false; }
+  } else if (o.hair === "short") { // le collègue : court, dégagé
+    cap(0.322, 0.3, -0.36);
+  } else if (o.hair === "kid") {
+    cap(0.33, 0.33, -0.4); const tuft = add(head, mk(new THREE.ConeGeometry(0.05, 0.12, 8), hm()), 0.04, 0.33, 0.05); tuft.rotation.z = -0.4;
+  }
+  if (o.glasses) for (const sx of [-1, 1]) { const f = add(head, mk(new THREE.TorusGeometry(0.075, 0.009, 6, 24), toon(0xd8dde3)), sx * 0.11, 0.03, 0.3); f.rotation.y = sx * 0.36; }
+  P.eyes = [-1, 1].map((sx) => { const tex = canvasTex(256, 256);
+    const e = mk(new THREE.PlaneGeometry(0.19, 0.19), basic(0xffffff, { map: tex, transparent: true })); e.position.set(sx * 0.11, 0.02, 0.284); e.rotation.y = sx * 0.36; head.add(e); return { tex, sx }; });
+  P.brows = [-1, 1].map((sx) => { const b = add(head, mk(new THREE.CapsuleGeometry(0.012, 0.085, 4, 8), toon(o.browCol || 0xc49a6c)), sx * 0.11, 0.15, 0.248);
+    b.rotation.set(0, sx * 0.36, Math.PI / 2); return { b, sx }; });
+  P.arms = [-1, 1].map((sx) => { const p = new THREE.Group(); p.position.set(sx * 0.31 * wide, 1.12, 0); r.add(p);
+    add(p, mk(new THREE.CapsuleGeometry(0.065, 0.34, 6, 12), toon(o.jacket)), 0, -0.21, 0);
+    const h = add(p, mk(new THREE.SphereGeometry(0.072, 16, 12), toon(SKIN)), 0, -0.45, 0); return { p, h, sx }; });
+  return P;
+}
+const _q = new THREE.Quaternion(), _p = V(0, 0, 0), DOWN = V(0, -1, 0);
+function aim(pivot, target, k = 1) { pivot.quaternion.identity(); pivot.updateWorldMatrix(true, false);
+  const d = target.clone().sub(pivot.getWorldPosition(_p)).normalize(); d.applyQuaternion(pivot.parent.getWorldQuaternion(_q).invert());
+  pivot.quaternion.slerpQuaternions(new THREE.Quaternion(), new THREE.Quaternion().setFromUnitVectors(DOWN, d), k); }
+function face(P, E) {
+  for (const { tex, sx } of P.eyes) { const c = tex.g, ry = 100 * E.eye, rx = 80 * (0.85 + 0.15 * E.eye);
+    c.setTransform(1, 0, 0, 1, 0, 0); c.globalCompositeOperation = "source-over"; c.clearRect(0, 0, 256, 256); c.save();
+    c.beginPath(); c.ellipse(128, 128, rx, ry, 0, 0, 7); c.fillStyle = "#f4f1ea"; c.fill();
+    c.beginPath(); c.arc(128 + sx * 4, 128 + 14 * E.slant - 10 * E.low, 36 * E.pupil, 0, 7); c.fillStyle = "#050607"; c.fill();
+    c.beginPath(); c.arc(128 + sx * 4 + 12, 128 + 14 * E.slant - 10 * E.low - 12, 9 * E.pupil, 0, 7); c.fillStyle = "#ffffff"; c.fill();
+    c.globalCompositeOperation = "destination-out"; c.translate(128, 128); c.rotate(sx * E.slant * 0.7); c.translate(-128, -128);
+    c.beginPath(); c.arc(128, 128 - ry - 260 + E.top * (2 * ry + 10), 260, 0, 7); c.fill(); c.setTransform(1, 0, 0, 1, 0, 0);
+    if (E.low > 0.01) { c.beginPath(); c.arc(128, 128 + ry + 150 - E.low * 2 * ry, 150, 0, 7); c.fill(); }
+    c.restore(); tex.needsUpdate = true; }
+  for (const { b, sx } of P.brows) { b.rotation.x = 0; b.rotation.z = Math.PI / 2 + sx * E.brow[0] * -1; b.position.y = 0.15 + E.brow[1] + (E.top > 0.25 ? -0.01 : 0); }
+}
+function sit(P) { for (const l of P.legs) l.rotation.x = -1.45; P.r.position.y = -0.42; }
+const LEA = { jacket: 0x1f5566, pants: 0x2c3038, hair: "bob", hairCol: 0x8a4b2a, browCol: 0xb5835a, scarf: 0xe8a823 };
+const COL = { jacket: 0x9aa2ab, collar: 0x9aa2ab, pants: 0x3b3f46, hair: "short", hairCol: 0x3c2c22, browCol: 0xb8946a, wide: 1.14, scale: 1.07, badge: true, glasses: true, zip: false };
+const MOM = { jacket: 0xd5d0c6, pants: 0x4a4f57, hair: "long", hairCol: 0x8b5a38, browCol: 0xc9a074 };
+const KID = { jacket: 0x1fb3b0, pants: 0x2f4a6b, hair: "kid", hairCol: 0x6b4428, browCol: 0xc9a074, scale: 0.66, zip: false };
+
+// ---------- téléphone : interface de messagerie dédiée (non copiée d'une application existante) ----------
+// state : 1 reçu · 2 saisie · 3 effacé · 4 enregistrement · 5 envoyé · 6 écouté
+function drawPhone(g, Wp, Hp, state, sms) {
+  const k = Wp / 1080, F = (w, s) => `${w} ${Math.round(s * k)}px ${FONT}`;
+  g.fillStyle = "#0f1217"; g.fillRect(0, 0, Wp, Hp);
+  // barre d'état
+  g.fillStyle = "#e9edf2"; g.font = F(600, 40); g.fillText("23:41", 70 * k, 80 * k); g.textAlign = "right"; g.fillText("4G  ▮▮▮", Wp - 70 * k, 80 * k); g.textAlign = "left";
+  // en-tête de conversation
+  g.fillStyle = "#171b22"; g.fillRect(0, 120 * k, Wp, 190 * k);
+  g.fillStyle = "#c98a3a"; g.beginPath(); g.arc(150 * k, 215 * k, 60 * k, 0, 7); g.fill(); g.fillStyle = "#1a1d22"; g.font = F(700, 58); g.textAlign = "center"; g.fillText("C", 150 * k, 236 * k);
+  g.textAlign = "left"; g.fillStyle = "#f2f4f6"; g.font = F(700, 54); g.fillText("Camille", 240 * k, 210 * k);
+  g.fillStyle = "#8b95a1"; g.font = F(400, 38); g.fillText("Sœur", 240 * k, 262 * k);
+  // fil
+  const bubble = (x, y, w, h, col) => { g.fillStyle = col; g.beginPath(); g.roundRect(x * k, y * k, w * k, h * k, 46 * k); g.fill(); };
+  g.fillStyle = "#6f7a87"; g.font = F(500, 34); g.textAlign = "center"; g.fillText("Aujourd'hui", Wp / 2, 390 * k); g.textAlign = "left";
+  bubble(60, 430, 760, 190, "#262c36"); g.fillStyle = "#f4f6f8"; g.font = F(500, 56);
+  g.fillText(sms[0], 110 * k, 510 * k); g.fillText(sms[1], 110 * k, 580 * k);
+  g.fillStyle = "#7d8794"; g.font = F(400, 32); g.fillText("23:39", 60 * k, 665 * k);
+  if (state >= 5) {   // message vocal envoyé
+    bubble(330, 720, 690, 170, "#2f6fd0"); g.fillStyle = "#ffffff";
+    g.beginPath(); g.moveTo(400 * k, 765 * k); g.lineTo(400 * k, 845 * k); g.lineTo(465 * k, 805 * k); g.closePath(); g.fill();
+    _s = 21; for (let i = 0; i < 22; i++) { const hh = (18 + rnd() * 62) * k; g.fillRect((510 + i * 15) * k, 805 * k - hh / 2, 8 * k, hh); }
+    g.font = F(600, 38); g.fillText("0:03", 905 * k, 818 * k);
+    g.fillStyle = state === 6 ? "#5fd3a0" : "#7d8794"; g.font = F(700, 46); g.textAlign = "right";
+    g.fillText(state === 6 ? "Écouté" : "Envoyé", 1020 * k, 940 * k); g.textAlign = "left";
+  }
+  // zone de saisie
+  const yb = Hp - 300 * k; g.fillStyle = "#171b22"; g.fillRect(0, yb - 40 * k, Wp, 340 * k);
+  if (state === 4) {    // enregistrement en cours
+    g.fillStyle = "#e5484d"; g.beginPath(); g.arc(110 * k, yb + 70 * k, 22 * k, 0, 7); g.fill();
+    g.fillStyle = "#f2f4f6"; g.font = F(600, 46); g.fillText("0:02", 160 * k, yb + 86 * k);
+    _s = 33; g.fillStyle = "#e5484d"; for (let i = 0; i < 30; i++) { const hh = (14 + rnd() * 60) * k; g.fillRect((320 + i * 18) * k, yb + 70 * k - hh / 2, 9 * k, hh); }
+    g.fillStyle = "#8b95a1"; g.font = F(500, 34); g.fillText("‹ Glisser pour annuler", 320 * k, yb + 170 * k);
+    g.fillStyle = "#e5484d"; g.beginPath(); g.arc(960 * k, yb + 80 * k, 70 * k, 0, 7); g.fill();
+    g.fillStyle = "#ffffff"; g.beginPath(); g.roundRect(938 * k, yb + 40 * k, 44 * k, 64 * k, 22 * k); g.fill();
+  } else {
+    g.fillStyle = "#232a33"; g.beginPath(); g.roundRect(50 * k, yb + 10 * k, 790 * k, 130 * k, 65 * k); g.fill();
+    const txt = state === 2 ? "J'arrive" : ""; g.font = F(500, 52); g.fillStyle = txt ? "#f4f6f8" : "#6f7a87"; g.fillText(txt || "Message", 110 * k, yb + 93 * k);
+    if (state === 2 || state === 3) { const w = txt ? g.measureText(txt).width : 0; g.fillStyle = "#7fd0ff"; g.fillRect(112 * k + w, yb + 40 * k, 5 * k, 70 * k); }
+    // bouton : envoyer si texte, micro sinon
+    g.fillStyle = txt ? "#2f6fd0" : "#2b333d"; g.beginPath(); g.arc(950 * k, yb + 75 * k, 66 * k, 0, 7); g.fill(); g.fillStyle = "#ffffff";
+    if (txt) { g.beginPath(); g.moveTo(920 * k, yb + 45 * k); g.lineTo(990 * k, yb + 75 * k); g.lineTo(920 * k, yb + 105 * k); g.closePath(); g.fill(); }
+    else { g.beginPath(); g.roundRect(930 * k, yb + 38 * k, 40 * k, 62 * k, 20 * k); g.fill(); g.fillRect(947 * k, yb + 100 * k, 6 * k, 18 * k); }
+  }
+}
+function makePhone(state, sms) {
+  const G = new THREE.Group(), tex = canvasTex(1080, 2200, (g, w, h) => drawPhone(g, w, h, state, sms));
+  const body = add(G, mk(new THREE.BoxGeometry(0.074, 0.152, 0.008), toon(0x1a1c20))); body.material.color.set(0x1a1c20);
+  add(G, mk(new THREE.BoxGeometry(0.076, 0.154, 0.006), toon(0x5b616a)), 0, 0, -0.002);   // tranche métallique
+  const scr = mk(new THREE.PlaneGeometry(0.068, 0.146), basic(0xffffff, { map: tex })); scr.position.z = 0.0042; G.add(scr);
+  return G;
+}
+
+// ---------- décor : coupole de Calern (nuit, éclairage rouge et sources secondaires) ----------
+function calern(S) {
+  S.background = new THREE.Color(0x0a0c12);
+  const wall = mk(new THREE.CylinderGeometry(6, 6, 3, 64, 1, true), toon(0x8e5249, { side: THREE.BackSide })); add(S, wall, 0, 1.5, 0);
+  const dome = mk(new THREE.SphereGeometry(6, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2), toon(0x7a463f, { side: THREE.BackSide })); add(S, dome, 0, 3, 0);
+  for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2;   // nervures de la coupole et poteaux
+    const rib = mk(new THREE.TorusGeometry(5.92, 0.045, 6, 40, Math.PI / 2), toon(0x5a302b)); rib.position.y = 3; rib.rotation.set(0, a, Math.PI / 2); S.add(rib);
+    add(S, mk(new THREE.BoxGeometry(0.09, 3, 0.09), toon(0x5a302b)), Math.cos(a) * 5.9, 1.5, Math.sin(a) * 5.9); }
+  const fl = add(S, mk(new THREE.CircleGeometry(6, 64), toon(0x3e3b3c))); fl.rotation.x = -Math.PI / 2;
+  const grid = mk(new THREE.RingGeometry(1.2, 1.25, 64), toon(0xb8a23a)); grid.rotation.x = -Math.PI / 2; grid.position.y = 0.005; S.add(grid);   // bande de sécurité
+  // télescope : tube blanc, araignée, fourche
+  const mount = add(S, mk(new THREE.CylinderGeometry(0.55, 0.75, 1.3, 32), toon(0x2a2d34)), 0, 0.65, -2.7);
+  const fork = add(S, mk(new THREE.BoxGeometry(1.5, 0.9, 0.3), toon(0x343842)), 0, 1.7, -2.7);
+  const tube = add(S, mk(new THREE.CylinderGeometry(0.45, 0.45, 3.4, 40), toon(0xe1e4e8)), 0, 2.8, -3.2); tube.rotation.x = -0.55;
+  const ring = add(S, mk(new THREE.TorusGeometry(0.46, 0.04, 8, 40), toon(0x23262c)), 0, 3.75, -3.75); ring.rotation.x = -0.55 + Math.PI / 2;
+  // baies techniques avec voyants, armoire, câbles au sol
+  _s = 4;
+  for (let b = 0; b < 3; b++) { const a = 0.35 + b * 0.22, x = Math.cos(a) * 5.2, z = Math.sin(a) * 5.2 - 1.2;
+    const rack = add(S, mk(new THREE.BoxGeometry(0.62, 2.0, 0.7), toon(0x23262d)), x, 1.0, z); rack.lookAt(0, 1, 0);
+    for (let i = 0; i < 18; i++) { const led = mk(new THREE.SphereGeometry(0.014, 8, 6), basic([0x46ff7a, 0xffb020, 0xff4a3a, 0x46ff7a][Math.floor(rnd() * 4)]));
+      led.position.set(-0.2 + (i % 3) * 0.2, -0.8 + Math.floor(i / 3) * 0.28, 0.36); rack.add(led); } }
+  const cab = add(S, mk(new THREE.BoxGeometry(1.0, 1.2, 0.5), toon(0x5c6470)), -2.6, 0.6, -4.4); cab.lookAt(0, 0.6, 0);
+  for (const [x0, z0, x1, z1] of [[1.9, 0.9, 4.6, -0.5], [1.9, 0.3, 4.4, -1.4], [0.3, -2.4, 3.5, -2.3]]) {
+    const c = new THREE.CatmullRomCurve3([V(x0, 0.02, z0), V((x0 + x1) / 2, 0.03, (z0 + z1) / 2 + 0.3), V(x1, 0.02, z1)]);
+    add(S, mk(new THREE.TubeGeometry(c, 30, 0.022, 6), toon(0x121316))); }
+  // fente : ciel nocturne, Lune un peu trop grosse (jour 4 : × 2)
+  const sky = canvasTex(256, 1024, (g) => { const gr = g.createLinearGradient(0, 0, 0, 1024); gr.addColorStop(0, "#050a18"); gr.addColorStop(1, "#16264c");
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 1024); _s = 3; for (let i = 0; i < 90; i++) { g.fillStyle = `rgba(255,255,255,${0.4 + rnd() * 0.6})`; g.fillRect(rnd() * 256, rnd() * 1024, 2, 2); }
+    g.fillStyle = "#ece8dc"; g.beginPath(); g.arc(150, 300, 34, 0, 7); g.fill(); });
+  const slit = mk(new THREE.PlaneGeometry(1.7, 7.5), basic(0xffffff, { map: sky })); slit.position.set(0, 5.2, -5.2); slit.rotation.x = 0.62; S.add(slit);
+  // poste de travail détaillé
+  const desk = new THREE.Group(); desk.position.set(1.8, 0, 0.5); desk.rotation.y = -Math.PI / 2; S.add(desk);   // face à +x pour Léa
+  add(desk, mk(new THREE.BoxGeometry(1.9, 0.05, 0.8), toon(0x6b5a48)), 0, 0.76, 0);                 // plateau (bois)
+  add(desk, mk(new THREE.BoxGeometry(1.9, 0.018, 0.8), toon(0x2c2f35)), 0, 0.735, 0);
+  for (const sx of [-0.9, 0.9]) add(desk, mk(new THREE.BoxGeometry(0.05, 0.73, 0.75), toon(0x2c2f35)), sx, 0.365, 0);
+  add(desk, mk(new THREE.BoxGeometry(0.5, 0.6, 0.7), toon(0x343842)), -0.65, 0.33, 0);                // caisson
+  const kbT = canvasTex(1024, 360, (g) => { g.fillStyle = "#1d2026"; g.fillRect(0, 0, 1024, 360);
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 15; c++) { g.fillStyle = "#d7dbe0"; g.beginPath(); g.roundRect(14 + c * 67, 14 + r * 68, 58, 58, 8); g.fill(); }
+    g.fillStyle = "#d7dbe0"; g.beginPath(); g.roundRect(260, 14 + 4 * 68, 420, 58, 8); g.fill(); });
+  add(desk, mk(new THREE.BoxGeometry(0.46, 0.022, 0.16), new THREE.MeshToonMaterial({ map: kbT, gradientMap: grad })), 0.05, 0.795, 0.12);
+  const pad = add(desk, mk(new THREE.BoxGeometry(0.24, 0.004, 0.2), toon(0x223a5a)), 0.42, 0.787, 0.12);
+  const mouse = add(desk, mk(new THREE.CapsuleGeometry(0.025, 0.04, 6, 10), toon(0xd7dbe0)), 0.42, 0.805, 0.12); mouse.rotation.x = Math.PI / 2; mouse.scale.set(1.1, 1, 0.6);
+  add(desk, mk(new THREE.CylinderGeometry(0.035, 0.03, 0.1, 16), toon(0xe8e3d8)), -0.4, 0.83, 0.25);   // tasse
+  for (let i = 0; i < 3; i++) add(desk, mk(new THREE.BoxGeometry(0.21, 0.012, 0.29), toon([0xf2f0ea, 0xe6e2d6, 0xf7f5f0][i])), -0.55, 0.792 + i * 0.012, 0.15 + i * 0.01).rotation.y = i * 0.08;
+  // lampe de bureau : la lumière chaude sur les mains et le clavier
+  const lp = add(desk, mk(new THREE.CylinderGeometry(0.07, 0.08, 0.02, 16), toon(0x2c2f35)), 0.7, 0.79, -0.25);
+  const arm1 = add(desk, mk(new THREE.CylinderGeometry(0.012, 0.012, 0.42, 8), toon(0x2c2f35)), 0.66, 0.99, -0.2); arm1.rotation.z = 0.3;
+  const shade = add(desk, mk(new THREE.ConeGeometry(0.08, 0.12, 16, 1, true), toon(0x2c2f35)), 0.52, 1.17, -0.08); shade.rotation.set(0.6, 0, -0.9);
+  const bulb = mk(new THREE.SphereGeometry(0.025, 8, 6), basic(0xfff1c8)); bulb.position.set(0.49, 1.13, -0.04); desk.add(bulb);
+  const lamp = new THREE.SpotLight(0xffd9a0, 5, 2.2, 0.75, 0.6, 1.3); lamp.position.set(0.49, 1.13, -0.04); desk.add(lamp);
+  lamp.target.position.set(0.1, 0.78, 0.15); desk.add(lamp.target); lamp.castShadow = true;
+  // deux écrans : interface scientifique de télémétrie laser
+  const screens = [];
+  for (const [i, x] of [[0, -0.28], [1, 0.38]]) {
+    const st = canvasTex(1280, 800); screens.push(st);
+    const fr = add(desk, mk(new THREE.BoxGeometry(0.62, 0.4, 0.03), toon(0x15171b)), x, 1.12, -0.22); fr.rotation.y = i ? -0.18 : 0.12;
+    const sc = mk(new THREE.PlaneGeometry(0.585, 0.366), basic(0xffffff, { map: st })); sc.position.z = 0.016; fr.add(sc);
+    add(desk, mk(new THREE.BoxGeometry(0.05, 0.3, 0.05), toon(0x15171b)), x, 0.92, -0.25); add(desk, mk(new THREE.BoxGeometry(0.22, 0.015, 0.16), toon(0x15171b)), x, 0.79, -0.25);
+  }
+  drawLLR(screens[0].g); drawOrbit(screens[1].g); screens.forEach((s) => (s.needsUpdate = true));
+  const glow = new THREE.PointLight(0x8fd8ff, 2.2, 3, 1.4); glow.position.set(1.45, 1.15, 0.5); S.add(glow);   // la lumière bleutée des écrans
+  add(S, mk(new THREE.BoxGeometry(0.5, 0.06, 0.5), toon(0x1c1e24)), 1.0, 0.48, 0.55); add(S, mk(new THREE.CylinderGeometry(0.03, 0.03, 0.46, 8), toon(0x1c1e24)), 1.0, 0.24, 0.55);
+  const back = add(S, mk(new THREE.BoxGeometry(0.46, 0.5, 0.05), toon(0x1c1e24)), 0.76, 0.78, 0.55); back.rotation.y = Math.PI / 2;
+  // lumières : rouge d'observatoire, contre-jour chaud, bleu des écrans
+  S.add(new THREE.HemisphereLight(0xff8a78, 0x26100e, 0.85));
+  const red = new THREE.PointLight(0xff3a2a, 4.2, 12, 1.2); red.position.set(0, 4.5, 0.5); S.add(red);
+  const rim = new THREE.DirectionalLight(0xffb070, 1.6); rim.position.set(-3, 3, -2); S.add(rim);
+  return { desk };
+}
+function drawLLR(g) {   // écran 1 : temps d'aller-retour de l'écho laser (jour 4 : 1,18 s)
+  g.fillStyle = "#07131b"; g.fillRect(0, 0, 1280, 800);
+  g.fillStyle = "#0e2230"; g.fillRect(0, 0, 1280, 86); g.fillStyle = "#cfe9f2"; g.font = `700 40px ${FONT}`; g.fillText("Télémétrie laser · Calern", 34, 58);
+  g.fillStyle = "#ff6b6b"; g.font = `700 34px ${FONT}`; g.textAlign = "right"; g.fillText("● Évacuation demandée", 1246, 58); g.textAlign = "left";
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Temps d'aller-retour de l'écho", 40, 150);
+  g.fillStyle = "#ffffff"; g.font = `700 150px ${MONO}`; g.fillText("1,183 s", 40, 320);
+  g.fillStyle = "#5fd3a0"; g.font = `600 34px ${MONO}`; g.fillText("normal : 2,51 s", 44, 380);
+  g.strokeStyle = "#2a4656"; g.lineWidth = 2; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(40, 440 + i * 80); g.lineTo(1240, 440 + i * 80); g.stroke(); }
+  g.strokeStyle = "#7fe7ff"; g.lineWidth = 6; g.beginPath(); for (let x = 0; x <= 1200; x += 10) { const t = x / 1200, y = 450 + 300 * (1 - Math.cos(t * Math.PI / 2) ** 1.6); x ? g.lineTo(40 + x, y) : g.moveTo(40 + x, y); } g.stroke();
+  g.fillStyle = "#7fe7ff"; for (let i = 0; i < 14; i++) { const t = i / 13, y = 450 + 300 * (1 - Math.cos(t * Math.PI / 2) ** 1.6); g.beginPath(); g.arc(40 + t * 1200, y, 9, 0, 7); g.fill(); }
+  g.fillStyle = "#8fb3c4"; g.font = `500 26px ${FONT}`; g.fillText("Jour 0", 40, 785); g.fillText("Jour 4", 1150, 785);
+}
+function drawOrbit(g) {  // écran 2 : distance Terre-Lune et trajectoire de chute
+  g.fillStyle = "#07131b"; g.fillRect(0, 0, 1280, 800);
+  g.fillStyle = "#0e2230"; g.fillRect(0, 0, 1280, 86); g.fillStyle = "#cfe9f2"; g.font = `700 40px ${FONT}`; g.fillText("Trajectoire · distance", 34, 58);
+  g.strokeStyle = "#2a4656"; g.setLineDash([14, 12]); g.lineWidth = 3; g.beginPath(); g.arc(380, 450, 290, 0, 7); g.stroke(); g.setLineDash([]);
+  g.fillStyle = "#3d8fd1"; g.beginPath(); g.arc(380, 450, 70, 0, 7); g.fill(); g.fillStyle = "#cfd2d6"; g.beginPath(); g.arc(380 + 140, 450 - 30, 26, 0, 7); g.fill();
+  g.strokeStyle = "#ff6b6b"; g.lineWidth = 5; g.beginPath(); g.moveTo(670, 450); g.quadraticCurveTo(620, 430, 546, 422); g.stroke();
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Distance Terre–Lune", 760, 210);
+  g.fillStyle = "#ffffff"; g.font = `700 88px ${MONO}`; g.fillText("185 400", 760, 320); g.font = `600 40px ${MONO}`; g.fillText("km", 1150, 320);
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Contact dans", 760, 440); g.fillStyle = "#ff6b6b"; g.font = `700 76px ${MONO}`; g.fillText("19 h 36", 760, 530);
+  g.fillStyle = "#5fd3a0"; g.font = `600 30px ${MONO}`; g.fillText("Écart mesuré : confirmé ×3", 760, 640);
+}
+
+// ---------- décor : la plage (dune, rochers, promenade, écume, sable mouillé) ----------
+function beach(S) {
+  const skyT = canvasTex(16, 512, (g) => { const gr = g.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, "#5f9fdc"); gr.addColorStop(0.7, "#b9dcf5"); gr.addColorStop(1, "#e8f3fb"); g.fillStyle = gr; g.fillRect(0, 0, 16, 512); });
+  S.background = skyT; S.fog = new THREE.Fog(0xcfe5f5, 30, 90);
+  const sandT = canvasTex(1024, 1024, (g) => { g.fillStyle = "#ead5a8"; g.fillRect(0, 0, 1024, 1024); _s = 8;
+    for (let i = 0; i < 2500; i++) { g.fillStyle = rnd() < 0.5 ? "rgba(200,170,120,.25)" : "rgba(255,245,220,.25)"; g.fillRect(rnd() * 1024, rnd() * 1024, 3, 3); } });
+  sandT.wrapS = sandT.wrapT = THREE.RepeatWrapping; sandT.repeat.set(10, 6);
+  const sand = add(S, mk(new THREE.PlaneGeometry(90, 40), new THREE.MeshToonMaterial({ map: sandT, gradientMap: grad })), 0, 0, 10); sand.rotation.x = -Math.PI / 2;
+  const wet = add(S, mk(new THREE.PlaneGeometry(90, 3.2), toon(0xc9ae7e)), 0, 0.006, -2.4); wet.rotation.x = -Math.PI / 2;
+  const seaT = canvasTex(512, 512, (g) => { g.fillStyle = "#2f86c9"; g.fillRect(0, 0, 512, 512); g.fillStyle = "#4ea3dd"; for (let i = 0; i < 8; i++) g.fillRect(0, i * 64 + 20, 512, 9);
+    g.fillStyle = "#246fae"; for (let i = 0; i < 8; i++) g.fillRect(0, i * 64 + 44, 512, 6); });
+  seaT.wrapS = seaT.wrapT = THREE.RepeatWrapping; seaT.repeat.set(8, 6);
+  const sea = add(S, mk(new THREE.PlaneGeometry(140, 70), new THREE.MeshToonMaterial({ map: seaT, gradientMap: grad })), 0, 0.01, -39); sea.rotation.x = -Math.PI / 2;
+  for (const [z, w, o] of [[-4.0, 0.22, 0.95], [-5.2, 0.12, 0.7], [-7.0, 0.08, 0.5]]) {   // lignes d'écume ondulées
+    const pts = []; for (let x = -45; x <= 45; x += 1) pts.push(V(x, 0.03, z + Math.sin(x * 0.45 + z) * 0.25));
+    add(S, mk(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 180, w, 4), basic(0xf7fbff, { transparent: true, opacity: o }))); }
+  // dune et oyats à gauche, rochers à droite, promenade en bois au fond
+  const dune = add(S, mk(new THREE.SphereGeometry(6, 32, 16), toon(0xdcc392)), -12, -3.2, 6); dune.scale.set(1.6, 0.9, 1);
+  _s = 12; for (let i = 0; i < 40; i++) { const a = rnd() * Math.PI, rr = 4 + rnd() * 4;
+    const gr = add(S, mk(new THREE.ConeGeometry(0.05, 0.55, 5), toon(0x7d9a52)), -12 + Math.cos(a) * rr * 1.4, 0.9 + rnd() * 1.2, 6 - Math.sin(a) * rr * 0.6); gr.rotation.z = (rnd() - 0.5) * 0.5; }
+  for (const [x, z, s] of [[7.5, -3.2, 1.2], [9, -2.6, 0.8], [8.3, -4.0, 0.6], [11, -3.4, 1.4]]) { const rk = add(S, mk(new THREE.DodecahedronGeometry(s, 0), toon(0x6f6a66)), x, s * 0.35, z); rk.rotation.set(rnd(), rnd(), rnd()); }
+  const prom = new THREE.Group(); prom.position.set(3, 0, 13); S.add(prom);
+  add(prom, mk(new THREE.BoxGeometry(40, 0.25, 2.4), toon(0x9c7a55)), 0, 1.1, 0);
+  for (let x = -20; x <= 20; x += 2.5) { add(prom, mk(new THREE.BoxGeometry(0.15, 1.1, 0.15), toon(0x7d5f40)), x, 0.55, 1.1); add(prom, mk(new THREE.BoxGeometry(0.08, 0.9, 0.08), toon(0x5d6670)), x, 1.65, -1.1); }
+  add(prom, mk(new THREE.BoxGeometry(40, 0.07, 0.07), toon(0x5d6670)), 0, 2.05, -1.1);
+  for (let x = -16; x <= 16; x += 8) { add(prom, mk(new THREE.CylinderGeometry(0.05, 0.06, 3.2, 8), toon(0x3d444c)), x, 2.8, -0.9); add(prom, mk(new THREE.SphereGeometry(0.16, 12, 8), toon(0xf2efe6)), x, 4.4, -0.9); }
+  S.add(new THREE.HemisphereLight(0xeaf3ff, 0xb89a68, 1.0));
+  const sun = new THREE.DirectionalLight(0xfff1dc, 2.5); sun.position.set(-6, 9, 7); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 }); S.add(sun);
+  const rim = new THREE.DirectionalLight(0xffe2b0, 1.2); rim.position.set(3, 4, -8); S.add(rim);   // contre-jour de la mer : détache les cheveux
+}
+
+// ---------- les quatre images ----------
+const S = new THREE.Scene();
+const look = (p, t, fov) => { camera.position.copy(p); camera.fov = fov; camera.updateProjectionMatrix(); camera.lookAt(t); };
+if (SHOT === 1 || SHOT === 3) {
+  calern(S);
+  const lea = person(LEA); lea.g.position.set(1.0, 0, 0.55); lea.g.rotation.y = SHOT === 1 ? 0.9 : Math.PI / 2; S.add(lea.g); sit(lea);
+  face(lea, SHOT === 1 ? EXPR.inquiet : EXPR.normal); lea.g.updateWorldMatrix(true, true);
+  const col = person(COL); S.add(col.g);
+  if (SHOT === 1) {
+    aim(lea.arms[0].p, lea.g.localToWorld(V(-0.15, 0.62, 0.45)), 1); aim(lea.arms[1].p, lea.g.localToWorld(V(0.2, 0.55, 0.35)), 1);
+    col.g.position.set(-1.6, 0, 3.2); col.g.rotation.y = 2.2; face(col, EXPR.inquiet);
+    const hp = lea.head.getWorldPosition(V(0, 0, 0)); look(hp.clone().add(V(0.85, 0.05, 1.9)), hp.clone().add(V(0.0, -0.12, 0)), 30);
+  } else {
+    // Léa tape : les mains sur le clavier, éclairées par la lampe
+    const kb = (dx) => lea.g.parent.localToWorld(V(1.68, 0.84, 0.55 + dx));
+    aim(lea.arms[1].p, kb(-0.09), 1); aim(lea.arms[0].p, kb(0.1), 1);
+    lea.head.rotation.x = 0.12;
+    col.g.position.set(3.4, 0, -2.3); col.g.rotation.y = -0.6; face(col, EXPR.inquiet);
+    look(V(-0.15, 1.75, 2.75), V(1.55, 1.0, 0.25), 40);
+  }
+} else if (SHOT === 2) {
+  beach(S);
+  const mom = person(MOM), kid = person(KID); S.add(mom.g, kid.g);
+  mom.g.position.set(0.25, 0, -0.6); mom.g.rotation.y = 0.35; kid.g.position.set(-0.55, 0, -0.35); kid.g.rotation.y = 0.25;
+  face(mom, EXPR.doux); face(kid, EXPR.joie); mom.head.rotation.y = -0.45; mom.head.rotation.x = 0.18; kid.head.rotation.x = -0.22; kid.head.rotation.y = 0.45;
+  mom.g.updateWorldMatrix(true, true); kid.g.updateWorldMatrix(true, true);
+  aim(mom.arms[0].p, kid.g.localToWorld(V(0.18, 0.78, 0.0)), 0.9);   // main sur l'épaule de l'enfant
+  // seau rouge et pelle
+  const bk = new THREE.Group(); kid.arms[1].p.add(bk); bk.position.set(0, -0.6, 0.02);
+  add(bk, mk(new THREE.CylinderGeometry(0.15, 0.11, 0.21, 24), toon(0xd8262b))); add(bk, mk(new THREE.TorusGeometry(0.15, 0.012, 6, 24), toon(0xb81e22)), 0, 0.105, 0).rotation.x = Math.PI / 2;
+  add(bk, mk(new THREE.TorusGeometry(0.13, 0.008, 6, 24, Math.PI), toon(0x222)), 0, 0.1, 0);
+  aim(kid.arms[1].p, kid.g.localToWorld(V(0.32, 0.25, 0.15)), 0.4);
+  const sh = add(S, mk(new THREE.BoxGeometry(0.05, 0.02, 0.32), toon(0xffc51a)), -0.95, 0.01, 0.1); sh.rotation.y = 0.6;
+  look(V(-0.2, 1.05, 3.4), V(-0.1, 0.85, -0.5), 34);
+} else {
+  calern(S);
+  const ph = makePhone(1, ["On est sur la route.", "Tu nous rejoins ?"]);
+  ph.position.set(1.56, 0.8, 0.26); ph.rotation.set(-Math.PI / 2, 0, -Math.PI / 2); S.add(ph);
+  // la main de Léa approche, le pouce au-dessus du clavier virtuel
+  const hand = add(S, mk(new THREE.SphereGeometry(0.045, 20, 14), toon(SKIN)), 1.41, 0.83, 0.34); hand.scale.set(1, 0.6, 1.3);
+  const thumb = add(S, mk(new THREE.CapsuleGeometry(0.012, 0.045, 4, 8), toon(SKIN)), 1.465, 0.818, 0.3); thumb.rotation.set(1.3, 0.9, 0);
+  const sleeve = add(S, mk(new THREE.CapsuleGeometry(0.05, 0.2, 6, 12), toon(LEA.jacket)), 1.33, 0.86, 0.46); sleeve.rotation.set(1.35, 0.6, 0);
+  camera.up.set(1, 0, 0); look(V(1.55, 1.1, 0.26), V(1.56, 0.8, 0.26), 30);
+}
+// planche des six états du téléphone (validation des interactions)
+window.sheet = () => { const cv = document.createElement("canvas"); cv.width = 1920; cv.height = 1080; const g = cv.getContext("2d");
+  g.fillStyle = "#0b0d11"; g.fillRect(0, 0, 1920, 1080);
+  const names = ["1 · Message reçu", "2 · Léa écrit", "3 · Elle efface", "4 · Message vocal", "5 · Envoyé", "6 · Écouté"];
+  const sms = [["On est sur la route.", "Tu nous rejoins ?"], ["On est sur la route.", "Tu nous rejoins ?"], ["On est sur la route.", "Tu nous rejoins ?"],
+               ["On est arrêtés. Je ne", "sais pas où aller."], ["On est arrêtés. Je ne", "sais pas où aller."], ["On est arrêtés. Je ne", "sais pas où aller."]];
+  for (let i = 0; i < 6; i++) { const pc = document.createElement("canvas"); pc.width = 540; pc.height = 1100; drawPhone(pc.getContext("2d"), 540, 1100, i + 1, sms[i]);
+    const x = 40 + i * 310; g.fillStyle = "#2a2e35"; g.beginPath(); g.roundRect(x - 8, 92, 286, 572, 34); g.fill(); g.drawImage(pc, x, 100, 270, 550);
+    g.fillStyle = "#e9edf2"; g.font = `700 30px ${FONT}`; g.fillText(names[i], x, 720); }
+  g.fillStyle = "#8b95a1"; g.font = `500 28px ${FONT}`; g.fillText("05:25 : états 1 à 3 (le premier SMS).   09:00 : états 4 à 6 (le dernier SMS, puis le message vocal de Léa).", 40, 800);
+  g.fillText("Textes en Instrument Sans, 52 à 58 px sur un écran de 1080 px de large : lisibles même quand le téléphone occupe un tiers de l'image.", 40, 850);
+  return cv.toDataURL("image/png"); };
+document.getElementById("tag").style.display = SHOT === 2 ? "none" : "block";
+document.fonts.ready.then(() => { renderer.render(S, camera); window.ready = true; });
+window.renderAt = () => renderer.render(S, camera);
+</script></body></html>
