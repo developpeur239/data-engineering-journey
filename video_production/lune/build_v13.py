@@ -1,5 +1,13 @@
 import re, sys
-L = open(sys.argv[1]).read().split('\n')
+"""Texte de la voix V13 : python3 build_v13.py Le_Dernier_Echo_Dossier_Preproduction_V12.docx texte_voix_V13.md"""
+import zipfile
+def lines_of(path):
+    if path.endswith(".docx"):  # texte des paragraphes du dossier V12
+        x = zipfile.ZipFile(path).read("word/document.xml").decode()
+        paras = [re.sub("<[^>]+>", "", q) for q in re.findall(r"<w:p[ >].*?</w:p>", x)]
+        return [q for q in paras if q.strip()]
+    return open(path).read().split("\n")
+L = lines_of(sys.argv[1])
 CUTS = ["Sur les trottoirs, des centaines de personnes regardent vers le haut.","Personne ne parle.","Certains filment.",
 "Il tient encore son seau en plastique.","Il regarde l’eau.","Sa mère ne répond pas immédiatement.","Parce que c’est justement ce qui rend la situation si difficile à comprendre.",
 "Il regarde par la vitre.","Il prend une photographie avec le téléphone de sa mère.","Puis il ouvre celle qu’il avait prise la veille.","Il rapproche les deux images.","Sa mère regarde le ciel.",
