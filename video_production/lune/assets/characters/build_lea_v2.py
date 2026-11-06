@@ -61,8 +61,20 @@ def build_hand(s, skin, outl):
         parts += L.capsule(tuple(start), tuple(b1), r)
         parts += L.capsule(tuple(b1), tuple(b2), r * 0.92)
     h = L.fuse(f"Lea_main_{'G' if s < 0 else 'D'}", parts, skin, voxel=0.0009, smooth=14)
+    decimate(h, 0.12)   # 61 000 faces → environ 7 000, sans différence visible
     L.add_outline(h, outl, P["outline_w"] * 0.5)
     return h
+
+
+def decimate(o, ratio):
+    """Allège un maillage (le remaillage voxel en produit beaucoup trop pour l'animation)."""
+    bpy.context.view_layer.objects.active = o
+    for x in bpy.context.view_layer.objects:
+        x.select_set(x == o)
+    m = o.modifiers.new("Allegement", "DECIMATE"); m.ratio = ratio
+    while o.modifiers.find(m.name) > 0:
+        bpy.ops.object.modifier_move_up(modifier=m.name)
+    bpy.ops.object.modifier_apply(modifier=m.name); bpy.ops.object.shade_smooth()
 
 
 def seg_dist(p, a, b):
@@ -175,7 +187,10 @@ def key_fingers(rig, n, frame):
 def build():
     L.reset()
     parts = L.build_lea()
+    decimate(parts["hair"], 0.3); decimate(parts["scarf"], 0.5)
     rig = L.build_rig(parts)
+    for nm in ("Lea_oeil_G", "Lea_oeil_D"):   # les yeux suivent la tête (ils restaient en place quand Léa s'assoit)
+        o = bpy.data.objects[nm]; mw = o.matrix_world.copy(); o.parent = rig; o.parent_type = "BONE"; o.parent_bone = "tete"; o.matrix_world = mw
     add_finger_bones(rig)
     skin = bpy.data.materials["Lea_peau"]; outl = bpy.data.materials["Contour_blanc"]
     hands = {}
@@ -260,7 +275,7 @@ def mat(name, color, rough=0.7):
 
 def box(name, size, loc, m):
     bpy.ops.mesh.primitive_cube_add(size=1, location=loc); o = bpy.context.active_object; o.name = name; o.scale = size
-    bpy.ops.object.transform_apply(scale=True); o.data.materials.append(m)
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True); o.data.materials.append(m)   # la position reste celle de l'objet (les touches s'animent)
     bev = o.modifiers.new("Arrondi", "BEVEL"); bev.width = min(size) * 0.25; bev.segments = 3
     return o
 
@@ -435,6 +450,68 @@ def preview_frames(name, frames):
     for i, im in enumerate(ims):
         W.paste(im, ((i % 3) * 640, (i // 3) * 360))
     out = OUT / f"apercu_{name}.png"; W.save(out); return out
+
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Contours et moteurs de rendu (V3 des contours : la coque inversée de 11 mm est remplacée)
+# ---------------------------------------------------------------------------------------------------------------
+LINE_GREY = (0.80, 0.82, 0.84)   # blanc cassé / gris clair, jamais blanc pur
+
+
+def character_objects():
+    return [o for o in bpy.data.objects if o.name.startswith("Lea_") and o.type == "MESH"]
+
+
+def outlines_off():
+    for o in bpy.data.objects:
+        if "Contour" in o.modifiers:
+            o.modifiers["Contour"].show_render = False; o.modifiers["Contour"].show_viewport = False
+
+
+def use_cycles_freestyle(px=1.4):
+    """Cycles + Freestyle : uniquement le contour extérieur du personnage, fin et gris clair ; aucune ligne intérieure."""
+    outlines_off(); sc = bpy.context.scene; sc.render.engine = "CYCLES"
+    for m in bpy.data.materials:   # matériaux mats : aucun reflet (l'écran allumé s'y reflétait en rectangle blanc)
+        if m.name.startswith("Lea_") and m.use_nodes and "Principled BSDF" in m.node_tree.nodes:
+            b = m.node_tree.nodes["Principled BSDF"]; b.inputs["Specular IOR Level"].default_value = 0.0; b.inputs["Roughness"].default_value = 0.9
+    col = bpy.data.collections.get("Lea_contour") or bpy.data.collections.new("Lea_contour")
+    if col.name not in sc.collection.children:
+        sc.collection.children.link(col)
+    for o in character_objects():
+        if o.name not in col.objects:
+            col.objects.link(o)
+    sc.render.use_freestyle = True; sc.render.line_thickness_mode = "ABSOLUTE"; sc.render.line_thickness = 1.0
+    fs = bpy.context.view_layer.freestyle_settings; fs.as_render_pass = False
+    ls = fs.linesets[0] if fs.linesets else fs.linesets.new("Contour")
+    ls.select_by_visibility = True; ls.select_by_edge_types = True; ls.select_by_collection = True; ls.collection = col
+    for t in ("silhouette", "border", "crease", "ridge_valley", "suggestive_contour", "material_boundary", "contour", "edge_mark"):
+        setattr(ls, f"select_{t}", False)
+    ls.select_external_contour = True
+    if ls.linestyle is None:
+        ls.linestyle = bpy.data.linestyles.new("Contour_fin")
+    st = ls.linestyle; st.color = LINE_GREY; st.thickness = px; st.alpha = 0.9; st.thickness_position = "OUTSIDE"
+
+
+def use_workbench():
+    """Workbench : aplats mats, ombre douce, contour d'objet fin gris clair (rapide sans carte graphique)."""
+    outlines_off(); sc = bpy.context.scene; sc.render.engine = "BLENDER_WORKBENCH"; sc.render.use_freestyle = False
+    for m in bpy.data.materials:   # Workbench lit la couleur d'affichage : on la recopie depuis le matériau
+        if not m.use_nodes:
+            continue
+        col = None
+        for nd in m.node_tree.nodes:
+            if nd.type == "BSDF_PRINCIPLED":
+                col = nd.inputs["Base Color"].default_value
+            elif nd.type == "EMISSION" and col is None:
+                col = nd.inputs["Color"].default_value
+        if col is not None:
+            m.diffuse_color = tuple(col); m.roughness = 0.7; m.metallic = 0.0
+    sh = sc.display.shading; sh.light = "STUDIO"; sh.color_type = "MATERIAL"; sh.show_shadows = True; sh.shadow_intensity = 0.35
+    sh.show_object_outline = True; sh.object_outline_color = LINE_GREY; sh.show_cavity = False; sh.show_specular_highlight = False
+    sc.display.shadow_shift = 0.1; sc.display.shadow_focus = 0.6
+    if sc.world:
+        sc.world.color = L.srgb("#8c8d91")[:3]
 
 
 if __name__ == "__main__":
