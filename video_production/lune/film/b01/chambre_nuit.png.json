@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A bedroom at night seen from the bed, point of view of someone who just woke up: an unmade bed with a crumpled duvet in the foreground, a large window on the far wall with thin half-open curtains, an intense cold white moonlight floods the room, sharp window-shaped patches of light on the floor and wall, a bedside table with a switched-off lamp and a phone, deep blue shadows. The Moon itself is not visible. No people. Flat 2D vector illustration for an animated documentary, same drawing style, line quality and palette as the reference image, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, no text, no letters, no logos",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_calern_nuit.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "f27f0234cda391e3e44236015b3ffa16",
+ "credits": 12.0,
+ "seconds": 25
+}

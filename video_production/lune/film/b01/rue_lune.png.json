@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A quiet street of a small French town at night, wide shot at street level, a gigantic Moon dominating the sky above the roofs with its craters clearly visible, brilliant white moonlight casting long sharp shadows on the asphalt, parked cars and street lamps on the sides, open empty space in the middle of the street. No people. Flat 2D vector illustration for an animated documentary, same drawing style, line quality and palette as the reference image, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, no text, no letters, no logos",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_calern_nuit.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "d4a2a950f26cd63b803239959863736b",
+ "credits": 12.0,
+ "seconds": 34
+}
