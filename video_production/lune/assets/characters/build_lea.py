@@ -128,8 +128,10 @@ def build_lea():
     for s in (-1, 1):
         B += capsule((s * p["leg_x"], 0, cz + 0.05), (s * p["leg_x"], 0, 0.07), p["leg_r"])         # jambe
         B.append(ellipsoid((s * (p["leg_x"] + 0.012), -0.04, 0.045), (0.078, 0.11, 0.048)))          # chaussure
-        B += capsule((s * (p["shoulder_x"] + 0.0), 0, sz - 0.02), (s * (p["hand_x"] - 0.005), 0, p["hand_z"] + 0.05), p["arm_r"])   # bras
-        B.append(ellipsoid((s * p["hand_x"], -0.005, p["hand_z"]), (p["hand_r"], p["hand_r"] * 0.8, p["hand_r"] * 1.05)))            # main
+        arm_end = p["hand_z"] + (0.05 if p.get("hands_in_body", True) else 0.085)   # V2 : le bras s'arrête au poignet
+        B += capsule((s * (p["shoulder_x"] + 0.0), 0, sz - 0.02), (s * (p["hand_x"] - 0.005), 0, arm_end), p["arm_r"])   # bras
+        if p.get("hands_in_body", True):   # V1 : mains rondes fondues dans le corps (la V2 les remplace par des mains à doigts)
+            B.append(ellipsoid((s * p["hand_x"], -0.005, p["hand_z"]), (p["hand_r"], p["hand_r"] * 0.8, p["hand_r"] * 1.05)))            # main
     B += capsule((0, 0, sz), (0, 0, sz + 0.12), 0.05)                                               # cou
     body = fuse("Lea_corps", B, skin); add_outline(body, outl, p["outline_w"])
 
