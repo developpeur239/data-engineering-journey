@@ -34,11 +34,16 @@ def dur(p):
 
 # ------------------------------------------------------------------ minutage (calé sur les voix réelles)
 D = {k: dur(B / f"{k}.wav") for k in ("v1", "v2", "v3", "v4")}
-V1 = 2.0                         # « Imaginez… » après 2 s de nuit
-V2 = V1 + D["v1"] + 2.2          # silence : on regarde la lumière
-CUT_B = V2 + 2.35                # coupe sur « …de la fenêtre. »
-V3 = V2 + D["v2"] + 1.4
-CUT_C = V3 - 0.9
+# repères des phrases, lus sur la forme d'onde de chaque voix (secondes depuis le début du fichier)
+V1 = 1.8                         # « Imaginez que vous vous réveilliez… » pendant que les yeux s'ouvrent
+LIGHT = V1 + 2.92                # « Votre chambre est éclairée. » : la lumière monte
+CUT_B = V1 + 5.86                # « Par la Lune. » : coupe sur la fenêtre, la Lune géante
+V2 = V1 + D["v1"] + 1.7          # on laisse la révélation respirer
+A_APP, A_CRAT, A_RUES = V2, V2 + 8.86, V2 + 10.83   # « Vous vous approchez… » · « Ses cratères… » · « …transforme les rues… »
+CUT_C = V2 + D["v2"] + 0.5
+V3 = CUT_C + 0.9
+CUT_D = V3 + 6.6                 # « Dans quelques heures… » : très gros plan sur la Lune
+PERC = V3 + 8.45                 # « …percuter… » : coup sourd, secousse
 V4 = V3 + D["v3"] + 1.8          # silence protégé après « …percuter la Terre. »
 REW = V4 + 0.2                   # le retour en arrière commence avec la phrase
 BLACK = V4 + D["v4"] + 0.4
@@ -56,12 +61,16 @@ def load_rgb(name):
     return np.asarray(Image.open(B / f"{name}.png").convert("RGB")).astype(np.float32)
 
 
-def cam(img, cx, cy, zoom, out=(W, H)):
-    """Fenêtre de caméra dans l'image source (2752×1536) : centre, zoom (1 = toute la largeur)."""
+def cam(img, cx, cy, zoom, out=(W, H), rot=0.0, shake=(0.0, 0.0)):
+    """Fenêtre de caméra dans l'image source (2752×1536) : centre, zoom (1 = toute la largeur), roulis en degrés."""
     sh, sw = img.shape[:2]
+    zoom = zoom * (1 + abs(rot) * 0.012)                  # le roulis ne doit jamais montrer les bords
     wv = sw / zoom; s = out[0] / wv
     cx = np.clip(cx, wv / 2, sw - wv / 2); hv = out[1] / s; cy = np.clip(cy, hv / 2, sh - hv / 2)
-    M = np.float32([[s, 0, -(cx - wv / 2) * s], [0, s, -(cy - hv / 2) * s]])
+    M = np.float32([[s, 0, -(cx - wv / 2) * s + shake[0]], [0, s, -(cy - hv / 2) * s + shake[1]]])
+    if rot:
+        R = cv2.getRotationMatrix2D((out[0] / 2, out[1] / 2), rot, 1.0)
+        M = (np.vstack([R, [0, 0, 1]]) @ np.vstack([M, [0, 0, 1]]))[:2].astype(np.float32)
     return cv2.warpAffine(img, M, out, flags=cv2.INTER_AREA if s < 1 else cv2.INTER_LINEAR)
 
 
@@ -139,15 +148,34 @@ cur_w = cur * np.clip((yyA - 150) / 700, 0, 1) ** 1.3                  # fixé �
 bright_A = np.clip(((A_img.mean(2) - 150) / 70), 0, 1)                   # zones éclairées par la Lune
 
 
+def keys(t, ks):
+    """Interpolation adoucie entre images clés [(t, valeurs...)]."""
+    if t <= ks[0][0]:
+        return np.array(ks[0][1:], float)
+    for a, b in zip(ks, ks[1:]):
+        if t <= b[0]:
+            u = ease((t - a[0]) / (b[0] - a[0]))
+            return np.array(a[1:], float) * (1 - u) + np.array(b[1:], float) * u
+    return np.array(ks[-1][1:], float)
+
+
+def lids(t):
+    """Ouverture des paupières (0 fermé, 1 ouvert) : un premier entrouvrement, un clignement, puis grand ouvert."""
+    return float(keys(t, [(1.5, 0.0), (2.2, 0.5), (2.45, 0.12), (2.6, 0.12), (3.4, 1.0)])[0])
+
+
 def plan_A(t):
     sway = 7 * np.sin(2 * np.pi * t / 5.3 + yyA * 0.004) + 3 * np.sin(2 * np.pi * t / 2.9 + 1.3)
     mx = (xxA - cur_w * sway).astype(np.float32)
     f = cv2.remap(A_img, mx, yyA, cv2.INTER_LINEAR)
-    veil = 0.10 * np.exp(-((t - 5.6) / 1.4) ** 2) + 0.05 * np.exp(-((t - 11.0) / 1.1) ** 2)   # un nuage passe devant la Lune
-    f *= (1 - veil * bright_A)[..., None]
-    dust(f, t, (1450, 300, 2350, 1300))
-    u = ease(t / CUT_B)
-    return cam(f, 1376 + 450 * u, 768 - 130 * u, 1.0 + 0.16 * u)
+    lk = ease((t - LIGHT) / 1.3)                                   # la lumière de Lune monte sur « …éclairée. »
+    f *= ((1 - bright_A * (1 - lk) * 0.38) * (0.66 + 0.34 * lk))[..., None]
+    dust(f, t, (1450, 300, 2350, 1300), alpha=0.06 + 0.18 * lk)
+    # vue subjective : la tête sur l'oreiller (penchée), elle se soulève, puis le regard glisse vers la fenêtre
+    cx, cy, z, rot = keys(t, [(0, 1250, 1000, 1.28, -6.0), (2.4, 1250, 990, 1.28, -6.0), (4.2, 1450, 790, 1.14, -1.0),
+                              (CUT_B, 1680, 640, 1.24, 0.0)])
+    rot += 0.4 * np.sin(2 * np.pi * t / 3.7)                       # respiration
+    return cam(f, cx, cy, z, rot=rot)
 
 
 # ------------------------------------------------------------------ plan B : fenêtre
@@ -169,8 +197,13 @@ def plan_B(t, tl):
         k = ease((tl - 7.2) / 0.25)[()] if np.ndim(tl) == 0 else 0
         a = (off_mask * float(k))[..., None]
         f = f * (1 - a) + win_dark * a
-    u = ease(tl / (CUT_C - CUT_B))
-    return cam(f, 1376 + 220 * u, 700 - 120 * u, 1.04 + 0.10 * u)
+    T = CUT_B + tl
+    cx, cy, z = keys(T, [(CUT_B, 1376, 768, 1.0), (A_APP, 1376, 768, 1.02), (A_APP + 1.6, 1440, 740, 1.14),
+                         (A_CRAT, 1520, 690, 1.2), (A_CRAT + 1.5, 1835, 450, 1.95), (A_RUES, 1835, 470, 2.0),
+                         (A_RUES + 2.8, 1420, 1060, 1.5), (CUT_C, 1400, 1080, 1.53)])
+    walk = np.clip((T - A_APP) / 1.6, 0, 1)                         # trois pas jusqu'à la fenêtre
+    bob = 7 * np.sin(np.pi * 2 * 1.9 * (T - A_APP)) * np.sin(np.pi * walk) if 0 < walk < 1 else 0.0
+    return cam(f, cx, cy + bob, z)
 
 
 # ------------------------------------------------------------------ plan C : rue
@@ -213,13 +246,19 @@ def plan_C(t, tl, rew):
     f[930:1290] = f[930:1290] * (1 - fa) + np.array([175, 185, 200], np.float32) * fa
     for k in range(4):
         figurant(f, k, t, rew)
-    # caméra : lente avancée ; sur « …percuter la Terre » elle se resserre un peu vers la Lune ; au retour elle recule
-    u = ease(tl / (V4 - CUT_C))
-    z = 1.02 + 0.07 * u
-    cx, cy = 1376, 820 - 120 * u
+    T = CUT_C + tl
+    if T < CUT_D:                                                   # la rue : lente avancée
+        u = ease(tl / (CUT_D - CUT_C))
+        return cam(f, 1376, 860 - 60 * u, 1.02 + 0.06 * u)
+    # « Dans quelques heures… » : la Lune écrase le cadre ; « percuter » : secousse ; au retour, on recule jusqu'à la rue
+    z = 1.95 + 0.25 * ease((T - CUT_D) / (V4 - CUT_D))
+    cx, cy = 1390, 440
     if rew > 0:
-        z = z - 0.12 * rew; cy = cy + 60 * rew
-    return cam(f, cx, cy, max(1.0, z))
+        z = z * (1 - rew) + 1.0 * rew; cy = cy * (1 - rew) + 820 * rew
+    k = max(0.0, T - PERC)
+    amp = 9 * np.exp(-k / 0.45) if T > PERC else 0.0
+    sh = (amp * np.sin(T * 71), amp * np.sin(T * 53 + 1))
+    return cam(f, cx, cy, z, shake=sh)
 
 
 # ------------------------------------------------------------------ assemblage d'une image
@@ -233,7 +272,15 @@ def frame(i):
     t = i / FPS
     if t < CUT_B:
         f = plan_A(t)
-        f *= ease(t / 1.6)                                           # sortie du noir
+        o = lids(t)                                                  # paupières : flou puis net, bord courbe
+        if o < 1:
+            sig = 1 + (1 - o) * 14
+            f = cv2.GaussianBlur(f, (0, 0), sig)
+            xs = (np.arange(W) / W * 2 - 1)
+            half = o * H / 2 * (0.62 + 0.38 * np.sqrt(np.clip(1 - xs ** 2, 0, 1)))
+            yy = np.abs(np.arange(H)[:, None] - H / 2)
+            m = np.clip((half[None, :] - yy) / 40 + 0.5, 0, 1)
+            f = f * m[..., None]
     elif t < CUT_C:
         f = plan_B(t, t - CUT_B)
         if t - CUT_B < 0.5:                                          # raccord : la lumière éblouit un instant
@@ -269,11 +316,18 @@ def soundtrack(path):
     voice, bed = np.zeros(N), np.zeros(N)
     for k, at in VOICES:
         put(voice, norm(load(B / f"{k}.wav"), 0.6), at)
-    amb = loop(rms(load(SFX / "amb_calern_nuit.wav"), -36), BLACK)
-    put(bed, fade(amb, 2.0, 1.5), 0)
+    R = B / "sfx_real"
+    amb = loop(rms(load(R / "amb_ville_nuit.wav"), -33), BLACK)
+    inside = np.ones(len(amb)); inside[: int(CUT_B * SR)] = 0.35                                # la ville, assourdie dans la chambre
+    k = np.ones(64) / 64; muff = np.convolve(amb, k, "same")
+    cb = int(CUT_B * SR); amb = np.concatenate([muff[:cb] * 0.6, amb[cb:]])
+    put(bed, fade(amb, 1.5, 1.5), 0)
+    put(bed, norm(load(R / "reveil.wav")), 1.25, 0.32)                                         # réveil : inspiration, draps
+    put(bed, norm(load(R / "parquet.wav")), A_APP + 0.05, 0.30)                                # trois pas vers la fenêtre
     put(bed, fade(fx.drone("dark", BLACK - 1.0), 3.0, 2.0), 1.0, 0.08)
-    put(bed, fx.riser(3.0) * np.linspace(0, 1, int(3.0 * SR)), V3 + D["v3"] - 3.2, 0.10)        # monte vers « …la Terre »
-    put(bed, norm(load(SFX / "space_rumble.wav")), V3 + D["v3"] - 1.2, 0.20)                  # grondement sourd, puis silence protégé
+    put(bed, fx.riser(2.0), PERC - 2.0, 0.10)                                                  # monte vers « percuter »
+    put(bed, fx.impact(1.8), PERC, 0.45)                                                       # coup sourd
+    put(bed, norm(load(SFX / "space_rumble.wav")), PERC - 0.1, 0.22)                           # grondement, puis silence protégé
     put(bed, fx.reverse_cymbal(1.6), REW + 0.4, 0.22)                                          # le temps repart en arrière
     bed[int(BLACK * SR):] *= 0
     duck = fx.duck_under_voice(bed, voice * 32768.0, SR, 1.0, margin=8.0)
