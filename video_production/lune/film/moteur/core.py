@@ -317,16 +317,21 @@ def soundtrack(bloc: Bloc, out: Path):
     pcm = (np.clip(mix, -1, 1) * 32767).astype(np.int16)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "s16le", "-ar", str(SR), "-ac", "1", "-i", "-", str(tmp)],
                    input=pcm.tobytes(), check=True)
-    # niveaux : référence de travail −14 LUFS intégré, crête réelle ≤ −1,5 dBTP (loudnorm en deux passes)
+    # niveaux : référence de travail −14 LUFS intégré, crête ≤ −1,5 dBTP : gain mesuré puis limiteur de crête (sur-échantillonné)
     L = STYLE["son"]
-    meas = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(tmp), "-af",
-                           f"loudnorm=I={L['lufs']}:TP={L['crete_dbtp']}:LRA={L['lra']}:print_format=json", "-f", "null", "-"],
-                          capture_output=True, text=True).stderr
-    m = json.loads(meas[meas.rindex("{"):meas.rindex("}") + 1])
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(tmp), "-af",
-                    f"loudnorm=I={L['lufs']}:TP={L['crete_dbtp']}:LRA={L['lra']}:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
-                    f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true",
-                    "-ar", str(SR), str(out)], check=True)
+    r = subprocess.run(["ffmpeg", "-nostats", "-i", str(tmp), "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+    I0 = float(re.findall(r"I:\s+(-?[\d.]+) LUFS", r)[-1])
+    lim = 10 ** (L["crete_dbtp"] / 20)
+    for _ in range(5):                                         # le limiteur retire un peu de niveau : on recale
+        g = L["lufs"] - I0
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(tmp), "-af",
+                        f"volume={g:.2f}dB,aresample=192000,alimiter=limit={lim:.4f}:attack=2:release=60:level=false,aresample={SR}",
+                        str(out)], check=True)
+        r = subprocess.run(["ffmpeg", "-nostats", "-i", str(out), "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+        I1 = float(re.findall(r"I:\s+(-?[\d.]+) LUFS", r)[-1])
+        if abs(I1 - L["lufs"]) < 0.3:
+            break
+        I0 += I1 - L["lufs"]                                  # trop bas → plus de gain au tour suivant
     tmp.unlink()
     report(out, voice, duck)
 
@@ -389,7 +394,7 @@ def main(argv):
                 print(f"image {k}/{len(todo)}", flush=True)
     out = bloc.dir / f"bloc{name[1:]}.mp4"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", str(tmp / "%05d.png"), "-i", str(wav),
-                    "-c:v", "libx264", "-crf", "16", "-preset", "slow", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ac", "2",
+                    "-c:v", "libx264", "-preset", "slow", "-b:v", "14M", "-maxrate", "18M", "-bufsize", "28M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ac", "2",
                     "-shortest", "-movflags", "+faststart", str(out)], check=True)
     print("ok", out)
 
