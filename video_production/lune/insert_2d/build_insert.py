@@ -57,7 +57,9 @@ def ellipse(cx, cy, rx, ry):
             C(cx - rx, cy - k * ry, cx - k * rx, cy - ry, cx, cy - ry), C(cx + k * rx, cy - ry, cx + rx, cy - k * ry, cx + rx, cy), Z()]
 
 
-PENSEE = False   # pensée de Léa pendant l'hésitation : ajout au texte V13, à valider avant de l'activer
+PENSEE = False
+HAND_ASSET, TIP, HAND_SCALE, HAND_ROT = "main", (428, 410), 30.0, 8.0   # image de la main, bout de l'index (px), échelle %, rotation
+HAND_GROUP = [None]   # pensée de Léa pendant l'hésitation : ajout au texte V13, à valider avant de l'activer
 _eid = [1000]
 
 
@@ -222,30 +224,14 @@ def build(fr, fb):
         shape(f"Appui {i}", rrect(kx - w / 2, ky - KH / 2, w, KH, 9), "#ffffff", 0.75, P, start=t - 20, dur=120)
 
     # ---------- main : silhouette noire, index tendu ; le bout du doigt est l'origine du groupe ----------
-    Hd = group("Main", T(keys["J"][0] + 420, keys["J"][1] + 520, 0), P)
-    BLK, RIM = "#0a0b0d", "#2f333a"   # silhouette noire ; liseré fin qui sépare les doigts (comme une lumière de bord)
-
-    def finger(name, base, tip, w):
-        """Doigt en gélule (bouts ronds), orienté de la base vers le bout ; liseré fin pour le séparer du voisin."""
-        bx, by = base; dx, dy = tip[0] - bx, tip[1] - by; L_ = math.hypot(dx, dy) + w * 0.5
-        rot = math.degrees(math.atan2(dx, -dy))
-        lid = nid()
-        A.append({"type": "createFxShapeLayer", "compositionId": "main", "layerId": lid, "name": name, "insertIndex": 0, "parentLayerId": Hd,
-                  "activeRange": {"start": 0, "duration": DUR}, "transform": T(bx, by, rot),
-                  "shape": {"path": {"commands": rrect(-w / 2, -L_ + w / 2, w, L_ + 30, w / 2)}, "fills": [fill(BLK)],
-                            "strokes": [{"paint": {"type": "solid", "color": rgb(RIM)}, "width": 3, "cap": "round", "join": "round", "miterLimit": 4, "blendMode": "normal", "opacity": 1}]}})
-        return lid
-
-    shape("Avant-bras", [M(55, 285), C(95, 270, 150, 280, 190, 300), L(540, 1150), L(330, 1185), Z()], BLK, 1, Hd)
-    # doigts repliés derrière l'index, en léger éventail, de plus en plus courts ; l'index tendu devant
-    finger("Auriculaire", (172, 228), (150, 152), 34)
-    finger("Annulaire", (142, 212), (108, 112), 40)
-    finger("Majeur", (106, 200), (62, 74), 42)
-    finger("Index", (68, 196), (0, 2), 42)
-    finger("Pouce", (78, 268), (2, 226), 40)
-    # la paume par-dessus, sans liseré : elle cache la base des doigts
-    shape("Paume", [M(28, 190), C(80, 160, 165, 170, 200, 210), C(222, 245, 212, 300, 182, 324), C(140, 344, 72, 338, 46, 310),
-                    C(22, 282, 12, 222, 28, 190), Z()], BLK, 1, Hd)
+    Hd = group("Main", T(keys["J"][0] + 420, keys["J"][1] + 520, HAND_ROT), P)
+    # silhouette d'une vraie main (image générée puis nettoyée : main_ref/), posée par le bout de l'index
+    BLK = "#0a0b0d"
+    k = HAND_SCALE / 100.0
+    ext = [(1520, 2048), (2048, 1590), (2600, 2300), (2070, 2760)]   # l'avant-bras continue hors de l'image, dans l'axe du bras
+    shape("Avant-bras prolongé", [M((x - TIP[0]) * k, (y - TIP[1]) * k) if i == 0 else L((x - TIP[0]) * k, (y - TIP[1]) * k)
+                                   for i, (x, y) in enumerate(ext)] + [Z()], BLK, 1, Hd)
+    HAND_GROUP[0] = Hd
     # trajectoire du doigt : entrée par le bas, chaque touche, hésitation, effacement, retrait
     kx = [(0, keys["J"][0] + 420, keys["J"][1] + 520)]
     kx.append((560, keys["J"][0] + 4, keys["J"][1] + 40))
@@ -278,6 +264,7 @@ def main():
     run("project", "create", "--project", proj)
     fr_ = json.loads(run("project", "import-font", "--project", proj, "--file", str(FONTS / "InstrumentSans-Regular.ttf")))
     fb_ = json.loads(run("project", "import-font", "--project", proj, "--file", str(FONTS / "InstrumentSans-Bold.ttf")))
+    run("project", "import-asset", "--project", proj, "--file", str(Path(__file__).resolve().parent / "main_ref/main_index_silhouette.png"), "--asset-id", HAND_ASSET, "--kind", "image")
     doc = json.loads(run("project", "inspect", "--project", proj))
     doc["dimensions"] = {"width": 1920, "height": 1080}; doc["duration"] = DUR / 1000
     (ROOT / ".work/doc.json").write_text(json.dumps(doc)); run("project", "commit", "--project", proj, "--file", str(ROOT / ".work/doc.json"))
@@ -285,6 +272,19 @@ def main():
     (ROOT / ".work/actions.json").write_text(json.dumps(A, ensure_ascii=False))
     out = json.loads(run("project", "apply", "--project", proj, "--actions", str(ROOT / ".work/actions.json")))
     print("actions :", out.get("appliedActions"), "avertissements :", out.get("warnings"))
+    doc = json.loads(run("project", "inspect", "--project", proj))
+    def all_layers(ls):
+        for l in ls:
+            yield l; yield from all_layers(l.get("layers", []))
+    lid = max(l["id"] for l in all_layers(doc["composition"]["layers"])) + 1
+    hand_group = next(l for l in all_layers(doc["composition"]["layers"]) if l["id"] == HAND_GROUP[0])
+    hand_group["layers"].insert(0, {
+        "type": "Image", "id": lid, "name": "Main (silhouette)", "blendMode": "normal", "parent": HAND_GROUP[0],
+        "activeRange": {"start": 0, "duration": DUR},
+        "transform": {"anchorPoint": list(TIP), "position": [0, 0], "scale": [HAND_SCALE, HAND_SCALE], "rotation": 0, "opacity": 100},
+        "source": {"assetId": HAND_ASSET, "fit": "contain"}})
+    (ROOT / ".work/doc.json").write_text(json.dumps(doc, ensure_ascii=False))
+    run("project", "commit", "--project", proj, "--file", str(ROOT / ".work/doc.json"))
     print(proj)
 
 
