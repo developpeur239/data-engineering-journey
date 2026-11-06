@@ -181,13 +181,22 @@ def plan_A(t):
 # ------------------------------------------------------------------ plan B : fenêtre
 B_img = load_rgb("fenetre_rue")
 skyB = sky_mask(B_img, 800, (780, 2230))
-win = (B_img[..., 0] > 190) & (B_img[..., 1] > 130) & (B_img[..., 2] < 140)
-ncomp, labels = cv2.connectedComponents(win.astype(np.uint8))
+win = (B_img[..., 0] > 160) & (B_img[..., 0] - B_img[..., 2] > 55)              # fenêtres éclairées (chaudes)
+win = cv2.morphologyEx(win.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+ncomp, labels = cv2.connectedComponents(cv2.dilate(win, np.ones((9, 9), np.uint8)))   # les carreaux d'une fenêtre = 1 fenêtre
+labels = labels * (cv2.dilate(win, np.ones((3, 3), np.uint8)) > 0)
 sizes = np.bincount(labels.ravel())
-cands = [i for i in range(1, ncomp) if 300 < sizes[i] < 20000]
+cands = [i for i in range(1, ncomp) if 250 < sizes[i] < 30000]
 target = max(cands, key=lambda i: np.mean(np.nonzero(labels == i)[1])) if cands else None   # la fenêtre allumée la plus à droite
 off_mask = cv2.GaussianBlur(cv2.dilate((labels == target).astype(np.uint8), np.ones((9, 9), np.uint8)).astype(np.float32), (0, 0), 2) if target else None
 win_dark = cv2.GaussianBlur(B_img, (0, 0), 1) * np.array([0.30, 0.33, 0.42], np.float32)
+WIN_B = []
+for i in sorted(cands, key=lambda i: -sizes[i]):
+    if i == target:
+        continue
+    ys, xs = np.nonzero(labels == i)
+    if ys.max() - ys.min() > 30 and xs.max() - xs.min() > 14:
+        WIN_B.append((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
 
 
 def plan_B(t, tl):
@@ -209,29 +218,87 @@ def plan_B(t, tl):
 # ------------------------------------------------------------------ plan C : rue
 C_img = load_rgb("rue_lune")
 skyC = sky_mask(C_img, 820)
-figs = [np.asarray(Image.open(B / f"fig_{k}.png").convert("RGBA")).astype(np.float32) for k in range(4)]
-FIG_X = [204, 821, 1365, 2176]                     # position d'origine dans l'image des figurants (on garde le groupe)
-FIG_S, FEET, GX = 0.33, 1405, 1376 - (2549 - 204) * 0.33 / 2 - 204 * 0.33
+def _cut(name):
+    return np.asarray(Image.open(B / f"{name}.png").convert("RGBA")).astype(np.float32)
+
+
+# la foule : 13 personnes sur trois rangs (du fond vers l'avant) : (image, centre x, pieds y, échelle)
+_g = 0.33; _GX = 1376 - (2549 - 204) * _g / 2 - 204 * _g
+CROWD = [("foule_0", 1010, 1232, 0.165), ("foule_3", 1555, 1236, 0.16), ("foule_5", 1745, 1230, 0.165),
+         ("foule_1", 870, 1300, 0.225), ("foule_2", 1200, 1296, 0.215), ("foule_4", 1880, 1302, 0.22)]
+for k, (x0, x1) in enumerate([(204, 755), (821, 1320), (1365, 2142), (2176, 2549)]):
+    CROWD.append((f"fig_{k}", _GX + (x0 + x1) / 2 * _g, 1405, _g))
+SPR = {n: _cut(n) for n, *_ in CROWD}
+
+
+def _warp_local(img, A, shape, pad=4):
+    """warpAffine limité au rectangle d'arrivée (bien plus rapide que sur toute l'image)."""
+    h, w = img.shape[:2]
+    pts = np.array([[0, 0, 1], [w, 0, 1], [0, h, 1], [w, h, 1]], np.float32) @ A.T
+    x0, y0 = np.floor(pts.min(0)).astype(int) - pad; x1, y1 = np.ceil(pts.max(0)).astype(int) + pad
+    x0, y0 = max(0, x0), max(0, y0); x1, y1 = min(shape[1], x1), min(shape[0], y1)
+    if x0 >= x1 or y0 >= y1:
+        return None, 0, 0
+    A2 = A.copy(); A2[0, 2] -= x0; A2[1, 2] -= y0
+    return cv2.warpAffine(img, A2, (x1 - x0, y1 - y0), flags=cv2.INTER_AREA), x0, y0
 
 
 def figurant(f, k, t, rew):
-    img = figs[k]
+    name, cx, feet, s = CROWD[k]
+    img = SPR[name]
     h, w = img.shape[:2]
-    br = 0.006 * np.sin(2 * np.pi * t / (3.4 + 0.5 * k) + k * 1.7)          # respiration, décalée pour chacun
-    sway = 0.35 * np.sin(2 * np.pi * t / (5.0 + k) + k)                     # balancement à peine visible
+    br = 0.006 * np.sin(2 * np.pi * t / (3.4 + 0.37 * k) + k * 1.7)          # respiration, décalée pour chacun
+    sway = 0.35 * np.sin(2 * np.pi * t / (5.0 + 0.6 * k) + k)                # balancement à peine visible
     R = np.vstack([cv2.getRotationMatrix2D((w / 2, h), sway, 1.0), [0, 0, 1]])
     Sb = np.array([[1, 0, 0], [0, 1 + br, -h * br], [0, 0, 1]])        # respiration : le corps s'étire depuis les pieds
-    s = FIG_S
-    x = GX + FIG_X[k] * s; y = FEET - h * s
-    A = (np.array([[s, 0, x], [0, s, y], [0, 0, 1]]) @ Sb @ R)[:2].astype(np.float32)
-    out = cv2.warpAffine(img, A, (f.shape[1], f.shape[0]), flags=cv2.INTER_AREA, borderValue=(0, 0, 0, 0))
-    a = out[..., 3:4] / 255 * (1 - rew)
+    x = cx - w * s / 2; y = feet - h * s
     # ombre portée vers nous (la Lune est derrière eux), écrasée et inclinée
-    sh = cv2.warpAffine(img[..., 3], np.float32([[s, 0.35 * s, x - 0.35 * s * h], [0, -0.42 * s, FEET + 0.42 * s * h]]),
-                        (f.shape[1], f.shape[0]), flags=cv2.INTER_AREA)
-    sh = cv2.GaussianBlur(sh, (0, 0), 3)[..., None] / 255 * 0.42 * (1 - rew)
-    f[:] = f * (1 - sh * 0.75)
-    f[:] = f * (1 - a) + out[..., :3] * a
+    As = np.float32([[s, 0.35 * s, x - 0.35 * s * h], [0, -0.42 * s, feet + 0.42 * s * h]])
+    sh, sx, sy = _warp_local(img[..., 3], As, f.shape)
+    if sh is not None:
+        sh = cv2.GaussianBlur(sh, (0, 0), 3)[..., None] / 255 * 0.42 * (1 - rew)
+        reg = f[sy:sy + sh.shape[0], sx:sx + sh.shape[1]]; reg[:] = reg * (1 - sh * 0.75)
+    A = (np.array([[s, 0, x], [0, s, y], [0, 0, 1]]) @ Sb @ R)[:2].astype(np.float32)
+    out, ox, oy = _warp_local(img, A, f.shape)
+    if out is not None:
+        a = out[..., 3:4] / 255 * (1 - rew)
+        reg = f[oy:oy + out.shape[0], ox:ox + out.shape[1]]; reg[:] = reg * (1 - a) + out[..., :3] * a
+
+
+# gens aux fenêtres : fenêtre allumée (lumière chaude) + buste à contre-jour (tiré des silhouettes de dos)
+BUSTS = []
+for n in ("fig_1", "fig_0", "fig_3", "foule_1", "foule_5", "foule_4"):
+    a = SPR[n][..., 3]
+    ys = np.nonzero(a.max(1) > 128)[0]; top = ys.min(); cut = int(top + (ys.max() - top) * 0.36)
+    BUSTS.append(a[top:cut])
+
+
+def light_windows(img, wins, relight=True, size=0.62):
+    out = img.copy()
+    for k, (x0, y0, x1, y1, who) in enumerate(wins):
+        w, h = x1 - x0, y1 - y0
+        g = np.linspace(1.0, 0.75, h)[:, None, None]
+        warm = np.array([255, 196, 128], np.float32) * g
+        if relight:
+            out[y0:y1, x0:x1] = out[y0:y1, x0:x1] * 0.15 + warm * 0.85
+        if who is not None:                                          # buste en bas de la fenêtre, à contre-jour
+            b = BUSTS[who]; bw = int(w * size); bh = int(b.shape[0] * bw / b.shape[1])
+            bh = min(bh, int(h * (0.75 if relight else 0.55)))
+            bb = cv2.resize(b, (bw, bh), interpolation=cv2.INTER_AREA)[..., None] / 255
+            yb = y1 - bh; xb = x0 + (w - bw) // 2 + int(w * 0.05 * ((k % 3) - 1))
+            reg = out[yb:y1, xb:xb + bw]; reg[:] = reg * (1 - bb) + np.array([22, 20, 24], np.float32) * bb
+        if not relight:
+            continue
+        glow = np.zeros(img.shape[:2], np.float32); cv2.rectangle(glow, (x0, y0), (x1, y1), 1, -1)
+        glow = cv2.GaussianBlur(glow, (0, 0), max(4, w * 0.25))[..., None] * 0.22
+        out = out * (1 - glow) + np.array([255, 190, 120], np.float32) * glow
+    return out
+
+
+WIN_C = [(178, 165, 268, 395, 0), (806, 702, 831, 848, 1), (872, 742, 889, 888, None), (1772, 672, 1789, 778, 2),
+         (1842, 607, 1859, 718, 3), (1921, 742, 1939, 858, None), (2226, 332, 2254, 418, 4)]
+C_img = light_windows(C_img, WIN_C)
+B_img = light_windows(B_img, [(*w_, k % len(BUSTS)) for k, w_ in enumerate(WIN_B[:4])], relight=False, size=0.95)
 
 
 def plan_C(t, tl, rew):
@@ -244,7 +311,7 @@ def plan_C(t, tl, rew):
     yy = np.arange(360)[:, None]
     fa = (fog * np.exp(-((yy - 170) / 110) ** 2) * 0.28)[..., None]
     f[930:1290] = f[930:1290] * (1 - fa) + np.array([175, 185, 200], np.float32) * fa
-    for k in range(4):
+    for k in range(len(CROWD)):
         figurant(f, k, t, rew)
     T = CUT_C + tl
     if T < CUT_D:                                                   # la rue : lente avancée

@@ -1,0 +1,16 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Eight different people seen from behind, standing still in a loose row and looking up at the sky, frozen, all clearly different: a man in pyjamas and slippers, a woman in a bathrobe, a father carrying a small child on his shoulders (counts as two), an old woman with a shawl, a young man holding his phone up to film the sky, a couple holding each other, a teenage girl with a backpack. Same flat 2D style as the reference characters: pure black bodies and heads without shading, simple rounded limbs, only small touches of muted colour on clothes or hair, thin white outline, same proportions as the reference. Pure flat magenta background (#FF00FF) filling the whole image, no floor, no shadow, all characters fully visible and not overlapping.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/reference_2d.png",
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/figurants_dos.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "182bfec90828386a37a2d1e3cd55fd6e",
+ "credits": 12.0,
+ "seconds": 26
+}

@@ -32,6 +32,13 @@ IMGS = {
                       "(counts as two). Same flat 2D style as the reference characters: pure black bodies and heads without shading, "
                       "simple rounded limbs, only small touches of muted colour on clothes or hair, thin white outline. Pure flat magenta "
                       "background (#FF00FF) filling the whole image, no floor, no shadow, all characters fully visible.", [CHAR_REF]),
+    "foule_dos": ("Eight different people seen from behind, standing still in a loose row and looking up at the sky, frozen, "
+                  "all clearly different: a man in pyjamas and slippers, a woman in a bathrobe, a father carrying a small child on "
+                  "his shoulders (counts as two), an old woman with a shawl, a young man holding his phone up to film the sky, a "
+                  "couple holding each other, a teenage girl with a backpack. Same flat 2D style as the reference characters: pure "
+                  "black bodies and heads without shading, simple rounded limbs, only small touches of muted colour on clothes or "
+                  "hair, thin white outline, same proportions as the reference. Pure flat magenta background (#FF00FF) filling the "
+                  "whole image, no floor, no shadow, all characters fully visible and not overlapping.", [CHAR_REF, HERE / "b01/figurants_dos.png"]),
 }
 NIC = "aQROLel5sQbj1vuIVi6B"
 VOIX = {
@@ -52,6 +59,11 @@ def img(name):
 
 
 if __name__ == "__main__":
+    only = sys.argv[1:]
+    if only:
+        for n in only:
+            print("image", n, img(n))
+        sys.exit()
     with ThreadPoolExecutor(5) as ex:
         futs = {n: ex.submit(img, n) for n in IMGS}
         chars = sum(tts_elevenlabs(t, OUT / f"{k}.wav", NIC, "eleven_v4", 0.7, 0.5) for k, t in VOIX.items())
