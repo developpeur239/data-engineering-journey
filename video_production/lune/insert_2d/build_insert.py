@@ -223,13 +223,29 @@ def build(fr, fb):
 
     # ---------- main : silhouette noire, index tendu ; le bout du doigt est l'origine du groupe ----------
     Hd = group("Main", T(keys["J"][0] + 420, keys["J"][1] + 520, 0), P)
-    BLK = "#0a0b0d"
-    shape("Avant-bras", [M(40, 230), L(150, 220), L(520, 1150), L(330, 1180), Z()], BLK, 1, Hd)
-    shape("Paume", rrect(-12, 120, 170, 175, 70), BLK, 1, Hd)
-    shape("Index", rrect(-17, -6, 38, 175, 19), BLK, 1, Hd)
-    for k, (x, y, rr) in enumerate([(48, 150, 30), (88, 162, 30), (124, 186, 27)]):
-        shape(f"Doigt replié {k}", ellipse(x, y, rr, rr * 1.05), BLK, 1, Hd)
-    shape("Pouce", [M(-12, 170), C(-40, 175, -52, 215, -40, 250), C(-30, 275, 0, 285, 10, 270), L(30, 220), Z()], BLK, 1, Hd)   # replié contre la paume
+    BLK, RIM = "#0a0b0d", "#2f333a"   # silhouette noire ; liseré fin qui sépare les doigts (comme une lumière de bord)
+
+    def finger(name, base, tip, w):
+        """Doigt en gélule (bouts ronds), orienté de la base vers le bout ; liseré fin pour le séparer du voisin."""
+        bx, by = base; dx, dy = tip[0] - bx, tip[1] - by; L_ = math.hypot(dx, dy) + w * 0.5
+        rot = math.degrees(math.atan2(dx, -dy))
+        lid = nid()
+        A.append({"type": "createFxShapeLayer", "compositionId": "main", "layerId": lid, "name": name, "insertIndex": 0, "parentLayerId": Hd,
+                  "activeRange": {"start": 0, "duration": DUR}, "transform": T(bx, by, rot),
+                  "shape": {"path": {"commands": rrect(-w / 2, -L_ + w / 2, w, L_ + 30, w / 2)}, "fills": [fill(BLK)],
+                            "strokes": [{"paint": {"type": "solid", "color": rgb(RIM)}, "width": 3, "cap": "round", "join": "round", "miterLimit": 4, "blendMode": "normal", "opacity": 1}]}})
+        return lid
+
+    shape("Avant-bras", [M(55, 285), C(95, 270, 150, 280, 190, 300), L(540, 1150), L(330, 1185), Z()], BLK, 1, Hd)
+    # doigts repliés derrière l'index, en léger éventail, de plus en plus courts ; l'index tendu devant
+    finger("Auriculaire", (172, 228), (150, 152), 34)
+    finger("Annulaire", (142, 212), (108, 112), 40)
+    finger("Majeur", (106, 200), (62, 74), 42)
+    finger("Index", (68, 196), (0, 2), 42)
+    finger("Pouce", (78, 268), (2, 226), 40)
+    # la paume par-dessus, sans liseré : elle cache la base des doigts
+    shape("Paume", [M(28, 190), C(80, 160, 165, 170, 200, 210), C(222, 245, 212, 300, 182, 324), C(140, 344, 72, 338, 46, 310),
+                    C(22, 282, 12, 222, 28, 190), Z()], BLK, 1, Hd)
     # trajectoire du doigt : entrée par le bas, chaque touche, hésitation, effacement, retrait
     kx = [(0, keys["J"][0] + 420, keys["J"][1] + 520)]
     kx.append((560, keys["J"][0] + 4, keys["J"][1] + 40))
