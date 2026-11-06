@@ -1,0 +1,718 @@
+{
+ "v1": [
+  {
+   "w": "Imaginez",
+   "start": 0.0,
+   "end": 0.58,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 0.58,
+   "end": 0.72,
+   "ok": true
+  },
+  {
+   "w": "vous",
+   "start": 0.72,
+   "end": 0.86,
+   "ok": true
+  },
+  {
+   "w": "vous",
+   "start": 0.86,
+   "end": 0.98,
+   "ok": true
+  },
+  {
+   "w": "réveilliez",
+   "start": 0.98,
+   "end": 1.52,
+   "ok": true
+  },
+  {
+   "w": "au",
+   "start": 1.52,
+   "end": 1.62,
+   "ok": true
+  },
+  {
+   "w": "milieu",
+   "start": 1.62,
+   "end": 1.84,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.84,
+   "end": 2.02,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 2.02,
+   "end": 2.14,
+   "ok": true
+  },
+  {
+   "w": "nuit.",
+   "start": 2.14,
+   "end": 2.34,
+   "ok": true
+  },
+  {
+   "w": "Votre",
+   "start": 2.92,
+   "end": 3.14,
+   "ok": true
+  },
+  {
+   "w": "chambre",
+   "start": 3.14,
+   "end": 3.42,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 3.42,
+   "end": 3.54,
+   "ok": true
+  },
+  {
+   "w": "éclairée.",
+   "start": 3.56,
+   "end": 4.03,
+   "ok": true
+  },
+  {
+   "w": "Pas",
+   "start": 4.46,
+   "end": 4.6,
+   "ok": true
+  },
+  {
+   "w": "par",
+   "start": 4.6,
+   "end": 4.78,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 4.78,
+   "end": 4.88,
+   "ok": true
+  },
+  {
+   "w": "soleil.",
+   "start": 4.88,
+   "end": 5.37,
+   "ok": true
+  },
+  {
+   "w": "Par",
+   "start": 5.8,
+   "end": 5.96,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 5.96,
+   "end": 6.12,
+   "ok": true
+  },
+  {
+   "w": "Lune.",
+   "start": 6.12,
+   "end": 6.44,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Vous",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "vous",
+   "start": 0.16,
+   "end": 0.3,
+   "ok": true
+  },
+  {
+   "w": "approchez",
+   "start": 0.3,
+   "end": 0.76,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 0.76,
+   "end": 0.88,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.88,
+   "end": 1.0,
+   "ok": true
+  },
+  {
+   "w": "fenêtre.",
+   "start": 1.0,
+   "end": 1.46,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 1.96,
+   "end": 2.06,
+   "ok": true
+  },
+  {
+   "w": "ce",
+   "start": 2.06,
+   "end": 2.18,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 2.18,
+   "end": 2.22,
+   "ok": true
+  },
+  {
+   "w": "vous",
+   "start": 2.22,
+   "end": 2.32,
+   "ok": true
+  },
+  {
+   "w": "découvrez",
+   "start": 2.32,
+   "end": 2.76,
+   "ok": true
+  },
+  {
+   "w": "dehors",
+   "start": 2.76,
+   "end": 3.16,
+   "ok": true
+  },
+  {
+   "w": "semble",
+   "start": 3.16,
+   "end": 3.54,
+   "ok": true
+  },
+  {
+   "w": "impossible.",
+   "start": 3.54,
+   "end": 4.26,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 4.94,
+   "end": 5.06,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 5.06,
+   "end": 5.38,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 5.38,
+   "end": 5.58,
+   "ok": true
+  },
+  {
+   "w": "devenue",
+   "start": 5.58,
+   "end": 5.96,
+   "ok": true
+  },
+  {
+   "w": "gigantesque.",
+   "start": 5.96,
+   "end": 6.96,
+   "ok": true
+  },
+  {
+   "w": "Elle",
+   "start": 7.26,
+   "end": 7.36,
+   "ok": true
+  },
+  {
+   "w": "domine",
+   "start": 7.36,
+   "end": 7.84,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 7.84,
+   "end": 8.02,
+   "ok": true
+  },
+  {
+   "w": "ciel.",
+   "start": 8.02,
+   "end": 8.22,
+   "ok": true
+  },
+  {
+   "w": "Ses",
+   "start": 8.88,
+   "end": 8.98,
+   "ok": true
+  },
+  {
+   "w": "cratères",
+   "start": 8.98,
+   "end": 9.4,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 9.4,
+   "end": 9.56,
+   "ok": true
+  },
+  {
+   "w": "visibles",
+   "start": 9.56,
+   "end": 9.96,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 9.96,
+   "end": 10.06,
+   "ok": true
+  },
+  {
+   "w": "l’œil",
+   "start": 10.06,
+   "end": 10.22,
+   "ok": true
+  },
+  {
+   "w": "nu,",
+   "start": 10.22,
+   "end": 10.42,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 10.42,
+   "end": 10.9,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 10.9,
+   "end": 11.04,
+   "ok": true
+  },
+  {
+   "w": "lumière",
+   "start": 11.04,
+   "end": 11.2,
+   "ok": true
+  },
+  {
+   "w": "blanche",
+   "start": 11.2,
+   "end": 11.72,
+   "ok": true
+  },
+  {
+   "w": "transforme",
+   "start": 11.72,
+   "end": 12.34,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 12.34,
+   "end": 12.46,
+   "ok": true
+  },
+  {
+   "w": "rues",
+   "start": 12.46,
+   "end": 12.72,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 12.72,
+   "end": 12.84,
+   "ok": true
+  },
+  {
+   "w": "paysages",
+   "start": 12.84,
+   "end": 13.4,
+   "ok": true
+  },
+  {
+   "w": "presque",
+   "start": 13.4,
+   "end": 13.7,
+   "ok": true
+  },
+  {
+   "w": "irréels.",
+   "start": 13.7,
+   "end": 14.34,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Certains",
+   "start": 0.0,
+   "end": 0.48,
+   "ok": true
+  },
+  {
+   "w": "restent",
+   "start": 0.48,
+   "end": 0.77,
+   "ok": true
+  },
+  {
+   "w": "immobiles,",
+   "start": 0.82,
+   "end": 1.38,
+   "ok": true
+  },
+  {
+   "w": "comme",
+   "start": 1.66,
+   "end": 1.76,
+   "ok": true
+  },
+  {
+   "w": "s’ils",
+   "start": 1.76,
+   "end": 1.98,
+   "ok": true
+  },
+  {
+   "w": "attendaient",
+   "start": 1.98,
+   "end": 2.4,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 2.4,
+   "end": 2.5,
+   "ok": true
+  },
+  {
+   "w": "quelqu’un",
+   "start": 2.5,
+   "end": 2.96,
+   "ok": true
+  },
+  {
+   "w": "leur",
+   "start": 2.96,
+   "end": 3.06,
+   "ok": true
+  },
+  {
+   "w": "explique",
+   "start": 3.06,
+   "end": 3.6,
+   "ok": true
+  },
+  {
+   "w": "ce",
+   "start": 3.6,
+   "end": 3.68,
+   "ok": true
+  },
+  {
+   "w": "qu’ils",
+   "start": 3.68,
+   "end": 3.86,
+   "ok": true
+  },
+  {
+   "w": "voient.",
+   "start": 3.86,
+   "end": 4.19,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 4.62,
+   "end": 4.82,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 4.82,
+   "end": 5.04,
+   "ok": true
+  },
+  {
+   "w": "chose",
+   "start": 5.04,
+   "end": 5.32,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 5.32,
+   "end": 5.48,
+   "ok": true
+  },
+  {
+   "w": "déjà",
+   "start": 5.48,
+   "end": 5.7,
+   "ok": true
+  },
+  {
+   "w": "certaine.",
+   "start": 5.7,
+   "end": 6.29,
+   "ok": true
+  },
+  {
+   "w": "Dans",
+   "start": 6.66,
+   "end": 6.74,
+   "ok": true
+  },
+  {
+   "w": "quelques",
+   "start": 6.74,
+   "end": 7.0,
+   "ok": true
+  },
+  {
+   "w": "heures,",
+   "start": 7.0,
+   "end": 7.48,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 7.76,
+   "end": 7.9,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 7.9,
+   "end": 8.18,
+   "ok": true
+  },
+  {
+   "w": "va",
+   "start": 8.18,
+   "end": 8.32,
+   "ok": true
+  },
+  {
+   "w": "percuter",
+   "start": 8.32,
+   "end": 8.88,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 8.88,
+   "end": 9.02,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 9.02,
+   "end": 9.22,
+   "ok": true
+  }
+ ],
+ "v4": [
+  {
+   "w": "Pour",
+   "start": 0.0,
+   "end": 0.12,
+   "ok": true
+  },
+  {
+   "w": "comprendre",
+   "start": 0.12,
+   "end": 0.5,
+   "ok": true
+  },
+  {
+   "w": "comment",
+   "start": 0.5,
+   "end": 0.88,
+   "ok": true
+  },
+  {
+   "w": "nous",
+   "start": 0.88,
+   "end": 1.08,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 1.08,
+   "end": 1.24,
+   "ok": true
+  },
+  {
+   "w": "sommes",
+   "start": 1.24,
+   "end": 1.46,
+   "ok": true
+  },
+  {
+   "w": "arrivés",
+   "start": 1.46,
+   "end": 1.86,
+   "ok": true
+  },
+  {
+   "w": "là,",
+   "start": 1.86,
+   "end": 2.02,
+   "ok": true
+  },
+  {
+   "w": "il",
+   "start": 2.42,
+   "end": 2.46,
+   "ok": true
+  },
+  {
+   "w": "faut",
+   "start": 2.44,
+   "end": 2.6,
+   "ok": true
+  },
+  {
+   "w": "revenir",
+   "start": 2.6,
+   "end": 2.9,
+   "ok": true
+  },
+  {
+   "w": "quatre",
+   "start": 2.9,
+   "end": 3.22,
+   "ok": true
+  },
+  {
+   "w": "jours",
+   "start": 3.24,
+   "end": 3.54,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 3.54,
+   "end": 3.72,
+   "ok": true
+  },
+  {
+   "w": "arrière.",
+   "start": 3.72,
+   "end": 4.15,
+   "ok": true
+  },
+  {
+   "w": "À",
+   "start": 4.54,
+   "end": 4.68,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 4.68,
+   "end": 4.78,
+   "ok": true
+  },
+  {
+   "w": "moment",
+   "start": 4.78,
+   "end": 5.02,
+   "ok": true
+  },
+  {
+   "w": "où",
+   "start": 5.02,
+   "end": 5.16,
+   "ok": true
+  },
+  {
+   "w": "personne,",
+   "start": 5.16,
+   "end": 5.62,
+   "ok": true
+  },
+  {
+   "w": "sur",
+   "start": 5.9,
+   "end": 6.05,
+   "ok": true
+  },
+  {
+   "w": "Terre,",
+   "start": 6.06,
+   "end": 6.36,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 6.66,
+   "end": 6.76,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 6.76,
+   "end": 6.88,
+   "ok": true
+  },
+  {
+   "w": "doutait",
+   "start": 6.88,
+   "end": 7.18,
+   "ok": true
+  },
+  {
+   "w": "encore",
+   "start": 7.18,
+   "end": 7.36,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 7.36,
+   "end": 7.6,
+   "ok": true
+  },
+  {
+   "w": "rien.",
+   "start": 7.6,
+   "end": 7.84,
+   "ok": true
+  }
+ ]
+}

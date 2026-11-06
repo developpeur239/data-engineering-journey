@@ -1,0 +1,50 @@
+{
+ "_doc": "Bloc 1 « Le dernier ciel ». Temps = secondes ou ancres sur les mots (voir moteur/core.py). Caméra : [temps, centre x, centre y, zoom, roulis] dans l'image source 2752×1536.",
+ "look": "nuit",
+ "voix": [
+  {"id": "v1", "at": 1.8},
+  {"id": "v2", "at": "v1.end+1.7"},
+  {"id": "v3", "at": "v2.end+1.4"},
+  {"id": "v4", "at": "v3.end+1.8"}
+ ],
+ "plans": [
+  {"id": "A", "debut": 0, "set": "nuit_ville.Chambre", "texte": "Imaginez… Votre chambre est éclairée. Pas par le soleil.",
+   "intention": "vue subjective : on se réveille, la lumière anormale monte",
+   "camera": [[0, 1250, 1000, 1.28, -6.0], [2.4, 1250, 990, 1.28, -6.0], [4.2, 1450, 790, 1.14, -1.0], ["#B", 1680, 640, 1.24, 0.0]],
+   "respiration_camera": 0.4,
+   "reglages": {"lumiere": "v1:votre"},
+   "filtres": [{"type": "paupieres", "cles": [[1.5, 0.0], [2.2, 0.5], [2.45, 0.12], [2.6, 0.12], [3.4, 1.0]]}]},
+  {"id": "B", "debut": "v1:par#2", "set": "nuit_ville.Fenetre", "texte": "Par la Lune. Vous vous approchez de la fenêtre… les rues…",
+   "intention": "révélation de la Lune géante sur « Par la Lune » ; on s'approche ; cratères ; descente vers les rues",
+   "camera": [["#B", 1376, 768, 1.0], ["v2", 1376, 768, 1.02], ["v2+1.6", 1440, 740, 1.14], ["v2:ses", 1520, 690, 1.2],
+              ["v2:ses+1.5", 1835, 450, 1.95], ["v2:sa-0.07", 1835, 470, 2.0], ["v2:sa+2.73", 1420, 1060, 1.5], ["#C", 1400, 1080, 1.53]],
+   "reglages": {"pas": {"de": "v2", "duree": 1.6}, "fenetre_eteinte": "#B+7.2"},
+   "filtres": [{"type": "eclat", "a": "#B", "duree": 0.5, "force": 90}]},
+  {"id": "C", "debut": "v2.end+0.5", "set": "nuit_ville.Rue", "texte": "Certains restent immobiles… Mais une chose est déjà certaine.",
+   "intention": "la foule figée sous la Lune, gens aux fenêtres",
+   "camera": [["#C", 1376, 860, 1.02], ["#D", 1376, 800, 1.08]]},
+  {"id": "D", "debut": "v3:dans", "set": "nuit_ville.Rue", "texte": "Dans quelques heures, la Lune va percuter la Terre. (silence) Pour comprendre… de rien.",
+   "intention": "la Lune écrase le cadre ; secousse sur « percuter » ; silence protégé ; retour en arrière : on recule, tout s'éteint",
+   "camera": [["#D", 1390, 440, 1.95], ["v4+0.2", 1390, 440, 2.2], ["#E", 1390, 820, 1.0]],
+   "secousses": [{"a": "v3:percuter", "force": 9, "duree": 0.45}],
+   "reglages": {"retour": {"de": "v4+0.2", "a": "#E"}},
+   "filtres": [{"type": "extinction", "de": "v4+0.2", "a": "#E"}]},
+  {"id": "E", "debut": "v4.end+0.4", "set": "noir", "texte": "Quatre jours plus tôt (carton)"}
+ ],
+ "fin": "v4.end+4.8",
+ "textes": [
+  {"texte": "SIMULATION HYPOTHÉTIQUE", "de": 0, "a": "#E+0.3", "pos": [58, 60], "police": "InstrumentSans-Bold.ttf", "taille": 24, "couleur": [214, 220, 226]},
+  {"texte": "Quatre jours plus tôt", "de": "#E+0.6", "a": "#E+3.6", "plein_ecran": true, "fondu": 0.6, "police": "BricolageGrotesque-Bold.ttf", "taille": 76, "couleur": [236, 240, 245]}
+ ],
+ "son": [
+  {"fichier": "sfx_real/amb_ville_nuit.wav", "a": 0, "boucle": true, "jusqua": "#E", "rms": -33, "assourdi_jusqua": "#B", "fondu_entree": 1.5, "fondu_sortie": 1.5},
+  {"fichier": "sfx_real/reveil.wav", "a": 1.25, "gain": -9.9},
+  {"fichier": "sfx_real/parquet.wav", "a": "v2+0.05", "gain": -10.5},
+  {"synth": "drone", "args": ["dark"], "a": 1.0, "jusqua": "#E-0.6", "gain": -22, "fondu_entree": 3.0, "fondu_sortie": 2.0, "normalise": false},
+  {"synth": "riser", "args": [2.0], "a": "v3:percuter-2.0", "gain": -20, "normalise": false},
+  {"synth": "impact", "args": [1.8], "a": "v3:percuter", "gain": -7, "normalise": false},
+  {"fichier": "../../prototype/son/sfx_real/space_rumble.wav", "a": "v3:percuter-0.1", "gain": -13},
+  {"synth": "reverse_cymbal", "args": [1.6], "a": "v4+0.6", "gain": -13, "normalise": false}
+ ],
+ "silences": [{"de": "#E", "a": "v4.end+4.8"}]
+}
