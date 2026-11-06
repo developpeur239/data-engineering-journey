@@ -1,0 +1,13 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Interior of a professional astronomical observatory dome at night, wide shot. A large white telescope in the center under the open dome slit showing a starry sky; on the right a modern scientific workstation desk with two glowing monitors showing graphs, a keyboard and an empty office chair; on the left a doorway open to a warmly lit corridor; technical racks with tiny status lights; dim red safety lights and cool blue light from the screens, soft haze. No people. Flat 2D vector illustration for an animated documentary, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, subtle depth of field on far objects, no text, no letters, no logos",
+  "image_input": [],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "70ef1447cbcad260caed18a07c900a06",
+ "credits": 12.0,
+ "seconds": 92
+}

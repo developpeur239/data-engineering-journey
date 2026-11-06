@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The woman from the reference (copper-red bob haircut, yellow scarf, black body) sitting on an office chair seen exactly from the side, facing right, typing on an invisible keyboard at table height, slightly worried eyes. Pure flat magenta background (#FF00FF) filling the whole image, no floor, no shadow on the background, the character only, fully visible, centered, flat 2D vector style exactly like the reference character: pure black head and body without any shading, small white oval eyes, simple rounded limbs.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_lea.png"
+  ],
+  "aspect_ratio": "3:4",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "bd75a681a8b1f2b9d52e3d8f21ba9f3b",
+ "credits": 12.0,
+ "seconds": 34
+}

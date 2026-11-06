@@ -1,0 +1,13 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The same astronomical observatory dome interior in calm daylight, wide shot: large white telescope in the center, the dome slit open on a bright blue sky, the scientific workstation desk with two monitors on the right with an empty chair, the doorway on the left; soft natural light, peaceful ordinary morning. No people. Flat 2D vector illustration for an animated documentary, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, subtle depth of field on far objects, no text, no letters, no logos",
+  "image_input": [],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "f96bcf2afd7e8fc8d724d622cd043aa6",
+ "credits": 12.0,
+ "seconds": 25
+}

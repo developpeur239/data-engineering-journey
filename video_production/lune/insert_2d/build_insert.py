@@ -17,7 +17,12 @@ from pathlib import Path
 TSRCT = str(Path.home() / ".local/share/Tesseract/bin/tsrct")
 FONTS = Path(__file__).resolve().parents[1] / "prototype/fonts"
 ROOT = Path(sys.argv[1])
-DUR = 5000
+import os
+LONG = os.environ.get("INSERT_LONG") == "1"   # version de la séquence : 8 s, message lu, frappe lente, hésitation 1,5 s
+DUR = 8000 if LONG else 5000
+T_MSG = 300 if LONG else 250
+T_TYPE0, T_STEP = (3000, 300) if LONG else (700, 240)
+T_ERASE0, T_ESTEP = (6600, 160) if LONG else (3050, 160)
 
 A, _id = [], [0]
 
@@ -159,10 +164,10 @@ def build(fr, fb):
     text("Nom", X0 + 128, Y0 + 145, "Camille", 40, "#f2f5f9", fb, P)
     text("Lien", X0 + 128, Y0 + 182, "Sœur", 26, "#9fb0c8", fr, P)
     # le message arrive à 0,25 s
-    shape("Bulle", rrect(X0 + 28, Y0 + 250, 390, 150, 40), "#2d3e5c", 1, P, start=250, dur=DUR - 250)
-    text("Message 1", X0 + 58, Y0 + 312, "On est sur la route.", 36, "#f4f6f9", fb, P, start=250, dur=DUR - 250)
-    text("Message 2", X0 + 58, Y0 + 362, "Tu nous rejoins ?", 36, "#f4f6f9", fb, P, start=250, dur=DUR - 250)
-    text("Heure du message", X0 + 32, Y0 + 434, "23:39", 22, "#8496b2", fr, P, start=250, dur=DUR - 250)
+    shape("Bulle", rrect(X0 + 28, Y0 + 250, 390, 150, 40), "#2d3e5c", 1, P, start=T_MSG, dur=DUR - T_MSG)
+    text("Message 1", X0 + 58, Y0 + 312, "On est sur la route.", 36, "#f4f6f9", fb, P, start=T_MSG, dur=DUR - T_MSG)
+    text("Message 2", X0 + 58, Y0 + 362, "Tu nous rejoins ?", 36, "#f4f6f9", fb, P, start=T_MSG, dur=DUR - T_MSG)
+    text("Heure du message", X0 + 32, Y0 + 434, "23:39", 22, "#8496b2", fr, P, start=T_MSG, dur=DUR - T_MSG)
 
     # champ de saisie et clavier virtuel AZERTY
     FY = Y0 + 540
@@ -194,8 +199,8 @@ def build(fr, fb):
 
     # ---------- frappe : J ' A R R I V E, hésitation, puis effacement ----------
     word = "J'arrive"; seq = ["J", "'", "A", "R", "R", "I", "V", "E"]
-    t_type = [700 + i * 240 for i in range(len(seq))]
-    t_erase = [3050 + i * 160 for i in range(len(seq))]
+    t_type = [T_TYPE0 + i * T_STEP for i in range(len(seq))]
+    t_erase = [T_ERASE0 + i * T_ESTEP for i in range(len(seq))]
     states = []   # (début, fin, texte)
     prev = 0
     for i, t in enumerate(t_type):
@@ -213,8 +218,12 @@ def build(fr, fb):
         else:
             text("Invite", X0 + 56, FY + 52, "Message", 34, "#7f92b0", fr, P, start=a, dur=b - a)
     # curseur qui clignote pendant l'hésitation (2,7 s → 3,05 s) et après l'effacement
-    for k, (a, b) in enumerate([(2660, 2860), (2960, 3050), (4500, 4700), (4850, 5000)]):
-        n_chars = len(word) if a < 3050 else 0
+    hes = t_type[-1] + 200
+    for k, (a, b) in enumerate([(hes, hes + 250), (hes + 500, hes + 750), (hes + 1000, T_ERASE0), (t_erase[-1] + 300, t_erase[-1] + 550)]):
+        b = min(b, DUR)
+        if a >= b:
+            continue
+        n_chars = len(word) if a < T_ERASE0 else 0
         cx = X0 + 60 + (n_chars * 16.3 if n_chars else 0)
         shape(f"Curseur {k}", rrect(cx, FY + 18, 4, 44, 2), "#8fd0ff", 1, P, start=a, dur=b - a)
     # touches qui s'éclairent quand le doigt les frappe
@@ -234,12 +243,12 @@ def build(fr, fb):
     HAND_GROUP[0] = Hd
     # trajectoire du doigt : entrée par le bas, chaque touche, hésitation, effacement, retrait
     kx = [(0, keys["J"][0] + 420, keys["J"][1] + 520)]
-    kx.append((560, keys["J"][0] + 4, keys["J"][1] + 40))
+    kx.append((T_TYPE0 - 140, keys["J"][0] + 4, keys["J"][1] + 40))
     for t, ch in taps:
         x, y, _ = keys[ch]
         kx.append((t - 110, x + 6, y + 30)); kx.append((t, x, y)); kx.append((t + 70, x + 4, y + 22))
-    kx.append((2700, keys["E"][0] + 30, keys["E"][1] + 80))   # le doigt se suspend : elle hésite
-    kx.append((4700, keys["⌫"][0] + 60, keys["⌫"][1] + 150)); kx.append((4999, keys["⌫"][0] + 90, keys["⌫"][1] + 210))
+    kx.append((t_type[-1] + 300, keys["E"][0] + 30, keys["E"][1] + 80)); kx.append((T_ERASE0 - 250, keys["E"][0] + 34, keys["E"][1] + 84))   # le doigt se suspend : elle hésite
+    kx.append((DUR - 300, keys["⌫"][0] + 60, keys["⌫"][1] + 150)); kx.append((DUR - 1, keys["⌫"][0] + 90, keys["⌫"][1] + 210))
     kx.sort(key=lambda r: r[0]); dedup = []
     for r in kx:
         if dedup and r[0] <= dedup[-1][0]:
