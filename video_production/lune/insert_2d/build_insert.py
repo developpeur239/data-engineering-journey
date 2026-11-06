@@ -57,6 +57,31 @@ def ellipse(cx, cy, rx, ry):
             C(cx - rx, cy - k * ry, cx - k * rx, cy - ry, cx, cy - ry), C(cx + k * rx, cy - ry, cx + rx, cy - k * ry, cx + rx, cy), Z()]
 
 
+PENSEE = False   # pensée de Léa pendant l'hésitation : ajout au texte V13, à valider avant de l'activer
+_eid = [1000]
+
+
+def grad(kind, start, end, stops):
+    """Remplissage en dégradé ; stops : [(position 0..1, couleur hex, opacité)]."""
+    return {"paint": {"type": "gradient", "gradientType": kind, "start": list(start), "end": list(end),
+                      "stops": [{"offset": o, "color": rgb(c, a)} for o, c, a in stops]},
+            "fillRule": "nonZeroWinding", "blendMode": "normal", "opacity": 1}
+
+
+def blur(lid, px):
+    _eid[0] += 1
+    A.append({"type": "addFxLayerEffect", "compositionId": "main", "layerId": lid, "effectId": _eid[0], "effect": {"type": "gaussianBlur", "blurriness": px}})
+
+
+def gshape(name, path, fill_, parent=None, start=0, dur=DUR):
+    lid = nid()
+    act = {"type": "createFxShapeLayer", "compositionId": "main", "layerId": lid, "name": name, "insertIndex": 0,
+           "activeRange": {"start": start, "duration": dur}, "transform": T(), "shape": {"path": {"commands": path}, "fills": [fill_], "strokes": []}}
+    if parent:
+        act["parentLayerId"] = parent
+    A.append(act); return lid
+
+
 def shape(name, path, color, a=1.0, parent=None, start=0, dur=DUR, tr=None):
     lid = nid()
     act = {"type": "createFxShapeLayer", "compositionId": "main", "layerId": lid, "name": name, "insertIndex": 0,
@@ -92,17 +117,36 @@ def key(i, t, v, ease="smooth"):
 
 
 def build(fr, fb):
-    # ---------- décor : bureau sombre, cône de lumière, vignettage ----------
-    shape("Bureau", rrect(0, 0, 1920, 1080, 0), "#23262b")
-    for i in range(14):   # lames de bois très discrètes
-        shape(f"Lame {i}", rrect(0, 40 + i * 78, 1920, 3, 1), "#3a3d43", 0.55)
-    for i in range(14):   # cône de lumière : 14 anneaux très légers, le dégradé reste doux
-        k = 1 - i / 14; shape(f"Lumière {i}", ellipse(820, 360, 300 + 900 * k, 220 + 640 * k), "#f2efe6", 0.022)
+    # ---------- décor : table en lames de bois, faisceau de la lampe, objets flous, vignettage ----------
+    import random
+    rnd = random.Random(7)
+    shape("Bureau", rrect(0, 0, 1920, 1080, 0), "#26292e")
+    y = -20
+    while y < 1080:   # lames de largeurs et de tons variés
+        h = rnd.choice([72, 84, 96, 110]); tone = rnd.choice(["#2a2d32", "#2e3136", "#33363b", "#2c2f34", "#30333a"])
+        gshape(f"Lame {int(y)}", rrect(0, y, 1920, h - 4, 0), grad("linear", (0, y), (1920, y), [(0, tone, 1), (0.5, tone, 0.92), (1, "#24272c", 1)]))
+        shape(f"Joint {int(y)}", rrect(0, y + h - 4, 1920, 4, 0), "#1c1e22", 0.9)
+        for k in range(rnd.randint(3, 6)):   # veinage : quelques traits allongés, très discrets
+            x0 = rnd.uniform(-200, 1700); w = rnd.uniform(200, 700); yy = y + rnd.uniform(10, h - 16)
+            lid = shape(f"Veine {int(y)}_{k}", rrect(x0, yy, w, 2.5, 1.2), rnd.choice(["#3d4046", "#202226"]), 0.32)
+        y += h
+    # faisceau diagonal doux de la lampe (haut gauche)
+    lid = gshape("Faisceau", [M(-300, -200), L(900, -200), L(1700, 1300), L(300, 1300), Z()],
+                 grad("linear", (200, 0), (1300, 900), [(0, "#f3efe4", 0.24), (0.55, "#f3efe4", 0.1), (1, "#f3efe4", 0.0)]))
+    blur(lid, 70)
+    # objets du bureau, hors foyer : le pied de l'écran (gauche) et une tasse (haut droite)
+    lid = shape("Pied d'écran flou", rrect(250, -40, 230, 520, 40), "#15171a", 0.85); blur(lid, 55)
+    lid = shape("Socle flou", rrect(150, 430, 430, 70, 30), "#15171a", 0.8); blur(lid, 50)
+    lid = shape("Tasse floue", ellipse(1660, 140, 150, 150), "#3c4046", 0.9); blur(lid, 45)
+    lid = shape("Tasse intérieur", ellipse(1660, 140, 118, 118), "#1b1d21", 0.9); blur(lid, 45)
+    # vignettage radial progressif
+    gshape("Vignettage", rrect(0, 0, 1920, 1080, 0), grad("radial", (900, 470), (900 + 1250, 470),
+           [(0, "#000000", 0.0), (0.45, "#000000", 0.08), (0.8, "#000000", 0.42), (1, "#000000", 0.62)]))
 
     # ---------- téléphone (repère local : centre du téléphone) ----------
     P = group("Téléphone", T(985, 470, -8, 92))
     W, H = 500, 1000
-    shape("Ombre du téléphone", rrect(-W / 2 + 26, -H / 2 + 34, W, H, 70), "#000000", 0.35, P)
+    lid = shape("Ombre du téléphone", rrect(-W / 2 + 10, -H / 2 + 16, W, H, 70), "#000000", 0.55, P); blur(lid, 26)
     shape("Coque", rrect(-W / 2, -H / 2, W, H, 70), "#0f1114", 1, P)
     shape("Écran", rrect(-W / 2 + 18, -H / 2 + 18, W - 36, H - 36, 56), "#16253f", 1, P)
     X0, Y0 = -W / 2 + 18, -H / 2 + 18
@@ -202,6 +246,10 @@ def build(fr, fb):
     A.append({"type": "setFxPositionKeyframes", "compositionId": "main", "layerId": Hd,
               "positionX": {"keyframes": [key("x", t, x) for t, x, _ in dedup]},
               "positionY": {"keyframes": [key("y", t, y) for t, _, y in dedup]}})
+
+    if PENSEE:   # pensée de Léa, à gauche du téléphone, pendant l'hésitation (style du guide : Comic Neue, halo sombre)
+        lid = gshape("Halo pensée", rrect(140, 380, 520, 90, 45), grad("radial", (400, 425), (700, 425), [(0, "#000000", 0.55), (1, "#000000", 0.0)]), start=2550, dur=1000); blur(lid, 24)
+        text("Pensée", 400, 440, "Je ne peux pas partir.", 46, "#f0b04a", fb, start=2550, dur=1000, just="center")
 
     # étiquette de fiction (petite, lisible)
     text("Étiquette", 58, 74, "SIMULATION HYPOTHÉTIQUE", 24, "#d9dde3", fb, a=0.8)
