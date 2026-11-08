@@ -1,0 +1,460 @@
+{
+ "_doc": "Bloc 3 « Le compte à rebours » (02:00–03:00). Temps = secondes ou ancres sur les mots. Caméra : [temps, x, y, zoom] dans l'image source. Nuit (J0, après 22 h 14) jusqu'au plan F ; jour (J1, 08 h 30) de G à K ; schémas ; plage de jour.",
+ "look": "nuit",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.6"
+  },
+  {
+   "id": "v3",
+   "at": "v2.end+1.2"
+  }
+ ],
+ "fin": "v3.end+2.4",
+ "lea": {
+  "frappe": [
+   [
+    "v1:les-0.05",
+    "v1:donnent.end"
+   ]
+  ],
+  "regard_ecran": [
+   [
+    "v1:résultat-0.9",
+    "v1.end+5"
+   ]
+  ],
+  "clignements": [
+   "v1:calculs"
+  ]
+ },
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "compte.Chute",
+   "texte": "Un événement inconnu vient de supprimer brutalement la vitesse orbitale de la Lune par rapport à la Terre.",
+   "intention": "la cause : la vitesse latérale disparaît d'un coup, sur « brutalement »",
+   "camera": [
+    [
+     "#A",
+     980,
+     520,
+     1.0
+    ],
+    [
+     "#B",
+     1080,
+     470,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "mode": "arret",
+    "valeur": "v1:vitesse",
+    "arret": "v1:brutalement"
+   }
+  },
+  {
+   "id": "B",
+   "debut": "v1:normalement-0.15",
+   "set": "compte.Chute",
+   "texte": "Normalement, cette vitesse lui permet de tomber continuellement autour de notre planète sans jamais la toucher.",
+   "intention": "comprendre : elle tombe sans cesse, mais avance assez vite pour rater la Terre",
+   "camera": [
+    [
+     "#B",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#C",
+     960,
+     540,
+     1.04
+    ]
+   ],
+   "reglages": {
+    "mode": "normal",
+    "vitesse": "v1:vitesse#2",
+    "tomber": "v1:tomber",
+    "autour": "v1:autour"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "C",
+   "debut": "v1:mais-0.1",
+   "set": "compte.Chute",
+   "texte": "Mais sans ce mouvement latéral, plus rien ne l'empêche de se rapprocher directement de nous.",
+   "intention": "la conséquence : la flèche latérale est barrée, la Lune tombe droit",
+   "camera": [
+    [
+     "#C",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#D",
+     1020,
+     520,
+     1.1
+    ]
+   ],
+   "reglages": {
+    "mode": "directe",
+    "lateral": "v1:latéral",
+    "rien": "v1:rien",
+    "directement": "v1:directement"
+   }
+  },
+  {
+   "id": "D",
+   "debut": "v1:les-0.1",
+   "set": "calern.Poste",
+   "texte": "Les calculs donnent un résultat terrifiant.",
+   "intention": "retour à Léa, la nuit même : elle lance le calcul",
+   "camera": [
+    [
+     "#D",
+     820,
+     900,
+     1.8
+    ],
+    [
+     "#E",
+     840,
+     890,
+     1.9
+    ]
+   ]
+  },
+  {
+   "id": "E",
+   "debut": "v1:résultat-0.2",
+   "set": "compte.Calcul",
+   "texte": "…un résultat terrifiant. Quatre jours et vingt heures. C'est la durée totale de sa chute, jusqu'à l'impact.",
+   "intention": "le chiffre tombe sur « quatre » ; la barre montre que 17 h sont déjà passées ; le compte à rebours démarre",
+   "camera": [
+    [
+     "#E",
+     960,
+     520,
+     1.0
+    ],
+    [
+     "#F",
+     960,
+     560,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "calcul": "v1:résultat-0.2",
+    "resultat": "v1:quatre",
+    "duree": "v1:durée",
+    "ecoule": "v1:totale+0.2",
+    "reste": "v1:l’impact"
+   }
+  },
+  {
+   "id": "F",
+   "debut": "v2-0.25",
+   "set": "compte.Globe",
+   "texte": "Moins de cinq jours pour un monde de huit milliards d'habitants.",
+   "intention": "l'échelle humaine : toutes les lumières de la Terre",
+   "camera": [
+    [
+     "#F",
+     960,
+     560,
+     1.0
+    ],
+    [
+     "#G",
+     960,
+     600,
+     1.1
+    ]
+   ],
+   "reglages": {
+    "jours": "v2:moins",
+    "habitants": "v2:huit"
+   }
+  },
+  {
+   "id": "G",
+   "debut": "v2:et-0.1",
+   "set": "ville_jour.Rue",
+   "texte": "Et pourtant, dehors, rien ne semble avoir changé.",
+   "intention": "le lendemain matin, la ville ordinaire, lumineuse, calme",
+   "reglages": {
+    "vue": "large"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "H",
+   "debut": "v2:les-0.1",
+   "set": "ville_jour.Rue",
+   "texte": "Les avions décollent.",
+   "intention": "un avion monte dans le ciel bleu",
+   "reglages": {
+    "vue": "ciel",
+    "avion": "v2:avions"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "I",
+   "debut": "v2:les#2-0.1",
+   "set": "ville_jour.Rue",
+   "texte": "Les enfants vont à l'école.",
+   "intention": "les enfants devant le portail de l'école",
+   "reglages": {
+    "vue": "ecole"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "J",
+   "debut": "v2:les#3-0.1",
+   "set": "ville_jour.Rue",
+   "texte": "Les restaurants ouvrent.",
+   "intention": "le rideau de fer du restaurant remonte sur « ouvrent »",
+   "reglages": {
+    "vue": "restaurant",
+    "rideau": "v2:ouvrent"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "K",
+   "debut": "v2:dans-0.1",
+   "set": "ville_jour.Rue",
+   "texte": "Dans le ciel, la Lune paraît toujours aussi paisible. Mais ce que personne ne voit encore, c'est que le compte à rebours a déjà commencé.",
+   "intention": "on lève les yeux vers une petite Lune pâle de jour ; le compte à rebours s'y inscrit, invisible pour les passants",
+   "reglages": {
+    "vue": "lune"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "L",
+   "debut": "v3:dans-0.1",
+   "set": "compte.Acceleration",
+   "texte": "Dans les observatoires, chaque nouvelle mesure confirme que sa chute s'accélère.",
+   "intention": "les points de mesure montent de plus en plus vite",
+   "camera": [
+    [
+     "#L",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#M",
+     1020,
+     500,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "mesures": "v3:chaque",
+    "accelere": "v3:s’accélère"
+   }
+  },
+  {
+   "id": "M",
+   "debut": "v3:et-0.1",
+   "set": "compte.Marees",
+   "texte": "Et les scientifiques commencent à recalculer les prévisions de marée.",
+   "intention": "la courbe de marée habituelle, puis la nouvelle qui grandit",
+   "camera": [
+    [
+     "#M",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#N",
+     960,
+     540,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "recalcul": "v3:recalculer"
+   }
+  },
+  {
+   "id": "N",
+   "debut": "v3:car-0.1",
+   "set": "compte.Influence",
+   "texte": "Car les premiers changements apparaîtront là où la Lune exerce déjà son influence depuis des milliards d'années.",
+   "intention": "la Lune soulève les océans depuis toujours",
+   "camera": [
+    [
+     "#N",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#O",
+     900,
+     560,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "influence": "v3:influence",
+    "oceans": "v3:changements",
+    "milliards": "v3:milliards"
+   }
+  },
+  {
+   "id": "O",
+   "debut": "v3:dans#2-0.2",
+   "set": "littoral.Plage",
+   "texte": "Dans les océans.",
+   "intention": "la mer calme, en plein jour : c'est là que tout va commencer",
+   "camera": [
+    [
+     "#O",
+     1376,
+     800,
+     1.0
+    ],
+    [
+     "#O.end",
+     1500,
+     760,
+     1.12
+    ]
+   ],
+   "look": "jour"
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "a": "v3.end+2.4",
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ]
+  },
+  {
+   "texte": "Le lendemain matin",
+   "de": "#G+0.2",
+   "a": "#H-0.1",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    960
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 40,
+   "couleur": [
+    236,
+    240,
+    245
+   ]
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 318600,
+   "de": "v3:compte-0.2",
+   "a": "#L",
+   "fondu": 0.6,
+   "pos": [
+    620,
+    840
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 54,
+   "couleur": [
+    255,
+    214,
+    150
+   ]
+  }
+ ],
+ "son": [
+  {
+   "petit": "bip",
+   "a": "v1:quatre",
+   "gain": -11
+  },
+  {
+   "petit": "bip",
+   "a": "v1:totale+0.2",
+   "gain": -15
+  },
+  {
+   "petit": "bip",
+   "a": "v3:chaque",
+   "gain": -15
+  },
+  {
+   "petit": "bip",
+   "a": "v3:s’accélère",
+   "gain": -13
+  },
+  {
+   "synth": "riser",
+   "args": [
+    1.6
+   ],
+   "a": "v1:brutalement-1.6",
+   "gain": -22,
+   "normalise": false
+  },
+  {
+   "fichier": "sfx_real/amb_matin.wav",
+   "a": "#G",
+   "boucle": true,
+   "jusqua": "#L",
+   "rms": -32,
+   "fondu_entree": 0.6,
+   "fondu_sortie": 0.8
+  },
+  {
+   "fichier": "sfx_real/avion.wav",
+   "a": "#H-0.3",
+   "gain": -16,
+   "fondu_sortie": 1.0
+  },
+  {
+   "petit": "rideau",
+   "a": "v2:ouvrent",
+   "gain": -15
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_plage.wav",
+   "a": "#O",
+   "boucle": true,
+   "jusqua": "v3.end+2.4",
+   "rms": -30,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 1.2
+  }
+ ]
+}

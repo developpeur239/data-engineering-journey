@@ -8,6 +8,8 @@
 Temps : partout où un temps est attendu, on peut écrire un nombre (secondes du bloc) ou une ANCRE sur un mot de la voix,
 p. ex. "v1:Lune" (début du mot « Lune » de la voix v1), "v1:Lune.end", "v1.end" (fin de la voix), "v2:rues+0.3",
 "#plan_C" (début du plan C), "#plan_C.end". Les mots viennent de bXX/mots.json (moteur/mots.py, Whisper contrôlé).
+Textes : {"texte", "de", "a", "pos", …} ; avec "reste" (secondes avant le contact à l'instant « de »), le texte devient un
+compte à rebours qui défile ("texte": "impact dans {}").
 Les voix sont placées dans "voix" : [{"id": "v1", "at": 1.8}, {"id": "v2", "at": "v1.end+1.7"}, …].
 
 Architecture hybride : chaque plan a un décor (« set ») qui rend l'image source, codé dans film/decors/ ; il peut
@@ -40,6 +42,13 @@ def ease(u):
     return u * u * (3 - 2 * u)
 
 
+def restant(sec):
+    """Temps restant avant le contact, tel que l'affichent tous les compteurs du film."""
+    sec = max(0, int(sec))
+    j, r = divmod(sec, 86400); h, r = divmod(r, 3600); m, s = divmod(r, 60)
+    return f"{j} j {h:02d} h {m:02d} min {s:02d} s"
+
+
 def taps(windows, step=0.19):
     """Instants des frappes au clavier dans des périodes [(de, a)] : rythme irrégulier, identique image et son."""
     out = []
@@ -67,6 +76,14 @@ def synth(kind, rng):
     if kind == "bip":
         tt = np.arange(int(0.12 * SR)) / SR
         return np.sin(2 * np.pi * 1320 * tt) * np.exp(-tt / 0.04) * 0.5
+    if kind == "rideau":                                       # rideau de fer qui remonte : cliquetis de lames + roulement
+        n = int(1.6 * SR); tt = np.arange(n) / SR
+        roll = np.convolve(rng.normal(0, 1, n), np.ones(40) / 40, "same") * 0.25
+        clk = np.zeros(n)
+        for x in np.arange(0.05, 1.5, 0.075 + 0.01 * np.sin(np.arange(0.05, 1.5, 0.075) * 9)):
+            m = int(0.02 * SR); i = int(x * SR)
+            clk[i:i + m] += rng.normal(0, 1, m) * np.exp(-np.arange(m) / (0.003 * SR)) * 0.7
+        return (roll + clk) * np.minimum(1, tt / 0.1) * np.minimum(1, (1.6 - tt) / 0.2)
     raise KeyError(kind)
 
 
@@ -270,6 +287,8 @@ def frame(bloc: Bloc, i: int):
             continue
         fade = tx.get("fondu", 0.0)
         al = min(ease((t - a) / fade), ease((b - t) / fade)) if fade else 1.0
+        if "reste" in tx:                                       # compte à rebours : secondes restantes à « de », qui défilent
+            tx = {**tx, "texte": tx.get("texte", "{}").format(restant(tx["reste"] - (t - a)))}
         if tx.get("plein_ecran"):
             layer = draw_text(np.zeros_like(out), tx["texte"], (W / 2, H / 2 - 20), tx["police"], tx["taille"], tuple(tx["couleur"]), center=True)
             out = (layer.astype(np.float32) * al).astype(np.uint8)
