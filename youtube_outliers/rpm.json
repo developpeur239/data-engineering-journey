@@ -1,0 +1,14 @@
+{
+  "_comment": "RPM en $ pour 1 000 vues. Ordres de grandeur, baissés d'environ 40 % par rapport à ceux annoncés dans la vidéo après comparaison avec les estimations vidIQ. Le vrai RPM d'une chaîne n'est visible que dans son YouTube Studio : ajuste ces valeurs.",
+  "short": 0.25,
+  "long": {
+    "default": 5,
+    "tech": 7.5,
+    "finance": 7.5,
+    "news": 6,
+    "education": 5.5,
+    "science": 5.5,
+    "entertainment": 3.5,
+    "horror": 2.5
+  }
+}

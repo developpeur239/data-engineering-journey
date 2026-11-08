@@ -1,0 +1,42 @@
+# Mots-clés LARGES du mode découverte : un par ligne. Les niches doivent émerger des résultats,
+# pas de ces mots. Les plus prometteurs en premier (le balayage s'arrête au budget de quota).
+3d animation
+what happened
+documentary
+simulation
+reconstruction
+explained
+what if
+how it works
+the truth about
+investigation
+disaster
+mystery
+history of
+ancient
+engineering
+inside
+military
+space
+ocean
+physics
+ai future
+economy
+billionaire
+geography
+map
+war
+survival
+evolution
+timeline
+comparison
+experiment
+abandoned
+unsolved
+bodycam
+satellite
+nuclear
+prison
+cartel
+plane crash
+ship
