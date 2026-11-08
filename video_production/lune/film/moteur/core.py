@@ -40,6 +40,36 @@ def ease(u):
     return u * u * (3 - 2 * u)
 
 
+def taps(windows, step=0.19):
+    """Instants des frappes au clavier dans des périodes [(de, a)] : rythme irrégulier, identique image et son."""
+    out = []
+    for a, b in windows:
+        k = 0
+        while True:
+            x = a + 0.25 + k * step + 0.05 * np.sin(k * 2.3) + (0.12 if k % 7 == 6 else 0.0)
+            if x > b - 0.1:
+                break
+            out.append(x); k += 1
+    return out
+
+
+def synth(kind, rng):
+    """Petits sons synthétisés : clic de clavier, vibreur, impulsion laser, bip d'interface."""
+    if kind == "clic":
+        m = int(0.03 * SR); x = rng.normal(0, 1, m) * np.exp(-np.arange(m) / (0.004 * SR))
+        return np.convolve(x, [1, -0.85], "same") * 0.5
+    if kind == "vibreur":
+        tt = np.arange(int(0.45 * SR)) / SR
+        return np.sin(2 * np.pi * 160 * tt) * (np.sin(2 * np.pi * 9 * tt) > 0) * 0.6
+    if kind == "laser":
+        tt = np.arange(int(0.18 * SR)) / SR
+        return np.sin(2 * np.pi * (2400 - 6000 * tt) * tt) * np.exp(-tt / 0.05) * 0.5
+    if kind == "bip":
+        tt = np.arange(int(0.12 * SR)) / SR
+        return np.sin(2 * np.pi * 1320 * tt) * np.exp(-tt / 0.04) * 0.5
+    raise KeyError(kind)
+
+
 def dur_of(p: Path) -> float:
     return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)],
                                 capture_output=True, text=True).stdout)
@@ -290,8 +320,18 @@ def soundtrack(bloc: Bloc, out: Path):
         x = load_audio(bloc.dir / f"{v['id']}.wav"); x = x / (np.abs(x).max() + 1e-9) * 0.6
         _put(voice, x, bloc.vat[v["id"]])
     db = lambda g: 10 ** (g / 20)  # noqa: E731
+    rng = np.random.default_rng(5)
+    if "lea" in bloc.data and bloc.data["lea"].get("frappe"):                   # un clic par frappe de Léa (mêmes instants)
+        for x in taps([(bloc.t(a), bloc.t(b)) for a, b in bloc.data["lea"]["frappe"]]):
+            _put(bed, synth("clic", rng), x, db(-17) * rng.uniform(0.7, 1.1))
+    if "lea" in bloc.data and (bloc.data["lea"].get("telephone") or {}).get("vibre"):
+        _put(bed, synth("vibreur", rng), bloc.t(bloc.data["lea"]["telephone"]["vibre"]), db(-14))
     for s in bloc.data.get("son", []):
         at = bloc.t(s["a"])
+        if "petit" in s:                                                          # petits sons synthétisés (moteur)
+            for k in range(s.get("repete", 1)):
+                _put(bed, synth(s["petit"], rng), at + k * s.get("intervalle", 0.5), db(s.get("gain", -12)))
+            continue
         if "fichier" in s:
             x = load_audio(bloc.dir / s["fichier"] if not s["fichier"].startswith("/") else Path(s["fichier"]))
         else:                                                    # sons de signature synthétisés (fx.py)

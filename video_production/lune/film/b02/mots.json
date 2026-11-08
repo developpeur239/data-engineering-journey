@@ -1,0 +1,882 @@
+{
+ "v1": [
+  {
+   "w": "Dans",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 0.16,
+   "end": 0.3,
+   "ok": true
+  },
+  {
+   "w": "sud",
+   "start": 0.3,
+   "end": 0.44,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 0.44,
+   "end": 0.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.6,
+   "end": 0.7,
+   "ok": true
+  },
+  {
+   "w": "France,",
+   "start": 0.7,
+   "end": 1.12,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 1.42,
+   "end": 1.46,
+   "ok": true
+  },
+  {
+   "w": "l’observatoire",
+   "start": 1.46,
+   "end": 2.02,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 2.02,
+   "end": 2.18,
+   "ok": true
+  },
+  {
+   "w": "Calern,",
+   "start": 2.18,
+   "end": 2.72,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 3.0,
+   "end": 3.14,
+   "ok": true
+  },
+  {
+   "w": "astrophysicienne",
+   "start": 3.14,
+   "end": 3.96,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 3.96,
+   "end": 4.1,
+   "ok": true
+  },
+  {
+   "w": "nous",
+   "start": 4.1,
+   "end": 4.2,
+   "ok": true
+  },
+  {
+   "w": "appellerons",
+   "start": 4.2,
+   "end": 4.72,
+   "ok": true
+  },
+  {
+   "w": "Léa",
+   "start": 4.72,
+   "end": 5.16,
+   "ok": true
+  },
+  {
+   "w": "vérifie",
+   "start": 5.16,
+   "end": 5.8,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 5.8,
+   "end": 5.96,
+   "ok": true
+  },
+  {
+   "w": "série",
+   "start": 5.96,
+   "end": 6.2,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 6.2,
+   "end": 6.36,
+   "ok": true
+  },
+  {
+   "w": "mesures.",
+   "start": 6.36,
+   "end": 6.7,
+   "ok": true
+  },
+  {
+   "w": "Son",
+   "start": 7.38,
+   "end": 7.56,
+   "ok": true
+  },
+  {
+   "w": "équipe",
+   "start": 7.56,
+   "end": 7.94,
+   "ok": true
+  },
+  {
+   "w": "utilise",
+   "start": 7.94,
+   "end": 8.24,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 8.24,
+   "end": 8.48,
+   "ok": true
+  },
+  {
+   "w": "laser",
+   "start": 8.48,
+   "end": 8.82,
+   "ok": true
+  },
+  {
+   "w": "pour",
+   "start": 8.82,
+   "end": 9.18,
+   "ok": true
+  },
+  {
+   "w": "mesurer",
+   "start": 9.18,
+   "end": 9.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 9.6,
+   "end": 9.72,
+   "ok": true
+  },
+  {
+   "w": "distance",
+   "start": 9.72,
+   "end": 10.04,
+   "ok": true
+  },
+  {
+   "w": "entre",
+   "start": 10.04,
+   "end": 10.44,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 10.44,
+   "end": 10.62,
+   "ok": true
+  },
+  {
+   "w": "Terre",
+   "start": 10.66,
+   "end": 10.92,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 10.92,
+   "end": 11.2,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 11.2,
+   "end": 11.36,
+   "ok": true
+  },
+  {
+   "w": "Lune.",
+   "start": 11.36,
+   "end": 11.6,
+   "ok": true
+  },
+  {
+   "w": "Le",
+   "start": 12.18,
+   "end": 12.26,
+   "ok": true
+  },
+  {
+   "w": "principe",
+   "start": 12.26,
+   "end": 12.48,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 12.48,
+   "end": 12.72,
+   "ok": true
+  },
+  {
+   "w": "simple",
+   "start": 12.72,
+   "end": 13.0,
+   "ok": true
+  },
+  {
+   "w": "on",
+   "start": 13.52,
+   "end": 13.62,
+   "ok": true
+  },
+  {
+   "w": "envoie",
+   "start": 13.62,
+   "end": 13.9,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 13.9,
+   "end": 14.08,
+   "ok": true
+  },
+  {
+   "w": "impulsion",
+   "start": 14.08,
+   "end": 14.48,
+   "ok": true
+  },
+  {
+   "w": "lumineuse",
+   "start": 14.48,
+   "end": 15.12,
+   "ok": true
+  },
+  {
+   "w": "vers",
+   "start": 15.12,
+   "end": 15.28,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 15.28,
+   "end": 15.44,
+   "ok": true
+  },
+  {
+   "w": "réflecteur",
+   "start": 15.44,
+   "end": 16.12,
+   "ok": true
+  },
+  {
+   "w": "installé",
+   "start": 16.12,
+   "end": 16.66,
+   "ok": true
+  },
+  {
+   "w": "sur",
+   "start": 16.66,
+   "end": 16.8,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 16.8,
+   "end": 16.9,
+   "ok": true
+  },
+  {
+   "w": "surface",
+   "start": 16.9,
+   "end": 17.18,
+   "ok": true
+  },
+  {
+   "w": "lunaire.",
+   "start": 17.18,
+   "end": 17.74,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 18.26,
+   "end": 18.4,
+   "ok": true
+  },
+  {
+   "w": "lumière",
+   "start": 18.4,
+   "end": 18.58,
+   "ok": true
+  },
+  {
+   "w": "revient",
+   "start": 18.58,
+   "end": 19.28,
+   "ok": true
+  },
+  {
+   "w": "environ",
+   "start": 19.28,
+   "end": 19.58,
+   "ok": true
+  },
+  {
+   "w": "deux",
+   "start": 19.58,
+   "end": 19.86,
+   "ok": true
+  },
+  {
+   "w": "secondes",
+   "start": 19.86,
+   "end": 20.24,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 20.24,
+   "end": 20.3,
+   "ok": true
+  },
+  {
+   "w": "demie",
+   "start": 20.3,
+   "end": 20.44,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 20.44,
+   "end": 20.6,
+   "ok": true
+  },
+  {
+   "w": "tard.",
+   "start": 20.6,
+   "end": 20.92,
+   "ok": true
+  },
+  {
+   "w": "C’est",
+   "start": 21.36,
+   "end": 21.54,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 21.54,
+   "end": 21.62,
+   "ok": true
+  },
+  {
+   "w": "temps",
+   "start": 21.62,
+   "end": 21.76,
+   "ok": true
+  },
+  {
+   "w": "nécessaire",
+   "start": 21.76,
+   "end": 22.22,
+   "ok": true
+  },
+  {
+   "w": "pour",
+   "start": 22.22,
+   "end": 22.6,
+   "ok": true
+  },
+  {
+   "w": "effectuer",
+   "start": 22.6,
+   "end": 23.0,
+   "ok": true
+  },
+  {
+   "w": "l’aller-retour.",
+   "start": 23.0,
+   "end": 23.54,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Mais",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "cette",
+   "start": 0.16,
+   "end": 0.32,
+   "ok": true
+  },
+  {
+   "w": "nuit-là,",
+   "start": 0.36,
+   "end": 0.76,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 1.12,
+   "end": 1.2,
+   "ok": true
+  },
+  {
+   "w": "signal",
+   "start": 1.2,
+   "end": 1.42,
+   "ok": true
+  },
+  {
+   "w": "revient",
+   "start": 1.42,
+   "end": 1.82,
+   "ok": true
+  },
+  {
+   "w": "légèrement",
+   "start": 1.82,
+   "end": 2.42,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 2.42,
+   "end": 2.6,
+   "ok": true
+  },
+  {
+   "w": "tôt",
+   "start": 2.6,
+   "end": 2.76,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 2.76,
+   "end": 2.88,
+   "ok": true
+  },
+  {
+   "w": "prévu.",
+   "start": 2.88,
+   "end": 3.3,
+   "ok": true
+  },
+  {
+   "w": "Léa",
+   "start": 3.86,
+   "end": 4.06,
+   "ok": true
+  },
+  {
+   "w": "recommence.",
+   "start": 4.06,
+   "end": 4.7,
+   "ok": true
+  },
+  {
+   "w": "Même",
+   "start": 5.12,
+   "end": 5.36,
+   "ok": true
+  },
+  {
+   "w": "résultat.",
+   "start": 5.36,
+   "end": 5.88,
+   "ok": true
+  },
+  {
+   "w": "Elle",
+   "start": 6.46,
+   "end": 6.6,
+   "ok": true
+  },
+  {
+   "w": "vérifie",
+   "start": 6.6,
+   "end": 6.92,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 6.92,
+   "end": 7.06,
+   "ok": true
+  },
+  {
+   "w": "instruments,",
+   "start": 7.06,
+   "end": 7.5,
+   "ok": true
+  },
+  {
+   "w": "puis",
+   "start": 7.88,
+   "end": 7.92,
+   "ok": true
+  },
+  {
+   "w": "contacte",
+   "start": 7.92,
+   "end": 8.5,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 8.5,
+   "end": 8.56,
+   "ok": true
+  },
+  {
+   "w": "autre",
+   "start": 8.56,
+   "end": 8.76,
+   "ok": true
+  },
+  {
+   "w": "observatoire.",
+   "start": 8.76,
+   "end": 9.34,
+   "ok": true
+  },
+  {
+   "w": "Quelques",
+   "start": 9.96,
+   "end": 10.24,
+   "ok": true
+  },
+  {
+   "w": "minutes",
+   "start": 10.24,
+   "end": 10.4,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 10.4,
+   "end": 10.64,
+   "ok": true
+  },
+  {
+   "w": "tard,",
+   "start": 10.64,
+   "end": 10.98,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 11.26,
+   "end": 11.34,
+   "ok": true
+  },
+  {
+   "w": "confirmation",
+   "start": 11.34,
+   "end": 11.76,
+   "ok": true
+  },
+  {
+   "w": "arrive.",
+   "start": 11.76,
+   "end": 12.26,
+   "ok": true
+  },
+  {
+   "w": "Ce",
+   "start": 12.8,
+   "end": 12.94,
+   "ok": true
+  },
+  {
+   "w": "n’est",
+   "start": 12.94,
+   "end": 13.06,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 13.08,
+   "end": 13.24,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 13.24,
+   "end": 13.46,
+   "ok": true
+  },
+  {
+   "w": "panne.",
+   "start": 13.46,
+   "end": 13.86,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 14.22,
+   "end": 14.36,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 14.36,
+   "end": 14.6,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 14.6,
+   "end": 14.92,
+   "ok": true
+  },
+  {
+   "w": "rapproche.",
+   "start": 14.92,
+   "end": 15.5,
+   "ok": true
+  },
+  {
+   "w": "Au",
+   "start": 16.16,
+   "end": 16.28,
+   "ok": true
+  },
+  {
+   "w": "début,",
+   "start": 16.28,
+   "end": 16.5,
+   "ok": true
+  },
+  {
+   "w": "l’écart",
+   "start": 16.9,
+   "end": 17.14,
+   "ok": true
+  },
+  {
+   "w": "paraît",
+   "start": 17.14,
+   "end": 17.48,
+   "ok": true
+  },
+  {
+   "w": "minuscule.",
+   "start": 17.48,
+   "end": 18.18,
+   "ok": true
+  },
+  {
+   "w": "Pourtant,",
+   "start": 18.58,
+   "end": 19.0,
+   "ok": true
+  },
+  {
+   "w": "il",
+   "start": 19.34,
+   "end": 19.4,
+   "ok": true
+  },
+  {
+   "w": "augmente",
+   "start": 19.4,
+   "end": 19.8,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 19.8,
+   "end": 19.96,
+   "ok": true
+  },
+  {
+   "w": "chaque",
+   "start": 19.96,
+   "end": 20.16,
+   "ok": true
+  },
+  {
+   "w": "mesure.",
+   "start": 20.16,
+   "end": 20.58,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 21.26,
+   "end": 21.4,
+   "ok": true
+  },
+  {
+   "w": "scientifiques",
+   "start": 21.4,
+   "end": 21.87,
+   "ok": true
+  },
+  {
+   "w": "comprennent",
+   "start": 21.88,
+   "end": 22.28,
+   "ok": true
+  },
+  {
+   "w": "alors",
+   "start": 22.28,
+   "end": 22.46,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 22.46,
+   "end": 22.66,
+   "ok": true
+  },
+  {
+   "w": "quelque",
+   "start": 22.66,
+   "end": 22.84,
+   "ok": true
+  },
+  {
+   "w": "chose",
+   "start": 22.84,
+   "end": 23.24,
+   "ok": true
+  },
+  {
+   "w": "d’impossible",
+   "start": 23.24,
+   "end": 24.0,
+   "ok": true
+  },
+  {
+   "w": "vient",
+   "start": 24.0,
+   "end": 24.46,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 24.46,
+   "end": 24.58,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 24.58,
+   "end": 24.7,
+   "ok": true
+  },
+  {
+   "w": "produire.",
+   "start": 24.7,
+   "end": 25.18,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 25.18,
+   "end": 25.78,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 25.78,
+   "end": 26.14,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 26.14,
+   "end": 26.4,
+   "ok": true
+  },
+  {
+   "w": "suit",
+   "start": 26.4,
+   "end": 26.62,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 26.62,
+   "end": 26.94,
+   "ok": true
+  },
+  {
+   "w": "son",
+   "start": 26.94,
+   "end": 27.14,
+   "ok": true
+  },
+  {
+   "w": "orbite",
+   "start": 27.14,
+   "end": 27.5,
+   "ok": true
+  },
+  {
+   "w": "habituelle.",
+   "start": 27.5,
+   "end": 28.02,
+   "ok": true
+  },
+  {
+   "w": "Elle",
+   "start": 28.36,
+   "end": 28.62,
+   "ok": true
+  },
+  {
+   "w": "tombe",
+   "start": 28.62,
+   "end": 29.14,
+   "ok": true
+  },
+  {
+   "w": "vers",
+   "start": 29.14,
+   "end": 29.28,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 29.28,
+   "end": 29.45,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 29.46,
+   "end": 29.68,
+   "ok": true
+  }
+ ]
+}
