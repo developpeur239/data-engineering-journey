@@ -1,7 +1,7 @@
 {
  "_doc": "Étalonnage commun à tout le film (moteur/core.py : grade). releve = teinte des ombres, gain = teinte des hautes lumières. Les « looks » (nuit, jour…) ne modifient que quelques valeurs du défaut, pour que tous les blocs restent cohérents.",
  "defaut": {"releve": [0.012, 0.016, 0.030], "gamma": [1.0, 1.0, 1.0], "gain": [1.0, 1.0, 1.0],
-            "contraste": 1.04, "saturation": 0.94, "vignette": 0.22, "grain": 0.018},
+            "contraste": 1.04, "saturation": 0.94, "vignette": 0.22, "grain": 0.010},
  "nuit": {"releve": [0.010, 0.016, 0.036], "gain": [0.98, 1.0, 1.03], "saturation": 0.92},
  "jour": {"releve": [0.014, 0.014, 0.020], "gain": [1.02, 1.0, 0.98], "saturation": 0.97, "vignette": 0.16},
  "espace": {"releve": [0.006, 0.008, 0.020], "contraste": 1.08, "saturation": 0.95, "vignette": 0.28},
