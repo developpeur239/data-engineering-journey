@@ -134,13 +134,13 @@ class Ecran:
     def render(self, t, shot, bloc):
         R = shot["reglages"]; T = {k: bloc.t(v) for k, v in R.items() if k != "vue"}
         f = canvas(grid=False)
-        items = [("TÉLÉMÉTRIE LASER-LUNE · CALERN", (90, 118), SANS, 30, DIM, 1, False),
-                 ("EN DIRECT", (W - 290, 118), SANS, 28, RED, 1, False)]
+        items = [("TÉLÉMÉTRIE LASER-LUNE · CALERN", (110, 150), SANS, 30, DIM, 1, False),
+                 ("EN DIRECT", (W - 290, 150), SANS, 28, RED, 1, False)]
         if int(t * 2) % 2:                                                          # voyant qui clignote
-            cv2.circle(f, (W - 316, 136), 9, RED, -1, cv2.LINE_AA)
+            cv2.circle(f, (W - 316, 168), 9, RED, -1, cv2.LINE_AA)
         vue = R["vue"]
         if vue in ("mesure", "mesure2"):
-            f = self.panel(f, 90, 190, W - 90, 950)
+            f = self.panel(f, 90, 215, W - 90, 960)
             items += [("Temps aller-retour attendu", (160, 230), SANS, 38, DIM, 1, False),
                       ("2,509 431 20 s", (160, 290), MONO, 96, INK, 1, False)]
             m = T["mesure"]
@@ -156,7 +156,7 @@ class Ecran:
                 r2 = ease((t - T["mesure2"]) / 0.3)
                 items += [("mesure n° 2 :  2,509 431 16 s   écart − 0,040 µs", (160, 800), MONO, 40, RED, r2, False)]
         elif vue == "confirmation":
-            f = self.panel(f, 90, 190, W - 90, 950)
+            f = self.panel(f, 90, 215, W - 90, 960)
             items += [("Mesure n° 1   écart − 0,033 µs", (160, 230), MONO, 44, RED, 1, False),
                       ("Mesure n° 2   écart − 0,040 µs", (160, 300), MONO, 44, RED, 1, False)]
             c = ease((t - T["message"]) / 0.35)
