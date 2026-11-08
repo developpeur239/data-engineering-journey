@@ -1,0 +1,16 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Animation model sheet: six separate drawings on a pure flat magenta background (#FF00FF), all at the same scale, evenly spaced in a 3x2 grid, not overlapping, same flat 2D style as the reference woman: pure black skin with no shading, a very thin white outline, a black long-sleeve cuff at the wrist. It is HER hand seen exactly from the side, fingers pointing to the right, with the wrist and a short part of the forearm on the left. 1) hand in typing position hovering over an invisible keyboard, five distinct gently curved fingers, the index finger pressed down; 2) same hand, the middle finger pressed down, the index raised; 3) same hand open, fingers relaxed and slightly apart, reaching forward and slightly down; 4) same hand gripping a black smartphone that lies flat, thumb on top of the phone, fingers wrapped under its edge; 5) same hand holding the same smartphone upright, its glowing screen facing left, thumb resting on the screen; 6) the same black smartphone alone, lying flat, seen from the side, screen off. Anatomically correct hands, natural proportions, no text.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/lea_profil.png",
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/main_index_silhouette.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "fd1706c11523767c51506f4ae975a563",
+ "credits": 12.0,
+ "seconds": 42
+}
