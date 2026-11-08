@@ -169,17 +169,17 @@ class Ecran:
             p = ease((t - T["panne"]) / 0.3)
             items += [("Instruments : OK   ·   Horloge : OK   ·   Réflecteur : OK", (W / 2, 860), SANS, 36, GREEN, p, True)]
         elif vue == "graphe":
-            x0, y0, x1, y1 = 260, 220, 1700, 900                                    # écart (m) en fonction du temps (min)
+            x0, y0, x1, y1 = 260, 300, 1700, 880                                    # écart (m) en fonction du temps (min)
             cv2.line(f, (x0, y1), (x1, y1), (90, 110, 140), 2, cv2.LINE_AA); cv2.line(f, (x0, y0), (x0, y1), (90, 110, 140), 2, cv2.LINE_AA)
             items += [("temps depuis la première mesure", (x1 - 560, y1 + 30), SANS, 30, DIM, 1, False),
-                      ("écart (m)", (x0 - 10, y0 - 60), SANS, 30, DIM, 1, False)]
+                      ("écart (m)", (x0 + 24, y0 - 20), SANS, 30, DIM, 1, False)]
             X = lambda m: x0 + (x1 - x0) * m / 11  # noqa: E731
-            Y = lambda d: y1 - (y1 - y0) * d / 520  # noqa: E731
+            Y = lambda d: y1 - (y1 - y0) * d / 570  # noqa: E731
             for mm in (0, 1, 5, 10):
                 items.append((f"{mm} min", (X(mm), y1 + 70), MONO, 26, DIM, 1, True))
             g = ease((t - T["courbe"]) / 2.5)                                      # la courbe de chute se dessine
             if g > 0:
-                ts = np.linspace(0, 11 * g, 120)
+                ts = np.linspace(0, 10.4 * g, 120)
                 pts = np.stack([X(ts), Y(0.5 * 0.0027 * (ts * 60) ** 2)], 1).astype(np.int32)
                 cv2.polylines(f, [pts], False, (120, 70, 66), 3, cv2.LINE_AA)
             for k, (mm, d, key) in enumerate(((1, 4.9, "p1"), (5, 122, "p2"), (10, 486, "p3"))):
