@@ -10,8 +10,9 @@ Branche de travail : `claude/modest-brahmagupta-fqowhp` (reprise de `claude/opti
 | Test Léa (clavier, téléphone, regard) | **Validé** : méthode des personnages (`test_lea/`) |
 | Bloc 2 « Le premier signal » (01:00–02:00, 58 s) | Rendu et corrigé (son de fond retiré, Léa retouchée), **en attente de validation finale** |
 | Bloc 3 « Le compte à rebours » (02:00–03:00, 62,5 s) | **Validé** : schémas `decors/compte.py`, rue de jour `decors/ville_jour.py`, plage `decors/littoral.py` |
-| Bloc 4 « Le premier jour » (03:00–04:00, 63 s) | Rendu, **en attente de validation** : schémas `decors/maree.py`, `decors/littoral.py` (Plage, Port, Barriere), mère et garçon `b04/mere_*.png`, `b04/garcon_*.png` (silhouettes, seau rouge) |
-| Blocs 5 à 12 | À faire, un par un |
+| Bloc 4 « Le premier jour » (03:00–04:00, 63 s) | **Validé** : schémas `decors/maree.py`, `decors/littoral.py` (Plage, Port, Barriere), mère et garçon `b04/mere_*.png`, `b04/garcon_*.png` (silhouettes, seau rouge) |
+| Blocs 5 à 13 (04:00–12:40) | Rendus d'une traite à la demande de l'utilisateur, **à valider dans le film assemblé**. Découpage : `plans_reste.py` ; voix : `generer_voix.py` ; images : `generer_images.py` ; bruitages : `generer_sons.py` ; décors : `decors/astres.py` (Lune et Terre texturées, fractures, fragmentation, collision), `decors/scenes.py`, `decors/littoral.py` (PlageFin) |
+| Film complet | `python3 assembler.py` → `le_dernier_echo.mp4` (blocs 1 à 13 reconstruits par le moteur) |
 
 Les vidéos `bXX/blocXX.mp4` ne sont pas dans git (trop lourdes) : `python3 -m moteur.core bXX` les reconstruit.
 
@@ -47,10 +48,10 @@ pip install -q opencv-python-headless scikit-image faster-whisper fonttools brot
 4. `python3 -m moteur.core bXX --planche` puis `--images …`, corriger, puis rendu complet ; ne re-rendre que les plans
    modifiés (effacer leurs images dans `bXX/.frames/`).
 
-## Étape suivante : bloc 5 « Le deuxième jour » (04:00–05:00)
-Après validation du bloc 4. Personnages : silhouettes noires pleines, contour discret, un seul détail de couleur
-(détourage `b03/detourer.py`, `b04/detourer.py`) ; marche découpée (`ville_jour.Rue.person`, `littoral.Barriere.figure`).
-Voix du garçon : MiniMax `French_MovieLeadFemale`, speech-2.8-hd, hauteur +4, vitesse 0,95 (`b04/generer.py garcon`).
+## Étape suivante
+Retours de l'utilisateur sur le film assemblé, bloc par bloc. Pour corriger un plan : modifier `plans_reste.py` (ou le décor),
+`python3 plans_reste.py bXX`, effacer les images du plan dans `bXX/.frames/`, relancer `python3 -m moteur.core bXX`, puis
+`python3 assembler.py`. Personnages : style de Léa (`decors/style_perso.py`) ; ne pas revenir aux silhouettes noires.
 
 ## Coûts engagés à ce jour (film)
-Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage. Bloc 3 : 2 images (rue de jour, enfants), 1 045 car., 2 bruitages (ambiance matin, avion). Bloc 4 : 3 images (plage barrée, port, mère et garçon), 951 car. + 31 car. MiniMax, 1 bruitage (port).
+Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage. Bloc 3 : 2 images (rue de jour, enfants), 1 045 car., 2 bruitages (ambiance matin, avion). Bloc 4 : 3 images (plage barrée, port, mère et garçon), 951 car. + 31 car. MiniMax, 1 bruitage (port). Blocs 5 à 13 : 5 images, 7 567 car. ElevenLabs + 59 car. MiniMax, 5 bruitages.
