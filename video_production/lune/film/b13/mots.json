@@ -1,0 +1,386 @@
+{
+ "v1": [
+  {
+   "w": "Heureusement…",
+   "start": 0.0,
+   "end": 0.62,
+   "ok": true
+  },
+  {
+   "w": "tout",
+   "start": 1.12,
+   "end": 1.48,
+   "ok": true
+  },
+  {
+   "w": "cela",
+   "start": 1.48,
+   "end": 1.76,
+   "ok": true
+  },
+  {
+   "w": "n’était",
+   "start": 1.76,
+   "end": 2.02,
+   "ok": true
+  },
+  {
+   "w": "qu’une",
+   "start": 2.02,
+   "end": 2.26,
+   "ok": true
+  },
+  {
+   "w": "simulation.",
+   "start": 2.26,
+   "end": 2.7,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Aujourd’hui,",
+   "start": 0.0,
+   "end": 0.56,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.8,
+   "end": 0.98,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 0.98,
+   "end": 1.22,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 1.22,
+   "end": 1.31,
+   "ok": true
+  },
+  {
+   "w": "toujours",
+   "start": 1.32,
+   "end": 1.6,
+   "ok": true
+  },
+  {
+   "w": "là.",
+   "start": 1.6,
+   "end": 1.88,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 2.4,
+   "end": 2.44,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 2.44,
+   "end": 2.52,
+   "ok": true
+  },
+  {
+   "w": "l’observatoire",
+   "start": 2.52,
+   "end": 3.08,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.08,
+   "end": 3.24,
+   "ok": true
+  },
+  {
+   "w": "Calern,",
+   "start": 3.24,
+   "end": 3.72,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 3.98,
+   "end": 4.08,
+   "ok": true
+  },
+  {
+   "w": "scientifiques",
+   "start": 4.08,
+   "end": 4.58,
+   "ok": true
+  },
+  {
+   "w": "continuent",
+   "start": 4.6,
+   "end": 5.14,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 5.14,
+   "end": 5.22,
+   "ok": true
+  },
+  {
+   "w": "mesurer",
+   "start": 5.22,
+   "end": 5.64,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 5.64,
+   "end": 5.8,
+   "ok": true
+  },
+  {
+   "w": "distance",
+   "start": 5.8,
+   "end": 6.26,
+   "ok": true
+  },
+  {
+   "w": "grâce",
+   "start": 6.26,
+   "end": 6.76,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 6.76,
+   "end": 6.98,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 6.98,
+   "end": 7.1,
+   "ok": true
+  },
+  {
+   "w": "impulsions",
+   "start": 7.1,
+   "end": 7.68,
+   "ok": true
+  },
+  {
+   "w": "laser.",
+   "start": 7.68,
+   "end": 7.98,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 8.66,
+   "end": 8.82,
+   "ok": true
+  },
+  {
+   "w": "lumière",
+   "start": 8.82,
+   "end": 9.0,
+   "ok": true
+  },
+  {
+   "w": "part",
+   "start": 9.0,
+   "end": 9.42,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 9.42,
+   "end": 9.56,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 9.56,
+   "end": 9.7,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 9.7,
+   "end": 10.0,
+   "ok": true
+  },
+  {
+   "w": "Puis",
+   "start": 10.54,
+   "end": 10.7,
+   "ok": true
+  },
+  {
+   "w": "elle",
+   "start": 10.7,
+   "end": 10.94,
+   "ok": true
+  },
+  {
+   "w": "revient.",
+   "start": 10.94,
+   "end": 11.36,
+   "ok": true
+  },
+  {
+   "w": "Deux",
+   "start": 11.72,
+   "end": 12.08,
+   "ok": true
+  },
+  {
+   "w": "secondes",
+   "start": 12.08,
+   "end": 12.4,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 12.4,
+   "end": 12.46,
+   "ok": true
+  },
+  {
+   "w": "demie.",
+   "start": 12.46,
+   "end": 12.7,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Et",
+   "start": 0.0,
+   "end": 0.12,
+   "ok": true
+  },
+  {
+   "w": "chaque",
+   "start": 0.12,
+   "end": 0.32,
+   "ok": true
+  },
+  {
+   "w": "année,",
+   "start": 0.32,
+   "end": 0.68,
+   "ok": true
+  },
+  {
+   "w": "elle",
+   "start": 0.96,
+   "end": 1.04,
+   "ok": true
+  },
+  {
+   "w": "s’éloigne",
+   "start": 1.04,
+   "end": 1.48,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.48,
+   "end": 1.62,
+   "ok": true
+  },
+  {
+   "w": "nous",
+   "start": 1.62,
+   "end": 1.78,
+   "ok": true
+  },
+  {
+   "w": "d’environ",
+   "start": 1.78,
+   "end": 2.14,
+   "ok": true
+  },
+  {
+   "w": "3,8",
+   "start": 2.14,
+   "end": 3.1,
+   "ok": true
+  },
+  {
+   "w": "centimètres.",
+   "start": 3.1,
+   "end": 3.74,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 4.16,
+   "end": 4.36,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 4.36,
+   "end": 4.54,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 4.54,
+   "end": 4.68,
+   "ok": true
+  },
+  {
+   "w": "tombe",
+   "start": 4.68,
+   "end": 5.08,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 5.12,
+   "end": 5.28,
+   "ok": true
+  },
+  {
+   "w": "vers",
+   "start": 5.28,
+   "end": 5.44,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 5.44,
+   "end": 5.6,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 5.6,
+   "end": 5.88,
+   "ok": true
+  },
+  {
+   "w": "Elle",
+   "start": 6.26,
+   "end": 6.36,
+   "ok": true
+  },
+  {
+   "w": "s’en",
+   "start": 6.36,
+   "end": 6.58,
+   "ok": true
+  },
+  {
+   "w": "éloigne.",
+   "start": 6.58,
+   "end": 7.12,
+   "ok": true
+  }
+ ]
+}
