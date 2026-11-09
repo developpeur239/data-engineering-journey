@@ -80,9 +80,9 @@ def synth(kind, rng):
         n = int(1.6 * SR); tt = np.arange(n) / SR
         roll = np.convolve(rng.normal(0, 1, n), np.ones(40) / 40, "same") * 0.25
         clk = np.zeros(n)
-        for x in np.arange(0.05, 1.5, 0.075 + 0.01 * np.sin(np.arange(0.05, 1.5, 0.075) * 9)):
+        for x in 0.05 + np.cumsum(0.075 + 0.012 * np.sin(np.arange(19) * 9)):
             m = int(0.02 * SR); i = int(x * SR)
-            clk[i:i + m] += rng.normal(0, 1, m) * np.exp(-np.arange(m) / (0.003 * SR)) * 0.7
+            clk[i:i + m] += rng.normal(0, 1, m) * np.exp(-np.arange(m) / (0.004 * SR)) * 0.4
         return (roll + clk) * np.minimum(1, tt / 0.1) * np.minimum(1, (1.6 - tt) / 0.2)
     raise KeyError(kind)
 
@@ -267,7 +267,12 @@ def frame(bloc: Bloc, i: int):
     else:
         st = get_set(shot["set"], bloc)
         src = st.render(t, shot, bloc)
-        c = bloc.keys(t, shot["camera"]) if "camera" in shot else np.array([src.shape[1] / 2, src.shape[0] / 2, 1.0, 0.0])
+        if "camera" in shot:
+            c = bloc.keys(t, shot["camera"])
+        elif hasattr(st, "camera"):                               # cadrage proposé par le décor (vues nommées)
+            c = st.camera(t, shot)
+        else:
+            c = np.array([src.shape[1] / 2, src.shape[0] / 2, 1.0, 0.0])
         cx, cy, z = c[:3]; rot = c[3] if len(c) > 3 else 0.0
         cy += st.bob(t, shot, bloc) if hasattr(st, "bob") else 0.0
         shk = (0.0, 0.0)
@@ -293,6 +298,12 @@ def frame(bloc: Bloc, i: int):
             layer = draw_text(np.zeros_like(out), tx["texte"], (W / 2, H / 2 - 20), tx["police"], tx["taille"], tuple(tx["couleur"]), center=True)
             out = (layer.astype(np.float32) * al).astype(np.uint8)
         else:
+            if tx.get("fond"):                                   # cartouche sombre derrière le texte (lisible sur un décor clair)
+                bb = ImageDraw.Draw(Image.new("L", (1, 1))).textbbox(tuple(tx["pos"]), tx["texte"], font=font(tx["police"], tx["taille"]))
+                box = out.astype(np.float32); m = np.zeros(out.shape[:2], np.float32)
+                cv2.rectangle(m, (int(bb[0]) - 36, int(bb[1]) - 24), (int(bb[2]) + 40, int(bb[3]) + 24), 1, -1)
+                m = cv2.GaussianBlur(m, (0, 0), 6)[..., None] * 0.55 * al
+                out = (box * (1 - m) + np.array([10, 16, 28], np.float32) * m).astype(np.uint8)
             layer = draw_text(out.copy(), tx["texte"], tuple(tx["pos"]), tx["police"], tx["taille"], tuple(tx["couleur"]))
             out = (out * (1 - al) + layer * al).astype(np.uint8)
     return out

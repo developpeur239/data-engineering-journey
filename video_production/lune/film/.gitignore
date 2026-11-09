@@ -1,3 +1,5 @@
 __pycache__/
 b*/bloc*.mp4
 b*/*_tmp.mp4
+b*/.frames/
+b*/*.brut.wav

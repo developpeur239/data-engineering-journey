@@ -174,14 +174,14 @@
     [
      "#F",
      960,
-     560,
+     540,
      1.0
     ],
     [
      "#G",
      960,
-     600,
-     1.1
+     560,
+     1.06
     ]
    ],
    "reglages": {
@@ -208,7 +208,7 @@
    "intention": "un avion monte dans le ciel bleu",
    "reglages": {
     "vue": "ciel",
-    "avion": "v2:avions"
+    "avion": "#H-0.6"
    },
    "look": "jour"
   },
@@ -231,7 +231,7 @@
    "intention": "le rideau de fer du restaurant remonte sur « ouvrent »",
    "reglages": {
     "vue": "restaurant",
-    "rideau": "v2:ouvrent"
+    "rideau": "v2:restaurants"
    },
    "look": "jour"
   },
@@ -244,7 +244,27 @@
    "reglages": {
     "vue": "lune"
    },
-   "look": "jour"
+   "look": "jour",
+   "camera": [
+    [
+     "#K",
+     1760,
+     720,
+     1.5
+    ],
+    [
+     "v2:paisible",
+     1900,
+     390,
+     2.4
+    ],
+    [
+     "#L",
+     1915,
+     370,
+     2.55
+    ]
+   ]
   },
   {
    "id": "L",
@@ -368,7 +388,7 @@
    "fondu": 0.4,
    "pos": [
     90,
-    960
+    130
    ],
    "police": "InstrumentSans-Bold.ttf",
    "taille": 40,
@@ -381,20 +401,21 @@
   {
    "texte": "impact dans {}",
    "reste": 318600,
-   "de": "v3:compte-0.2",
+   "de": "v3:personne-0.2",
    "a": "#L",
    "fondu": 0.6,
    "pos": [
-    620,
-    840
+    110,
+    470
    ],
    "police": "FragmentMono-Regular.ttf",
-   "taille": 54,
+   "taille": 46,
    "couleur": [
     255,
-    214,
-    150
-   ]
+    226,
+    170
+   ],
+   "fond": true
   }
  ],
  "son": [
@@ -445,7 +466,7 @@
   {
    "petit": "rideau",
    "a": "v2:ouvrent",
-   "gain": -15
+   "gain": -19
   },
   {
    "fichier": "../../prototype/son/sfx_real/amb_plage.wav",

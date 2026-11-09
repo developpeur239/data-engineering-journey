@@ -1,6 +1,6 @@
 # Le Dernier Écho : fiche de reprise (à lire en premier dans une nouvelle session)
 
-Branche de travail : `claude/optimistic-ptolemy-jq9t7e`. Méthode complète : `film/README.md`. Texte de la voix : `texte_voix_V13.md`
+Branche de travail : `claude/modest-brahmagupta-fqowhp` (reprise de `claude/optimistic-ptolemy-jq9t7e`). Méthode complète : `film/README.md`. Texte de la voix : `texte_voix_V13.md`
 (validé). Plan général : `plan_rendu_v2.md`.
 
 ## Où on en est
@@ -9,7 +9,8 @@ Branche de travail : `claude/optimistic-ptolemy-jq9t7e`. Méthode complète : `f
 | Bloc 1 « Le dernier ciel » (00:00–01:00, 50 s) | **Validé.** `b01/shots.json`, décors `decors/nuit_ville.py` |
 | Test Léa (clavier, téléphone, regard) | **Validé** : méthode des personnages (`test_lea/`) |
 | Bloc 2 « Le premier signal » (01:00–02:00, 58 s) | Rendu et corrigé (son de fond retiré, Léa retouchée), **en attente de validation finale** |
-| Blocs 3 à 12 | À faire, un par un |
+| Bloc 3 « Le compte à rebours » (02:00–03:00, 62,5 s) | Rendu, **en attente de validation** : schémas `decors/compte.py`, rue de jour `decors/ville_jour.py`, plage `decors/littoral.py` |
+| Blocs 4 à 12 | À faire, un par un |
 
 Les vidéos `bXX/blocXX.mp4` ne sont pas dans git (trop lourdes) : `python3 -m moteur.core bXX` les reconstruit.
 
@@ -45,14 +46,10 @@ pip install -q opencv-python-headless scikit-image faster-whisper fonttools brot
 4. `python3 -m moteur.core bXX --planche` puis `--images …`, corriger, puis rendu complet ; ne re-rendre que les plans
    modifiés (effacer leurs images dans `bXX/.frames/`).
 
-## Étape suivante : bloc 3 « Le compte à rebours » (02:00–03:00)
-Texte : V13, trois passages (02:00–02:26, 02:26–02:47, 02:47–03:00). Idées déjà réutilisables, à proposer avec leur coût
-avant de générer :
-- « …supprimer brutalement la vitesse orbitale… » → schéma `Orbite` (existe) ; « Quatre jours et vingt heures… durée
-  totale de la chute » → compteur animé sur l'écran (`Ecran`, code).
-- « Les avions décollent. Les enfants vont à l'école. Les restaurants ouvrent. » → 3 images de vie normale de jour
-  (≈ 36 crédits) ou réutilisation de la rue du bloc 1 en version jour (à décider avec l'utilisateur).
-- « …prévisions de marée… Dans les océans. » → schéma de marée (code) ou plage (décor `decor_plage` existant, film2d).
+## Étape suivante : bloc 4 « Le premier jour » (03:00–04:00)
+Après validation du bloc 3. Réutilisables : plage (`littoral.Plage`, image existante), rue de jour (`ville_jour.Rue`,
+enfants détourés `b03/enf_*.png`), compteur à rebours du moteur (texte avec `"reste"`, toujours le temps restant avant
+le contact ; repères dans plan_rendu_v2 § 7.1 bis).
 
 ## Coûts engagés à ce jour (film)
-Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage.
+Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage. Bloc 3 : 2 images (rue de jour, enfants), 1 045 car., 2 bruitages (ambiance matin, avion).

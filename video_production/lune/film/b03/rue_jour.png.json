@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The same small French town street as the reference image, the next morning in clear daylight, wide shot: pale blue sky with a few light clouds over the upper third, a small pale normal-size daytime Moon high in the upper right of the sky, plenty of empty sky above the roofs for a distant plane; on the left side a primary school with a low wall and an open green metal gate leading to a small schoolyard with a tree; on the right side a small restaurant on the ground floor with an empty terrace (folded chairs stacked, a closed parasol) and a large shop window whose metal roller shutter is fully closed; stone houses with shutters, parked cars, quiet cobbled street. No people, no plane, no birds. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image, but in soft morning daylight. No text, no letters, no signs with writing, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/rue_lune.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "23a1f5690d9c55b589a70ba902aecd7a",
+ "credits": 12.0,
+ "seconds": 100
+}
