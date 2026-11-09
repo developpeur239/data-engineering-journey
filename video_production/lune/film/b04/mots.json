@@ -1,0 +1,922 @@
+{
+ "v1": [
+  {
+   "w": "Au",
+   "start": 0.0,
+   "end": 0.18,
+   "ok": true
+  },
+  {
+   "w": "début,",
+   "start": 0.18,
+   "end": 0.42,
+   "ok": true
+  },
+  {
+   "w": "rien",
+   "start": 0.72,
+   "end": 1.04,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 1.04,
+   "end": 1.18,
+   "ok": true
+  },
+  {
+   "w": "ressemble",
+   "start": 1.18,
+   "end": 1.52,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 1.52,
+   "end": 1.66,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 1.66,
+   "end": 1.74,
+   "ok": true
+  },
+  {
+   "w": "catastrophe.",
+   "start": 1.74,
+   "end": 2.14,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 2.92,
+   "end": 3.04,
+   "ok": true
+  },
+  {
+   "w": "vagues",
+   "start": 3.04,
+   "end": 3.28,
+   "ok": true
+  },
+  {
+   "w": "arrivent",
+   "start": 3.28,
+   "end": 3.56,
+   "ok": true
+  },
+  {
+   "w": "sur",
+   "start": 3.56,
+   "end": 3.72,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 3.72,
+   "end": 3.84,
+   "ok": true
+  },
+  {
+   "w": "sable.",
+   "start": 3.84,
+   "end": 4.22,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 4.7,
+   "end": 4.78,
+   "ok": true
+  },
+  {
+   "w": "bateaux",
+   "start": 4.78,
+   "end": 5.08,
+   "ok": true
+  },
+  {
+   "w": "quittent",
+   "start": 5.08,
+   "end": 5.34,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 5.34,
+   "end": 5.46,
+   "ok": true
+  },
+  {
+   "w": "ports.",
+   "start": 5.46,
+   "end": 5.76,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 6.32,
+   "end": 6.4,
+   "ok": true
+  },
+  {
+   "w": "marées",
+   "start": 6.4,
+   "end": 6.66,
+   "ok": true
+  },
+  {
+   "w": "suivent",
+   "start": 6.66,
+   "end": 6.98,
+   "ok": true
+  },
+  {
+   "w": "encore",
+   "start": 7.0,
+   "end": 7.28,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 7.28,
+   "end": 7.46,
+   "ok": true
+  },
+  {
+   "w": "rythme",
+   "start": 7.46,
+   "end": 7.76,
+   "ok": true
+  },
+  {
+   "w": "familier.",
+   "start": 7.76,
+   "end": 8.4,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 8.92,
+   "end": 9.08,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 9.08,
+   "end": 9.2,
+   "ok": true
+  },
+  {
+   "w": "instruments",
+   "start": 9.2,
+   "end": 9.56,
+   "ok": true
+  },
+  {
+   "w": "commencent",
+   "start": 9.56,
+   "end": 10.04,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 10.06,
+   "end": 10.18,
+   "ok": true
+  },
+  {
+   "w": "détecter",
+   "start": 10.18,
+   "end": 10.66,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 10.66,
+   "end": 10.78,
+   "ok": true
+  },
+  {
+   "w": "faibles",
+   "start": 10.78,
+   "end": 11.18,
+   "ok": true
+  },
+  {
+   "w": "écarts",
+   "start": 11.18,
+   "end": 11.66,
+   "ok": true
+  },
+  {
+   "w": "par",
+   "start": 11.66,
+   "end": 11.94,
+   "ok": true
+  },
+  {
+   "w": "rapport",
+   "start": 11.94,
+   "end": 12.18,
+   "ok": true
+  },
+  {
+   "w": "aux",
+   "start": 12.18,
+   "end": 12.34,
+   "ok": true
+  },
+  {
+   "w": "prévisions.",
+   "start": 12.34,
+   "end": 12.8,
+   "ok": true
+  },
+  {
+   "w": "Car",
+   "start": 13.28,
+   "end": 13.48,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 13.48,
+   "end": 13.6,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 13.6,
+   "end": 13.72,
+   "ok": true
+  },
+  {
+   "w": "rapprochant",
+   "start": 13.72,
+   "end": 14.12,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 14.12,
+   "end": 14.28,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 14.28,
+   "end": 14.38,
+   "ok": true
+  },
+  {
+   "w": "Terre,",
+   "start": 14.42,
+   "end": 14.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 15.06,
+   "end": 15.14,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 15.14,
+   "end": 15.3,
+   "ok": true
+  },
+  {
+   "w": "perturbe",
+   "start": 15.3,
+   "end": 15.92,
+   "ok": true
+  },
+  {
+   "w": "progressivement",
+   "start": 15.92,
+   "end": 16.72,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 16.72,
+   "end": 16.86,
+   "ok": true
+  },
+  {
+   "w": "marées.",
+   "start": 16.86,
+   "end": 17.18,
+   "ok": true
+  },
+  {
+   "w": "Son",
+   "start": 17.6,
+   "end": 17.74,
+   "ok": true
+  },
+  {
+   "w": "attraction",
+   "start": 17.74,
+   "end": 18.06,
+   "ok": true
+  },
+  {
+   "w": "n’est",
+   "start": 18.06,
+   "end": 18.36,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 18.38,
+   "end": 18.52,
+   "ok": true
+  },
+  {
+   "w": "identique",
+   "start": 18.52,
+   "end": 19.04,
+   "ok": true
+  },
+  {
+   "w": "sur",
+   "start": 19.04,
+   "end": 19.22,
+   "ok": true
+  },
+  {
+   "w": "toute",
+   "start": 19.22,
+   "end": 19.4,
+   "ok": true
+  },
+  {
+   "w": "notre",
+   "start": 19.4,
+   "end": 19.57,
+   "ok": true
+  },
+  {
+   "w": "planète.",
+   "start": 19.58,
+   "end": 20.14,
+   "ok": true
+  },
+  {
+   "w": "C’est",
+   "start": 20.5,
+   "end": 20.72,
+   "ok": true
+  },
+  {
+   "w": "cette",
+   "start": 20.72,
+   "end": 20.88,
+   "ok": true
+  },
+  {
+   "w": "différence",
+   "start": 20.88,
+   "end": 21.3,
+   "ok": true
+  },
+  {
+   "w": "qui",
+   "start": 21.3,
+   "end": 21.64,
+   "ok": true
+  },
+  {
+   "w": "contribue",
+   "start": 21.64,
+   "end": 22.08,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 22.08,
+   "end": 22.2,
+   "ok": true
+  },
+  {
+   "w": "faire",
+   "start": 22.2,
+   "end": 22.34,
+   "ok": true
+  },
+  {
+   "w": "monter",
+   "start": 22.34,
+   "end": 22.68,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 22.68,
+   "end": 23.04,
+   "ok": true
+  },
+  {
+   "w": "descendre",
+   "start": 23.04,
+   "end": 23.62,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 23.62,
+   "end": 23.78,
+   "ok": true
+  },
+  {
+   "w": "océans.",
+   "start": 23.78,
+   "end": 24.2,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 24.64,
+   "end": 24.73,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 24.74,
+   "end": 24.96,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 24.96,
+   "end": 25.12,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 25.12,
+   "end": 25.28,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 25.28,
+   "end": 25.46,
+   "ok": true
+  },
+  {
+   "w": "rapproche,",
+   "start": 25.46,
+   "end": 26.02,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 26.32,
+   "end": 26.44,
+   "ok": true
+  },
+  {
+   "w": "cet",
+   "start": 26.44,
+   "end": 26.7,
+   "ok": true
+  },
+  {
+   "w": "effet",
+   "start": 26.7,
+   "end": 26.92,
+   "ok": true
+  },
+  {
+   "w": "devient",
+   "start": 26.92,
+   "end": 27.22,
+   "ok": true
+  },
+  {
+   "w": "puissant.",
+   "start": 27.22,
+   "end": 27.74,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Après",
+   "start": 0.0,
+   "end": 0.24,
+   "ok": true
+  },
+  {
+   "w": "vingt-quatre",
+   "start": 0.4,
+   "end": 0.56,
+   "ok": false
+  },
+  {
+   "w": "heures,",
+   "start": 0.56,
+   "end": 0.94,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 1.22,
+   "end": 1.34,
+   "ok": true
+  },
+  {
+   "w": "changement",
+   "start": 1.34,
+   "end": 1.76,
+   "ok": true
+  },
+  {
+   "w": "reste",
+   "start": 1.76,
+   "end": 1.99,
+   "ok": true
+  },
+  {
+   "w": "relativement",
+   "start": 2.02,
+   "end": 2.72,
+   "ok": true
+  },
+  {
+   "w": "faible.",
+   "start": 2.72,
+   "end": 3.14,
+   "ok": true
+  },
+  {
+   "w": "Pas",
+   "start": 3.52,
+   "end": 3.64,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.64,
+   "end": 3.78,
+   "ok": true
+  },
+  {
+   "w": "mur",
+   "start": 3.78,
+   "end": 3.96,
+   "ok": true
+  },
+  {
+   "w": "d’eau",
+   "start": 3.96,
+   "end": 4.18,
+   "ok": true
+  },
+  {
+   "w": "géant.",
+   "start": 4.18,
+   "end": 4.54,
+   "ok": true
+  },
+  {
+   "w": "Pas",
+   "start": 4.78,
+   "end": 4.92,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 4.92,
+   "end": 5.04,
+   "ok": true
+  },
+  {
+   "w": "tsunami",
+   "start": 5.04,
+   "end": 5.32,
+   "ok": true
+  },
+  {
+   "w": "mondial.",
+   "start": 5.32,
+   "end": 5.94,
+   "ok": true
+  },
+  {
+   "w": "Seulement",
+   "start": 6.3,
+   "end": 6.72,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 6.72,
+   "end": 6.86,
+   "ok": true
+  },
+  {
+   "w": "anomalies",
+   "start": 6.86,
+   "end": 7.42,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 7.42,
+   "end": 7.6,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 7.6,
+   "end": 7.74,
+   "ok": true
+  },
+  {
+   "w": "chercheurs",
+   "start": 7.74,
+   "end": 8.18,
+   "ok": true
+  },
+  {
+   "w": "prennent",
+   "start": 8.18,
+   "end": 8.5,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 8.5,
+   "end": 8.58,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 8.58,
+   "end": 8.86,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 8.86,
+   "end": 9.0,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 9.0,
+   "end": 9.18,
+   "ok": true
+  },
+  {
+   "w": "au",
+   "start": 9.18,
+   "end": 9.34,
+   "ok": true
+  },
+  {
+   "w": "sérieux.",
+   "start": 9.34,
+   "end": 9.77,
+   "ok": true
+  },
+  {
+   "w": "Puis",
+   "start": 10.04,
+   "end": 10.32,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 10.32,
+   "end": 10.64,
+   "ok": true
+  },
+  {
+   "w": "autorités",
+   "start": 10.64,
+   "end": 11.12,
+   "ok": true
+  },
+  {
+   "w": "commencent",
+   "start": 11.12,
+   "end": 11.54,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 11.54,
+   "end": 11.62,
+   "ok": true
+  },
+  {
+   "w": "fermer",
+   "start": 11.62,
+   "end": 12.04,
+   "ok": true
+  },
+  {
+   "w": "certaines",
+   "start": 12.04,
+   "end": 12.26,
+   "ok": true
+  },
+  {
+   "w": "zones",
+   "start": 12.28,
+   "end": 12.66,
+   "ok": true
+  },
+  {
+   "w": "côtières.",
+   "start": 12.66,
+   "end": 13.23,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Sur",
+   "start": 0.0,
+   "end": 0.22,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 0.22,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "plage,",
+   "start": 0.38,
+   "end": 0.78,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 1.04,
+   "end": 1.14,
+   "ok": true
+  },
+  {
+   "w": "petit",
+   "start": 1.14,
+   "end": 1.36,
+   "ok": true
+  },
+  {
+   "w": "garçon",
+   "start": 1.36,
+   "end": 1.8,
+   "ok": true
+  },
+  {
+   "w": "s’arrête",
+   "start": 1.8,
+   "end": 2.22,
+   "ok": true
+  },
+  {
+   "w": "devant",
+   "start": 2.22,
+   "end": 2.48,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 2.48,
+   "end": 2.66,
+   "ok": true
+  },
+  {
+   "w": "barrière.",
+   "start": 2.66,
+   "end": 3.16,
+   "ok": true
+  },
+  {
+   "w": "Sa",
+   "start": 3.56,
+   "end": 3.8,
+   "ok": true
+  },
+  {
+   "w": "mère",
+   "start": 3.8,
+   "end": 4.0,
+   "ok": true
+  },
+  {
+   "w": "lui",
+   "start": 4.0,
+   "end": 4.14,
+   "ok": true
+  },
+  {
+   "w": "explique",
+   "start": 4.14,
+   "end": 4.62,
+   "ok": true
+  },
+  {
+   "w": "qu’ils",
+   "start": 4.62,
+   "end": 4.82,
+   "ok": true
+  },
+  {
+   "w": "doivent",
+   "start": 4.82,
+   "end": 5.0,
+   "ok": true
+  },
+  {
+   "w": "partir.",
+   "start": 5.0,
+   "end": 5.38,
+   "ok": true
+  }
+ ],
+ "v4": [
+  {
+   "w": "Le",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "danger",
+   "start": 0.16,
+   "end": 0.54,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 0.54,
+   "end": 0.82,
+   "ok": true
+  },
+  {
+   "w": "déjà",
+   "start": 0.82,
+   "end": 1.16,
+   "ok": true
+  },
+  {
+   "w": "là.",
+   "start": 1.16,
+   "end": 1.4,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 1.9,
+   "end": 2.02,
+   "ok": true
+  },
+  {
+   "w": "personne",
+   "start": 2.02,
+   "end": 2.4,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 2.4,
+   "end": 2.68,
+   "ok": true
+  },
+  {
+   "w": "peut",
+   "start": 2.68,
+   "end": 2.8,
+   "ok": true
+  },
+  {
+   "w": "encore",
+   "start": 2.8,
+   "end": 3.04,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 3.04,
+   "end": 3.26,
+   "ok": true
+  },
+  {
+   "w": "voir.",
+   "start": 3.26,
+   "end": 3.46,
+   "ok": true
+  }
+ ]
+}

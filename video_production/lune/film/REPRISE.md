@@ -9,8 +9,9 @@ Branche de travail : `claude/modest-brahmagupta-fqowhp` (reprise de `claude/opti
 | Bloc 1 « Le dernier ciel » (00:00–01:00, 50 s) | **Validé.** `b01/shots.json`, décors `decors/nuit_ville.py` |
 | Test Léa (clavier, téléphone, regard) | **Validé** : méthode des personnages (`test_lea/`) |
 | Bloc 2 « Le premier signal » (01:00–02:00, 58 s) | Rendu et corrigé (son de fond retiré, Léa retouchée), **en attente de validation finale** |
-| Bloc 3 « Le compte à rebours » (02:00–03:00, 62,5 s) | Rendu, **en attente de validation** : schémas `decors/compte.py`, rue de jour `decors/ville_jour.py`, plage `decors/littoral.py` |
-| Blocs 4 à 12 | À faire, un par un |
+| Bloc 3 « Le compte à rebours » (02:00–03:00, 62,5 s) | **Validé** : schémas `decors/compte.py`, rue de jour `decors/ville_jour.py`, plage `decors/littoral.py` |
+| Bloc 4 « Le premier jour » (03:00–04:00, 63 s) | Rendu, **en attente de validation** : schémas `decors/maree.py`, `decors/littoral.py` (Plage, Port, Barriere), mère et garçon `b04/mere_*.png`, `b04/garcon_*.png` (silhouettes, seau rouge) |
+| Blocs 5 à 12 | À faire, un par un |
 
 Les vidéos `bXX/blocXX.mp4` ne sont pas dans git (trop lourdes) : `python3 -m moteur.core bXX` les reconstruit.
 
@@ -46,10 +47,10 @@ pip install -q opencv-python-headless scikit-image faster-whisper fonttools brot
 4. `python3 -m moteur.core bXX --planche` puis `--images …`, corriger, puis rendu complet ; ne re-rendre que les plans
    modifiés (effacer leurs images dans `bXX/.frames/`).
 
-## Étape suivante : bloc 4 « Le premier jour » (03:00–04:00)
-Après validation du bloc 3. Réutilisables : plage (`littoral.Plage`, image existante), rue de jour (`ville_jour.Rue`,
-enfants détourés `b03/enf_*.png`), compteur à rebours du moteur (texte avec `"reste"`, toujours le temps restant avant
-le contact ; repères dans plan_rendu_v2 § 7.1 bis).
+## Étape suivante : bloc 5 « Le deuxième jour » (04:00–05:00)
+Après validation du bloc 4. Personnages : silhouettes noires pleines, contour discret, un seul détail de couleur
+(détourage `b03/detourer.py`, `b04/detourer.py`) ; marche découpée (`ville_jour.Rue.person`, `littoral.Barriere.figure`).
+Voix du garçon : MiniMax `French_MovieLeadFemale`, speech-2.8-hd, hauteur +4, vitesse 0,95 (`b04/generer.py garcon`).
 
 ## Coûts engagés à ce jour (film)
-Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage. Bloc 3 : 2 images (rue de jour, enfants), 1 045 car., 2 bruitages (ambiance matin, avion).
+Bloc 1 : 5 images, 704 car. de voix, 3 bruitages. Test Léa : 2 images. Bloc 2 : 1 image, 936 car., 1 bruitage. Bloc 3 : 2 images (rue de jour, enfants), 1 045 car., 2 bruitages (ambiance matin, avion). Bloc 4 : 3 images (plage barrée, port, mère et garçon), 951 car. + 31 car. MiniMax, 1 bruitage (port).

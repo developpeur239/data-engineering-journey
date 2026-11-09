@@ -290,7 +290,7 @@ class Influence:
         pass
 
     def render(self, t, shot, bloc):
-        R = shot["reglages"]; T = {k: bloc.t(v) for k, v in R.items()}
+        R = shot["reglages"]; T = {k: bloc.t(v) for k, v in R.items() if k != "texte"}
         f = canvas()
         mang = 0.12 * np.sin(t * 0.25)                                             # la Lune glisse un peu ; les bourrelets la suivent
         mp = self.C + np.array([np.cos(mang), np.sin(mang)]) * 820
@@ -309,6 +309,6 @@ class Influence:
             y = k * 46
             p = (int(mp[0] - 80), int(mp[1] + y * 0.5)); q = (int(self.C[0] + self.R + 90), int(self.C[1] + y))
             dashed(f, [np.array(p) + (np.array(q) - np.array(p)) * (j / 30) for j in range(31)], (140, 150, 170), lines * 0.8)
-        items = [("depuis des milliards d'années, la Lune soulève les océans", (W / 2, 900), SANS, 44, INK, fade(t, T["milliards"], 0.5), True),
+        items = [(R.get("texte", "depuis des milliards d'années, la Lune soulève les océans"), (W / 2, 900), SANS, 44, INK, fade(t, T["milliards"], 0.5), True),
                  ("marée", (self.C[0] + self.R + 30, self.C[1] - 190), SANS, 38, (140, 190, 240), b, False)]
         return texts(f, items)
