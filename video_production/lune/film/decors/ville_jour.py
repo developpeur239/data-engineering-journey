@@ -27,11 +27,11 @@ VUES = {                                                       # [x, y, zoom] au
 class Rue:
     # nom, x du centre, y des pieds, échelle (de l'arrière vers l'avant)
     # nom, x du centre À L'ARRIVÉE, y des pieds, échelle, vitesse (px source/s), durée d'un pas (s),
-    # jambes : [(y de la hanche, x de séparation, x min, x max), …] dans le dessin d'origine (une paire par personne)
-    GENS = [("enf_gris", 262, 1302, 0.25, 95, 0.42, [(830, 197, 50, 320)]),
-            ("enf_rayures", 66, 1328, 0.28, 95, 0.40, [(735, 166, 40, 305)]),
-            ("enf_vert", 168, 1338, 0.28, 90, 0.38, [(722, 170, 65, 325)]),
-            ("parent_fille", 372, 1350, 0.28, 85, 0.52, [(870, 222, 75, 420), (1060, 868, 730, 1017)])]
+    # jambes : [(y de la hanche, x de séparation, x min, x max), …] dans le calque détouré, avant miroir (une paire par personne)
+    GENS = [("enf_gris", 262, 1302, 0.25, 95, 0.42, [(836, 203, 56, 326)]),
+            ("enf_rayures", 66, 1328, 0.28, 95, 0.40, [(741, 172, 46, 311)]),
+            ("enf_vert", 168, 1338, 0.28, 90, 0.38, [(728, 176, 71, 331)]),
+            ("parent_fille", 372, 1350, 0.28, 85, 0.52, [(876, 228, 81, 426), (1066, 874, 736, 1023)])]
     MARCHE = 1.9                                               # durée de la marche vers le portail (s), finie à la fin du plan I
     CAR = (500, 1040, 860, 1470)                                # zone de la 2 CV garée devant l'école
     SH = (2478, 884, 2752, 1302)                               # rideau de fer du restaurant (x0, y0, x1, y1)
