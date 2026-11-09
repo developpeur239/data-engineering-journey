@@ -12,7 +12,7 @@ Branche de travail : `claude/modest-brahmagupta-fqowhp` (reprise de `claude/opti
 | Bloc 3 « Le compte à rebours » (02:00–03:00, 62,5 s) | **Validé** : schémas `decors/compte.py`, rue de jour `decors/ville_jour.py`, plage `decors/littoral.py` |
 | Bloc 4 « Le premier jour » (03:00–04:00, 63 s) | **Validé** : schémas `decors/maree.py`, `decors/littoral.py` (Plage, Port, Barriere), mère et garçon `b04/mere_*.png`, `b04/garcon_*.png` (silhouettes, seau rouge) |
 | Blocs 5 à 13 (04:00–12:40) | Rendus d'une traite à la demande de l'utilisateur, **à valider dans le film assemblé**. Découpage : `plans_reste.py` ; voix : `generer_voix.py` ; images : `generer_images.py` ; bruitages : `generer_sons.py` ; décors : `decors/astres.py` (Lune et Terre texturées, fractures, fragmentation, collision), `decors/scenes.py`, `decors/littoral.py` (PlageFin) |
-| Film complet | `python3 assembler.py` → `le_dernier_echo.mp4` (blocs 1 à 13 reconstruits par le moteur) |
+| Film complet | `python3 assembler.py` → `le_dernier_echo.mp4` (blocs 1 à 13 reconstruits par le moteur). Assemblé le 9 nov. : 12 min 13 s, −14,2 LUFS, crête −2,2 dBTP ; copie d'envoi `le_dernier_echo_envoi.mp4` (H.264 CRF 24) |
 
 Les vidéos `bXX/blocXX.mp4` ne sont pas dans git (trop lourdes) : `python3 -m moteur.core bXX` les reconstruit.
 
