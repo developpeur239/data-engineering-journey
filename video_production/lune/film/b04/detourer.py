@@ -8,6 +8,9 @@ import cv2
 import numpy as np
 from PIL import Image
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from decors.style_perso import style_lea  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 from b03.detourer import CONTOUR, CONTOUR_A, CONTOUR_PX, NOIR, fill_holes, largest  # noqa: E402
@@ -27,7 +30,7 @@ if __name__ == "__main__":
         lowest = np.where(keep.any(1))[0].max()
         for k in range(1, hn):                                                           # écart entre les jambes : vide
             reg = hl == k
-            if hs[k, 4] > 600 and d[:, x0:x1][reg].mean() < 14 and hs[k, 1] > lowest - 700:
+            if hs[k, 4] > 600 and d[:, x0:x1][reg].mean() < 14 and hs[k, 1] > lowest - 0.3 * (lowest - np.where(keep.any(1))[0].min()):
                 holes[reg] = 0
         keep = keep | holes
         ys, xs = np.where(keep)
@@ -35,7 +38,7 @@ if __name__ == "__main__":
         P = CONTOUR_PX + 2
         sil = np.pad(keep[y0:y1, xa:xb], P)
         rgb = np.pad(im[:, x0:x1][y0:y1, xa:xb], ((P, P), (P, P), (0, 0)))
-        out = np.zeros(rgb.shape, np.float32) + NOIR
+        out = style_lea(rgb, sil.astype(np.uint8))                                       # style de Léa (cheveux, yeux, traits)
         if name.startswith("garcon"):                                                    # le seau rouge (et son anse sombre reste noire)
             a = RED(rgb[..., 0], rgb[..., 1], rgb[..., 2]).astype(np.uint8)
             a = cv2.morphologyEx(a, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))

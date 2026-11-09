@@ -6,11 +6,15 @@ silhouette NOIRE pleine (comme Léa), contour fin et discret, et UN SEUL détail
   enf_rayures   cartable bleu
   enf_gris      cartable rouge brique (recoloré : il était gris)
 """
+import sys
 from pathlib import Path
 
 import cv2
 import numpy as np
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from decors.style_perso import style_lea  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 NOIR = np.array([22, 22, 25], np.float32)                      # le noir des personnages (Léa)
@@ -40,8 +44,9 @@ def accent(rgb, box, test):
     r, g, b = (rgb[y0:y1, x0:x1, c] for c in range(3))
     k[y0:y1, x0:x1] = test(r, g, b, rgb[y0:y1, x0:x1].mean(2)).astype(np.uint8)
     k = cv2.morphologyEx(k, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    near = cv2.dilate(k, np.ones((11, 11), np.uint8))                                      # pas plus loin que la couleur elle-même
     k = cv2.morphologyEx(k, cv2.MORPH_CLOSE, np.ones((17, 17), np.uint8))
-    return fill_holes(largest(k))
+    return fill_holes(largest(k)) & near
 
 
 ACC = {   # nom : [(rectangle, test de couleur, couleur forcée ou None = couleur d'origine)]
@@ -60,7 +65,7 @@ if __name__ == "__main__":
         lowest = np.where(keep.any(1))[0].max()
         for k in range(1, hn):                                                           # … sauf l'écart entre les jambes
             reg = hl == k
-            if hs[k, 4] > 600 and d[:, x0:x1][reg].mean() < 14 and hs[k, 1] > lowest - 600:
+            if hs[k, 4] > 600 and d[:, x0:x1][reg].mean() < 14 and hs[k, 1] > lowest - 0.3 * (lowest - np.where(keep.any(1))[0].min()):
                 holes[reg] = 0
         keep = keep | holes
         ys, xs = np.where(keep)
@@ -68,7 +73,7 @@ if __name__ == "__main__":
         P = CONTOUR_PX + 2
         sil = np.pad(keep[y0:y1, xa:xb], P)
         rgb = np.pad(im[:, x0:x1][y0:y1, xa:xb], ((P, P), (P, P), (0, 0)))
-        out = np.zeros(rgb.shape, np.float32) + NOIR
+        out = style_lea(rgb, sil.astype(np.uint8))                                       # style de Léa (cheveux, yeux, traits)
         for box, test, col in ACC[name]:
             bx = tuple(v + P for v in box)                                              # rectangle : coordonnées du calque sans marge
             a = accent(rgb, bx, test) & sil
