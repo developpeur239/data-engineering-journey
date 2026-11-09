@@ -159,11 +159,12 @@ class Lune:
             piece = img.copy(); piece[..., 3] *= m
             d = pts[k] - c; nd = np.linalg.norm(d) + 1e-6
             front = max(0.0, np.dot(d / nd, tw))
-            off = d / nd * r * 0.45 * u ** 1.4 + tw * r * 0.9 * u * u * front              # écartement + avance vers la Terre
-            ang = (k % 5 - 2) * 4 * u
+            core = nd < 0.68 * r                                                   # le noyau (masse principale) reste entier
+            off = np.zeros(2) if core else d / nd * r * 0.28 * u ** 1.3 + tw * r * 0.6 * u * u * front
+            ang = 0.0 if core else (k % 5 - 2) * 3 * u
             R = cv2.getRotationMatrix2D((float(pts[k][0]), float(pts[k][1])), ang, 1.0)
             piece = cv2.warpAffine(piece, R, (piece.shape[1], piece.shape[0]))
-            if u > 0.05:                                                         # bord incandescent des cassures
+            if u > 0.05 and not core:                                            # bord incandescent des cassures
                 edge = cv2.morphologyEx((piece[..., 3] > 128).astype(np.uint8), cv2.MORPH_GRADIENT, np.ones((3, 3), np.uint8))
                 piece[..., :3] += edge[..., None] * np.array([255, 120, 40], np.float32) * min(1.0, u * 2)
             paste_rgba(f, piece, cx + off[0], cy + off[1], mask)
@@ -184,14 +185,18 @@ class Ciel:
     def __init__(self, bloc):
         self.cache = {}
 
-    def base(self, p, horizon):
-        key = (p, horizon)
+    def base(self, p, horizon, mode="bleu"):
+        key = (p, horizon, mode)
         if key not in self.cache:
             img = load_rgb(LUNE_IMG / p)
             r, g, b = img[..., 0], img[..., 1], img[..., 2]
             lum = img.mean(2)
             yy = np.mgrid[0:img.shape[0], 0:img.shape[1]][0]
-            sky = ((b >= r - 4) & (np.abs(cv2.Laplacian(lum, cv2.CV_32F)) < 6) & (yy < horizon)).astype(np.uint8)
+            if mode == "bleu":                                                    # ciel bleu ou violet (jour, soir, nuit)
+                sky = (((b - r) > 12) & (yy < horizon)).astype(np.uint8)
+            else:                                                                # ciel gris ou beige : zone sans détails
+                sky = ((np.abs(cv2.Laplacian(cv2.GaussianBlur(lum, (0, 0), 1.5), cv2.CV_32F)) < 2.5) & (yy < horizon)).astype(np.uint8)
+            sky = cv2.morphologyEx(sky, cv2.MORPH_CLOSE, np.ones((11, 11), np.uint8))   # étoiles : trous refermés
             sky = cv2.morphologyEx(sky, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8))
             n, lab, st, _ = cv2.connectedComponentsWithStats(sky)                # le ciel : la grande zone reliée au haut
             top = set(np.unique(lab[:6])) - {0}
@@ -201,7 +206,7 @@ class Ciel:
 
     def render(self, t, shot, bloc):
         R = shot["reglages"]
-        img, sky = self.base(R["image"], R.get("horizon", 99999))
+        img, sky = self.base(R["image"], R.get("horizon", 99999), R.get("ciel", "bleu"))
         f = img.copy()
         nuit = R.get("nuit", 0.0)
         if nuit:
@@ -219,9 +224,28 @@ class Ciel:
             paste_rgba(f, moon, lx, ly, sky)
         if "meteores" in R and t >= bloc.t(R["meteores"]):
             f = meteors(f, t - bloc.t(R["meteores"]), lx, ly, lr, sky)
+        if "laser" in R and t >= bloc.t(R["laser"]):                              # faisceau vert de la coupole à la Lune
+            sx, sy = R.get("coupole", (985, 470))
+            over = np.zeros(f.shape[:2], np.float32)
+            cv2.line(over, (int(sx), int(sy)), (int(lx), int(ly)), 1, 5, cv2.LINE_AA)
+            over = cv2.GaussianBlur(over, (0, 0), 3)[..., None] * 0.8 * fade_in(t, bloc.t(R["laser"]))
+            f = f * (1 - over) + np.array([110, 255, 150], np.float32) * over
+        for g in R.get("gens", []):                                                  # personnages (style de Léa)
+            from decors.scenes import put  # noqa: PLC0415
+            put(f, _sprite(g["sprite"]), g["x"], g["y"], g["s"], t, g.get("k", 0))
         if R.get("poussiere"):
             dust(f, t, (40, 40, f.shape[1] - 40, f.shape[0] - 40), n=50, alpha=0.15)
         return f
+
+
+def fade_in(t, a, d=0.3):
+    return float(ease((t - a) / d))
+
+
+@lru_cache(None)
+def _sprite(p):
+    from decors.commun import load_rgba  # noqa: PLC0415
+    return load_rgba(Path(__file__).resolve().parents[1] / p)
 
 
 def meteors(f, dt, lx, ly, lr, sky):
@@ -290,12 +314,13 @@ class Espace:
             if rest > 0:
                 paste_rgba(f, Lune.render(int(mr * (0.5 + 0.5 * rest)), fract=1.0, eclat=1.0), *(cp + dirv * mr * 0.6 * rest), opacity=rest)
             pl = np.zeros_like(f); pa = np.zeros(f.shape[:2], np.float32)          # panaches de roche fondue
-            for k in range(420):
+            for k in range(260):
                 rng = np.random.default_rng(k)
                 ang = np.arctan2(dirv[1], dirv[0]) + rng.normal(0, 0.6)
-                sp = rng.uniform(0.1, 0.75) * er
+                sp = rng.uniform(0.1, 0.55) * er
                 d = np.array([np.cos(ang), np.sin(ang)])
-                q1 = cp + d * sp * u ** 0.7; q0 = cp + d * sp * u ** 0.7 * 0.55
+                ex_ = min(u, 4.0) ** 0.6
+                q1 = cp + d * sp * ex_; q0 = cp + d * sp * ex_ * 0.8
                 w = max(1, int(er * 0.012 * rng.uniform(0.6, 2.0)))
                 col = (255, int(110 + 110 * rng.random()), 50) if rng.random() < 0.7 else (140, 120, 110)
                 cv2.line(pl, tuple(np.int32(q0)), tuple(np.int32(q1)), col, w, cv2.LINE_AA)
@@ -324,9 +349,10 @@ class Photos:
         if R["mode"] == "telephones":
             for k, (x, rr, lab) in enumerate(((620, 150, "il y a deux jours"), (1300, 165, "ce soir"))):
                 a = float(ease((t - shot["_t0"] - 0.6 * k) / 0.5))
-                ph = np.zeros_like(f); cv2.rectangle(ph, (x - 230, 150), (x + 230, 930), (18, 18, 22), -1)
-                cv2.rectangle(ph, (x - 215, 200), (x + 215, 880), (8, 10, 20), -1)
-                f = f * (1 - a) + ph * a if a > 0 else f
+                if a > 0:
+                    ph = f.copy(); cv2.rectangle(ph, (x - 230, 150), (x + 230, 930), (18, 18, 22), -1)
+                    cv2.rectangle(ph, (x - 215, 200), (x + 215, 880), (8, 10, 20), -1)
+                    f = f * (1 - a) + ph * a
                 if a > 0:
                     paste_rgba(f, sphere("lune_lroc_nasa.png", rr, gain=1.1), x, 520, opacity=a)
                     items.append((lab, (x, 950), SANS, 34, DIM, a, True))

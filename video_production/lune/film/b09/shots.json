@@ -1,0 +1,310 @@
+{
+ "_doc": "Bloc 09 : voir plans_reste.py (source du découpage).",
+ "look": "nuit",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.3"
+  }
+ ],
+ "fin": "v2.end+1.8",
+ "lea": {
+  "frappe": [
+   [
+    "v1:léa",
+    "v1:compare.end"
+   ]
+  ],
+  "regard_ecran": [
+   [
+    "v1:compare",
+    "v1:compare+5"
+   ]
+  ]
+ },
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "calern.Poste",
+   "texte": "À Calern, Léa compare deux photographies prises à quelques minutes d'intervalle.",
+   "intention": "Léa à son poste",
+   "camera": [
+    [
+     "#A",
+     820,
+     900,
+     1.8
+    ],
+    [
+     "#B",
+     860,
+     880,
+     2.0
+    ]
+   ]
+  },
+  {
+   "id": "B",
+   "debut": "v1:sur-0.1",
+   "set": "astres.Photos",
+   "texte": "Sur la première, une région de la surface lunaire semble intacte. Sur la seconde, une immense ligne sombre traverse le paysage. Elle agrandit l'image… Un autre observatoire transmet une photographie. La même anomalie apparaît.",
+   "intention": "les deux photos ; la ligne sombre ; la confirmation",
+   "camera": [
+    [
+     "#B",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#C",
+     1150,
+     540,
+     1.15
+    ]
+   ],
+   "reglages": {
+    "mode": "calern",
+    "seconde": "v1:seconde",
+    "zoom": "v1:agrandit",
+    "transmise": "v1:transmet"
+   }
+  },
+  {
+   "id": "C",
+   "debut": "v1:léa#2-0.1",
+   "set": "calern.Poste",
+   "texte": "Léa ne peut pas encore confirmer ce qu'elle voit.",
+   "intention": "elle fixe l'écran",
+   "camera": [
+    [
+     "#C",
+     860,
+     860,
+     2.2
+    ],
+    [
+     "#D",
+     880,
+     850,
+     2.4
+    ]
+   ]
+  },
+  {
+   "id": "D",
+   "debut": "v1:mais-0.1",
+   "set": "astres.Ciel",
+   "texte": "Mais les scientifiques redoutent une explication. La Lune pourrait commencer à se fracturer.",
+   "intention": "la Lune, les fractures s'étendent",
+   "camera": [
+    [
+     "#D",
+     2150,
+     420,
+     2.0
+    ],
+    [
+     "#E",
+     2150,
+     400,
+     2.4
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     2150,
+     400,
+     360
+    ],
+    "fract": [
+     [
+      "#D",
+      0.25
+     ],
+     [
+      "#E",
+      0.5
+     ]
+    ],
+    "lueur": 0.4
+   }
+  },
+  {
+   "id": "E",
+   "debut": "v2-0.3",
+   "set": "scenes.Roche",
+   "texte": "La Terre attire plus fortement sa face proche que sa face éloignée… la limite de Roche.",
+   "intention": "les deux flèches inégales, la limite",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#F",
+     960,
+     540,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "fleches": "v2:attire",
+    "limite": "v2:roche"
+   }
+  },
+  {
+   "id": "F",
+   "debut": "v2:en-0.1",
+   "set": "scenes.Comete",
+   "texte": "En 1994, les fragments d'une comète déchirée par Jupiter se sont écrasés sur la planète.",
+   "intention": "histoire réelle",
+   "camera": [
+    [
+     "#F",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#G",
+     1050,
+     540,
+     1.1
+    ]
+   ]
+  },
+  {
+   "id": "G",
+   "debut": "v2:mais-0.1",
+   "set": "scenes.Roche",
+   "texte": "Mais la Lune est un monde rocheux, pas une boule de liquide. Rien ne garantit qu'elle se brisera. Pourtant, les fractures s'étendent.",
+   "intention": "les fractures apparaissent",
+   "camera": [
+    [
+     "#G",
+     1100,
+     560,
+     1.15
+    ],
+    [
+     "#H",
+     1150,
+     560,
+     1.25
+    ]
+   ],
+   "reglages": {
+    "fleches": "#G",
+    "limite": "#G",
+    "fractures": "v2:fractures"
+   }
+  },
+  {
+   "id": "H",
+   "debut": "v2:et-0.1",
+   "set": "astres.Ciel",
+   "texte": "Et une question apparaît. Que se passera-t-il si la Lune commence à se disloquer avant de toucher la Terre ? La réponse arrive plus vite que prévu.",
+   "intention": "la Lune fissurée au-dessus de Calern",
+   "camera": [
+    [
+     "#H",
+     2000,
+     500,
+     1.6
+    ],
+    [
+     "#H.end",
+     1376,
+     768,
+     1.0
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     2150,
+     380,
+     420
+    ],
+    "fract": 0.7,
+    "deform": 0.2,
+    "lueur": 0.45
+   }
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v2.end+1.8"
+  },
+  {
+   "texte": "Histoire réelle",
+   "de": "#F",
+   "a": "#G",
+   "pos": [
+    1500,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    244,
+    200,
+    110
+   ]
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_nuit.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": "v2.end+1.8",
+   "rms": -34,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "petit": "bip",
+   "a": "v1:seconde",
+   "gain": -13
+  },
+  {
+   "petit": "bip",
+   "a": "v1:transmet",
+   "gain": -13
+  },
+  {
+   "synth": "riser",
+   "args": [
+    2.0
+   ],
+   "a": "v2:prévu-1.8",
+   "gain": -22,
+   "normalise": false
+  }
+ ]
+}

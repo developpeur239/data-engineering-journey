@@ -195,3 +195,34 @@ class Barriere(Eau):
             self.figure(f, "mere_accroupie", *self.ACCROUPIE, t, 0)
             self.figure(f, "garcon_dos", *self.GARCON[1], t, 1)
         return f
+
+
+class PlageFin(Barriere):
+    """Retour à la réalité : la plage ensoleillée, sans barrière ; le garçon court vers l'eau avec son seau, sa mère
+    le rejoint (réglages "course" : début de la course du garçon, "mere" : début de la marche de la mère)."""
+    IMAGE = "film2d/images/decor_plage.png"
+    EXCLU = []
+    GLINT = 0.35
+
+    def __init__(self, bloc):
+        Eau.__init__(self, bloc)
+        self.spr = {n: load_rgba(B04 / f"{n}.png") for n in ("mere_dos", "garcon_dos")}
+        self.legs = {n: legs_of(self.spr[n]) for n in self.spr}
+
+    def render(self, t, shot, bloc):
+        f = self.sea(self.img.copy(), t)
+        R = shot.get("reglages", {})
+        people = []
+        for k, (name, key, a, b, dur, T) in enumerate((("garcon_dos", "course", (1150, 1500, 0.40), (1560, 1040, 0.22), 3.2, 0.30),
+                                                        ("mere_dos", "mere", (820, 1530, 0.50), (1330, 1080, 0.30), 4.5, 0.55))):
+            if key not in R:
+                continue
+            t0 = bloc.t(R[key]); u = float(np.clip((t - t0) / dur, 0, 1))
+            if t < t0:
+                continue
+            x, y, s = np.array(a) * (1 - u) + np.array(b) * u
+            step = ((t - t0) / T + 0.3 * k, 30 * s / 0.3) if u < 1 else None
+            people.append((y, name, x, s, k, step))
+        for y, name, x, s, k, step in sorted(people):
+            self.figure(f, name, x, y, s, t, k, step)
+        return f

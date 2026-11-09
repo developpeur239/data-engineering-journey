@@ -1,0 +1,241 @@
+{
+ "_doc": "Bloc 12 : voir plans_reste.py (source du découpage).",
+ "look": "espace",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 2.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.2"
+  }
+ ],
+ "fin": "v2.end+5.2",
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "astres.Espace",
+   "texte": "La Lune frappe la Terre à près de dix kilomètres par seconde…",
+   "intention": "le contact",
+   "camera": [
+    [
+     "#A",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#B",
+     860,
+     560,
+     1.1
+    ]
+   ],
+   "reglages": {
+    "terre": [
+     700,
+     600,
+     340
+    ],
+    "lune": [
+     [
+      0,
+      1300,
+      450,
+      250
+     ],
+     [
+      "v1:frappe",
+      1060,
+      520,
+      250
+     ]
+    ],
+    "contact": "v1:frappe",
+    "morceaux": -30
+   }
+  },
+  {
+   "id": "B",
+   "debut": "v1:c’est-0.1",
+   "set": "astres.Espace",
+   "texte": "C'est un monde de plus de trois mille kilomètres de diamètre. Au point de contact… incandescente. Puis d'immenses panaches… des milliers de kilomètres.",
+   "intention": "l'incandescence, les panaches",
+   "camera": [
+    [
+     "#B",
+     860,
+     560,
+     1.1
+    ],
+    [
+     "#C",
+     960,
+     540,
+     1.0
+    ]
+   ],
+   "reglages": {
+    "terre": [
+     700,
+     600,
+     340
+    ],
+    "lune": [
+     [
+      0,
+      1300,
+      450,
+      250
+     ],
+     [
+      "v1:frappe",
+      1060,
+      520,
+      250
+     ]
+    ],
+    "contact": "v1:frappe",
+    "morceaux": -30
+   }
+  },
+  {
+   "id": "C",
+   "debut": "v2-0.3",
+   "set": "fixe.Image",
+   "texte": "L'énergie libérée dépasse de plusieurs millions de fois celle de l'impact qui a contribué à la disparition des dinosaures.",
+   "intention": "la planète frappée",
+   "camera": [
+    [
+     "#C",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#D",
+     1300,
+     760,
+     1.12
+    ]
+   ],
+   "reglages": {
+    "image": "film2d/images/decor_espace.png",
+    "poussiere": false
+   }
+  },
+  {
+   "id": "D",
+   "debut": "v2:des-0.1",
+   "set": "astres.Espace",
+   "texte": "Des ondes de choc traversent la Terre… Ce n'est pas la fin de la Terre. C'est la fin de notre monde.",
+   "intention": "la Terre transformée",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     1000,
+     560,
+     1.15
+    ]
+   ],
+   "reglages": {
+    "terre": [
+     700,
+     600,
+     340
+    ],
+    "lune": [
+     [
+      0,
+      1300,
+      450,
+      250
+     ],
+     [
+      "v1:frappe",
+      1060,
+      520,
+      250
+     ]
+    ],
+    "contact": "v1:frappe",
+    "morceaux": -30
+   },
+   "filtres": [
+    {
+     "type": "fondu_noir",
+     "de": "v2:monde",
+     "a": "v2.end+0.9"
+    }
+   ]
+  },
+  {
+   "id": "E",
+   "debut": "v2.end+1.0",
+   "set": "noir",
+   "texte": "[silence 4 s]",
+   "intention": "le noir ; l'étiquette disparaît"
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v2.end+0.9"
+  }
+ ],
+ "son": [
+  {
+   "synth": "riser",
+   "args": [
+    3.0
+   ],
+   "a": "v1:frappe-3.0",
+   "gain": -18,
+   "normalise": false
+  },
+  {
+   "fichier": "../sons/sfx_real/impacts.wav",
+   "a": "v1:frappe",
+   "gain": -6,
+   "fondu_sortie": 2.0
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/space_rumble.wav",
+   "a": "v1:frappe+0.2",
+   "gain": -10,
+   "fondu_sortie": 3.0
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/space_rumble.wav",
+   "a": "v2",
+   "gain": -16,
+   "fondu_sortie": 3.0
+  }
+ ],
+ "silences": [
+  {
+   "de": "v2.end+1.0",
+   "a": "v2.end+5.2"
+  }
+ ]
+}

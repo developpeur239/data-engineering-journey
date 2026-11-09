@@ -80,9 +80,10 @@ class Laser:
         pass
 
     def render(self, t, shot, bloc):
-        R = shot["reglages"]; T = {k: bloc.t(v) for k, v in R.items()}
+        R = shot["reglages"]; T = {k: bloc.t(v) for k, v in R.items() if k not in ("duree", "distance_txt", "final_txt", "lune_r")}
+        D = R.get("duree", 2.5)
         f = canvas()
-        f = earth(f, self.E, 175, t); f = moon(f, self.M, 100)
+        f = earth(f, self.E, 175, t); f = moon(f, self.M, R.get("lune_r", 100))
         e0 = np.array([self.E[0] + 177, self.E[1] - 10.0]); m0 = np.array([self.M[0] - 100, self.M[1] - 4.0])
         items = [("Terre", (self.E[0], self.E[1] + 200), SANS, 46, DIM, 1, True), ("Lune", (self.M[0], self.M[1] + 125), SANS, 46, DIM, 1, True),
                  ("Calern", (e0[0] - 20, e0[1] - 80), SANS, 40, INK, ease((t - T["depart"] + 1.2) / 0.4), True)]
@@ -90,7 +91,7 @@ class Laser:
         if glow > 0:
             for x in range(int(e0[0]) + 20, int(m0[0]) - 20, 26):
                 cv2.line(f, (x, 720), (x + 12, 720), tuple(int(v * glow) for v in (70, 90, 120)), 2, cv2.LINE_AA)
-            items.append(("384 000 km", ((e0[0] + m0[0]) / 2, 740), MONO, 52, INK, glow, True))
+            items.append((R.get("distance_txt", "384 000 km"), ((e0[0] + m0[0]) / 2, 740), MONO, 52, INK, glow, True))
         rf = ease((t - T["reflecteur"]) / 0.4)                                    # le réflecteur sur la Lune
         if rf > 0:
             cv2.rectangle(f, (int(m0[0]) + 4, int(m0[1]) - 13), (int(m0[0]) + 28, int(m0[1]) + 13), tuple(int(v * rf) for v in GOLD), -1)
@@ -113,11 +114,11 @@ class Laser:
                 f = glow_dot(f, p, 12, GREEN)
             items.append(("aller  →", ((e0[0] + m0[0]) / 2, 450), SANS, 44, GREEN, ease((t - a) / 0.3) * (1 - ease((t - mid) / 0.3)), True))
             items.append(("←  retour", ((e0[0] + m0[0]) / 2, 450), SANS, 44, GREEN, ease((t - mid) / 0.3) * (1 - ease((t - b - 1.5) / 0.4)), True))
-            u = np.clip((t - a) / (b - a), 0, 1) * 2.5                           # le chronomètre : 0 → 2,50 s pile sur « demie »
+            u = np.clip((t - a) / (b - a), 0, 1) * D                             # le chronomètre : 0 → la durée, pile sur le mot
             items.append((f"{u:.2f} s".replace(".", ","), (W / 2, 150), MONO, 92, GOLD if t >= b else INK, 1, True))
         ar = ease((t - T["aller_retour"]) / 0.4)
         if ar > 0:
-            items.append(("aller-retour : environ 2,5 secondes", (W / 2, 890), SANS, 54, GOLD, ar, True))
+            items.append((R.get("final_txt", "aller-retour : environ 2,5 secondes"), (W / 2, 890), SANS, 54, GOLD, ar, True))
         return texts(f, items)
 
 

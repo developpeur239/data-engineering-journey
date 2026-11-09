@@ -1,0 +1,330 @@
+{
+ "_doc": "Bloc 08 : voir plans_reste.py (source du découpage).",
+ "look": "nuit",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.8
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.3"
+  }
+ ],
+ "fin": "v2.end+2.0",
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "scenes.Seisme",
+   "texte": "Le bitume se soulève. Une fissure apparaît. Elle s'étend jusqu'au pied d'un immeuble.",
+   "intention": "la chaussée bombe, la fissure court vers l'immeuble",
+   "camera": [
+    [
+     "#A",
+     1150,
+     1250,
+     2.0
+    ],
+    [
+     "#B",
+     900,
+     1200,
+     1.8
+    ]
+   ],
+   "reglages": {
+    "souleve": "v1:soulève",
+    "fissure": "v1:fissure",
+    "duree_fissure": 3.2
+   },
+   "secousses": [
+    {
+     "a": "v1:soulève",
+     "force": 6
+    },
+    {
+     "a": "v1:fissure",
+     "force": 8
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "debut": "v1:un#2-0.2",
+   "set": "scenes.Seisme",
+   "texte": "Un craquement retentit. Puis une partie de la façade s'effondre.",
+   "intention": "un pan de façade tombe",
+   "camera": [
+    [
+     "#B",
+     800,
+     800,
+     1.6
+    ],
+    [
+     "#C",
+     850,
+     900,
+     1.5
+    ]
+   ],
+   "reglages": {
+    "souleve": "#A",
+    "fissure": "#A",
+    "effondre": "v1:façade-0.3"
+   },
+   "secousses": [
+    {
+     "a": "v1:craquement",
+     "force": 14
+    },
+    {
+     "a": "v1:façade",
+     "force": 18,
+     "duree": 0.8
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "debut": "v1:certaines-0.1",
+   "set": "scenes.Seisme",
+   "texte": "Certaines régions commencent à céder sous les contraintes qui déforment la planète.",
+   "intention": "la rue abîmée, la Lune géante",
+   "camera": [
+    [
+     "#C",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#D",
+     1376,
+     700,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "souleve": "#A",
+    "fissure": "#A",
+    "effondre": "#A"
+   }
+  },
+  {
+   "id": "D",
+   "debut": "v1:car-0.1",
+   "set": "scenes.Croute",
+   "texte": "Car la Terre n'est pas parfaitement rigide. Aujourd'hui déjà, l'attraction de la Lune soulève et abaisse légèrement le sol. Habituellement, ces mouvements passent inaperçus.",
+   "intention": "le sol aussi a ses marées",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     960,
+     540,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "rigide": "v1:rigide",
+    "sol": "v1:soulève#2"
+   }
+  },
+  {
+   "id": "E",
+   "debut": "v2-0.3",
+   "set": "scenes.Force",
+   "texte": "Mais à une heure et demie du contact, les forces… presque mille fois leur intensité initiale. Cela ne veut pas dire que le sol monte mille fois plus haut…",
+   "intention": "× 940, mais une force",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#F",
+     980,
+     540,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "v1": "#E",
+    "v75": "#E+0.3",
+    "v940": "v2:mille",
+    "hauteur": "v2:veut"
+   }
+  },
+  {
+   "id": "F",
+   "debut": "v2:ici-0.1",
+   "set": "scenes.Seisme",
+   "texte": "Ici, certaines déformations suffisent à endommager les infrastructures.",
+   "intention": "la rue fissurée",
+   "camera": [
+    [
+     "#F",
+     1200,
+     1150,
+     1.6
+    ],
+    [
+     "#G",
+     1100,
+     1100,
+     1.5
+    ]
+   ],
+   "reglages": {
+    "souleve": "#A",
+    "fissure": "#A",
+    "effondre": "#A"
+   }
+  },
+  {
+   "id": "G",
+   "debut": "v2:mais#2-0.1",
+   "set": "astres.Ciel",
+   "texte": "Mais pendant que la Terre se déforme… les astronomes découvrent quelque chose d'encore plus inquiétant. La Lune aussi commence à changer.",
+   "intention": "la Lune, de près : une première ligne sombre",
+   "camera": [
+    [
+     "#G",
+     2150,
+     400,
+     2.2
+    ],
+    [
+     "#G.end",
+     2150,
+     380,
+     3.0
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     2150,
+     380,
+     330
+    ],
+    "fract": [
+     [
+      "v2:changer-0.6",
+      0.0
+     ],
+     [
+      "v2.end+2",
+      0.25
+     ]
+    ],
+    "lueur": 0.4
+   }
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v2.end+2.0"
+  },
+  {
+   "texte": "1 h 30 avant l'impact",
+   "de": "v1-0.3",
+   "a": "v1:fissure",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    900
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 46,
+   "couleur": [
+    236,
+    240,
+    245
+   ],
+   "fond": true
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 5400,
+   "de": "v1-0.3",
+   "a": "v1:fissure",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    980
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 40,
+   "couleur": [
+    255,
+    226,
+    170
+   ],
+   "fond": true
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../b01/sfx_real/amb_ville_nuit.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": "#D",
+   "rms": -32,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "fichier": "../sons/sfx_real/craquement.wav",
+   "a": "v1:craquement-0.2",
+   "gain": -8
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/space_rumble.wav",
+   "a": "v1:soulève-0.2",
+   "gain": -18,
+   "fondu_sortie": 1.0
+  },
+  {
+   "fichier": "../b01/sfx_real/amb_ville_nuit.wav",
+   "a": "#F",
+   "boucle": true,
+   "jusqua": "#G",
+   "rms": -32,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_nuit.wav",
+   "a": "#G",
+   "boucle": true,
+   "jusqua": "v2.end+2.0",
+   "rms": -34,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  }
+ ]
+}

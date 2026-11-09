@@ -119,7 +119,8 @@ class Bloc:
             key, n = m.group(1), int(m.group(2))
         k = 0
         for x in self.words[vid]:
-            if re.sub(r"[^\w’']", "", x["w"].lower()) == key:
+            tok = re.sub(r"[^\w’']", "", x["w"].lower())
+            if tok == key or re.sub(r"^(?:[ldjnmstc]|qu|jusqu|lorsqu|puisqu)[’']", "", tok) == key:   # « d’enregistrer » ↔ « enregistrer »
                 k += 1
                 if k == n:
                     return self.vat[vid] + (x["end"] if which == "end" else x["start"])
@@ -263,7 +264,7 @@ def frame(bloc: Bloc, i: int):
     shot = bloc.shot_at(t)
     over = bloc.data.get("textes", [])
     if shot.get("set") == "noir":
-        f = np.zeros((H, W, 3), np.float32)
+        f = apply_filters(np.zeros((H, W, 3), np.float32), t, shot, bloc)           # noir (+ séquence d'images éventuelle)
     else:
         st = get_set(shot["set"], bloc)
         src = st.render(t, shot, bloc)
