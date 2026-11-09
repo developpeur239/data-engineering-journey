@@ -196,7 +196,8 @@
    "texte": "Et pourtant, dehors, rien ne semble avoir changé.",
    "intention": "le lendemain matin, la ville ordinaire, lumineuse, calme",
    "reglages": {
-    "vue": "large"
+    "vue": "large",
+    "marche": "#I-0.35"
    },
    "look": "jour"
   },
@@ -219,7 +220,8 @@
    "texte": "Les enfants vont à l'école.",
    "intention": "les enfants devant le portail de l'école",
    "reglages": {
-    "vue": "ecole"
+    "vue": "ecole",
+    "marche": "#I-0.35"
    },
    "look": "jour"
   },
