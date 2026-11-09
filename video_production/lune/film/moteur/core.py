@@ -467,6 +467,9 @@ def main(argv):
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", str(tmp / "%05d.png"), "-i", str(wav),
                     "-c:v", "libx264", "-preset", "slow", "-b:v", "14M", "-maxrate", "18M", "-bufsize", "28M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ac", "2",
                     "-shortest", "-movflags", "+faststart", str(out)], check=True)
+    if "--garder" not in argv:                                     # les images (plusieurs Go) ne servent plus : place disque
+        import shutil  # noqa: PLC0415
+        shutil.rmtree(tmp, ignore_errors=True)
     print("ok", out)
 
 
