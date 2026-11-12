@@ -1,0 +1,48 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Accroche,Anton,132,&H001E96FF,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,100,1,0,1,6,4,8,40,40,0,1
+Style: Sous,Anton,58,&H00FFFFFF,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,100,0,0,1,4,3,8,40,40,0,1
+Style: Mot,Anton,92,&H00FFFFFF,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,100,1,0,1,6,4,8,60,60,0,1
+Style: Petit,Anton,40,&H00D8D0C8,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,100,2,0,1,3,2,8,40,40,0,1
+Style: Voile,Anton,20,&H40000000,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 1,0:00:00.00,0:00:29.22,Petit,,0,0,0,,{\pos(540,90)}SIMULATION HYPOTHÉTIQUE
+Dialogue: 1,0:00:00.00,0:00:25.72,Accroche,,0,0,0,,{\pos(540,200)}LA LUNE TOMBE
+Dialogue: 1,0:00:00.00,0:00:25.72,Sous,,0,0,0,,{\pos(540,375)}Il reste moins de 5 jours
+Dialogue: 3,0:00:25.72,0:00:29.22,Voile,,0,0,0,,{\pos(0,0)\fad(300,0)\p1}m 0 0 l 1080 0 1080 1920 0 1920{\p0}
+Dialogue: 4,0:00:25.72,0:00:29.22,Accroche,,0,0,0,,{\pos(540,720)\fad(300,0)}QUE VA-T-IL\NSE PASSER ?
+Dialogue: 4,0:00:26.32,0:00:29.22,Sous,,0,0,0,,{\pos(540,1080)\fad(300,0)\c&HFFFFFF&}LE FILM COMPLET : TOUCHE LE LIEN EN BAS
+Dialogue: 0,0:00:00.26,0:00:01.10,Mot,,0,0,0,,{\pos(540,1395)}LUNE NE SUIT
+Dialogue: 0,0:00:01.10,0:00:01.98,Mot,,0,0,0,,{\pos(540,1395)}PLUS SON ORBITE
+Dialogue: 0,0:00:01.98,0:00:02.84,Mot,,0,0,0,,{\pos(540,1395)}HABITUELLE.
+Dialogue: 0,0:00:02.84,0:00:03.76,Mot,,0,0,0,,{\pos(540,1395)}ELLE TOMBE VERS
+Dialogue: 0,0:00:03.76,0:00:04.42,Mot,,0,0,0,,{\pos(540,1395)}LA TERRE.
+Dialogue: 0,0:00:04.56,0:00:05.40,Mot,,0,0,0,,{\pos(540,1395)}LES CALCULS DONNENT
+Dialogue: 0,0:00:05.40,0:00:07.10,Mot,,0,0,0,,{\pos(540,1395)}UN RÉSULTAT TERRIFIANT.
+Dialogue: 0,0:00:07.10,0:00:08.28,Mot,,0,0,0,,{\pos(540,1395)}QUATRE JOURS ET VINGT
+Dialogue: 0,0:00:08.28,0:00:09.08,Mot,,0,0,0,,{\pos(540,1395)}HEURES.
+Dialogue: 0,0:00:09.08,0:00:09.56,Mot,,0,0,0,,{\pos(540,1395)}C’EST LA DURÉE
+Dialogue: 0,0:00:09.56,0:00:10.84,Mot,,0,0,0,,{\pos(540,1395)}TOTALE DE SA CHUTE,
+Dialogue: 0,0:00:10.84,0:00:11.89,Mot,,0,0,0,,{\pos(540,1395)}JUSQU’À L’IMPACT.
+Dialogue: 0,0:00:11.98,0:00:12.64,Mot,,0,0,0,,{\pos(540,1395)}MOINS DE CINQ
+Dialogue: 0,0:00:12.64,0:00:13.60,Mot,,0,0,0,,{\pos(540,1395)}JOURS POUR UN MONDE
+Dialogue: 0,0:00:13.60,0:00:14.34,Mot,,0,0,0,,{\pos(540,1395)}DE HUIT MILLIARDS
+Dialogue: 0,0:00:14.34,0:00:15.36,Mot,,0,0,0,,{\pos(540,1395)}D’HABITANTS.
+Dialogue: 0,0:00:15.36,0:00:16.26,Mot,,0,0,0,,{\pos(540,1395)}ET POURTANT,
+Dialogue: 0,0:00:16.26,0:00:16.94,Mot,,0,0,0,,{\pos(540,1395)}DEHORS,
+Dialogue: 0,0:00:16.94,0:00:17.52,Mot,,0,0,0,,{\pos(540,1395)}RIEN NE SEMBLE
+Dialogue: 0,0:00:17.52,0:00:18.64,Mot,,0,0,0,,{\pos(540,1395)}AVOIR CHANGÉ.
+Dialogue: 0,0:00:18.64,0:00:19.90,Mot,,0,0,0,,{\pos(540,1395)}LES AVIONS DÉCOLLENT.
+Dialogue: 0,0:00:19.90,0:00:20.50,Mot,,0,0,0,,{\pos(540,1395)}LES ENFANTS VONT
+Dialogue: 0,0:00:20.50,0:00:21.46,Mot,,0,0,0,,{\pos(540,1395)}À L’ÉCOLE.
+Dialogue: 0,0:00:21.46,0:00:22.76,Mot,,0,0,0,,{\pos(540,1395)}LES RESTAURANTS OUVRENT.
+Dialogue: 0,0:00:22.76,0:00:23.74,Mot,,0,0,0,,{\pos(540,1395)}DANS LE CIEL,
+Dialogue: 0,0:00:23.74,0:00:24.44,Mot,,0,0,0,,{\pos(540,1395)}LA LUNE PARAÎT
+Dialogue: 0,0:00:24.44,0:00:25.72,Mot,,0,0,0,,{\pos(540,1395)}TOUJOURS AUSSI PAISIBLE.
