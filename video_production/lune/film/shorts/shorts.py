@@ -2,6 +2,8 @@
 
   python3 shorts/shorts.py [nom]     → shorts/<nom>.mp4
 
+Accroche dès la première image : pas de fondu d'entrée, la voix démarre dans la première demi-seconde
+(le premier Short, avec 0,6 s de noir avant la voix, a été balayé par 49 % des spectateurs).
 Chaque Short : le plan 16:9 agrandi au centre sur un fond flouté du même plan, une accroche en haut,
 les sous-titres mot à mot (Whisper, mots.json) sous l'image, « Simulation hypothétique » et un renvoi au film.
 Police : Anton (SIL Open Font License), shorts/polices/Anton.ttf.
@@ -17,11 +19,11 @@ sys.path.insert(0, str(FILM))
 from moteur.core import Bloc  # noqa: E402
 
 SHORTS = {
-    "s1_006_seconde": dict(bloc="b10", debut=27.6, fin=55.8, voix=["v3", "v4"],
+    "s1_006_seconde": dict(bloc="b10", debut=27.8, fin=55.8, voix=["v3", "v4"],
                            accroche=("0,06 SECONDE", "La Lune n'est plus qu'à 9 000 km")),
-    "s2_la_lune_se_brise": dict(bloc="b11", debut=0.0, fin=46.6, voix=["v1", "v2"],
+    "s2_la_lune_se_brise": dict(bloc="b11", debut=2.9, fin=46.6, voix=["v1", "v2"],
                                 accroche=("LA LUNE SE BRISE", "Et si elle tombait sur la Terre ?")),
-    "s3_impact": dict(bloc="b12", debut=2.0, fin=48.6, voix=["v1", "v2"],
+    "s3_impact": dict(bloc="b12", debut=2.5, fin=48.6, voix=["v1", "v2"],
                       accroche=("L'IMPACT", "10 km par seconde")),
 }
 H_IMG = 760                                   # hauteur du plan 16:9 dans le cadre vertical (rogné à 1080 de large)
@@ -67,8 +69,8 @@ def ass(nom, S):
         "Style: Petit,Anton,40,&H00D8D0C8,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,100,2,0,1,3,2,8,40,40,0,1",
         "", "[Events]", "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
         f"Dialogue: 1,{ts(0)},{ts(dur)},Petit,,0,0,0,,{{\\pos(540,90)}}SIMULATION HYPOTHÉTIQUE",
-        f"Dialogue: 1,{ts(0)},{ts(dur)},Accroche,,0,0,0,,{{\\pos(540,200)\\fad(200,0)}}{a1}",
-        f"Dialogue: 1,{ts(0)},{ts(dur)},Sous,,0,0,0,,{{\\pos(540,375)\\fad(400,0)}}{a2}",
+        f"Dialogue: 1,{ts(0)},{ts(dur)},Accroche,,0,0,0,,{{\\pos(540,200)}}{a1}",
+        f"Dialogue: 1,{ts(0)},{ts(dur)},Sous,,0,0,0,,{{\\pos(540,375)}}{a2}",
         f"Dialogue: 1,{ts(0)},{ts(dur - 4)},Petit,,0,0,0,,{{\\pos(540,1700)}}LE FILM COMPLET SUR LA CHAÎNE",
         f"Dialogue: 2,{ts(dur - 4)},{ts(dur)},Mot,,0,0,0,,{{\\pos(540,1650)\\fad(250,0)\\c&H001E96FF&}}LE FILM COMPLET\\NSUR LA CHAÎNE",
     ]
@@ -98,8 +100,8 @@ def rendre(nom):
           f"[a]scale=-2:1920,crop=1080:1920,gblur=sigma=28,eq=brightness=-0.18:saturation=0.8[fond];"
           f"[b]crop=1760:990:80:90,scale={w_img}:{H_IMG},crop=1080:{H_IMG}[img];"          # ôte le bandeau du film
           f"[fond][img]overlay=0:{Y_IMG},ass={sub}:fontsdir={ICI / 'polices'},"
-          f"fade=t=in:st=0:d=0.3,fade=t=out:st={dur - 0.4:.2f}:d=0.4[v];"
-          f"[0:a]afade=t=in:st=0:d=0.15,afade=t=out:st={dur - 0.5:.2f}:d=0.5[s]")
+          f"fade=t=out:st={dur - 0.4:.2f}:d=0.4[v];"
+          f"[0:a]afade=t=in:st=0:d=0.03,afade=t=out:st={dur - 0.5:.2f}:d=0.5[s]")
     out = ICI / f"{nom}.mp4"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(S["debut"]), "-t", f"{dur:.2f}", "-i", str(src),
                     "-filter_complex", fc, "-map", "[v]", "-map", "[s]", "-c:v", "libx264", "-preset", "medium",

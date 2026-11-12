@@ -12,33 +12,33 @@ Style: Petit,Anton,40,&H00D8D0C8,&H00FFFFFF,&H00100808,&H80000000,0,0,0,0,100,10
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 1,0:00:00.00,0:00:28.20,Petit,,0,0,0,,{\pos(540,90)}SIMULATION HYPOTHÉTIQUE
-Dialogue: 1,0:00:00.00,0:00:28.20,Accroche,,0,0,0,,{\pos(540,200)\fad(200,0)}0,06 SECONDE
-Dialogue: 1,0:00:00.00,0:00:28.20,Sous,,0,0,0,,{\pos(540,375)\fad(400,0)}La Lune n'est plus qu'à 9 000 km
-Dialogue: 1,0:00:00.00,0:00:24.20,Petit,,0,0,0,,{\pos(540,1700)}LE FILM COMPLET SUR LA CHAÎNE
-Dialogue: 2,0:00:24.20,0:00:28.20,Mot,,0,0,0,,{\pos(540,1650)\fad(250,0)\c&H001E96FF&}LE FILM COMPLET\NSUR LA CHAÎNE
-Dialogue: 0,0:00:00.34,0:00:01.30,Mot,,0,0,0,,{\pos(540,1395)}LÉA LANCE UNE DERNIÈRE
-Dialogue: 0,0:00:01.30,0:00:02.26,Mot,,0,0,0,,{\pos(540,1395)}IMPULSION.
-Dialogue: 0,0:00:02.26,0:00:04.74,Mot,,0,0,0,,{\pos(540,1395)}0,06 SECONDE.
-Dialogue: 0,0:00:04.74,0:00:05.12,Mot,,0,0,0,,{\pos(540,1395)}IL Y A
-Dialogue: 0,0:00:05.12,0:00:05.84,Mot,,0,0,0,,{\pos(540,1395)}CINQ JOURS,
-Dialogue: 0,0:00:05.84,0:00:06.48,Mot,,0,0,0,,{\pos(540,1395)}LE MÊME TRAJET
-Dialogue: 0,0:00:06.48,0:00:08.02,Mot,,0,0,0,,{\pos(540,1395)}PRENAIT ENVIRON DEUX
-Dialogue: 0,0:00:08.02,0:00:08.52,Mot,,0,0,0,,{\pos(540,1395)}SECONDES ET DEMIE.
-Dialogue: 0,0:00:08.52,0:00:09.28,Mot,,0,0,0,,{\pos(540,1395)}À PRÉSENT,
-Dialogue: 0,0:00:09.28,0:00:10.08,Mot,,0,0,0,,{\pos(540,1395)}LA LUMIÈRE NE PARCOURT
-Dialogue: 0,0:00:10.08,0:00:11.26,Mot,,0,0,0,,{\pos(540,1395)}PLUS QU’ENVIRON NEUF
-Dialogue: 0,0:00:11.26,0:00:12.26,Mot,,0,0,0,,{\pos(540,1395)}MILLE KILOMÈTRES À L’ALLER,
-Dialogue: 0,0:00:12.26,0:00:13.92,Mot,,0,0,0,,{\pos(540,1395)}ENTRE L’OBSERVATOIRE ET LA SURFACE
-Dialogue: 0,0:00:13.92,0:00:14.78,Mot,,0,0,0,,{\pos(540,1395)}LUNAIRE.
-Dialogue: 0,0:00:15.68,0:00:16.86,Mot,,0,0,0,,{\pos(540,1395)}D’APRÈS LES CALCULS,
-Dialogue: 0,0:00:16.86,0:00:17.78,Mot,,0,0,0,,{\pos(540,1395)}IL RESTE UNE VINGTAINE
-Dialogue: 0,0:00:17.78,0:00:18.38,Mot,,0,0,0,,{\pos(540,1395)}DE MINUTES AVANT
-Dialogue: 0,0:00:18.38,0:00:19.30,Mot,,0,0,0,,{\pos(540,1395)}LE CONTACT DES DEUX
-Dialogue: 0,0:00:19.30,0:00:20.10,Mot,,0,0,0,,{\pos(540,1395)}ASTRES.
-Dialogue: 0,0:00:20.10,0:00:22.04,Mot,,0,0,0,,{\pos(540,1395)}LÉA SAUVEGARDE LA MESURE.
-Dialogue: 0,0:00:22.08,0:00:23.24,Mot,,0,0,0,,{\pos(540,1395)}LES IMMENSES FRACTURES
-Dialogue: 0,0:00:23.24,0:00:24.34,Mot,,0,0,0,,{\pos(540,1395)}SONT DÉSORMAIS VISIBLES
-Dialogue: 0,0:00:24.34,0:00:25.24,Mot,,0,0,0,,{\pos(540,1395)}À L’ŒIL NU.
-Dialogue: 0,0:00:25.24,0:00:26.00,Mot,,0,0,0,,{\pos(540,1395)}UNE PARTIE DU BORD
-Dialogue: 0,0:00:26.00,0:00:27.48,Mot,,0,0,0,,{\pos(540,1395)}LUNAIRE CHANGE DE FORME.
+Dialogue: 1,0:00:00.00,0:00:28.00,Petit,,0,0,0,,{\pos(540,90)}SIMULATION HYPOTHÉTIQUE
+Dialogue: 1,0:00:00.00,0:00:28.00,Accroche,,0,0,0,,{\pos(540,200)}0,06 SECONDE
+Dialogue: 1,0:00:00.00,0:00:28.00,Sous,,0,0,0,,{\pos(540,375)}La Lune n'est plus qu'à 9 000 km
+Dialogue: 1,0:00:00.00,0:00:24.00,Petit,,0,0,0,,{\pos(540,1700)}LE FILM COMPLET SUR LA CHAÎNE
+Dialogue: 2,0:00:24.00,0:00:28.00,Mot,,0,0,0,,{\pos(540,1650)\fad(250,0)\c&H001E96FF&}LE FILM COMPLET\NSUR LA CHAÎNE
+Dialogue: 0,0:00:00.14,0:00:01.10,Mot,,0,0,0,,{\pos(540,1395)}LÉA LANCE UNE DERNIÈRE
+Dialogue: 0,0:00:01.10,0:00:02.06,Mot,,0,0,0,,{\pos(540,1395)}IMPULSION.
+Dialogue: 0,0:00:02.06,0:00:04.54,Mot,,0,0,0,,{\pos(540,1395)}0,06 SECONDE.
+Dialogue: 0,0:00:04.54,0:00:04.92,Mot,,0,0,0,,{\pos(540,1395)}IL Y A
+Dialogue: 0,0:00:04.92,0:00:05.64,Mot,,0,0,0,,{\pos(540,1395)}CINQ JOURS,
+Dialogue: 0,0:00:05.64,0:00:06.28,Mot,,0,0,0,,{\pos(540,1395)}LE MÊME TRAJET
+Dialogue: 0,0:00:06.28,0:00:07.82,Mot,,0,0,0,,{\pos(540,1395)}PRENAIT ENVIRON DEUX
+Dialogue: 0,0:00:07.82,0:00:08.32,Mot,,0,0,0,,{\pos(540,1395)}SECONDES ET DEMIE.
+Dialogue: 0,0:00:08.32,0:00:09.08,Mot,,0,0,0,,{\pos(540,1395)}À PRÉSENT,
+Dialogue: 0,0:00:09.08,0:00:09.88,Mot,,0,0,0,,{\pos(540,1395)}LA LUMIÈRE NE PARCOURT
+Dialogue: 0,0:00:09.88,0:00:11.06,Mot,,0,0,0,,{\pos(540,1395)}PLUS QU’ENVIRON NEUF
+Dialogue: 0,0:00:11.06,0:00:12.06,Mot,,0,0,0,,{\pos(540,1395)}MILLE KILOMÈTRES À L’ALLER,
+Dialogue: 0,0:00:12.06,0:00:13.72,Mot,,0,0,0,,{\pos(540,1395)}ENTRE L’OBSERVATOIRE ET LA SURFACE
+Dialogue: 0,0:00:13.72,0:00:14.58,Mot,,0,0,0,,{\pos(540,1395)}LUNAIRE.
+Dialogue: 0,0:00:15.48,0:00:16.66,Mot,,0,0,0,,{\pos(540,1395)}D’APRÈS LES CALCULS,
+Dialogue: 0,0:00:16.66,0:00:17.58,Mot,,0,0,0,,{\pos(540,1395)}IL RESTE UNE VINGTAINE
+Dialogue: 0,0:00:17.58,0:00:18.18,Mot,,0,0,0,,{\pos(540,1395)}DE MINUTES AVANT
+Dialogue: 0,0:00:18.18,0:00:19.10,Mot,,0,0,0,,{\pos(540,1395)}LE CONTACT DES DEUX
+Dialogue: 0,0:00:19.10,0:00:19.90,Mot,,0,0,0,,{\pos(540,1395)}ASTRES.
+Dialogue: 0,0:00:19.90,0:00:21.84,Mot,,0,0,0,,{\pos(540,1395)}LÉA SAUVEGARDE LA MESURE.
+Dialogue: 0,0:00:21.88,0:00:23.04,Mot,,0,0,0,,{\pos(540,1395)}LES IMMENSES FRACTURES
+Dialogue: 0,0:00:23.04,0:00:24.14,Mot,,0,0,0,,{\pos(540,1395)}SONT DÉSORMAIS VISIBLES
+Dialogue: 0,0:00:24.14,0:00:25.04,Mot,,0,0,0,,{\pos(540,1395)}À L’ŒIL NU.
+Dialogue: 0,0:00:25.04,0:00:25.80,Mot,,0,0,0,,{\pos(540,1395)}UNE PARTIE DU BORD
+Dialogue: 0,0:00:25.80,0:00:27.28,Mot,,0,0,0,,{\pos(540,1395)}LUNAIRE CHANGE DE FORME.
