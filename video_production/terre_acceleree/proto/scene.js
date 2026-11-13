@@ -30,19 +30,36 @@ const SEQUENCES = {
     plans: [[0, 20, [46, 19, 31], [30, 21, 29], [-40, 8.5, -70], [-52, 5.5, -105]]],
   },
   nice: {
-    duree: 58, ech: 130, reac: 24, ralenti: 36, soleil: [[33, 205], [24, 224]],
+    duree: 58, ech: 130, reac: 24, ralenti: 36, soleil: [[33, 205], [7, 252]],   // l'après-midi s'achève : coucher de soleil à l'ouest
     jour: [[0, 24], [8, 23 + 59 / 60], [18, 23 + 50 / 60], [28, 23 + 40 / 60], [40, 23 + 25 / 60], [58, 23 + 10 / 60]],
     sous: [[0.5, 7.5, 'Nice, 14 h. Une journée dure 24 heures.'], [8.5, 15.5, 'La Terre se met à tourner un peu plus vite.'],
            [18, 25, 'Dix minutes de moins par jour. Ça suffit.'], [28, 35, 'Les océans glissent vers l’équateur.'],
            [38.5, 46, 'À Nice, la mer se retire.'], [49, 57, 'Les bateaux touchent le fond.']],
-    plans: [[0, 17, [46, 19, 31], [38, 20, 30], [-40, 8.5, -70], [-46, 7, -88]],                // la Promenade, plan large
-            [17, 31, [12, 3.4, 3.0], [5, 3.4, 3.0], [-30, 1.5, -60], [-37, 1.0, -60]],         // un peu au-dessus des promeneurs, derrière les chaises
-            [31, 45, [-20, 32, 2], [-20, 34, -6], [-30, 2, -200], [-30, -4, -220]],            // au-dessus de la plage, face au large
-            [45, 58, [-64, -8, -228], [-68, -9, -236], [-88, -27, -300], [-90, -29, -306]]],  // sur le fond découvert, face aux bateaux
+    // UN SEUL PLAN CONTINU (comme la référence) : points de passage [temps, position, visée], interpolés sans à-coups
+    chemin: [[0, [46, 19, 31], [-40, 8.5, -70]],          // la Promenade, plan large
+             [14, [30, 17, 22], [-45, 6, -90]],           // lente avancée
+             [26, [10, 10, 8], [-35, 2, -110]],           // on descend au-dessus des plages privées
+             [37, [-10, 22, -12], [-35, -3, -205]],       // on s'élève : le fond se découvre
+             [47, [-40, 9, -150], [-80, -18, -262]],      // on glisse au-dessus du fond découvert
+             [58, [-62, -6, -232], [-88, -28, -302]]],    // on arrive sur les bateaux échoués
     echouages: [[-84, 49.5], [-104, 52.5], [-70, 56]],                                  // [x, instant où le bateau touche le fond]
   },
 };
 const SEQ = SEQUENCES[new URLSearchParams(location.search).get('seq') || 'proto'];
+// positions de caméra connues d'avance (plans fixes ou chemin continu), pour ne rien poser devant l'objectif
+const POS_CAMERA = SEQ.chemin ? Array.from({ length: Math.ceil(SEQ.duree) + 1 }, (_, i) => cheminA(SEQ.chemin, i, 1))
+                              : SEQ.plans.flatMap(q => [q[2], q[3]]);
+function cheminA(ch, t, idx) {                       // Catmull-Rom sur le temps : idx 1 = position, 2 = visée
+  t = Math.min(Math.max(t, ch[0][0]), ch[ch.length - 1][0]);
+  let i = 0; while (i < ch.length - 2 && t > ch[i + 1][0]) i++;
+  const P = k => ch[Math.min(Math.max(k, 0), ch.length - 1)];
+  const t0 = P(i)[0], t1 = P(i + 1)[0], u = (t - t0) / (t1 - t0), u2 = u * u, u3 = u2 * u;
+  return [0, 1, 2].map(c => {
+    const p0 = P(i - 1)[idx][c], p1 = P(i)[idx][c], p2 = P(i + 1)[idx][c], p3 = P(i + 2)[idx][c];
+    const m1 = (p2 - p0) / 2, m2 = (p3 - p1) / 2;
+    return (2 * u3 - 3 * u2 + 1) * p1 + (u3 - 2 * u2 + u) * m1 + (-2 * u3 + 3 * u2) * p2 + (u3 - u2) * m2;
+  });
+}
 const DUREE = SEQ.duree;
 const LAT = 43.7 * Math.PI / 180;
 
@@ -178,7 +195,7 @@ const fond = (x, z) => {
   for (let i = 0; i < 500; i++) {
     const x = (rnd() - 0.5) * 1600, z = PLAGE - 20 - rnd() * 700, s = 0.6 + rnd() * 3;
     o.position.set(x, fond(x, z) + s * 0.3, z); o.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3); o.scale.set(s, s * 0.6, s * 1.2);
-    if (SEQ.plans.some(q => [q[2], q[3]].some(c => Math.hypot(c[0] - x, c[2] - z) < 40))) o.scale.setScalar(0.001);   // pas de rocher devant la caméra
+    if (POS_CAMERA.some(c => Math.hypot(c[0] - x, c[2] - z) < 40)) o.scale.setScalar(0.001);   // pas de rocher devant la caméra
     o.updateMatrix(); roc.setMatrixAt(i, o.matrix);
   }
   roc.castShadow = roc.receiveShadow = true; scene.add(roc);
@@ -202,7 +219,7 @@ for (let x = -1300; x < 1300; x += 26 + rnd() * 10) {
   mat.map.repeat.set(w / 12, h / 22); mat.map.needsUpdate = true;
   mat.color.setHSL(0.08 + rnd() * 0.04, 0.35, 0.78 + rnd() * 0.1);
   // pas d'immeuble contre une position de caméra (il boucherait l'image)
-  if (SEQ.plans.some(q => [q[2], q[3]].some(c => Math.abs(c[0] - x) < w / 2 + 8 && Math.abs(c[2] - 37) < 14))) continue;
+  if (POS_CAMERA.some(c => Math.abs(c[0] - x) < w / 2 + 8 && Math.abs(c[2] - 37) < 14)) continue;
   ajoute(new THREE.BoxGeometry(w, h, 14), mat, x, h / 2, 37);
   ajoute(new THREE.BoxGeometry(w + 0.6, 0.8, 14.6), new THREE.MeshStandardMaterial({ color: 0xa8553a, roughness: 0.8 }), x, h + 0.4, 37);
 }
@@ -242,7 +259,10 @@ function palmier(x, z, h) {
   g.position.set(x, 0.2, z); scene.add(g); return g;
 }
 const palmiers = [];
-for (let x = -900; x < 400; x += 13 + rnd() * 4) palmiers.push(palmier(x, 11.2, 9 + rnd() * 3));
+for (let x = -900; x < 400; x += 13 + rnd() * 4) {
+  const pm = palmier(x, 11.2, 9 + rnd() * 3); palmiers.push(pm);
+  if (POS_CAMERA.some(c => Math.hypot(c[0] - x, c[2] - 11.2) < 14 && c[1] < 22)) pm.visible = false;   // pas de palme devant l'objectif
+}
 
 // lampadaires et chaises bleues
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x2e3b44, roughness: 0.5, metalness: 0.6 });
@@ -352,7 +372,7 @@ function poseGens(t) {
       } else marche = assis ? 0 : 0.15;
     }
     const y = fond(x, z) > -0.1 || z > 0 ? 0.05 : fond(x, z) + 0.06;
-    const cache = Math.hypot(x - camera.position.x, z - camera.position.z) < 9 ? 0 : 1;
+    const cache = Math.hypot(x - camera.position.x, y - camera.position.y, z - camera.position.z) < 5 ? 0 : 1;
     const bob = Math.abs(Math.sin(t * 7 * p.v + p.ph)) * 0.05 * marche;
     const hJ = assis ? 0.25 : 0.85;
     o3.rotation.set(0, cap, 0);
@@ -437,6 +457,9 @@ soleil.shadow.bias = -0.0004; scene.add(soleil, soleil.target);
 const ciel = new THREE.HemisphereLight(0xbcd6f0, 0x8a7c66, 1.1); scene.add(ciel);
 // caméra et voitures, recalculables sans rendu (utilisé aussi par window.etat pour caler le son)
 function placeCamera(t) {
+  if (SEQ.chemin) {
+    camera.position.set(...cheminA(SEQ.chemin, t, 1)); camera.lookAt(...cheminA(SEQ.chemin, t, 2)); camera.updateMatrixWorld(); return;
+  }
   const p = SEQ.plans.find(q => t >= q[0] && t < q[1]) || SEQ.plans[SEQ.plans.length - 1];
   const k = clamp((t - p[0]) / (p[1] - p[0]), 0, 1);
   camera.position.set(...[0, 1, 2].map(i => lerp(p[2][i], p[3][i], k)));
@@ -509,9 +532,10 @@ window.etat = (t) => {
   const coques = bateaux.map(b => { const q = new THREE.Vector3(b.userData.x, b.userData.fondY + 1, b.userData.z), d = q.distanceTo(camera.position); q.project(camera);
     return { x: +b.userData.x.toFixed(1), z: +b.userData.z.toFixed(1), fond: +b.userData.fondY.toFixed(1), echoue: !(niveau > b.userData.fondY + 0.9),
              ex: +q.x.toFixed(3), vis: Math.abs(q.x) < 1 && Math.abs(q.y) < 1 && q.z < 1, d: +d.toFixed(1) }; });
-  const plan = SEQ.plans.findIndex(q => t >= q[0] && t < q[1]);
+  const plan = SEQ.chemin ? -1 : SEQ.plans.findIndex(q => t >= q[0] && t < q[1]);
+  const surFond = camera.position.z < PLAGE && camera.position.z > zs, hauteur = camera.position.y - fond(camera.position.x, camera.position.z);
   const rive = new THREE.Vector3(camera.position.x, niveau, Math.min(zs, camera.position.z)), drive = rive.distanceTo(camera.position);
-  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos, coques, plan: plan < 0 ? SEQ.plans.length - 1 : plan, drive: +drive.toFixed(1), cam: camera.position.toArray().map(v => +v.toFixed(1)) };
+  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos, coques, plan: SEQ.chemin ? 0 : (plan < 0 ? SEQ.plans.length - 1 : plan), surFond, hauteur: +hauteur.toFixed(1), drive: +drive.toFixed(1), cam: camera.position.toArray().map(v => +v.toFixed(1)) };
 };
 await document.fonts.ready;
 window.frame(0);
