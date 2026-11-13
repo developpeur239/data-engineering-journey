@@ -324,13 +324,12 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(11000, 48, 24), new THREE.Sh
     float fbm(vec2 p){ float s = 0., a = .5; for (int k = 0; k < 6; k++){ s += a * n(p); p = p * 2.03 + 17.1; a *= .5; } return s; }
     void main(){
       vec3 d = normalize(vDir); float e = max(d.y, 0.);
-      vec3 zen = mix(vec3(.10,.30,.62), vec3(.16,.24,.48), soir);
+      vec3 zen = mix(vec3(.20,.44,.78), vec3(.24,.36,.62), soir);
       // la lueur du soir se concentre du côté du soleil ; à l'opposé, le ciel reste bleu-mauve
       float cote = pow(max(dot(normalize(d.xz + 1e-4), normalize(sunDir.xz + 1e-4)), 0.), 7.);
       float chaudH = soir * (.25 + .75 * cote);
       vec3 hor = mix(vec3(.74,.85,.94), vec3(.98,.80,.62), chaudH);
-      zen = mix(zen, vec3(.14,.22,.46), soir * (1. - cote) * .6);
-      vec3 c = mix(hor, zen, pow(e, .32));
+      vec3 c = mix(hor, zen, pow(e, .45));
       float sd = max(dot(d, normalize(sunDir)), 0.);
       vec3 chaud = mix(vec3(1.,.95,.85), vec3(1.,.72,.42), soir);
       c += chaud * (pow(sd, 8.) * .35 + pow(sd, 90.) * .6) + chaud * smoothstep(.9994, .9997, sd) * 2.;
