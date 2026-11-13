@@ -1,0 +1,10 @@
+{
+  "name": "terre-acceleree-proto",
+  "private": true,
+  "description": "Prototype 3D : et si la Terre tournait de plus en plus vite ? (Nice)",
+  "dependencies": {
+    "@fontsource/inter": "5.1.0",
+    "@fontsource/source-serif-4": "5.1.0",
+    "three": "0.170.0"
+  }
+}

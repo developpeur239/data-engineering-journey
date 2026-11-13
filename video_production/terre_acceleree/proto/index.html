@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype · La Terre accélère</title>
+<style>
+  @font-face { font-family: Serif4; src: url(node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-300-normal.woff2); font-weight: 300; }
+  @font-face { font-family: Serif4; src: url(node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-400-italic.woff2); font-style: italic; }
+  @font-face { font-family: InterW; src: url(node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: InterW; src: url(node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2); font-weight: 600; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  canvas { display: block; }
+  #voile { position: absolute; inset: 0; pointer-events: none;
+           background: radial-gradient(ellipse 900px 520px at 0 0, rgba(10,25,45,.42), rgba(10,25,45,0) 70%),
+                       linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,0) 22%); }
+  #hud { position: absolute; left: 96px; top: 86px; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.35); }
+  #hud .lab { font: 600 21px InterW; letter-spacing: .26em; opacity: .92; }
+  #hud .big { font: 300 112px Serif4; line-height: 1; margin: 10px 0 46px; letter-spacing: -.01em; }
+  #hud .ln { font: 500 20px InterW; letter-spacing: .2em; margin-top: 14px; opacity: .9; }
+  #hud .or { color: #f2b56b; opacity: 1; }
+  #sous { position: absolute; left: 0; right: 0; bottom: 86px; text-align: center; color: #fff;
+          font: italic 400 44px Serif4; text-shadow: 0 2px 20px rgba(0,0,0,.6); transition: none; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./node_modules/three/build/three.module.js",
+               "three/addons/": "./node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="voile"></div>
+<div id="hud">
+  <div class="lab">UNE JOURNÉE DURE</div>
+  <div class="big" id="jour">24 h 00 min</div>
+  <div class="ln" id="poids">VOUS PESEZ 75,00 KG</div>
+  <div class="ln">NICE · 43,7° NORD</div>
+  <div class="ln or" id="mer">LA MER EST À SON NIVEAU</div>
+</div>
+<div id="sous"></div>
+<script type="module" src="scene.js"></script>
+</body>
+</html>
