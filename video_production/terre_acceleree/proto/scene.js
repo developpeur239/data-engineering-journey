@@ -8,9 +8,7 @@
 import * as THREE from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 
-const W = 1920, H = 1080, DUREE = 20;
-const LAT = 43.7 * Math.PI / 180;
-
+const W = 1920, H = 1080;
 // ---------- aléa reproductible ----------
 let seed = 7;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -19,19 +17,60 @@ const lerp = (a, b, u) => a + (b - a) * u;
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const smooth = u => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); };
 
+// ---------- séquences (?seq=… dans l'adresse ; « proto » = le prototype validé de 20 s) ----------
+// jour : points (temps s, durée du jour h) interpolés sans à-coups ; ech : échelle (m) de la baisse visible ;
+// plans : [début, fin, position A, position B, visée A, visée B] ; soleil : [élévation, azimut] début → fin ;
+// reac : décalage des réactions de la foule ; ralenti : instant où les voitures ralentissent.
+const SEQUENCES = {
+  proto: {
+    duree: 20, ech: 250, reac: 0, ralenti: 12, soleil: [[33, 205], [9, 246]],
+    jour: Array.from({ length: 21 }, (_, i) => [i, 24 - 2.5 * Math.pow(i / 20, 3)]),
+    sous: [[0, 4.6, 'Nice, 14 h. Une journée dure 24 heures.'], [4.8, 9.6, 'La Terre se met à tourner un peu plus vite.'],
+           [9.8, 14.6, 'Les océans glissent vers l’équateur.'], [14.8, 20, 'À Nice, la mer se retire.']],
+    plans: [[0, 20, [46, 19, 31], [30, 21, 29], [-40, 8.5, -70], [-52, 5.5, -105]]],
+  },
+  nice: {
+    duree: 58, ech: 130, reac: 24, ralenti: 36, soleil: [[33, 205], [24, 224]],
+    jour: [[0, 24], [8, 23 + 59 / 60], [18, 23 + 50 / 60], [28, 23 + 40 / 60], [40, 23 + 25 / 60], [58, 23 + 10 / 60]],
+    sous: [[0.5, 7.5, 'Nice, 14 h. Une journée dure 24 heures.'], [8.5, 15.5, 'La Terre se met à tourner un peu plus vite.'],
+           [18, 25, 'Dix minutes de moins par jour. Ça suffit.'], [28, 35, 'Les océans glissent vers l’équateur.'],
+           [38.5, 46, 'À Nice, la mer se retire.'], [49, 57, 'Les bateaux touchent le fond.']],
+    plans: [[0, 17, [46, 19, 31], [38, 20, 30], [-40, 8.5, -70], [-46, 7, -88]],                // la Promenade, plan large
+            [17, 31, [12, 3.4, 3.0], [5, 3.4, 3.0], [-30, 1.5, -60], [-37, 1.0, -60]],         // un peu au-dessus des promeneurs, derrière les chaises
+            [31, 45, [-20, 32, 2], [-20, 34, -6], [-30, 2, -200], [-30, -4, -220]],            // au-dessus de la plage, face au large
+            [45, 58, [-64, -8, -228], [-68, -9, -236], [-88, -27, -300], [-90, -29, -306]]],  // sur le fond découvert, face aux bateaux
+    echouages: [[-84, 49.5], [-104, 52.5], [-70, 56]],                                  // [x, instant où le bateau touche le fond]
+  },
+};
+const SEQ = SEQUENCES[new URLSearchParams(location.search).get('seq') || 'proto'];
+const DUREE = SEQ.duree;
+const LAT = 43.7 * Math.PI / 180;
+
+
+// interpolation monotone (Fritsch–Carlson) : le compteur ne remonte jamais et n'a pas d'à-coups
+function pchip(pts) {
+  const n = pts.length, x = pts.map(p => p[0]), y = pts.map(p => p[1]);
+  const h = x.slice(1).map((v, i) => v - x[i]), d = h.map((hi, i) => (y[i + 1] - y[i]) / hi);
+  const m = y.map((_, i) => i === 0 ? d[0] : i === n - 1 ? d[n - 2] : (d[i - 1] * d[i] <= 0 ? 0 : 3 * (h[i - 1] + h[i]) / ((2 * h[i] + h[i - 1]) / d[i - 1] + (h[i] + 2 * h[i - 1]) / d[i])));
+  return t => {
+    t = clamp(t, x[0], x[n - 1]); let i = 0; while (i < n - 2 && t > x[i + 1]) i++;
+    const u = (t - x[i]) / h[i], u2 = u * u, u3 = u2 * u;
+    return (2 * u3 - 3 * u2 + 1) * y[i] + (u3 - 2 * u2 + u) * h[i] * m[i] + (-2 * u3 + 3 * u2) * y[i + 1] + (u3 - u2) * h[i] * m[i + 1];
+  };
+}
+
 // ---------- chronologie ----------
-const jourH = t => 24 - 2.5 * Math.pow(clamp(t / DUREE, 0, 1), 3);           // durée du jour (h)
+const jourH = pchip(SEQ.jour);                                                   // durée du jour (h)
 const baisse = t => 11000 * (Math.pow(24 / jourH(t), 2) - 1) * (2 / 3 - Math.cos(LAT) ** 2); // m
 const poids = t => {
   const g = 9.806, R = 6.371e6, c2 = Math.cos(LAT) ** 2;
   const w = 2 * Math.PI / (jourH(t) * 3600), w0 = 2 * Math.PI / 86400;
   return 75 * (g - w * w * R * c2) / (g - w0 * w0 * R * c2);
 };
-const visuel = t => 46 * (1 - Math.exp(-baisse(t) / 250));                       // baisse visible (m)
-const SOUS = [[0, 4.6, 'Nice, 14 h. Une journée dure 24 heures.'],
-              [4.8, 9.6, 'La Terre se met à tourner un peu plus vite.'],
-              [9.8, 14.6, 'Les océans glissent vers l’équateur.'],
-              [14.8, 20, 'À Nice, la mer se retire.']];
+const visuel = t => 46 * (1 - Math.exp(-baisse(t) / SEQ.ech));                  // baisse visible (m)
+const SOUS = SEQ.sous;
+window.jourSeq = t => jourH(t);                                                  // pour le son (tic-tac)
+window.DUREE = DUREE;
 
 // ---------- rendu ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -123,7 +162,15 @@ const fond = (x, z) => {
   }
   geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   geo.computeVertexNormals();
-  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.03 }));
+  const texFond = canvasTex(512, 512, (g, w, h) => {
+    g.fillStyle = '#d8d8d8'; g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 2) { const v = 205 + 25 * Math.sin(y * 0.19 + Math.sin(y * 0.05) * 3); g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(0, y, w, 2); }   // rides
+    for (let i = 0; i < 9000; i++) { const v = 150 + rnd() * 105, r = 0.6 + rnd() * 2.2; g.fillStyle = `rgba(${v},${v},${v},0.8)`;
+      g.beginPath(); g.ellipse(rnd() * w, rnd() * h, r, r * 0.7, rnd() * 3, 0, 7); g.fill(); }                                       // graviers
+    for (let i = 0; i < 40; i++) { const x = rnd() * w, y = rnd() * h, r = 10 + rnd() * 40, gr = g.createRadialGradient(x, y, 0, x, y, r);
+      gr.addColorStop(0, 'rgba(90,110,80,0.5)'); gr.addColorStop(1, 'rgba(90,110,80,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r); }  // algues
+  }, [260, 70]);
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, map: texFond, roughness: 0.45, metalness: 0.03 }));
   m.receiveShadow = true; scene.add(m);
   // rochers sur le fond
   const roc = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), new THREE.MeshStandardMaterial({ color: 0x5f5a50, roughness: 0.9 }), 500);
@@ -131,6 +178,7 @@ const fond = (x, z) => {
   for (let i = 0; i < 500; i++) {
     const x = (rnd() - 0.5) * 1600, z = PLAGE - 20 - rnd() * 700, s = 0.6 + rnd() * 3;
     o.position.set(x, fond(x, z) + s * 0.3, z); o.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3); o.scale.set(s, s * 0.6, s * 1.2);
+    if (SEQ.plans.some(q => [q[2], q[3]].some(c => Math.hypot(c[0] - x, c[2] - z) < 40))) o.scale.setScalar(0.001);   // pas de rocher devant la caméra
     o.updateMatrix(); roc.setMatrixAt(i, o.matrix);
   }
   roc.castShadow = roc.receiveShadow = true; scene.add(roc);
@@ -220,19 +268,51 @@ const matTransat = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 
       ajoute(new THREE.ConeGeometry(1.5, 0.5, 10, 1, true), toile, x + 2.2, y + 2.4, z); }
   }
 });
-// bateaux au mouillage
+// bateaux au mouillage : vraie coque (étrave en pointe, tableau arrière, carène en V), pont, cabine vitrée
+function coqueBateau(L) {
+  const B = L * 0.36, f = new THREE.Shape();
+  f.moveTo(-L / 2, -B * 0.42); f.lineTo(L * 0.1, -B / 2);
+  f.quadraticCurveTo(L * 0.42, -B * 0.42, L / 2, 0); f.quadraticCurveTo(L * 0.42, B * 0.42, L * 0.1, B / 2);
+  f.lineTo(-L / 2, B * 0.42); f.lineTo(-L / 2, -B * 0.42);
+  const Hh = L * 0.16;
+  const geo = new THREE.ExtrudeGeometry(f, { depth: Hh, bevelEnabled: true, bevelThickness: L * 0.012, bevelSize: L * 0.012, bevelSegments: 2, curveSegments: 10 });
+  geo.rotateX(-Math.PI / 2);                                                   // extrusion vers le haut (y de 0 à Hh)
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) { const y = p.getY(i), k = 0.45 + 0.55 * Math.min(1, Math.max(0, y / Hh)); p.setZ(i, p.getZ(i) * k); }  // carène en V
+  geo.computeVertexNormals();
+  return { geo, f, B, Hh };
+}
 const bateaux = [];
+const matPont = new THREE.MeshStandardMaterial({ color: 0xcaa77a, roughness: 0.7 });
+const matVitre = new THREE.MeshStandardMaterial({ color: 0x1b2a36, roughness: 0.15, metalness: 0.5 });
+const matBlanc = new THREE.MeshStandardMaterial({ color: 0xf6f6f2, roughness: 0.35 });
 for (let i = 0; i < 16; i++) {
   const g = new THREE.Group(), L = 6 + rnd() * 9;
-  const coque = new THREE.Mesh(new THREE.CylinderGeometry(L * 0.18, L * 0.12, L, 10, 1, false, 0, Math.PI), new THREE.MeshStandardMaterial({ color: pick([0xf4f4f0, 0xf4f4f0, 0x1d3550]), roughness: 0.4 }));
-  coque.rotation.set(0, 0, Math.PI / 2); coque.rotation.order = 'ZYX'; coque.rotateY(Math.PI / 2); coque.castShadow = true; g.add(coque);
-  const cab = new THREE.Mesh(new THREE.BoxGeometry(L * 0.3, L * 0.12, L * 0.2), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 }));
-  cab.position.set(-L * 0.05, L * 0.06, 0); g.add(cab);
-  if (rnd() < 0.5) { const mat = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, L * 1.1, 5), matMetal); mat.position.y = L * 0.55; g.add(mat); }
+  const teinte = pick([0xf4f4f0, 0xf4f4f0, 0x1d3550]);
+  const { geo, f, B, Hh } = coqueBateau(L);
+  const coque = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: teinte, roughness: 0.35 }));
+  coque.position.y = -Hh * 0.55; coque.castShadow = coque.receiveShadow = true; g.add(coque);
+  const liseré = new THREE.Mesh(new THREE.ExtrudeGeometry(f, { depth: Hh * 0.08, bevelEnabled: false }).rotateX(-Math.PI / 2).scale(1.012, 1, 1.03),
+    new THREE.MeshStandardMaterial({ color: teinte === 0x1d3550 ? 0xf2f2ee : [0x1f4e8c, 0xb83a32, 0x2a7f86][i % 3], roughness: 0.4 }));
+  liseré.position.y = Hh * 0.33; g.add(liseré);
+  const pont = new THREE.Mesh(new THREE.ShapeGeometry(f).rotateX(-Math.PI / 2).scale(0.92, 1, 0.86), matPont);
+  pont.position.y = Hh * 0.47; pont.receiveShadow = true; g.add(pont);
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(L * 0.28, Hh * 0.75, B * 0.62), matBlanc);
+  cab.position.set(-L * 0.06, Hh * 0.47 + Hh * 0.37, 0); cab.castShadow = true; g.add(cab);
+  const vitre = new THREE.Mesh(new THREE.BoxGeometry(L * 0.285, Hh * 0.22, B * 0.64), matVitre);
+  vitre.position.set(-L * 0.06, Hh * 0.47 + Hh * 0.5, 0); g.add(vitre);
+  if (rnd() < 0.5) { const mat = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, L * 1.1, 5), matMetal); mat.position.set(L * 0.05, L * 0.55, 0); g.add(mat); }
   const x = -500 + rnd() * 700, z = PLAGE - 120 - rnd() * 520;
   g.position.set(x, 0, z); g.rotation.y = rnd() * 6.28; g.userData = { x, z, fondY: fond(x, z), tilt: (rnd() - 0.5) * 0.5, phase: rnd() * 6 };
   scene.add(g); bateaux.push(g);
 }
+// échouages mis en scène : le bateau est posé à la profondeur exacte où l'eau le lâche à l'instant voulu
+(SEQ.echouages || []).forEach(([x, tc], k) => {
+  const cible = (Y0 + 0.05 - visuel(tc)) - 0.9;                                     // fond où il touche à tc
+  let z = PLAGE - 20; while (fond(x, z) > cible && z > PLAGE - 1400) z -= 0.25;
+  const b = bateaux[k], d = b.userData;
+  d.x = x; d.z = z; d.fondY = fond(x, z); b.position.set(x, 0, z);
+});
 
 // ---------- foule (instances : jambes, torse, tête) ----------
 const N = 520;
@@ -247,7 +327,7 @@ for (let i = 0; i < N; i++) {
   const p = {
     surPlage, x: (rnd() - 0.5) * 620 - 100, z: surPlage ? -6 - rnd() * 30 : 0.9 + rnd() * 8.5,
     dir: rnd() < 0.5 ? 1 : -1, v: 0.9 + rnd() * 0.6, assis: surPlage && rnd() < 0.55, ph: rnd() * 6, curieux: rnd(),
-    t0: 10 + rnd() * 4.5,
+    t0: 10 + SEQ.reac + rnd() * 4.5,
   };
   p.z0 = p.z; p.x0 = p.x;
   IJ.setColorAt(i, new THREE.Color(pick(bas))); IT.setColorAt(i, new THREE.Color(pick(hauts))); IH.setColorAt(i, new THREE.Color(pick(peau)));
@@ -270,11 +350,12 @@ function poseGens(t) {
       } else marche = assis ? 0 : 0.15;
     }
     const y = fond(x, z) > -0.1 || z > 0 ? 0.05 : fond(x, z) + 0.06;
+    const cache = Math.hypot(x - camera.position.x, z - camera.position.z) < 9 ? 0 : 1;
     const bob = Math.abs(Math.sin(t * 7 * p.v + p.ph)) * 0.05 * marche;
     const hJ = assis ? 0.25 : 0.85;
     o3.rotation.set(0, cap, 0);
-    o3.position.set(x, y + hJ / 2 + bob, z); o3.scale.set(1, hJ / 0.85, assis ? 2.2 : 1); o3.updateMatrix(); IJ.setMatrixAt(i, o3.matrix);
-    o3.scale.set(1, 1, 1); o3.position.set(x, y + hJ + 0.31 + bob, z); o3.updateMatrix(); IT.setMatrixAt(i, o3.matrix);
+    o3.position.set(x, y + hJ / 2 + bob, z); o3.scale.set(cache, cache * hJ / 0.85, cache * (assis ? 2.2 : 1)); o3.updateMatrix(); IJ.setMatrixAt(i, o3.matrix);
+    o3.scale.set(cache, cache, cache); o3.position.set(x, y + hJ + 0.31 + bob, z); o3.updateMatrix(); IT.setMatrixAt(i, o3.matrix);
     o3.position.set(x, y + hJ + 0.75 + bob, z); o3.updateMatrix(); IH.setMatrixAt(i, o3.matrix);
   });
   IJ.instanceMatrix.needsUpdate = IT.instanceMatrix.needsUpdate = IH.instanceMatrix.needsUpdate = true;
@@ -354,14 +435,15 @@ soleil.shadow.bias = -0.0004; scene.add(soleil, soleil.target);
 const ciel = new THREE.HemisphereLight(0xbcd6f0, 0x8a7c66, 1.1); scene.add(ciel);
 // caméra et voitures, recalculables sans rendu (utilisé aussi par window.etat pour caler le son)
 function placeCamera(t) {
-  const k = t / DUREE;
-  camera.position.set(lerp(46, 30, k), lerp(19, 21, k), lerp(31, 29, k));
-  camera.lookAt(lerp(-40, -52, k), lerp(8.5, 5.5, k), lerp(-70, -105, k));   // horizon vers 38 % de la hauteur : le compteur est sur le ciel
+  const p = SEQ.plans.find(q => t >= q[0] && t < q[1]) || SEQ.plans[SEQ.plans.length - 1];
+  const k = clamp((t - p[0]) / (p[1] - p[0]), 0, 1);
+  camera.position.set(...[0, 1, 2].map(i => lerp(p[2][i], p[3][i], k)));
+  camera.lookAt(...[0, 1, 2].map(i => lerp(p[4][i], p[5][i], k)));
   camera.updateMatrixWorld();
 }
 function placeVoitures(t) {
-  voitures.forEach(v => { const d = v.userData, ralenti = 1 - 0.85 * smooth((t - 12) / 4);
-    v.position.set(((d.x0 + d.v * (t < 12 ? t : 12 + (t - 12) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI; });
+  voitures.forEach(v => { const d = v.userData, ralenti = 1 - 0.85 * smooth((t - SEQ.ralenti) / 4), R0 = SEQ.ralenti;
+    v.position.set(((d.x0 + d.v * (t < R0 ? t : R0 + (t - R0) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI; });
 }
 // ---------- image t ----------
 const el = id => document.getElementById(id);
@@ -369,7 +451,7 @@ const fmtJour = h => { const H = Math.floor(h), M = Math.floor((h - H) * 60 + 1e
 window.frame = (t) => {
   // soleil : 14 h → environ 17 h 30 (azimut SO → O), le jour raccourcit
   const u = smooth(t / DUREE) * 0.5 + (t / DUREE) * 0.5;
-  const elev = THREE.MathUtils.degToRad(lerp(33, 9, u)), azi = THREE.MathUtils.degToRad(lerp(205, 246, u));
+  const elev = THREE.MathUtils.degToRad(lerp(SEQ.soleil[0][0], SEQ.soleil[1][0], u)), azi = THREE.MathUtils.degToRad(lerp(SEQ.soleil[0][1], SEQ.soleil[1][1], u));
   // azimut compté depuis le nord, sens horaire. Repère : nord = +z, donc (main droite) OUEST = +x :
   // face à la mer (sud), l'ouest est à droite de l'image, comme à Nice.
   const sunDir = new THREE.Vector3(-Math.sin(azi) * Math.cos(elev), Math.sin(elev), Math.cos(azi) * Math.cos(elev));
@@ -391,6 +473,7 @@ window.frame = (t) => {
   bateaux.forEach(b => { const d = b.userData, flotte = niveau > d.fondY + 0.9;
     b.position.y = flotte ? niveau + Math.sin(t * 1.2 + d.phase) * 0.12 : d.fondY + 0.35;
     b.rotation.z = flotte ? Math.sin(t * 0.9 + d.phase) * 0.04 : d.tilt; });
+  placeCamera(t);
   placeVoitures(t);
   poseGens(t);
 
@@ -421,7 +504,8 @@ window.etat = (t) => {
   placeCamera(t); placeVoitures(t);
   const autos = voitures.map(v => { const p = v.position.clone().add(new THREE.Vector3(0, 0.8, 0)), d = p.distanceTo(camera.position);
     p.project(camera); return { x: +p.x.toFixed(3), y: +p.y.toFixed(3), vis: Math.abs(p.x) < 1 && Math.abs(p.y) < 1 && p.z < 1, d: +d.toFixed(1), sens: Math.sign(v.userData.v) }; });
-  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos };
+  const coques = bateaux.map(b => ({ x: +b.userData.x.toFixed(1), z: +b.userData.z.toFixed(1), fond: +b.userData.fondY.toFixed(1), echoue: !(niveau > b.userData.fondY + 0.9) }));
+  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos, coques };
 };
 await document.fonts.ready;
 window.frame(0);

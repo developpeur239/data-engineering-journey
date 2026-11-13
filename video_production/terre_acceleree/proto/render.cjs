@@ -1,7 +1,7 @@
-// node render.cjs [debut] [fin] [pas] [dossier]  → images JPEG de la scène (30 i/s)
+// node render.cjs [debut] [fin] [pas] [dossier] [séquence]  → images JPEG de la scène (30 i/s)
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
-const [deb = 0, fin = 20, pas = 1 / 30, out = 'frames'] = process.argv.slice(2).map((v, i) => i < 3 ? Number(v) : v);
+const [deb = 0, fin = 20, pas = 1 / 30, out = 'frames', seq = 'proto'] = process.argv.slice(2).map((v, i) => i < 3 ? Number(v) : v);
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.woff2': 'font/woff2' };
 const srv = http.createServer((q, r) => {
   const f = path.join(__dirname, decodeURIComponent(q.url.split('?')[0]) === '/' ? 'index.html' : decodeURIComponent(q.url.split('?')[0]));
@@ -10,7 +10,7 @@ const srv = http.createServer((q, r) => {
   const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('console', m => console.log('page:', m.text())); p.on('pageerror', e => console.log('ERREUR page:', e.message));
-  await p.goto(`http://127.0.0.1:${srv.address().port}/`);
+  await p.goto(`http://127.0.0.1:${srv.address().port}/?seq=${seq}`);
   await p.waitForFunction(() => window.pret === true, null, { timeout: 180000 });
   fs.mkdirSync(out, { recursive: true });
   const n = Math.round((fin - deb) / pas); const t0 = Date.now();
