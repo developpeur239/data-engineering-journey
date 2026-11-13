@@ -8,7 +8,7 @@ Film sans voix off, à la manière de What If Sim (« What If Earth Spun Faster 
 | Étape | État |
 |---|---|
 | Prototype de Nice (20 s) | **Validé par l'utilisateur.** `proto/` (scène Three.js, rendu image par image, son) |
-| Texte du film (sous-titres, compteur, chiffres par lieu) | À écrire, puis à faire valider |
+| Texte du film (sous-titres, compteur, chiffres par lieu) | Écrit (`texte.md`), **en attente de validation** |
 | Lieux suivants | À faire, lieu par lieu, avec 3 images d'exemple avant chaque rendu |
 
 ## Décisions validées
@@ -24,15 +24,16 @@ Film sans voix off, à la manière de What If Sim (« What If Earth Spun Faster 
   à l'équateur (Kourou) elle monte. Les commentaires des concurrents relèvent les erreurs de sens : c'est notre point fort.
 - **Compteur du film long** : de 24 h 00 à 1 h 24 (apesanteur à l'équateur) sur environ 8 min, lent au début, plus rapide ensuite, toujours lisible.
 
-## Son (poste à part entière, `proto/son/`)
+## Son (poste à part entière, `proto/son/`) — prototype validé (« Parfait »)
 
 - L'utilisateur veut un **vrai travail d'ingénieur du son** : ne pas économiser ElevenLabs sur le son (annoncer quand même le coût).
-- `conception.md` : intention, arc émotionnel, feuille de calage. `bibliotheque.py` : sons ElevenLabs. `mix.py` : mixage
-  (distance, réverbération, panoramique, respirations, coupure nette finale), −14 LUFS, crête −1,5 dBTP.
-- Les sons sont **calés sur les événements de la scène** (`window.etat(t)` dans `scene.js` → `etat.json`).
-- **Pulsation** : un tic régulier comme un battement de cœur (72 bpm), **indépendant du compteur**. Option proposée pour le film :
-  monter très lentement de 60 à 90 bpm sur 8 min.
-- Le prototype a coûté environ 1 290 crédits ElevenLabs (21 sons). Je ne peux pas écouter : l'utilisateur valide à l'oreille.
+- **Règle : on n'entend que ce qu'on voit.** Continu = ce que l'image montre en permanence (à la plage : l'eau) + le **tic-tac du
+  compteur**, dont le tempo suit la vitesse du compteur (60 + 25·log2(1 + min/s)). Ponctuel = seulement quand c'est à l'image
+  (voiture qui passe à l'écran, gens qui réagissent, bateau qui touche le fond). Rien de ce qu'on ne voit pas.
+- Niveaux validés : tic-tac et bateaux bien présents (montés de 7 dB par rapport au premier essai).
+- Calage sur la scène : `window.etat(t)` dans `scene.js` → `node etat.cjs` → `etat.json` (bateaux échoués, voitures visibles à l'écran…).
+- `conception.md` (règles), `bibliotheque.py` (sons ElevenLabs), `mix.py` (mixage), −14 LUFS, crête −1,5 dBTP.
+- Coût du prototype : environ 1 300 crédits ElevenLabs. Je ne peux pas écouter : l'utilisateur valide à l'oreille.
 
 ## Plan du film proposé (à valider avec le texte)
 
