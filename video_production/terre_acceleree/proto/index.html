@@ -14,9 +14,9 @@
      qui assombrissent et désaturent le décor derrière le texte, puis s'effacent vers le centre */
   .voile { position: absolute; z-index: 1; pointer-events: none; background: rgba(8,12,22,.68);
            backdrop-filter: saturate(.55); -webkit-backdrop-filter: saturate(.55); }
-  #voileHaut { left: 0; top: 0; width: 1300px; height: 860px;
-               -webkit-mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 45%, rgba(0,0,0,.5) 68%, transparent 100%);
-               mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 45%, rgba(0,0,0,.5) 68%, transparent 100%); }
+  #voileHaut { left: 0; top: 0; width: 960px; height: 540px;      /* juste le bloc du compteur (texte : x 96–720, y 86–400) */
+               -webkit-mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 55%, rgba(0,0,0,.45) 80%, transparent 100%);
+               mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 55%, rgba(0,0,0,.45) 80%, transparent 100%); }
   /* sous-titre : ovale sombre qui épouse la phrase (validé) */
   #sous span { display: inline-block; padding: 44px 150px;
                background: radial-gradient(closest-side, rgba(0,0,0,.68) 0%, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%); }
