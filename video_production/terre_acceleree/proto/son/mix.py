@@ -137,7 +137,7 @@ for k, t0 in enumerate(temps):
     j = int(t0 * SR); x = x[: N - j]
     tictac[j:j + len(x)] += x * g
 th = (-0.45 + 1) * np.pi / 4                                        # côté du compteur (gauche)
-continu += np.stack([tictac * np.cos(th), tictac * np.sin(th)], 1) * np.sqrt(2) * 10 ** (-17 / 20)
+continu += np.stack([tictac * np.cos(th), tictac * np.sin(th)], 1) * np.sqrt(2) * 10 ** (-10 / 20)
 print(f"tic-tac : {len(temps)} coups, {bpm(1):.0f} bpm au début → {bpm(19.5):.0f} bpm à la fin")
 
 # ===================== PONCTUEL : seulement quand on le voit =====================
@@ -161,7 +161,7 @@ for a, b in zip(ETAT, ETAT[1:]):
     echoues += [b["t"]] * (b["echoues"] - a["echoues"])
 sons = ["coque_plastique", "coque_bois", "amarres", "coque_plastique", "coque_bois", "coque_plastique", "coque_bois", "coque_plastique"]
 for k, t0 in enumerate(echoues):
-    place(ponctuel, sons[k % len(sons)], t0, -8 - 1.2 * k, decalage=[0, 0, 0, 1.0, 0.6, 0.3, 1.2, 1.5][k % 8],
+    place(ponctuel, sons[k % len(sons)], t0, -1 - 0.8 * k, decalage=[0, 0, 0, 1.0, 0.6, 0.3, 1.2, 1.5][k % 8],
           pan=[0.45, -0.25, 0.5, -0.5, 0.6, 0.1, -0.6, 0.3][k % 8], lp=4500 - 350 * k, rev=0.4, fi=0.02, fo=0.6)
 print("bateaux échoués à", echoues)
 
@@ -174,7 +174,7 @@ wavfile.write(brut, SR, (mix / (np.abs(mix).max() * 1.05) * 32767).astype(np.int
 I = lufs(brut)
 sortie = ICI.parent / "son.wav"
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(brut), "-af",
-                f"highpass=f=30,volume={-14 - I + 1.2:.2f}dB,alimiter=limit=0.75:attack=2:release=80:level=disabled",
+                f"highpass=f=30,volume={-14 - I + 1.8:.2f}dB,alimiter=limit=0.75:attack=2:release=80:level=disabled",
                 "-ar", "48000", str(sortie)], check=True)
 brut.unlink()
 print("ok", sortie)
