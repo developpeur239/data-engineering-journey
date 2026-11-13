@@ -10,16 +10,17 @@
   @font-face { font-family: InterW; src: url(node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2); font-weight: 600; }
   html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
   canvas { display: block; }
+  /* voiles de lisibilité, comme la référence : environ −45 % derrière le compteur, −50 % derrière le sous-titre */
   #voile { position: absolute; inset: 0; pointer-events: none;
-           background: radial-gradient(ellipse 900px 520px at 0 0, rgba(10,25,45,.42), rgba(10,25,45,0) 70%),
-                       linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,0) 22%); }
-  #hud { position: absolute; left: 96px; top: 86px; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.35); }
+           background: radial-gradient(ellipse 1250px 760px at 0 0, rgba(4,12,26,.66) 0%, rgba(4,12,26,.45) 38%, rgba(4,12,26,0) 78%),
+                       radial-gradient(ellipse 1500px 330px at 50% 100%, rgba(0,0,0,.62) 0%, rgba(0,0,0,.38) 45%, rgba(0,0,0,0) 85%); }
+  #hud { position: absolute; left: 96px; top: 86px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45), 0 2px 18px rgba(0,0,0,.35); }
   #hud .lab { font: 600 21px InterW; letter-spacing: .26em; opacity: .92; }
   #hud .big { font: 300 112px Serif4; line-height: 1; margin: 10px 0 46px; letter-spacing: -.01em; }
-  #hud .ln { font: 500 20px InterW; letter-spacing: .2em; margin-top: 14px; opacity: .9; }
+  #hud .ln { font: 600 21px InterW; letter-spacing: .2em; margin-top: 14px; }
   #hud .or { color: #f2b56b; opacity: 1; }
   #sous { position: absolute; left: 0; right: 0; bottom: 86px; text-align: center; color: #fff;
-          font: italic 400 44px Serif4; text-shadow: 0 2px 20px rgba(0,0,0,.6); transition: none; }
+          font: italic 400 44px Serif4; text-shadow: 0 1px 3px rgba(0,0,0,.5), 0 2px 20px rgba(0,0,0,.6); transition: none; }
 </style>
 <script type="importmap">
 { "imports": { "three": "./node_modules/three/build/three.module.js",
