@@ -324,9 +324,13 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(11000, 48, 24), new THREE.Sh
     float fbm(vec2 p){ float s = 0., a = .5; for (int k = 0; k < 6; k++){ s += a * n(p); p = p * 2.03 + 17.1; a *= .5; } return s; }
     void main(){
       vec3 d = normalize(vDir); float e = max(d.y, 0.);
-      vec3 zen = mix(vec3(.20,.44,.78), vec3(.24,.36,.62), soir);
-      vec3 hor = mix(vec3(.74,.85,.94), vec3(.98,.80,.62), soir);
-      vec3 c = mix(hor, zen, pow(e, .45));
+      vec3 zen = mix(vec3(.10,.30,.62), vec3(.16,.24,.48), soir);
+      // la lueur du soir se concentre du côté du soleil ; à l'opposé, le ciel reste bleu-mauve
+      float cote = pow(max(dot(normalize(d.xz + 1e-4), normalize(sunDir.xz + 1e-4)), 0.), 7.);
+      float chaudH = soir * (.25 + .75 * cote);
+      vec3 hor = mix(vec3(.74,.85,.94), vec3(.98,.80,.62), chaudH);
+      zen = mix(zen, vec3(.14,.22,.46), soir * (1. - cote) * .6);
+      vec3 c = mix(hor, zen, pow(e, .32));
       float sd = max(dot(d, normalize(sunDir)), 0.);
       vec3 chaud = mix(vec3(1.,.95,.85), vec3(1.,.72,.42), soir);
       c += chaud * (pow(sd, 8.) * .35 + pow(sd, 90.) * .6) + chaud * smoothstep(.9994, .9997, sd) * 2.;
@@ -356,8 +360,9 @@ window.frame = (t) => {
   // soleil : 14 h → environ 17 h 30 (azimut SO → O), le jour raccourcit
   const u = smooth(t / DUREE) * 0.5 + (t / DUREE) * 0.5;
   const elev = THREE.MathUtils.degToRad(lerp(33, 9, u)), azi = THREE.MathUtils.degToRad(lerp(205, 246, u));
-  // azimut compté depuis le nord, sens horaire ; est = +x, nord = +z
-  const sunDir = new THREE.Vector3(Math.sin(azi) * Math.cos(elev), Math.sin(elev), Math.cos(azi) * Math.cos(elev));
+  // azimut compté depuis le nord, sens horaire. Repère : nord = +z, donc (main droite) OUEST = +x :
+  // face à la mer (sud), l'ouest est à droite de l'image, comme à Nice.
+  const sunDir = new THREE.Vector3(-Math.sin(azi) * Math.cos(elev), Math.sin(elev), Math.cos(azi) * Math.cos(elev));
   sky.material.uniforms.sunDir.value.copy(sunDir); sky.material.uniforms.soir.value = smooth((u - 0.45) / 0.55); sky.material.uniforms.temps.value = t; sky.position.copy(camera.position);
   eau.material.uniforms.sunDirection.value.copy(sunDir).normalize();
   soleil.position.copy(camera.position).addScaledVector(sunDir, 400); soleil.target.position.copy(camera.position).add(new THREE.Vector3(-30, 0, -40));
@@ -383,7 +388,7 @@ window.frame = (t) => {
   // caméra : léger travelling le long de la Promenade
   const k = t / DUREE;
   camera.position.set(lerp(46, 30, k), lerp(19, 21, k), lerp(31, 29, k));
-  camera.lookAt(lerp(-40, -52, k), lerp(-5, -12, k), lerp(-70, -105, k));
+  camera.lookAt(lerp(-40, -52, k), lerp(8.5, 5.5, k), lerp(-70, -105, k));   // horizon vers 38 % de la hauteur : le compteur est sur le ciel
 
   // incrustations
   el('jour').textContent = fmtJour(jourH(t));
