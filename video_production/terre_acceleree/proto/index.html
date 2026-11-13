@@ -12,11 +12,11 @@
   canvas { display: block; }
   /* voiles de lisibilité, comme la référence : compteur : dégradé ANCRÉ DANS LE COIN de l'image (aucun contour visible),
      qui assombrissent et désaturent le décor derrière le texte, puis s'effacent vers le centre */
-  .voile { position: absolute; z-index: 1; pointer-events: none; background: rgba(10,16,26,.5);
+  .voile { position: absolute; z-index: 1; pointer-events: none; background: rgba(8,12,22,.68);
            backdrop-filter: saturate(.55); -webkit-backdrop-filter: saturate(.55); }
   #voileHaut { left: 0; top: 0; width: 1300px; height: 860px;
-               -webkit-mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.75) 38%, transparent 100%);
-               mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.75) 38%, transparent 100%); }
+               -webkit-mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 45%, rgba(0,0,0,.5) 68%, transparent 100%);
+               mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 45%, rgba(0,0,0,.5) 68%, transparent 100%); }
   /* sous-titre : ovale sombre qui épouse la phrase (validé) */
   #sous span { display: inline-block; padding: 44px 150px;
                background: radial-gradient(closest-side, rgba(0,0,0,.68) 0%, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%); }
@@ -24,7 +24,7 @@
   #hud .lab { font: 600 21px InterW; letter-spacing: .26em; opacity: .92; }
   #hud .big { font: 300 112px Serif4; line-height: 1; margin: 10px 0 46px; letter-spacing: -.01em; }
   #hud .ln { font: 600 21px InterW; letter-spacing: .2em; margin-top: 14px; }
-  #hud .or { color: #f2b56b; opacity: 1; }
+  #hud .or { color: #ffbf73; opacity: 1; text-shadow: 0 1px 2px rgba(0,0,0,.6), 0 2px 14px rgba(0,0,0,.45); }
   #sous { position: absolute; z-index: 2; left: 0; right: 0; bottom: 42px; text-align: center; color: #fff;
           font: italic 400 44px Serif4; text-shadow: 0 1px 3px rgba(0,0,0,.5), 0 2px 20px rgba(0,0,0,.6); transition: none; }
 </style>
