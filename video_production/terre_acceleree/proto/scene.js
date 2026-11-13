@@ -7,6 +7,7 @@
 //   R²ω0²/2g ≈ 11,0 km ; à Nice (43,7° N) cos²φ − 2/3 = −0,144 → la mer BAISSE.
 import * as THREE from 'three';
 import { Water } from 'three/addons/objects/Water.js';
+import { physique, alea } from './commun.js';
 
 const W = 1920, H = 1080;
 // ---------- aléa reproductible ----------
@@ -45,7 +46,25 @@ const SEQUENCES = {
     echouages: [[-84, 49.5], [-104, 52.5], [-70, 56]],                                  // [x, instant où le bateau touche le fond]
   },
 };
+SEQUENCES.kourou = {
+  lieu: 'kourou', lat: 5.16, duree: 55, mer: 'monte', ampl: 15, reac: 11, ralenti: 30, soleil: [[30, 200], [24, 212]],
+  jour: [[0, 23 + 10 / 60], [10, 23], [20, 22.75], [35, 22 + 1 / 3], [55, 22]],
+  sous: [[0.5, 9, 'Kourou, en Guyane. Presque sur l’équateur.'], [10, 18, 'Ici, c’est l’inverse.'], [20, 30, 'La mer monte.'],
+         [35, 45, 'Et elle ne redescend pas.'], [47, 54.5, 'La ville a disparu. La forêt aussi.']],
+  chemin: [[0, [40, 4.5, -8], [-60, -2.5, -120]],      // sur la plage, face à la mer
+           [14, [26, 6, -6], [-70, -1.5, -130]],
+           [24, [12, 10, 2], [-60, 4, 20]],           // la caméra se retourne vers la ville
+           [38, [6, 20, -18], [-50, 2, 70]],          // elle s'élève : l'eau envahit la route et les maisons
+           [55, [-10, 42, -46], [-50, 4, 150]]],      // de haut : la ville sous l'eau, la forêt au fond
+};
+SEQUENCES.nicepente = {
+  lieu: 'nice', lat: 43.7, duree: 50, mer: 'vide', pente: true, reac: -20, ralenti: 0, soleil: [[30, 210], [22, 225]],
+  jour: [[0, 1 + 50 / 60], [20, 1.75], [30, 1 + 38 / 60], [50, 1.5]],
+  sous: [[0.5, 12, 'À Nice, le sol plat est devenu une piste de ski.'], [18, 30, 'Tout glisse vers le sud.'], [36, 48, 'Vers la mer qui n’est plus là.']],
+  chemin: [[0, [70, 5.5, 5], [-200, 1, 3]], [25, [52, 6, 6], [-200, 0.5, 2]], [50, [36, 6.5, 7], [-200, 0, 1]]],
+};
 const SEQ = SEQUENCES[new URLSearchParams(location.search).get('seq') || 'proto'];
+const LIEU = SEQ.lieu || 'nice';
 // positions de caméra connues d'avance (plans fixes ou chemin continu), pour ne rien poser devant l'objectif
 const POS_CAMERA = SEQ.chemin ? Array.from({ length: Math.ceil(SEQ.duree) + 1 }, (_, i) => cheminA(SEQ.chemin, i, 1))
                               : SEQ.plans.flatMap(q => [q[2], q[3]]);
@@ -61,7 +80,7 @@ function cheminA(ch, t, idx) {                       // Catmull-Rom sur le temps
   });
 }
 const DUREE = SEQ.duree;
-const LAT = 43.7 * Math.PI / 180;
+const LAT = (SEQ.lat || 43.7) * Math.PI / 180;
 
 
 // interpolation monotone (Fritsch–Carlson) : le compteur ne remonte jamais et n'a pas d'à-coups
@@ -84,7 +103,11 @@ const poids = t => {
   const w = 2 * Math.PI / (jourH(t) * 3600), w0 = 2 * Math.PI / 86400;
   return 75 * (g - w * w * R * c2) / (g - w0 * w0 * R * c2);
 };
-const visuel = t => 46 * (1 - Math.exp(-baisse(t) / SEQ.ech));                  // baisse visible (m)
+const visuel = SEQ.mer === 'monte'
+  ? (() => { const h0 = -baisse(0), h1 = -baisse(SEQ.duree);                    // montée visible : 0 → ampl, au rythme du calcul
+             return t => -SEQ.ampl * Math.pow(Math.max(0, (-baisse(t) - h0) / (h1 - h0)), 1.6); })()
+  : SEQ.mer === 'vide' ? (t => 400)                                            // la mer a quitté le bassin
+  : (t => 46 * (1 - Math.exp(-baisse(t) / SEQ.ech)));                          // baisse visible (m)
 const SOUS = SEQ.sous;
 window.jourSeq = t => jourH(t);                                                  // pour le son (tic-tac)
 window.DUREE = DUREE;
@@ -134,9 +157,9 @@ const texDalles = canvasTex(512, 512, (g, w, h) => {
   }
 }, [80, 1.6]);
 const texGalets = canvasTex(512, 512, (g, w, h) => {
-  g.fillStyle = '#9d968c'; g.fillRect(0, 0, w, h);
+  g.fillStyle = LIEU === 'kourou' ? '#d9c79c' : '#9d968c'; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 2600; i++) {
-    const v = 120 + rnd() * 90, r = 2 + rnd() * 6; g.fillStyle = `rgb(${v},${v - 4},${v - 12})`;
+    const v = 120 + rnd() * 90, r = 2 + rnd() * 6; g.fillStyle = LIEU === 'kourou' ? `rgba(${v + 60},${v + 45},${v + 10},0.35)` : `rgb(${v},${v - 4},${v - 12})`;
     g.beginPath(); g.ellipse(rnd() * w, rnd() * h, r, r * (0.6 + rnd() * 0.4), rnd() * 3, 0, 7); g.fill();
   }
 }, [60, 4]);
@@ -214,14 +237,16 @@ ajoute(new THREE.BoxGeometry(2600, 0.2, 5), new THREE.MeshStandardMaterial({ map
 
 // immeubles côté nord
 for (let x = -1300; x < 1300; x += 26 + rnd() * 10) {
-  const h = 16 + rnd() * 14, w = 20 + rnd() * 8;
+  let h = 16 + rnd() * 14, w = 20 + rnd() * 8;
+  if (LIEU === 'kourou') h = 5 + (h - 16) * 0.3;
   const mat = new THREE.MeshStandardMaterial({ map: texFacade.clone(), roughness: 0.9 });
   mat.map.repeat.set(w / 12, h / 22); mat.map.needsUpdate = true;
   mat.color.setHSL(0.08 + rnd() * 0.04, 0.35, 0.78 + rnd() * 0.1);
+  if (LIEU === 'kourou') mat.color.set([0xf2d16b, 0x8fd1c4, 0xf4a3a8, 0xa9d48a, 0xf6efe0, 0x9cc3ec][Math.abs(Math.round(x)) % 6]);
   // pas d'immeuble contre une position de caméra (il boucherait l'image)
   if (POS_CAMERA.some(c => Math.abs(c[0] - x) < w / 2 + 8 && Math.abs(c[2] - 37) < 14)) continue;
   ajoute(new THREE.BoxGeometry(w, h, 14), mat, x, h / 2, 37);
-  ajoute(new THREE.BoxGeometry(w + 0.6, 0.8, 14.6), new THREE.MeshStandardMaterial({ color: 0xa8553a, roughness: 0.8 }), x, h + 0.4, 37);
+  ajoute(new THREE.BoxGeometry(w + 0.6, 0.8, 14.6), new THREE.MeshStandardMaterial({ color: LIEU === 'kourou' ? 0xb2412e : 0xa8553a, roughness: 0.8 }), x, h + 0.4, 37);
 }
 // collines lointaines (Baie des Anges, Cap d'Antibes, Préalpes) dans la brume
 for (let i = 0; i < 26; i++) {
@@ -231,6 +256,28 @@ for (let i = 0; i < 26; i++) {
   m.scale.set(500 + rnd() * 500, 160 + rnd() * 260, 400);
 }
 
+if (LIEU === 'kourou') {
+  const r2 = alea(99), vert = [0x2f5d2a, 0x3b6e31, 0x24502a, 0x4a7a3a];
+  // forêt tropicale : des centaines de houppiers serrés (instances), puis des collines boisées au loin
+  const NA = 1400, houp = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshStandardMaterial({ roughness: 1 }), NA);
+  const fut = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.25, 0.35, 1, 5), new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 }), NA);
+  const o = new THREE.Object3D();
+  for (let i = 0; i < NA; i++) {
+    const x = -1000 + r2() * 1600, z = 62 + r2() ** 1.5 * 520, h = 9 + r2() * 14, r = 3 + r2() * 4.5;
+    o.position.set(x, h / 2, z); o.scale.set(1, h, 1); o.rotation.set(0, 0, 0); o.updateMatrix(); fut.setMatrixAt(i, o.matrix);
+    o.position.set(x, h + r * 0.4, z); o.scale.set(r, r * (0.7 + r2() * 0.3), r); o.rotation.set(r2(), r2() * 6, 0); o.updateMatrix(); houp.setMatrixAt(i, o.matrix);
+    houp.setColorAt(i, new THREE.Color(vert[i % 4]).multiplyScalar(0.8 + r2() * 0.4));
+  }
+  houp.castShadow = houp.receiveShadow = true; scene.add(houp, fut);
+  for (let i = 0; i < 14; i++) {                                          // collines boisées à l'horizon
+    const m = ajoute(new THREE.SphereGeometry(1, 24, 12), new THREE.MeshStandardMaterial({ color: 0x2e4f2c, roughness: 1 }), -1200 + i * 190 + r2() * 80, -20, 900 + r2() * 500, false);
+    m.scale.set(260 + r2() * 220, 90 + r2() * 110, 220);
+  }
+  const blanc = new THREE.MeshStandardMaterial({ color: 0xf2f2ee, roughness: 0.5 });
+  ajoute(new THREE.BoxGeometry(14, 90, 14), new THREE.MeshStandardMaterial({ color: 0x8a8f96, roughness: 0.6 }), -1500, 45, 900, false);   // pas de tir au loin
+  ajoute(new THREE.CylinderGeometry(3, 3, 52, 16), blanc, -1480, 26, 900, false);
+  ajoute(new THREE.ConeGeometry(3, 8, 16), blanc, -1480, 56, 900, false);
+}
 // palmiers (tronc courbe + palmes en bandes)
 const matTronc = new THREE.MeshStandardMaterial({ color: 0x8b7559, roughness: 1 });
 const texPalme = canvasTex(256, 64, (g, w, h) => {
@@ -278,10 +325,12 @@ for (let x = -900; x < 400; x += 32) { ajoute(new THREE.CylinderGeometry(0.08, 0
     o.position.set(x + Math.sin(r) * 0.25, 0.7, 1.4 + 0.25 * Math.cos(r)); o.rotation.set(-0.2, Math.PI + r, 0); o.updateMatrix(); B.setMatrixAt(k, o.matrix);
   }
   A.count = B.count = k; A.castShadow = B.castShadow = true; scene.add(A, B);
+  window.chaises = { A, B, k, base: Array.from({ length: k }, (_, i) => { const m = new THREE.Matrix4(); A.getMatrixAt(i, m); const n = new THREE.Matrix4(); B.getMatrixAt(i, n); return [m, n]; }) };
+  if (LIEU === 'kourou') A.visible = B.visible = false;              // les chaises bleues sont niçoises
 }
 // plages privées : transats blancs et parasols aux couleurs du club
 const matTransat = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.7 });
-[[-260, 0x2a5f9e], [-140, 0xd8a23a], [-40, 0x1f7d78], [-480, 0xb8473a], [80, 0x2a5f9e]].forEach(([x0, coul]) => {
+(LIEU === 'kourou' ? [] : [[-260, 0x2a5f9e], [-140, 0xd8a23a], [-40, 0x1f7d78], [-480, 0xb8473a], [80, 0x2a5f9e]]).forEach(([x0, coul]) => {
   const toile = new THREE.MeshStandardMaterial({ color: coul, roughness: 0.8, side: THREE.DoubleSide });
   for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) {
     const x = x0 + i * 4.5, z = -8 - r * 6, y = fond(x, z);
@@ -356,6 +405,8 @@ for (let i = 0; i < N; i++) {
   gens.push(p);
 }
 const o3 = new THREE.Object3D();
+let NIVEAU = Y0;
+const glisse = t => Math.min(0.22 * t * t, 650);                               // Nice en pente : distance glissée
 function poseGens(t) {
   gens.forEach((p, i) => {
     let assis = p.assis, x = p.x0, z = p.z0, cap = p.dir > 0 ? -Math.PI / 2 : Math.PI / 2, marche = 1;
@@ -371,11 +422,19 @@ function poseGens(t) {
         const u = t - p.t0 - 2.5; z = p.z0 - u * p.v * 1.1; marche = 1; assis = false;
       } else marche = assis ? 0 : 0.15;
     }
+    let incl = 0;
+    if (LIEU === 'kourou' && t > p.t0) {                                 // l'eau arrive : tout le monde fuit vers l'intérieur
+      const u = t - p.t0; z = Math.max(z, p.z0) + u * p.v * 1.9; cap = 0; marche = 1.6; assis = false;
+    }
+    if (SEQ.pente) {                                                     // Nice en pente : on glisse vers le sud
+      z = z - glisse(t) * (0.55 + 0.9 * ((i * 0.618) % 1)); incl = -Math.min(0.5, 0.012 * t); marche = 0.3; assis = false;
+    }
     const y = fond(x, z) > -0.1 || z > 0 ? 0.05 : fond(x, z) + 0.06;
-    const cache = Math.hypot(x - camera.position.x, y - camera.position.y, z - camera.position.z) < 5 ? 0 : 1;
+    const noye = NIVEAU > y + 1.5 ? 0 : 1;
+    const cache = (Math.hypot(x - camera.position.x, y - camera.position.y, z - camera.position.z) < 5 ? 0 : 1) * noye;
     const bob = Math.abs(Math.sin(t * 7 * p.v + p.ph)) * 0.05 * marche;
     const hJ = assis ? 0.25 : 0.85;
-    o3.rotation.set(0, cap, 0);
+    o3.rotation.set(incl, cap, 0, 'YXZ');
     o3.position.set(x, y + hJ / 2 + bob, z); o3.scale.set(cache, cache * hJ / 0.85, cache * (assis ? 2.2 : 1)); o3.updateMatrix(); IJ.setMatrixAt(i, o3.matrix);
     o3.scale.set(cache, cache, cache); o3.position.set(x, y + hJ + 0.31 + bob, z); o3.updateMatrix(); IT.setMatrixAt(i, o3.matrix);
     o3.position.set(x, y + hJ + 0.75 + bob, z); o3.updateMatrix(); IH.setMatrixAt(i, o3.matrix);
@@ -407,6 +466,7 @@ eau.material.fragmentShader = eau.material.fragmentShader
            'vec3 scatter = ( 0.35 + 0.65 * max( 0.0, dot( surfaceNormal, eyeDirection ) ) ) * waterColor * 1.7;')
   .replace('reflectionSample * 0.9', 'reflectionSample * vec3( 0.7, 0.86, 1.0 ) * 0.9');
 eau.material.needsUpdate = true;
+if (LIEU === 'kourou') eau.material.uniforms.waterColor.value.set(0x137a84);
 const texEcume = canvasTex(1024, 64, (g, w, h) => {
   g.clearRect(0, 0, w, h);
   for (let i = 0; i < 1800; i++) { const x = rnd() * w, y = h * 0.5 + (rnd() - 0.5) * h * 0.7 * rnd(); g.fillStyle = `rgba(255,255,255,${0.15 + rnd() * 0.5})`; g.beginPath(); g.ellipse(x, y, 3 + rnd() * 10, 1 + rnd() * 3, 0, 0, 7); g.fill(); }
@@ -458,7 +518,9 @@ const ciel = new THREE.HemisphereLight(0xbcd6f0, 0x8a7c66, 1.1); scene.add(ciel)
 // caméra et voitures, recalculables sans rendu (utilisé aussi par window.etat pour caler le son)
 function placeCamera(t) {
   if (SEQ.chemin) {
-    camera.position.set(...cheminA(SEQ.chemin, t, 1)); camera.lookAt(...cheminA(SEQ.chemin, t, 2)); camera.updateMatrixWorld(); return;
+    camera.position.set(...cheminA(SEQ.chemin, t, 1)); camera.lookAt(...cheminA(SEQ.chemin, t, 2));
+    if (SEQ.pente) camera.rotateZ(physique.pente(SEQ.lat, jourH(t)) * Math.PI / 180);   // l'horizon penche : le « bas » ressenti a tourné
+    camera.updateMatrixWorld(); return;
   }
   const p = SEQ.plans.find(q => t >= q[0] && t < q[1]) || SEQ.plans[SEQ.plans.length - 1];
   const k = clamp((t - p[0]) / (p[1] - p[0]), 0, 1);
@@ -468,7 +530,9 @@ function placeCamera(t) {
 }
 function placeVoitures(t) {
   voitures.forEach(v => { const d = v.userData, ralenti = 1 - 0.85 * smooth((t - SEQ.ralenti) / 4), R0 = SEQ.ralenti;
-    v.position.set(((d.x0 + d.v * (t < R0 ? t : R0 + (t - R0) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI; });
+    v.position.set(((d.x0 + d.v * (t < R0 ? t : R0 + (t - R0) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI;
+    if (SEQ.pente) { const z = d.z - glisse(t) * 0.8; v.position.z = z; v.position.y = z > 0 ? 0 : fond(v.position.x, z); v.rotation.z = 0.25; }
+    if (LIEU === 'kourou' && NIVEAU > 0.4) v.position.y = Math.min(NIVEAU - 1.0, 0) ; });
 }
 // ---------- image t ----------
 const el = id => document.getElementById(id);
@@ -492,8 +556,22 @@ window.frame = (t) => {
   const niveau = Y0 + 0.05 - visuel(t);
   eau.position.y = niveau;
   eau.material.uniforms.time.value = t * 0.6;
+  NIVEAU = niveau;
   let zs = PLAGE; while (fond(0, zs) > niveau && zs > PLAGE - 1400) zs -= 0.5;               // trait de côte
+  if (niveau > fond(0, PLAGE)) { zs = PLAGE; while (zs < 0 && fond(0, zs) < niveau) zs += 0.25; }   // mer qui monte
   ecume.position.set(0, niveau + 0.04, zs + 1.5 + Math.sin(t * 1.3) * 0.8);
+  eau.visible = SEQ.mer !== 'vide'; ecume.visible = SEQ.mer !== 'vide' && niveau < -0.3;
+  if (SEQ.pente) {                                                       // les chaises glissent vers le sud
+    const o = new THREE.Object3D(), d = glisse(t);
+    for (let i = 0; i < window.chaises.k; i++) {
+      const [m, n] = window.chaises.base[i], f = 0.4 + 1.1 * ((i * 0.381) % 1), dz = d * f;
+      [[m, window.chaises.A], [n, window.chaises.B]].forEach(([mm, I]) => {
+        const p = new THREE.Vector3().setFromMatrixPosition(mm), z = p.z - dz, sol = z > 0 ? 0 : fond(p.x, z) + 0.3;
+        const M = mm.clone(); M.setPosition(p.x, (z > 0 ? p.y : sol + (p.y - 0.42)), z); I.setMatrixAt(i, M);
+      });
+    }
+    window.chaises.A.instanceMatrix.needsUpdate = window.chaises.B.instanceMatrix.needsUpdate = true;
+  }
   texEcume.offset.x = t * 0.01;
   bateaux.forEach(b => { const d = b.userData, flotte = niveau > d.fondY + 0.9;
     b.position.y = flotte ? niveau + Math.sin(t * 1.2 + d.phase) * 0.12 : d.fondY + 0.35;
@@ -508,9 +586,17 @@ window.frame = (t) => {
 
   // incrustations
   el('jour').textContent = fmtJour(jourH(t));
-  el('poids').textContent = `VOUS PESEZ ${poids(t).toFixed(2).replace('.', ',')} KG`;
   const b = baisse(t);
-  el('mer').textContent = b < 0.5 ? 'LA MER EST À SON NIVEAU HABITUEL' : `LA MER A BAISSÉ DE ${b < 10 ? b.toFixed(1).replace('.', ',') : Math.round(b)} M`;
+  if (!SEQ.lieu) {                                                       // Nice, version validée
+    el('poids').textContent = `VOUS PESEZ ${poids(t).toFixed(2).replace('.', ',')} KG`;
+    el('mer').textContent = b < 0.5 ? 'LA MER EST À SON NIVEAU HABITUEL' : `LA MER A BAISSÉ DE ${b < 10 ? b.toFixed(1).replace('.', ',') : Math.round(b)} M`;
+  } else {
+    const kg = physique.poids(SEQ.lat, jourH(t));
+    el('poids').textContent = `VOUS PESEZ ${kg.toFixed(kg > 74.9 ? 2 : 1).replace('.', ',')} KG`;
+    el('lieu').textContent = LIEU === 'kourou' ? 'KOUROU · 5,2° NORD' : 'NICE · 43,7° NORD';
+    el('mer').textContent = SEQ.pente ? `LE SOL PENCHE DE ${Math.round(physique.pente(SEQ.lat, jourH(t)))}°`
+      : t < 9 ? 'L’ÉQUATEUR VA PLUS VITE QUE LE SON' : `LA MER A MONTÉ DE ${Math.round(-b)} M`;
+  }
   const s = SOUS.find(([a, z]) => t >= a && t < z);
   const sous = el('sous');
   sous.innerHTML = s ? `<span>${s[2]}</span>` : '';
