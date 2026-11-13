@@ -129,29 +129,22 @@ place(evt, "alarme_voiture", 16.8, -17, pan=0.8, lp=3000, rev=0.5, fo=0.4)
 
 # nettoyage du grave : l'ambiance ne descend pas sous 90 Hz (le grave est réservé au grondement et au coup final)
 amb = sosfilt(butter(2, 90, "highpass", fs=SR, output="sos"), amb, axis=0)
-# --- le temps qui s'écoule : un tic à chaque changement de minute du compteur (même calcul que scene.js) ---
+# --- le temps qui s'écoule : pulsation régulière sous le compteur ---
 def jour_h(t):
     return 24 - 2.5 * np.clip(t / DUREE, 0, 1) ** 3
 tic = charge("tic")[int(0.77 * SR): int(0.77 * SR) + int(0.11 * SR)].mean(1)
 tic = sosfilt(butter(2, 350, "highpass", fs=SR, output="sos"), tic) * np.hanning(len(tic) * 2)[len(tic):][::-1] ** 0
 tic *= np.r_[np.linspace(0, 1, 48), np.ones(len(tic) - 48 - 960), np.linspace(1, 0, 960)]
-temps = []
-prec = None
-for i in range(int(DUREE * 30) + 1):                                # l'affichage change image par image (30 i/s)
-    h = jour_h(i / 30)
-    H = int(h); m = int((h - H) * 60 + 1e-6)
-    if prec is not None and (H, m) != prec:
-        temps.append(i / 30)
-    prec = (H, m)
+# Pulsation CONSTANTE, comme un battement de cœur : indépendante de la vitesse du compteur.
+BPM = 72
+temps = list(np.arange(0.35, 19.6, 60 / BPM))
 tics = np.zeros(N)
 for k, t0 in enumerate(temps):
-    hauteur = 1 + 0.035 * np.sin(k * 2.39)                         # légère variation : pas d'effet mitraillette
+    hauteur = 1 + 0.02 * np.sin(k * 2.39)                          # très légère variation : naturel, pas mécanique
     x = np.interp(np.arange(0, len(tic) - 1, hauteur), np.arange(len(tic)), tic)
-    dens = np.sum(np.abs(np.array(temps) - t0) < 0.5)               # tics par seconde autour de cet instant
-    g = 10 ** ((-14 - 4 * np.log2(max(dens, 1)) / 4) / 20)          # plus serrés = chacun un peu plus doux
     j = int(t0 * SR); x = x[: N - j]
-    tics[j:j + len(x)] += x * g
-tics *= 10 ** (env([(0, -2), (12, 0), (16, 2), (19.6, 7)], T) / 20)
+    tics[j:j + len(x)] += x * 10 ** (-14 / 20)
+tics *= 10 ** (env([(0, -1), (12, 0), (19.6, 1.5)], T) / 20)
 th = (-0.45 + 1) * np.pi / 4                                         # côté du compteur (gauche)
 evt += np.stack([tics * np.cos(th), tics * np.sin(th)], 1) * np.sqrt(2) * 10 ** (-23 / 20) / (np.sqrt((tic ** 2).mean()) + 1e-9) * 0.6
 import os
