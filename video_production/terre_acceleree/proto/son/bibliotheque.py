@@ -55,6 +55,38 @@ SONS = {
     # --- le temps qui s'écoule (calé sur le compteur) ---
     "tic": ("A single crisp mechanical clock tick, close, dry, one tick only, no reverb, no music", 1, 0.7),
     "coup_final": ("Sudden deep sub-bass boom with a short dark reverberant tail, cinematic hit, no music", 3, 0.6),
+    # --- film complet : un son = quelque chose qu'on voit ---
+    "grave_ouverture": ("Very deep cinematic sub-bass swell rising from silence, slow, dark, then fading, no music", 7, 0.5),
+    "ocean_planetaire": ("Immense slow surge of deep ocean water moving across a whole planet, distant low rumbling waves, "
+                         "heavy and slow, no music", 22, 0.5),
+    "vagues_sable": ("Warm tropical waves rolling onto a wide sandy beach, soft hiss of foam on sand, calm, no people, no music", 20, 0.5),
+    "eau_envahit": ("Seawater rushing into a small town street and around houses, gushing, flooding through doors, debris "
+                    "knocking, no music", 15, 0.55),
+    "foule_fuit": ("People running away from rising water, shouting in French, panicked but not screaming, footsteps "
+                   "splashing, no music", 12, 0.5),
+    "ville_paris": ("Daytime Paris quay ambience: light traffic, a scooter, people chatting in French, a distant siren, "
+                    "the river, no music", 22, 0.45),
+    "seisme": ("Strong earthquake: deep rumbling ground, buildings shaking, windows rattling, objects falling, "
+               "realistic, no music", 12, 0.55),
+    "vitres": ("Many windows rattling and glass shattering in a city street during an earthquake, no music", 6, 0.55),
+    "alarmes_voitures": ("Several car alarms going off on a city street after an earthquake, slightly distant, no music", 8, 0.5),
+    "bille_roule": ("A small hard ball rolling slowly then faster on stone pavement, close, no music", 6, 0.6),
+    "vagues_plateforme": ("Open ocean waves slapping against the steel columns of an offshore platform, deep water, "
+                          "steady, no music", 20, 0.5),
+    "vent_pont": ("Steady ocean wind across the open steel deck of an offshore platform, flapping cables, no music", 20, 0.5),
+    "equipe_rires": ("A crew of workers on a platform laughing and shouting in surprise as they jump very high, "
+                     "French exclamations, no music", 10, 0.5),
+    "fusee_decollage": ("Rocket engine ignition and liftoff from an offshore platform: roaring thunder, crackling exhaust, "
+                        "rising away, no music", 18, 0.6),
+    "metal_grince": ("Large steel structure creaking and groaning, metal stress, no music", 8, 0.55),
+    "souffle_doux": ("Very soft airy breath of wind, almost silent, weightless, calm, no music", 12, 0.5),
+    "gouttes_montent": ("Tiny water droplets and spray fizzing and shimmering softly, delicate, no music", 10, 0.5),
+    "raclement_chaises": ("Many metal chairs scraping and sliding over stone pavement, clattering, tipping over, no music", 10, 0.55),
+    "glisse_gens": ("People sliding down a slope shouting in French, surprised and scared, sliding on stone, no music", 10, 0.5),
+    "voiture_glisse": ("A parked car sliding sideways down a slope, tyres scraping and squealing on asphalt, metal "
+                       "scraping a curb, no music", 6, 0.55),
+    "grondement_geant": ("Colossal deep rumble of a planet tearing apart, grinding rock, very low and huge, slowly building, "
+                         "no music", 22, 0.5),
 }
 
 

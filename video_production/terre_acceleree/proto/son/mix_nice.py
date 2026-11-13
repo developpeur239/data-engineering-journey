@@ -123,7 +123,7 @@ continu *= 10 ** (env(sorted(resp), T) / 20)[:, None]
 # Tic-tac : tempo = vitesse du compteur (minutes affichées par seconde)
 jour = np.array([e["jour"] for e in E])
 vit = np.clip(-np.gradient(jour, TT) * 60, 0, None)
-bpm = lambda t: 60 + 25 * np.log2(1 + np.interp(t, TT, vit))
+bpm = lambda t: 64 + 22 * np.log2(24 / np.interp(t, TT, jour))      # tempo du film : suit la durée du jour
 tic = charge("tic")[int(0.77 * SR): int(0.77 * SR) + int(0.11 * SR)].mean(1)
 tic = sosfilt(butter(2, 350, "highpass", fs=SR, output="sos"), tic)
 tic *= np.r_[np.linspace(0, 1, 48), np.ones(len(tic) - 48 - 960), np.linspace(1, 0, 960)]
