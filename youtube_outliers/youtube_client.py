@@ -8,6 +8,8 @@ from typing import Iterator
 import requests
 
 API_URL = "https://www.googleapis.com/youtube/v3"
+# YOUTUBE_API_KEY=proxy : la clé est un secret réseau de l'environnement cloud, injectée par le proxy
+PROXY = "proxy"
 BATCH_SIZE = 50  # maximum d'IDs par appel videos.list / channels.list
 
 
@@ -29,7 +31,8 @@ class YouTubeClient:
         self.quota_used = 0
 
     def _get(self, endpoint: str, cost: int = 1, **params) -> dict:
-        params["key"] = self.api_key
+        if self.api_key != PROXY:                 # sinon la clé est ajoutée par le proxy (en-tête X-Goog-Api-Key)
+            params["key"] = self.api_key
         resp = self.session.get(f"{API_URL}/{endpoint}", params=params, timeout=30)
         self.quota_used += cost
         # 403 quotaExceeded : quota global ; 429 : limite séparée de recherches par jour
