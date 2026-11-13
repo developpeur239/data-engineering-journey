@@ -392,7 +392,7 @@ window.frame = (t) => {
   el('mer').textContent = b < 0.5 ? 'LA MER EST À SON NIVEAU HABITUEL' : `LA MER A BAISSÉ DE ${b < 10 ? b.toFixed(1).replace('.', ',') : Math.round(b)} M`;
   const s = SOUS.find(([a, z]) => t >= a && t < z);
   const sous = el('sous');
-  sous.textContent = s ? s[2] : '';
+  sous.innerHTML = s ? `<span>${s[2]}</span>` : '';
   sous.style.opacity = s ? Math.min(1, (t - s[0]) / 0.35, (s[1] - t) / 0.35) : 0;
 
   renderer.render(scene, camera);
