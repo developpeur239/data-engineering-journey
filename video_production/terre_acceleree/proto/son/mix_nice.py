@@ -2,7 +2,8 @@
 
     node etat.cjs nice && python3 son/mix_nice.py     → son_nice.wav (−14 LUFS, crête −1,5 dBTP)
 
-Continu : l'eau (sa distance réelle à la caméra, plan par plan) et le tic-tac (tempo = vitesse du compteur).
+Un seul plan continu : la distance caméra ↔ eau évolue en douceur, le son la suit.
+Continu : l'eau (sa distance réelle à la caméra) et le tic-tac (tempo = vitesse du compteur).
 Ponctuel : voitures à l'écran, réaction des promeneurs, pas sur les galets, chaque bateau qui touche le fond À L'IMAGE.
 """
 import subprocess
@@ -111,7 +112,7 @@ retrait_g = g_eau + 20 * np.log10(np.clip(recul, 0.03, 1))
 place(continu, "ressac_galets", 0, 0, boucle=True, auto=list(zip(TT, ressac_g)), glisse=list(zip(TT, lp_eau)), rev=0.25)
 place(continu, "retrait_eau", 0, -1, boucle=True, auto=list(zip(TT, retrait_g)), glisse=list(zip(TT, lp_eau)), rev=0.3)
 # l'eau qui s'égoutte du fond découvert : seulement quand on le voit (au-dessus et sur le fond)
-gout = [(e["t"], {0: -60, 1: -60, 2: -14, 3: -3}[e["plan"]]) for e in E]
+gout = [(e["t"], float(np.clip(-3 - (e["hauteur"] - 10) * 0.5, -16, -3)) if e["surFond"] else -60.0) for e in E]   # plus la caméra est basse au-dessus du fond, plus on l'entend
 place(continu, "ecoulement", 0, -6, boucle=True, auto=gout, pan=-0.1)
 sous = [(0.5, 7.5), (8.5, 15.5), (18, 25), (28, 35), (38.5, 46), (49, 57)]
 resp = [(0, 0)]
@@ -171,8 +172,8 @@ for a, b in zip(E, E[1:]):                                           # bateaux :
     for i, (c0, c1) in enumerate(zip(a["coques"], b["coques"])):
         if c1["echoue"] and not c0["echoue"] and c1["vis"]:
             d = c1["d"]
-            place(ponctuel, sons[k % len(sons)], b["t"], -1 - 20 * np.log10(max(d, 40) / 65), decalage=[0, 0, 0, 1.0, 0.6][k % 5],
-                  pan=float(np.clip(c1["ex"], -0.9, 0.9)), lp=float(np.clip(9000 * (65 / d) ** 1.3, 1500, 9000)), rev=0.4, fi=0.02, fo=0.6)
+            place(ponctuel, sons[k % len(sons)], b["t"], -1 - 20 * np.log10(max(d, 60) / 100), decalage=[0, 0, 0, 1.0, 0.6][k % 5],
+                  pan=float(np.clip(c1["ex"], -0.9, 0.9)), lp=float(np.clip(9000 * (100 / d) ** 1.3, 1500, 9000)), rev=0.4, fi=0.02, fo=0.6)
             print(f"bateau {i} touche le fond à {b['t']} s ({d} m)")
             k += 1
 
@@ -189,7 +190,7 @@ brut.unlink(); brut = comp
 I = lufs(brut)
 sortie = ICI.parent / "son_nice.wav"
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(brut), "-af",
-                f"highpass=f=30,volume={-14 - I + 2.6:.2f}dB,alimiter=limit=0.70:attack=2:release=80:level=disabled",
+                f"highpass=f=30,volume={-14 - I + 3.0:.2f}dB,alimiter=limit=0.70:attack=2:release=80:level=disabled",
                 "-ar", "48000", str(sortie)], check=True)
 brut.unlink()
 print("ok", sortie)
