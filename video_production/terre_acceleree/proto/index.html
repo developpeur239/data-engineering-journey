@@ -14,9 +14,13 @@
      qui assombrissent et désaturent le décor derrière le texte, puis s'effacent vers le centre */
   .voile { position: absolute; z-index: 1; pointer-events: none; background: rgba(8,12,22,.68);
            backdrop-filter: saturate(.55); -webkit-backdrop-filter: saturate(.55); }
-  #voileHaut { left: 0; top: 0; width: 960px; height: 540px;      /* juste le bloc du compteur (texte : x 96–720, y 86–400) */
-               -webkit-mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 55%, rgba(0,0,0,.45) 80%, transparent 100%);
-               mask-image: radial-gradient(ellipse 100% 100% at 0 0, #000 0%, rgba(0,0,0,.92) 55%, rgba(0,0,0,.45) 80%, transparent 100%); }
+  /* bloc du compteur : texte de x 96 à ~720, y 86 à ~410 (la ligne orange est la plus basse).
+     Masque = intersection de deux dégradés : plein sombre sur tout le bloc, puis fondu court à droite et en bas. */
+  #voileHaut { left: 0; top: 0; width: 1040px; height: 600px;
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 520px, rgba(0,0,0,.75) 700px, rgba(0,0,0,.3) 880px, transparent 1040px), linear-gradient(to bottom, #000 0, #000 420px, rgba(0,0,0,.5) 510px, transparent 600px);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, #000 0, #000 520px, rgba(0,0,0,.75) 700px, rgba(0,0,0,.3) 880px, transparent 1040px), linear-gradient(to bottom, #000 0, #000 420px, rgba(0,0,0,.5) 510px, transparent 600px);
+    mask-composite: intersect; }
   /* sous-titre : ovale sombre qui épouse la phrase (validé) */
   #sous span { display: inline-block; padding: 44px 150px;
                background: radial-gradient(closest-side, rgba(0,0,0,.68) 0%, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%); }
