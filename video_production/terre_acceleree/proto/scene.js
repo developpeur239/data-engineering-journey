@@ -394,6 +394,7 @@ window.frame = (t) => {
   const sous = el('sous');
   sous.innerHTML = s ? `<span>${s[2]}</span>` : '';
   sous.style.opacity = s ? Math.min(1, (t - s[0]) / 0.35, (s[1] - t) / 0.35) : 0;
+  el('voileBas').style.opacity = sous.style.opacity;
 
   renderer.render(scene, camera);
   return true;
