@@ -50,6 +50,8 @@ SONS = {
     "grondement": ("Deep rumble of the earth slowly growing stronger, distant thunder-like groan of the ground, cinematic "
                    "but realistic, building, no music", 10, 0.55),
     "vent_monte": ("Wind rising over the sea, gusts becoming stronger and colder, whistling slightly, no music", 12, 0.5),
+    "voiture_passe": ("A single car passing by on a seaside boulevard, approaching and fading away, tyres on asphalt, "
+                      "about 50 meters away, no horn, no music", 5, 0.6),
     # --- le temps qui s'écoule (calé sur le compteur) ---
     "tic": ("A single crisp mechanical clock tick, close, dry, one tick only, no reverb, no music", 1, 0.7),
     "coup_final": ("Sudden deep sub-bass boom with a short dark reverberant tail, cinematic hit, no music", 3, 0.6),

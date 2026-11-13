@@ -2,22 +2,24 @@
 
 Pas de voix off : **le son raconte**. Le spectateur doit *entendre* que quelque chose cloche avant de le lire.
 
-## Intention en trois temps
+## Règle de l'utilisateur (validée)
 
-| Temps | Émotion | Ce qu'on entend |
-|---|---|---|
-| 0 – 6 s · la vie normale | familiarité, chaleur | ressac sur les **galets** (le son de Nice), foule détendue, circulation derrière, mouettes, vent dans les palmes |
-| 6 – 14,6 s · le basculement | malaise, puis inquiétude | un grondement à peine audible, puis la mer qui **aspire** au lieu de revenir ; les vagues s'éloignent (plus faibles, plus sourdes) ; les **oiseaux partent avant les humains** ; la foule **se tait**, puis s'étonne ; les bateaux s'échouent un par un |
-| 14,6 – 20 s · la menace | angoisse | une **respiration** (tout baisse 0,4 s) pour le sous-titre « À Nice, la mer se retire. », puis le grondement et le vent montent, un chien, une alarme au loin ; **coupure nette** sur un coup grave : on veut la suite |
+Trop de sons perdent le spectateur. **On n'entend que ce qu'on voit.**
 
-## Règles de mixage
+- **Continu** = ce que l'image montre en permanence : **l'eau** (ressac sur les galets → la mer qui aspire en reculant → l'eau qui
+  s'égoutte du fond découvert) et le **tic-tac du compteur**, dont le tempo suit la vitesse du compteur
+  (60 + 25·log2(1 + minutes affichées par seconde) : 62 bpm au début, 172 à la fin du prototype ; dans le film long, le compteur
+  défile moins vite, donc l'accélération est plus douce).
+- **Ponctuel** = seulement au moment où on le voit : une voiture qui passe à l'écran (calculé : visible de 3,9 à 4,7 s), les gens
+  qui réagissent (11 s) puis descendent sur les galets (12,7 s), chaque bateau qui touche le fond (8 instants tirés de la scène).
+- Retirés : mouettes, chien, alarme, vent, grondement, poissons, foule et circulation en continu (on ne les voit pas).
 
-- **Distance réelle** : quand l'eau recule de 50 à 370 m, ses sons perdent du volume, des aigus (filtre passe-bas qui descend) et gagnent de la réverbération.
-- **Espace** : la circulation est derrière nous (filtrée, discrète) ; les bateaux et les animaux sont placés à gauche ou à droite selon l'image.
-- **Calage sur l'image** (`etat.json`, tiré de la scène) : chaque bateau qui s'échoue a son bruit, à l'instant où il touche le fond (12,6 · 13,0 · 13,8 · 14,2 · 15,9 · 17,1 · 17,6 · 19,4 s). Les baigneurs descendent sur les galets à 12,8 s.
-- **Le silence comme effet** : la foule qui se tait à 10,6 s inquiète plus qu'un cri.
-- **Contraste** : début calme (environ −18 LUFS à court terme), fin dense (environ −11), moyenne −14 LUFS, crête −1,5 dBTP.
-- Aucune musique : toute l'émotion vient de sons du monde réel.
+## Mixage
+
+- Distance réelle : l'eau qui recule perd du volume, des aigus et gagne de la réverbération ; les bateaux, de plus en plus loin.
+- Tic-tac à gauche (côté compteur), alterné tic (aigu) / tac (plus grave).
+- Respiration (−4 dB sur l'eau) sous le sous-titre « À Nice, la mer se retire. ».
+- −14 LUFS, crête −1,5 dBTP.
 
 ## Bibliothèque (ElevenLabs, `bibliotheque.py`)
 

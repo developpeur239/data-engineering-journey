@@ -352,6 +352,17 @@ soleil.castShadow = true; soleil.shadow.mapSize.set(2048, 2048);
 Object.assign(soleil.shadow.camera, { left: -120, right: 120, top: 120, bottom: -120, near: 1, far: 900 });
 soleil.shadow.bias = -0.0004; scene.add(soleil, soleil.target);
 const ciel = new THREE.HemisphereLight(0xbcd6f0, 0x8a7c66, 1.1); scene.add(ciel);
+// caméra et voitures, recalculables sans rendu (utilisé aussi par window.etat pour caler le son)
+function placeCamera(t) {
+  const k = t / DUREE;
+  camera.position.set(lerp(46, 30, k), lerp(19, 21, k), lerp(31, 29, k));
+  camera.lookAt(lerp(-40, -52, k), lerp(8.5, 5.5, k), lerp(-70, -105, k));   // horizon vers 38 % de la hauteur : le compteur est sur le ciel
+  camera.updateMatrixWorld();
+}
+function placeVoitures(t) {
+  voitures.forEach(v => { const d = v.userData, ralenti = 1 - 0.85 * smooth((t - 12) / 4);
+    v.position.set(((d.x0 + d.v * (t < 12 ? t : 12 + (t - 12) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI; });
+}
 // ---------- image t ----------
 const el = id => document.getElementById(id);
 const fmtJour = h => { const H = Math.floor(h), M = Math.floor((h - H) * 60 + 1e-6); return `${H} h ${String(M).padStart(2, '0')} min`; };
@@ -380,14 +391,12 @@ window.frame = (t) => {
   bateaux.forEach(b => { const d = b.userData, flotte = niveau > d.fondY + 0.9;
     b.position.y = flotte ? niveau + Math.sin(t * 1.2 + d.phase) * 0.12 : d.fondY + 0.35;
     b.rotation.z = flotte ? Math.sin(t * 0.9 + d.phase) * 0.04 : d.tilt; });
-  voitures.forEach(v => { const d = v.userData, ralenti = 1 - 0.85 * smooth((t - 12) / 4);
-    v.position.set(((d.x0 + d.v * (t < 12 ? t : 12 + (t - 12) * ralenti)) + 1300) % 2600 - 1300, 0, d.z); v.rotation.y = d.v > 0 ? 0 : Math.PI; });
+  placeVoitures(t);
   poseGens(t);
 
   // caméra : léger travelling le long de la Promenade
   const k = t / DUREE;
-  camera.position.set(lerp(46, 30, k), lerp(19, 21, k), lerp(31, 29, k));
-  camera.lookAt(lerp(-40, -52, k), lerp(8.5, 5.5, k), lerp(-70, -105, k));   // horizon vers 38 % de la hauteur : le compteur est sur le ciel
+  placeCamera(t);
 
   // incrustations
   el('jour').textContent = fmtJour(jourH(t));
@@ -409,7 +418,10 @@ window.etat = (t) => {
   const echoues = bateaux.filter(b => !(niveau > b.userData.fondY + 0.9)).length;
   const reagi = gens.filter(p => t > p.t0 + 1).length;
   const descendent = gens.filter(p => p.surPlage && p.curieux > 0.5 && t > p.t0 + 2.5).length;
-  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent };
+  placeCamera(t); placeVoitures(t);
+  const autos = voitures.map(v => { const p = v.position.clone().add(new THREE.Vector3(0, 0.8, 0)), d = p.distanceTo(camera.position);
+    p.project(camera); return { x: +p.x.toFixed(3), y: +p.y.toFixed(3), vis: Math.abs(p.x) < 1 && Math.abs(p.y) < 1 && p.z < 1, d: +d.toFixed(1), sens: Math.sign(v.userData.v) }; });
+  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos };
 };
 await document.fonts.ready;
 window.frame(0);
