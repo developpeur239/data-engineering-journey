@@ -20,14 +20,14 @@ const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const smooth = u => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); };
 
 // ---------- chronologie ----------
-const jourH = t => 24 - 2.5 * Math.pow(clamp(t / DUREE, 0, 1), 1.6);           // durée du jour (h)
+const jourH = t => 24 - 2.5 * Math.pow(clamp(t / DUREE, 0, 1), 3);           // durée du jour (h)
 const baisse = t => 11000 * (Math.pow(24 / jourH(t), 2) - 1) * (2 / 3 - Math.cos(LAT) ** 2); // m
 const poids = t => {
   const g = 9.806, R = 6.371e6, c2 = Math.cos(LAT) ** 2;
   const w = 2 * Math.PI / (jourH(t) * 3600), w0 = 2 * Math.PI / 86400;
   return 75 * (g - w * w * R * c2) / (g - w0 * w0 * R * c2);
 };
-const visuel = t => 46 * (1 - Math.exp(-baisse(t) / 90));                       // baisse visible (m)
+const visuel = t => 46 * (1 - Math.exp(-baisse(t) / 250));                       // baisse visible (m)
 const SOUS = [[0, 4.6, 'Nice, 14 h. Une journée dure 24 heures.'],
               [4.8, 9.6, 'La Terre se met à tourner un peu plus vite.'],
               [9.8, 14.6, 'Les océans glissent vers l’équateur.'],
@@ -123,7 +123,7 @@ const fond = (x, z) => {
   }
   geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   geo.computeVertexNormals();
-  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05 }));
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.03 }));
   m.receiveShadow = true; scene.add(m);
   // rochers sur le fond
   const roc = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), new THREE.MeshStandardMaterial({ color: 0x5f5a50, roughness: 0.9 }), 500);

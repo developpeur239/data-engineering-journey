@@ -14,4 +14,4 @@ python3 son.py              # son.wav (−14 LUFS)
 Physique : la surface des océans suit le potentiel centrifuge. Δh = (R²/2g)(ω² − ω0²)(cos²φ − 2/3), avec
 R²ω0²/2g ≈ 11 km. À Nice (43,7° N), cos²φ − 2/3 = −0,144 : quand la Terre accélère, la mer baisse
 (≈ 390 m pour une journée de 21 h 30). Modèle simplifié : pas d'auto-gravitation de l'eau ni de déformation de la croûte.
-La baisse visible à l'écran est compressée (46 m au plus) ; le chiffre affiché est le vrai.
+La baisse visible à l'écran est compressée (36 m à la fin) ; le chiffre affiché est le vrai.
