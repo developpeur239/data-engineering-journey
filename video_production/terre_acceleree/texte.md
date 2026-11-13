@@ -75,9 +75,9 @@ Image : un quai de Seine avec la tour Eiffel ; soleil et lune qui défilent de p
 façades qui tremblent ; une bille ou une canette qui roule vers le sud. Son : la ville, puis les sirènes, le craquement de la roche,
 les alarmes, les vitres.
 
-## 5 · Retour à Kourou — 4:20 → 5:30 · 4 h 00 → 1 h 50
+## 5 · Plateforme en mer sur l'équateur (Kourou est sous l'eau) — 4:20 → 5:30 · 4 h 00 → 1 h 50
 
-Compteur : VOUS PESEZ 66 → 30 KG · KOUROU · orange : vitesse de l'équateur.
+Compteur : VOUS PESEZ 66 → 30 KG · SUR L'OCÉAN · ÉQUATEUR · orange : vitesse de l'équateur.
 
 | ≈ Temps | Compteur | Sous-titre | Ligne orange |
 |---|---|---|---|
@@ -86,7 +86,7 @@ Compteur : VOUS PESEZ 66 → 30 KG · KOUROU · orange : vitesse de l'équateur.
 | 5:00 | 2 h 00 | *Les fusées n'ont presque plus besoin de pousser.* | VOUS PESEZ 38 KG |
 | 5:20 | 1 h 50 | *Les vagues retombent au ralenti.* | VOUS PESEZ 30 KG ✱ |
 
-Image : ce qui reste au-dessus de l'eau à Kourou, des gens qui sautent haut, une fusée qui décolle sans effort.
+Image : une plateforme de lancement en pleine mer (type Sea Launch), car Kourou est déjà sous des kilomètres d'eau ; des gens qui sautent haut, une fusée qui décolle sans effort.
 Son : vent violent, foule incrédule, la fusée.
 
 ## 6 · Nice, la pente — 5:30 → 6:20 · 1 h 50 → 1 h 30
@@ -107,7 +107,7 @@ Son : frottements, raclements, cris, métal qui traîne.
 | 6:20 | 1 h 26 | *À l'équateur, le sol va aussi vite que la Station spatiale.* | — |
 | 6:35 | 1 h 24 | *Vous ne pesez plus rien.* | VOUS PESEZ 0 KG |
 
-Image : Kourou, objets et gens qui décollent doucement du sol, l'eau qui monte en colonnes.
+Image : la même plateforme, objets et gens qui décollent doucement du sol, l'eau qui monte en colonnes.
 Son : **tout se tait**, sauf la pulsation et un souffle très doux.
 
 ## 8 · L'anneau — 6:50 → 7:40 · 1 h 24 → 59 min

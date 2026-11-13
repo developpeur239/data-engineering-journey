@@ -40,3 +40,12 @@ Film sans voix off, à la manière de What If Sim (« What If Earth Spun Faster 
 0. Ouverture flash-forward : la Terre avec son anneau, « Dans 8 minutes, voici la Terre. »
 1. Nice : la mer se retire. 2. Kourou (équateur) : la mer monte, on s'allège. 3. Paris : jours et nuits qui défilent, le sol penche.
 4. La Terre vue de l'espace s'aplatit. 5. Retour Kourou / Nice : apesanteur à 1 h 24. 6. Final : l'anneau, puis « Est-ce que c'est réel ? ».
+
+## État au 13/11/2026 — film complet v1
+
+- Film assemblé : `proto/terre_acceleree.mp4` (8 min 00 s, −14,1 LUFS, pic −0,1 dBFS), non versionné (.gitignore).
+- Ordre : ouverture, nice, kourou, espace, paris, equateur, nicepente, apesanteur, anneau, fin (`proto/assembler_film.sh`).
+- Séquences 5 et 7 déplacées sur une plateforme en mer à l'équateur (`proto/navire.js`) : Kourou serait sous l'eau.
+- Tic-tac du film : 64 + 22·log2(24/jour) bpm (64 → ~166 bpm), monotone sur tout le film.
+- Coût ElevenLabs : ~1 300 crédits (prototype) + ~760 crédits (21 sons du film).
+- Pistes d'amélioration : séquences spatiales un peu sombres ; décors simplifiés (Paris, plateforme).
