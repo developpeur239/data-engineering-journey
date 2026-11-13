@@ -25,6 +25,11 @@
   #hud .or { color: #ffbf73; opacity: 1; text-shadow: 0 1px 2px rgba(0,0,0,.6), 0 2px 14px rgba(0,0,0,.45); }
   #sous { position: absolute; z-index: 2; left: 0; right: 0; bottom: 42px; text-align: center; color: #fff;
           font: italic 400 44px Serif4; text-shadow: 0 1px 3px rgba(0,0,0,.5), 0 2px 20px rgba(0,0,0,.6); transition: none; }
+  #carton { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #fff; text-align: center; pointer-events: none; opacity: 0; }
+  #carton .t1 { font: italic 400 64px Serif4; text-shadow: 0 2px 24px rgba(0,0,0,.7); max-width: 1400px; }
+  #carton .t2 { font: 300 40px Serif4; margin-top: 34px; max-width: 1300px; line-height: 1.4; opacity: .92; }
+  #noir { position: absolute; inset: 0; z-index: 4; background: #000; opacity: 0; pointer-events: none; }
 </style>
 <script type="importmap">
 { "imports": { "three": "./node_modules/three/build/three.module.js",
@@ -37,10 +42,16 @@
   <div class="lab">UNE JOURNÉE DURE</div>
   <div class="big" id="jour">24 h 00 min</div>
   <div class="ln" id="poids">VOUS PESEZ 75,00 KG</div>
-  <div class="ln">NICE · 43,7° NORD</div>
+  <div class="ln" id="lieu">NICE · 43,7° NORD</div>
   <div class="ln or" id="mer">LA MER EST À SON NIVEAU</div>
 </div>
 <div id="sous"></div>
-<script type="module" src="scene.js"></script>
+<div id="carton"></div>
+<div id="noir"></div>
+<script type="module">
+  // ?scene=… choisit le décor (scene = Nice/Kourou, espace, navire, paris) ; ?seq=… la séquence
+  const sc = new URLSearchParams(location.search).get('scene') || 'scene';
+  import(`./${sc}.js`);
+</script>
 </body>
 </html>

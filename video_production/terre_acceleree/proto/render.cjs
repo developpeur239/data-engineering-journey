@@ -10,7 +10,7 @@ const srv = http.createServer((q, r) => {
   const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('console', m => console.log('page:', m.text())); p.on('pageerror', e => console.log('ERREUR page:', e.message));
-  await p.goto(`http://127.0.0.1:${srv.address().port}/?seq=${seq}`);
+  await p.goto(`http://127.0.0.1:${srv.address().port}/?${seq.includes(':') ? `scene=${seq.split(':')[0]}&seq=${seq.split(':')[1]}${seq.split(':')[2] ? '&' + seq.split(':')[2] : ''}` : `seq=${seq}`}`);
   await p.waitForFunction(() => window.pret === true, null, { timeout: 180000 });
   fs.mkdirSync(out, { recursive: true });
   const n = Math.round((fin - deb) / pas); const t0 = Date.now();
