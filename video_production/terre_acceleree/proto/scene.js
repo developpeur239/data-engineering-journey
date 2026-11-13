@@ -201,6 +201,8 @@ for (let x = -1300; x < 1300; x += 26 + rnd() * 10) {
   const mat = new THREE.MeshStandardMaterial({ map: texFacade.clone(), roughness: 0.9 });
   mat.map.repeat.set(w / 12, h / 22); mat.map.needsUpdate = true;
   mat.color.setHSL(0.08 + rnd() * 0.04, 0.35, 0.78 + rnd() * 0.1);
+  // pas d'immeuble contre une position de caméra (il boucherait l'image)
+  if (SEQ.plans.some(q => [q[2], q[3]].some(c => Math.abs(c[0] - x) < w / 2 + 8 && Math.abs(c[2] - 37) < 14))) continue;
   ajoute(new THREE.BoxGeometry(w, h, 14), mat, x, h / 2, 37);
   ajoute(new THREE.BoxGeometry(w + 0.6, 0.8, 14.6), new THREE.MeshStandardMaterial({ color: 0xa8553a, roughness: 0.8 }), x, h + 0.4, 37);
 }
