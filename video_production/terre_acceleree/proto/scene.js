@@ -504,8 +504,12 @@ window.etat = (t) => {
   placeCamera(t); placeVoitures(t);
   const autos = voitures.map(v => { const p = v.position.clone().add(new THREE.Vector3(0, 0.8, 0)), d = p.distanceTo(camera.position);
     p.project(camera); return { x: +p.x.toFixed(3), y: +p.y.toFixed(3), vis: Math.abs(p.x) < 1 && Math.abs(p.y) < 1 && p.z < 1, d: +d.toFixed(1), sens: Math.sign(v.userData.v) }; });
-  const coques = bateaux.map(b => ({ x: +b.userData.x.toFixed(1), z: +b.userData.z.toFixed(1), fond: +b.userData.fondY.toFixed(1), echoue: !(niveau > b.userData.fondY + 0.9) }));
-  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos, coques };
+  const coques = bateaux.map(b => { const q = new THREE.Vector3(b.userData.x, b.userData.fondY + 1, b.userData.z), d = q.distanceTo(camera.position); q.project(camera);
+    return { x: +b.userData.x.toFixed(1), z: +b.userData.z.toFixed(1), fond: +b.userData.fondY.toFixed(1), echoue: !(niveau > b.userData.fondY + 0.9),
+             ex: +q.x.toFixed(3), vis: Math.abs(q.x) < 1 && Math.abs(q.y) < 1 && q.z < 1, d: +d.toFixed(1) }; });
+  const plan = SEQ.plans.findIndex(q => t >= q[0] && t < q[1]);
+  const rive = new THREE.Vector3(camera.position.x, niveau, Math.min(zs, camera.position.z)), drive = rive.distanceTo(camera.position);
+  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent, autos, coques, plan: plan < 0 ? SEQ.plans.length - 1 : plan, drive: +drive.toFixed(1), cam: camera.position.toArray().map(v => +v.toFixed(1)) };
 };
 await document.fonts.ready;
 window.frame(0);
