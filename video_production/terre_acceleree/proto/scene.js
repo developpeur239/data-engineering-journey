@@ -402,6 +402,15 @@ window.frame = (t) => {
   renderer.render(scene, camera);
   return true;
 };
+// état de la scène sans rendu (pour caler le son) : niveau, trait de côte, bateaux échoués, réactions
+window.etat = (t) => {
+  const niveau = Y0 + 0.05 - visuel(t);
+  let zs = PLAGE; while (fond(0, zs) > niveau && zs > PLAGE - 1400) zs -= 0.5;
+  const echoues = bateaux.filter(b => !(niveau > b.userData.fondY + 0.9)).length;
+  const reagi = gens.filter(p => t > p.t0 + 1).length;
+  const descendent = gens.filter(p => p.surPlage && p.curieux > 0.5 && t > p.t0 + 2.5).length;
+  return { t, jour: jourH(t), baisse: baisse(t), visuel: visuel(t), trait: zs, echoues, reagi, descendent };
+};
 await document.fonts.ready;
 window.frame(0);
 window.pret = true;
