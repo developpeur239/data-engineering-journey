@@ -2,3 +2,5 @@ node_modules/
 frames/
 *.mp4
 frames_nice/
+rendus/
+segments/
