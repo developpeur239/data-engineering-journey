@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Dramatic YouTube thumbnail image, stylized 3D CGI render in the same simulation style as the reference image (clean 3D, saturated colors), 16:9. Scene: an offshore rocket launch platform on the equator at the exact moment Earth spins so fast that gravity disappears. IMPORTANT: keep the whole upper-left third of the image as plain sky with no objects, so a text can be placed there. No text, no letters, no watermark. Low angle looking up: the sky is filled with floating people, containers, water droplets and fish, all rising toward a huge dark cloud vortex. Below, the ocean surface bulges upward into a giant dome of water around the platform. A worker in the foreground is desperately gripping the yellow railing with both hands while his body floats horizontally, terrified face. Warm orange rim light, deep blue shadows, maximum drama.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_rendu.jpg"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "24d4c409fe6fadb2aa1bb1501d2bbfe8",
+ "credits": 12.0,
+ "seconds": 34
+}

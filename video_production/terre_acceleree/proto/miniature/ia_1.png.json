@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Dramatic YouTube thumbnail image, stylized 3D CGI render in the same simulation style as the reference image (clean 3D, saturated colors), 16:9. Scene: an offshore rocket launch platform on the equator at the exact moment Earth spins so fast that gravity disappears. IMPORTANT: keep the whole upper-left third of the image as plain sky with no objects, so a text can be placed there. No text, no letters, no watermark. Apocalyptic stormy sky, dark blue-grey clouds with a burning orange sunset glow on the horizon. A gigantic wall of ocean water rising vertically into the sky behind the platform, huge spray. Clearly recognizable panicked people with arms and legs flailing, floating up into the air, screaming. In the foreground right, a big terrified worker in an orange safety suit and helmet, mouth open, reaching out as he is lifted off the deck. Brightly colored shipping containers and barrels tumbling upward. Red launch tower on the right. Strong contrast, cinematic lighting, high drama.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_rendu.jpg"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "5bdcf8057e43285a0c41d42215418f68",
+ "credits": 12.0,
+ "seconds": 42
+}
