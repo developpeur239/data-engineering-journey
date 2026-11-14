@@ -67,7 +67,7 @@ for (let i = 0; i < 10; i++) { const b = box(6, 2.6, 2.4, M(coulC[i % coulC.leng
 const objets = [];
 if (MINI) {
   const coulF = [0xe24b3b, 0xf2c330, 0x2e6fb7, 0x3a9d6a, 0xf28c28, 0xe8e8e2];
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 140; i++) {
     const k = i % 3, c = coulF[i % coulF.length];
     const g = k === 0 ? new THREE.BoxGeometry(6, 2.6, 2.4) : k === 1 ? new THREE.CylinderGeometry(0.45, 0.45, 1.3, 14) : new THREE.BoxGeometry(1.2, 1.2, 1.2);
     const m = new THREE.Mesh(g, M(k === 0 ? coulC[i % coulC.length] : coulC[(i * 3 + 1) % coulC.length], 0.45, 0.15)); m.castShadow = true; plate.add(m);
@@ -102,6 +102,12 @@ const P = Array.from({ length: NP }, (_, i) => ({ x: MINI ? -15 + rnd() * 52 : -
 // miniature : rien ne passe devant le compteur (coin haut gauche de l'écran)
 const _v = new THREE.Vector3();
 const dansCoin = (x, y, z) => { _v.set(x, y, z).project(camera); return _v.x < 0.02 && _v.y > 0.05; };
+// objet entier (ses 8 coins) : rien ne doit toucher le bloc de texte, ligne orange comprise
+const _b = new THREE.Box3();
+const toucheTexte = m => { m.updateMatrixWorld(true); _b.setFromObject(m);
+  for (const x of [_b.min.x, _b.max.x]) for (const y of [_b.min.y, _b.max.y]) for (const z of [_b.min.z, _b.max.z]) {
+    _v.set(x, y, z).project(camera); if (_v.x < 0.34 && _v.y > 0.06) return true; }
+  return false; };
 let colPrete = false;
 function placeColonnes() {
   // repère caméra : direction horizontale de visée, et sa droite
@@ -156,7 +162,7 @@ function frame(t) {
   });
   gens.maj();
   if (MINI) { masqueCoin(); premierPlan(); if (!colPrete) placeColonnes(); }
-  objets.forEach(o => { o.m.position.set(o.x, PONT + 1.5 + o.h * flotte, o.z); o.m.rotation.set(o.r[0] * flotte, o.r[1], o.r[2] * flotte); o.m.visible = !dansCoin(o.x, o.m.position.y, o.z); });
+  objets.forEach(o => { o.m.position.set(o.x, PONT + 1.5 + o.h * flotte, o.z); o.m.rotation.set(o.r[0] * flotte, o.r[1], o.r[2] * flotte); o.m.visible = !toucheTexte(o.m); });
   conteneurs.forEach(c => { c.b.position.y = c.y0 + flotte * 10 * c.s * smooth((t - 12 - c.s * 4) / 14); c.b.rotation.z = flotte * c.s * 0.4; });
   // fusée : allumage puis décollage (accélération ≈ poussée − g ressentie)
   const tf = SEQ.fusee >= 0 ? t - SEQ.fusee : -1;
@@ -179,7 +185,7 @@ function frame(t) {
         orange: v > 27500 ? `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H · VITESSE D’UN SATELLITE` : `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H` });
   sousTitres(t, SEQ.sous);
   noir(t, D, 0.6, 0.6);
-  if (MINI) conteneurs.forEach(c => { c.b.visible = !dansCoin(c.b.position.x, c.b.position.y, c.b.position.z); });
+  if (MINI) conteneurs.forEach(c => { c.b.visible = !toucheTexte(c.b); });
   renderer.render(scene, camera);
   return true;
 }
