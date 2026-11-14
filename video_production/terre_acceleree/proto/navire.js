@@ -17,7 +17,7 @@ const SEQS = {
     soleil: [[14, 250], [9, 255]] },
   // image fixe pour la miniature YouTube (pas dans le film) : tout décolle, contre-plongée, ciel de fin de journée
   miniature: { duree: 30, jour: [[0, 1 + 26 / 60], [15, 1 + 24.6 / 60], [30, 1 + 23 / 60]], fusee: -1, sous: [],
-    chemin: [[0, [34, 9.2, 44], [-6, 24, 2]], [30, [34, 9.2, 44], [-6, 24, 2]]],
+    chemin: [[0, [34, 9.2, 44], [-20, 24, 24]], [30, [34, 9.2, 44], [-20, 24, 24]]],
     soleil: [[7, 248], [7, 248]] },
 };
 const SEQ = SEQS[PARAMS.get('seq') || 'equateur'];
