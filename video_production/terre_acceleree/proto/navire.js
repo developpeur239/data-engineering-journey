@@ -15,19 +15,24 @@ const SEQS = {
     sous: [[0.5, 13, 'À l’équateur, le sol va aussi vite que la Station spatiale.'], [15, 28, 'Vous ne pesez plus rien.']],
     chemin: [[0, [55, 10, 50], [0, 6, 0]], [30, [30, 22, 60], [0, 14, 0]]],
     soleil: [[14, 250], [9, 255]] },
+  // image fixe pour la miniature YouTube (pas dans le film) : tout décolle, contre-plongée, ciel de fin de journée
+  miniature: { duree: 30, jour: [[0, 1 + 26 / 60], [15, 1 + 24.6 / 60], [30, 1 + 23 / 60]], fusee: -1, sous: [],
+    chemin: [[0, [34, 9.2, 44], [-6, 24, 2]], [30, [34, 9.2, 44], [-6, 24, 2]]],
+    soleil: [[7, 248], [7, 248]] },
 };
 const SEQ = SEQS[PARAMS.get('seq') || 'equateur'];
+const MINI = SEQ === SEQS.miniature, APES = SEQ === SEQS.apesanteur || MINI;
 const D = SEQ.duree, jourH = pchip(SEQ.jour);
 const gRel = t => physique.poids(0, jourH(t)) / 75;                       // pesanteur ressentie (1 = aujourd'hui)
 
-const { renderer, scene, camera } = moteur({ exposition: 0.6, brume: [0x9fc2e0, 1500, 14000] });
+const { renderer, scene, camera } = moteur({ exposition: MINI ? 0.72 : 0.6, brume: [0x9fc2e0, 1500, 14000] });
 const sky = ciel(scene);
 const eau = mer(scene, rnd, { couleur: 0x0b5f8c, taille: 1.6 });
 const soleil = new THREE.DirectionalLight(0xfff0dc, 3.0);
 soleil.castShadow = true; soleil.shadow.mapSize.set(2048, 2048);
 Object.assign(soleil.shadow.camera, { left: -90, right: 90, top: 90, bottom: -90, near: 1, far: 800 });
 soleil.shadow.bias = -0.0004; scene.add(soleil, soleil.target);
-const amb = new THREE.HemisphereLight(0xbcd6f0, 0x2a4a5a, 1.1); scene.add(amb);
+const amb = new THREE.HemisphereLight(0xbcd6f0, 0x6a7a80, MINI ? 2.2 : 1.1); scene.add(amb);
 
 // ---------- la plateforme ----------
 const plate = new THREE.Group(); scene.add(plate);
@@ -58,6 +63,17 @@ box(26, 12, 18, M(0xe9e6dd, 0.7, 0.1), 28, PONT + 6, -10);              // hanga
 const coulC = [0x2f6fb3, 0xc0392b, 0x2a7f62, 0xe8a33a, 0x6b6f75];
 const conteneurs = [];
 for (let i = 0; i < 10; i++) { const b = box(6, 2.6, 2.4, M(coulC[i % 5], 0.6, 0.3), 12 + (i % 5) * 7, PONT + 1.3 + Math.floor(i / 5) * 2.6, 16); conteneurs.push({ b, y0: b.position.y, s: 0.3 + rnd() }); }
+// miniature : beaucoup plus d'objets en l'air (conteneurs, fûts, caisses)
+const objets = [];
+if (MINI) {
+  const coulF = [0xe24b3b, 0xf2c330, 0x2e6fb7, 0x3a9d6a, 0xf28c28, 0xe8e8e2];
+  for (let i = 0; i < 70; i++) {
+    const k = i % 3, c = coulF[i % coulF.length];
+    const g = k === 0 ? new THREE.BoxGeometry(6, 2.6, 2.4) : k === 1 ? new THREE.CylinderGeometry(0.45, 0.45, 1.3, 14) : new THREE.BoxGeometry(1.2, 1.2, 1.2);
+    const m = new THREE.Mesh(g, M(k === 0 ? coulC[i % 5] : c, 0.55, 0.3)); m.castShadow = true; plate.add(m);
+    objets.push({ m, x: -20 + rnd() * 60, z: -20 + rnd() * 55, h: 3 + rnd() * 30, r: [rnd() * 6, rnd() * 6, rnd() * 6] });
+  }
+}
 // fumée du décollage (particules)
 const NF = 900, fum = { pos: new Float32Array(NF * 3), meta: Array.from({ length: NF }, () => [rnd(), rnd() * 6.28, 0.3 + rnd()]) };
 const gF = new THREE.BufferGeometry(); gF.setAttribute('position', new THREE.BufferAttribute(fum.pos, 3));
@@ -67,28 +83,35 @@ const rond = (() => { const c = document.createElement('canvas'); c.width = c.he
 const fumee = new THREE.Points(gF, new THREE.PointsMaterial({ color: 0xeeeeee, map: rond, size: 16, sizeAttenuation: true, transparent: true, opacity: 0.28, depthWrite: false }));
 scene.add(fumee);
 // gouttes et embruns qui montent à 1 h 24
-const NG = 1600, gou = { pos: new Float32Array(NG * 3), meta: Array.from({ length: NG }, () => [(rnd() - 0.5) * 400, (rnd() - 0.5) * 400, rnd(), 0.4 + rnd()]) };
+const NG = 1600, gou = { pos: new Float32Array(NG * 3), meta: Array.from({ length: NG }, () => [(rnd() - 0.5) * (MINI ? 160 : 400), (rnd() - 0.5) * (MINI ? 160 : 400), rnd(), 0.4 + rnd()]) };
 const gG = new THREE.BufferGeometry(); gG.setAttribute('position', new THREE.BufferAttribute(gou.pos, 3));
-const gouttes = new THREE.Points(gG, new THREE.PointsMaterial({ color: 0xd8ecff, map: rond, size: 0.9, transparent: true, opacity: 0.8, depthWrite: false }));
+const gouttes = new THREE.Points(gG, new THREE.PointsMaterial({ color: 0xd8ecff, map: rond, size: MINI ? 1.4 : 0.9, transparent: true, opacity: 0.8, depthWrite: false }));
 scene.add(gouttes);
 
 // ---------- l'équipe sur le pont ----------
-const NP = 46, gens = foule(scene, NP, rnd);
-const P = Array.from({ length: NP }, (_, i) => ({ x: -40 + rnd() * 80, z: -26 + rnd() * 52, ph: rnd() * 10, saute: i % 3 === 0, cap: rnd() * 6.28, v: 0.4 + rnd() }));
+const NP = MINI ? 150 : 46, gens = foule(scene, NP, rnd);
+const P = Array.from({ length: NP }, (_, i) => ({ x: MINI ? -15 + rnd() * 52 : -40 + rnd() * 80, z: MINI ? -10 + rnd() * 48 : -26 + rnd() * 52, ph: rnd() * 10, saute: i % 3 === 0, cap: rnd() * 6.28, v: 0.4 + rnd() }));
 
+// miniature : rien ne passe devant le compteur (coin haut gauche de l'écran)
+const _v = new THREE.Vector3();
+const dansCoin = (x, y, z) => { _v.set(x, y, z).project(camera); return _v.x < 0.02 && _v.y > 0.05; };
+function masqueCoin() {
+  P.forEach((p, i) => { if (dansCoin(p.x, p.yv, p.z)) gens.pose(i, 0, -999, 0, 0, 0, 0); });
+  gens.maj();
+}
 function frame(t) {
   const jour = jourH(t), g = gRel(t);
   const u = t / D;
   const sd = dirSoleil(lerp(SEQ.soleil[0][0], SEQ.soleil[1][0], u), lerp(SEQ.soleil[0][1], SEQ.soleil[1][1], u));
   camera.position.set(...chemin(SEQ.chemin, t, 1)); camera.lookAt(...chemin(SEQ.chemin, t, 2)); camera.updateMatrixWorld();
-  sky.material.uniforms.sunDir.value.copy(sd); sky.material.uniforms.soir.value = smooth((u - 0.6) / 0.4) * (SEQ === SEQS.apesanteur ? 1 : 0.8);
+  sky.material.uniforms.sunDir.value.copy(sd); sky.material.uniforms.soir.value = smooth((u - 0.6) / 0.4) * (APES ? 1 : 0.8);
   sky.material.uniforms.temps.value = t; sky.position.copy(camera.position);
   eau.material.uniforms.sunDirection.value.copy(sd);
   // vagues : leur rythme suit √g (elles retombent au ralenti quand on s'allège)
   eau.material.uniforms.time.value = (eau.userData.tacc = (eau.userData.tacc ?? 0) + 0.6 * Math.sqrt(Math.max(g, 0.02)) / 30);
   soleil.position.copy(camera.position).addScaledVector(sd, 300); soleil.target.position.set(0, PONT, 0);
   // personnes : sauts de plus en plus hauts et lents ; à 1 h 24 elles quittent le pont
-  const flotte = SEQ === SEQS.apesanteur ? smooth((t - 9) / 14) : 0;
+  const flotte = APES ? smooth((t - 9) / 14) : 0;
   P.forEach((p, i) => {
     let y = PONT, incl = 0;
     if (p.saute) {
@@ -97,9 +120,11 @@ function frame(t) {
     }
     y += flotte * (1.5 + 14 * p.v) * smooth((t - 9 - p.ph * 0.4) / 12);
     incl = flotte * Math.sin(t * 0.4 + p.ph) * 0.8;
-    gens.pose(i, p.x, y, p.z, p.cap + flotte * t * 0.1, incl, 1);
+    p.yv = y; gens.pose(i, p.x, y, p.z, p.cap + flotte * t * 0.1, incl, 1);
   });
   gens.maj();
+  if (MINI) masqueCoin();
+  objets.forEach(o => { o.m.position.set(o.x, PONT + 1.5 + o.h * flotte, o.z); o.m.rotation.set(o.r[0] * flotte, o.r[1], o.r[2] * flotte); o.m.visible = !dansCoin(o.x, o.m.position.y, o.z); });
   conteneurs.forEach(c => { c.b.position.y = c.y0 + flotte * 10 * c.s * smooth((t - 12 - c.s * 4) / 14); c.b.rotation.z = flotte * c.s * 0.4; });
   // fusée : allumage puis décollage (accélération ≈ poussée − g ressentie)
   const tf = SEQ.fusee >= 0 ? t - SEQ.fusee : -1;
@@ -122,6 +147,7 @@ function frame(t) {
         orange: v > 27500 ? `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H · VITESSE D’UN SATELLITE` : `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H` });
   sousTitres(t, SEQ.sous);
   noir(t, D, 0.6, 0.6);
+  if (MINI) conteneurs.forEach(c => { c.b.visible = !dansCoin(c.b.position.x, c.b.position.y, c.b.position.z); });
   renderer.render(scene, camera);
   return true;
 }
