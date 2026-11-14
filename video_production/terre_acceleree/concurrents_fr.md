@@ -27,3 +27,22 @@ Méd. 15 = vues médianes des 15 dernières vidéos. « Et si » = part des 15 d
 What If Français (181 000), Solarballs Français (160 000), Le Petit Astronome (272 000), INDIANA SPACE (133 000).
 
 Constat : presque tout est en Shorts. Aucune chaîne francophone trouvée ne fait le format long « simulation 3D + compteur, sans voix off ».
+
+## Liens
+- Et si? : https://www.youtube.com/channel/UCeJiQLje-MU4j1IGQXZthXQ
+- Vertige : https://www.youtube.com/channel/UCGZyvbs4IC1IvXMj1UnvQQA
+- Les aventures de Thib : https://www.youtube.com/channel/UCc88kzygkPYNQWESUfJENgw
+- Et si… ? : https://www.youtube.com/channel/UCAwu0DvlGtX1ahTCZHrEk2A
+- The Suit Wonders : https://www.youtube.com/channel/UCXEtQviFXYCajWyNqT_2WJA
+- Une Vie Impossible : https://www.youtube.com/channel/UCjaxtChHYb2OSrHuWFWVIPw
+- Gaïa Explique : https://www.youtube.com/channel/UCoUvxhN1yMdRrIDkGdbquGA
+- Pryx FR : https://www.youtube.com/channel/UCeriRKLqcR-tNO2Kk54_V9g
+- Empire Espace : https://www.youtube.com/channel/UCJyvkOvZeVIhQhmG_Zqn0zw
+- Club60Secondes : https://www.youtube.com/channel/UCn95ug79ZlvLFKRWzyc5Lew
+- Le Fantôme : https://www.youtube.com/channel/UCs-colqMdW2G2sKb1ugYt2g
+- BioChokFr : https://www.youtube.com/channel/UCMnk02NoWgj2LuKHK9c3-XA
+- Déclic.mp3 : https://www.youtube.com/channel/UCxEeii7hqvYr3pJVbXvYTOg
+- What If Français : https://www.youtube.com/channel/UCWjkP53SduCLfH61uYl8_eA
+- Solarballs Français : https://www.youtube.com/channel/UCD5271ZnJRRHLbla1NegWbg
+- Le Petit Astronome : https://www.youtube.com/channel/UCyeoIdJHgQhOrct9mVJ2fTQ
+- INDIANA SPACE : https://www.youtube.com/channel/UCmXOSVVshbzd7KPNWfjdAIA
