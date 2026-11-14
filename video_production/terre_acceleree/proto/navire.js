@@ -60,9 +60,9 @@ const flamme = new THREE.Mesh(new THREE.ConeGeometry(2.2, 14, 16, 1, true), new 
 flamme.rotation.x = Math.PI; flamme.position.y = -7; fusee.add(flamme);
 fusee.position.set(-9, PONT, -2);
 box(26, 12, 18, M(0xe9e6dd, 0.7, 0.1), 28, PONT + 6, -10);              // hangar
-const coulC = [0x2f6fb3, 0xc0392b, 0x2a7f62, 0xe8a33a, 0x6b6f75];
+const coulC = MINI ? [0xff3b30, 0xffcc00, 0x0a84ff, 0xff9500, 0x30d158, 0xbf5af2, 0xff2d92] : [0x2f6fb3, 0xc0392b, 0x2a7f62, 0xe8a33a, 0x6b6f75];
 const conteneurs = [];
-for (let i = 0; i < 10; i++) { const b = box(6, 2.6, 2.4, M(coulC[i % 5], 0.6, 0.3), 12 + (i % 5) * 7, PONT + 1.3 + Math.floor(i / 5) * 2.6, 16); conteneurs.push({ b, y0: b.position.y, s: 0.3 + rnd() }); }
+for (let i = 0; i < 10; i++) { const b = box(6, 2.6, 2.4, M(coulC[i % coulC.length], 0.6, 0.3), 12 + (i % 5) * 7, PONT + 1.3 + Math.floor(i / 5) * 2.6, 16); conteneurs.push({ b, y0: b.position.y, s: 0.3 + rnd() }); }
 // miniature : beaucoup plus d'objets en l'air (conteneurs, fûts, caisses)
 const objets = [];
 if (MINI) {
@@ -70,7 +70,7 @@ if (MINI) {
   for (let i = 0; i < 70; i++) {
     const k = i % 3, c = coulF[i % coulF.length];
     const g = k === 0 ? new THREE.BoxGeometry(6, 2.6, 2.4) : k === 1 ? new THREE.CylinderGeometry(0.45, 0.45, 1.3, 14) : new THREE.BoxGeometry(1.2, 1.2, 1.2);
-    const m = new THREE.Mesh(g, M(k === 0 ? coulC[i % 5] : c, 0.55, 0.3)); m.castShadow = true; plate.add(m);
+    const m = new THREE.Mesh(g, M(k === 0 ? coulC[i % coulC.length] : coulC[(i * 3 + 1) % coulC.length], 0.45, 0.15)); m.castShadow = true; plate.add(m);
     objets.push({ m, x: -20 + rnd() * 60, z: -20 + rnd() * 55, h: 3 + rnd() * 30, r: [rnd() * 6, rnd() * 6, rnd() * 6] });
   }
 }
@@ -88,6 +88,13 @@ const gG = new THREE.BufferGeometry(); gG.setAttribute('position', new THREE.Buf
 const gouttes = new THREE.Points(gG, new THREE.PointsMaterial({ color: 0xd8ecff, map: rond, size: MINI ? 1.4 : 0.9, transparent: true, opacity: 0.8, depthWrite: false }));
 scene.add(gouttes);
 
+// miniature : la mer se soulève en colonnes derrière la plateforme
+const NC = 40000, colPos = new Float32Array(NC * 3);
+const gC = new THREE.BufferGeometry(); gC.setAttribute('position', new THREE.BufferAttribute(colPos, 3));
+const colonnes = new THREE.Points(gC, new THREE.PointsMaterial({ color: 0xeaf7ff, map: rond, size: 7, transparent: true, opacity: 0.32, depthWrite: false }));
+colonnes.visible = MINI; scene.add(colonnes);
+const COL = Array.from({ length: 9 }, (_, i) => ({ a: -0.6 + i * 0.17 + (rnd() - 0.5) * 0.05, d: 85 + rnd() * 70, h: 40 + rnd() * 60, r: 2.5 + rnd() * 2.5 }));
+
 // ---------- l'équipe sur le pont ----------
 const NP = MINI ? 150 : 46, gens = foule(scene, NP, rnd);
 const P = Array.from({ length: NP }, (_, i) => ({ x: MINI ? -15 + rnd() * 52 : -40 + rnd() * 80, z: MINI ? -10 + rnd() * 48 : -26 + rnd() * 52, ph: rnd() * 10, saute: i % 3 === 0, cap: rnd() * 6.28, v: 0.4 + rnd() }));
@@ -95,6 +102,31 @@ const P = Array.from({ length: NP }, (_, i) => ({ x: MINI ? -15 + rnd() * 52 : -
 // miniature : rien ne passe devant le compteur (coin haut gauche de l'écran)
 const _v = new THREE.Vector3();
 const dansCoin = (x, y, z) => { _v.set(x, y, z).project(camera); return _v.x < 0.02 && _v.y > 0.05; };
+let colPrete = false;
+function placeColonnes() {
+  // repère caméra : direction horizontale de visée, et sa droite
+  const f = new THREE.Vector3(); camera.getWorldDirection(f); f.y = 0; f.normalize();
+  const r = new THREE.Vector3(-f.z, 0, f.x);
+  for (let i = 0; i < NC; i++) {
+    const c = COL[i % COL.length], u = rnd(), h = c.h * Math.pow(u, 0.7);
+    const base = camera.position.clone().addScaledVector(f, c.d).addScaledVector(r, Math.tan(c.a) * c.d);
+    const rr = c.r * (1 + 1.6 * u * u) * Math.sqrt(rnd()), an = rnd() * 6.28;
+    let x = base.x + Math.cos(an) * rr, y = -1 + h, z = base.z + Math.sin(an) * rr;
+    if (dansCoin(x, y, z)) y = -999;
+    colPos.set([x, y, z], i * 3);
+  }
+  gC.attributes.position.needsUpdate = true; colPrete = true;
+}
+function premierPlan() {
+  // quelques personnes proches de la caméra, côté droit, qui flottent
+  const f = new THREE.Vector3(); camera.getWorldDirection(f);
+  const r = new THREE.Vector3().crossVectors(f, camera.up).normalize(), up = new THREE.Vector3().crossVectors(r, f);
+  [[9, 3.2, -1.2, 0.7], [12, 1.4, 1.6, -0.5], [14, 4.8, 2.4, 1.6], [10, 5.2, -2.6, 2.4], [16, 2.6, 4.2, -1.1]].forEach(([d, rx, uy, rot], k) => {
+    const p = camera.position.clone().addScaledVector(f, d).addScaledVector(r, rx).addScaledVector(up, uy);
+    gens.pose(k, p.x, p.y - 0.9, p.z, rot * 2, rot, 1);
+  });
+  gens.maj();
+}
 function masqueCoin() {
   P.forEach((p, i) => { if (dansCoin(p.x, p.yv, p.z)) gens.pose(i, 0, -999, 0, 0, 0, 0); });
   gens.maj();
@@ -123,7 +155,7 @@ function frame(t) {
     p.yv = y; gens.pose(i, p.x, y, p.z, p.cap + flotte * t * 0.1, incl, 1);
   });
   gens.maj();
-  if (MINI) masqueCoin();
+  if (MINI) { masqueCoin(); premierPlan(); if (!colPrete) placeColonnes(); }
   objets.forEach(o => { o.m.position.set(o.x, PONT + 1.5 + o.h * flotte, o.z); o.m.rotation.set(o.r[0] * flotte, o.r[1], o.r[2] * flotte); o.m.visible = !dansCoin(o.x, o.m.position.y, o.z); });
   conteneurs.forEach(c => { c.b.position.y = c.y0 + flotte * 10 * c.s * smooth((t - 12 - c.s * 4) / 14); c.b.rotation.z = flotte * c.s * 0.4; });
   // fusée : allumage puis décollage (accélération ≈ poussée − g ressentie)
