@@ -10,7 +10,8 @@ Barème force_signal :
                forte activité (≥ 20 offres clients en ligne), ou implantation/associé non daté
   0 = aucun signal détecté
 """
-import csv, json, sys
+import csv, json, re, sys
+import signals_lib as S
 from datetime import date
 TODAY = date(2026, 11, 15)
 
@@ -23,13 +24,21 @@ def months(d):
 def evaluate(row, raw, ann):
     sigs = []  # (force, texte)
     if raw:
-        for j in raw["jobs"]:
-            if not j["propre_compte"]:
+        seen = set()
+        for j in sorted(raw["jobs"], key=lambda j: j.get("date") or "", reverse=True):
+            own, why = S.classify(j["titre"], j.get("description", ""))   # reclassement avec les règles à jour
+            key = S.norm(j["titre"])[:40]
+            if not own or key in seen:
                 continue
-            if j.get("date") and j["date"] != "30j+" and j.get("recente"):
-                sigs.append((3, f"Offre interne « {j['titre']} » ({j['source']}, publiée le {j['date']}) {j['url']}"))
+            seen.add(key)
+            freelance = re.search(r"ind[ée]pendant|freelance", j["titre"], re.I)
+            n_dup = sum(1 for x in raw["jobs"] if S.norm(x["titre"])[:40] == key)
+            label = "Recrute des consultants indépendants/freelance (réseau)" if freelance else "Offre interne"
+            dup = f" ×{n_dup} annonces" if n_dup > 1 else ""
+            if j.get("date") and j["date"] != "30j+" and S.recent(j["date"]):
+                sigs.append((2 if freelance else 3, f"{label} « {j['titre']} »{dup} ({j['source']}, publiée le {j['date']}) {j['url']}"))
             elif j.get("date") == "30j+":
-                sigs.append((2, f"Offre interne « {j['titre']} » encore en ligne ({j['source']}, publiée il y a > 30 j) {j['url']}"))
+                sigs.append((2, f"{label} « {j['titre']} » encore en ligne ({j['source']}, publiée il y a > 30 j) {j['url']}"))
         if raw.get("n_offres_hellowork", 0) >= 20:
             sigs.append((1, f"Forte activité : {raw['n_offres_hellowork']} offres clients en ligne sur HelloWork"))
     for a in ann.get(row["siren"], []):

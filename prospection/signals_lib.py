@@ -21,8 +21,14 @@ OWN = re.compile(r"rejoin\w* (?:notre|l.)(?: |\w)*(?:cabinet|[ée]quipe|aventure
                  r"renforcer notre [ée]quipe|notre cabinet (?:recrute|recherche|se d[ée]veloppe|est en croissance)|"
                  r"pour notre propre compte|en interne|nous recrutons notre|recrute son|recrute sa|recrute un\(?e?\)? consultant|"
                  r"vous d[ée]velopperez (?:un|votre) portefeuille|d[ée]velopper le portefeuille clients? du cabinet", re.I)
-CLIENT = re.compile(r"(?:pour|de) (?:l.un|l.une|un|une) de nos clients|notre client|pour le compte d|nous recherchons pour|"
-                    r"client (?:final|industriel)|pour son client|mission pour", re.I)
+CLIENT = re.compile(r"(?:pour|de) (?:l.un|l.une|un|une) de (?:nos|ses) clients|notre client|pour le compte d|nous recherchons pour|"
+                    r"client (?:final|industriel)|pour son client|mission pour|accompagne (?:un|une|son|notre) \w+ \w*\s*(?:dans|pour) (?:le|son) recrutement|"
+                    r"recrute pour", re.I)
+# Intitulés propres au métier du cabinet (vente de prestations de recrutement)
+CABINET_TITLE = re.compile(r"recrut|chasseu?r de t[eê]te|talent acquisition|\bsdr\b|sales development|business develop|"
+                           r"business manager|d[ée]veloppeu?r(?:se)? commercial", re.I)
+TECH_TITLE = re.compile(r"travaux|tce|cvc|vrd|cfo|cfa|moe|construction|b[âa]timent|[ée]lectri|m[ée]cani|tuyauterie|"
+                        r"g[ée]nie|industri|a[ée]ronauti|esn|\bit\b|informatique|ing[ée]nierie|outillage|photovolta", re.I)
 
 
 def norm(s):
@@ -71,7 +77,13 @@ def employer_match(employer, nom):
 
 
 def classify(title, desc):
-    """Renvoie (propre_compte: bool|None, raison)."""
+    """Renvoie (propre_compte: bool|None, raison).
+    Règle prudente : un poste n'est « interne » que si son intitulé relève du métier du cabinet
+    (consultant recrutement, business developer…) ; un chargé/ingénieur d'affaires technique est une mission client."""
+    if TECH_TITLE.search(title) and not re.search(r"recrut", title, re.I):
+        return False, "intitulé technique : mission pour un client"
+    if not CABINET_TITLE.search(title):
+        return False, "intitulé hors métier du cabinet : mission pour un client"
     d = norm(desc)
     own, cli = bool(OWN.search(d)), bool(CLIENT.search(d))
     t = norm(title)
