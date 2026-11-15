@@ -37,10 +37,10 @@ def run(item):
     return siren, {"site_ok": True, "url": u, "title": html.unescape(m.group(1).strip()) if m else "", "meta": html.unescape(desc.group(1)) if desc else "",
                    "tel": tel[:3], "kw_home": {k:v for k,v in kw_home.items() if v}, "kw_full": {k:v for k,v in kw_full.items() if v},
                    "hiring_snips": hire[:4], "pages": list(pages)}
-if __name__ != "__main__": raise ImportError
-sites = json.load(open("sites.json"))
-with cf.ThreadPoolExecutor(12) as ex: out = dict(ex.map(run, sites.items()))
-json.dump(out, open("sites_scraped.json", "w"), ensure_ascii=False, indent=1)
-for s, d in out.items():
-    print("\n==", s, d.get("url"), "|", d.get("title","")[:80]); print("   meta:", d.get("meta","")[:160]); print("   tel:", d.get("tel"), "| home:", d.get("kw_home"), "\n   full:", d.get("kw_full"))
-    for x in d.get("hiring_snips", [])[:2]: print("   HIRE:", x[:160])
+if __name__ == "__main__":
+    sites = json.load(open("sites.json"))
+    with cf.ThreadPoolExecutor(12) as ex: out = dict(ex.map(run, sites.items()))
+    json.dump(out, open("sites_scraped.json", "w"), ensure_ascii=False, indent=1)
+    for s, d in out.items():
+        print("\n==", s, d.get("url"), "|", d.get("title","")[:80]); print("   meta:", d.get("meta","")[:160]); print("   tel:", d.get("tel"), "| home:", d.get("kw_home"), "\n   full:", d.get("kw_full"))
+        for x in d.get("hiring_snips", [])[:2]: print("   HIRE:", x[:160])
