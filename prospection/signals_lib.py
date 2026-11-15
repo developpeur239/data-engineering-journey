@@ -49,7 +49,8 @@ def brand_keys(nom):
     """Mots distinctifs du nom (marque entre parenthèses prioritaire) pour matcher l'employeur."""
     stop = {"recrutement", "conseil", "conseils", "consulting", "search", "sarl", "sas", "groupe", "group", "rh",
             "the", "les", "and", "cabinet", "talent", "talents", "selection", "solutions"}
-    inner = re.findall(r"\(([^)]+)\)", nom)
+    inner = [p for p in re.findall(r"\(([^)]+)\)", nom)
+             if not re.fullmatch(r"\s*(?:sarl|sas|sasu|eurl|sa|sci|scop)\s*", p, re.I)]
     base = inner[-1] if inner else re.sub(r"\(.*?\)", "", nom)
     words = [w for w in re.split(r"[^a-z0-9]+", norm(base)) if len(w) > 2 and w not in stop]
     if not words:  # nom générique (ex. « NC RH ») : on garde tout
@@ -62,7 +63,7 @@ def employer_match(employer, nom):
     legal = {"sarl", "sas", "sasu", "eurl", "sa", "france", ""}
     e = set(re.split(r"[^a-z0-9]+", norm(employer))) - legal
     full = set(re.split(r"[^a-z0-9]+", norm(base))) - legal
-    if not words or not e:
+    if not words or not e or not full:
         return False
     stop = {"recrutement", "conseil", "conseils", "consulting", "search", "groupe", "group", "rh", "cabinet"}
     # 1) l'employeur contient toute la marque ; 2) ou ses mots distinctifs sont tous dans la marque

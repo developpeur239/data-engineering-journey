@@ -16,6 +16,8 @@ for o in rows:
         continue
     if re.search(r"ind[ée]pendant|freelance", o["titre"], re.I):
         continue
+    if not re.search(r"recrut|chasse", o["titre"], re.I):   # missions client (chargé d'affaires VRD, etc.)
+        continue
     by[S.norm(re.sub(r"[^\w ]", " ", e)).strip()].append(o)
 out = []
 for k, L in by.items():

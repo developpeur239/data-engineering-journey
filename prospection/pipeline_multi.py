@@ -58,8 +58,15 @@ def exclusion(x):
     return None
 
 
+PLACEHOLDER = re.compile(r"prochainement|coming soon|bient[oô]t|en construction|under construction", re.I)
+# Sites détectés automatiquement mais appartenant à des homonymes (vérifiés à la main)
+FAUX_SITES = {"phillips.com", "icart.fr", "drhconseils.com", "may-rh.com"}
+
+
 def auto_score(s, nom):
     """Score 0-3 automatique à partir du site (titre, meta, mots-clés) ou à défaut du nom."""
+    if s and s.get("site_ok") and PLACEHOLDER.search((s.get("title", "") + " " + s.get("meta", ""))):
+        s = None  # page d'attente : on ignore le contenu
     if s and s.get("site_ok"):
         head = (s.get("title", "") + " " + s.get("meta", "")).lower()
         if re.search(r"btp|industri|construction|b[âa]timent|ing[ée]nierie|a[ée]ronauti|maintenance|travaux", head):
@@ -109,6 +116,10 @@ if __name__ == "__main__":
             row = {**x, **{k: m[k] for k in ("site_web", "telephone", "specialite", "score_btp_industrie", "notes")}}
         else:
             s = scraped.get(x["siren"], {})
+            if s.get("site_ok") and any(f in s.get("url", "") for f in FAUX_SITES):
+                s = {"site_ok": False}
+            if s.get("site_ok") and PLACEHOLDER.search(s.get("title", "") + " " + s.get("meta", "")):
+                s = {**s, "kw_full": {}, "kw_home": {}, "meta": "site en construction"}
             row = {**x, "site_web": s.get("url", "") if s.get("site_ok") else "",
                    "telephone": " / ".join(t[:2] + " " + t[2:4] + " " + t[4:6] + " " + t[6:8] + " " + t[8:] for t in s.get("tel", [])[:2]),
                    "specialite": specialite(s), "score_btp_industrie": auto_score(s, x["nom"]),
