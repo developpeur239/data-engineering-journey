@@ -1,0 +1,724 @@
+{
+ "979403524": {
+  "site_ok": true,
+  "url": "https://www.habeo-recrutement.fr/",
+  "title": "Accueil - Habeo Recrutement",
+  "meta": "Cabinet de recrutement à Bordeaux & Bayonne, spécialisé BTP et Industrie. Candidats ou recruteurs, trouvez des opportunités adaptées à vos ambitions.",
+  "tel": [],
+  "kw_home": {
+   "btp": 6,
+   "travaux": 2,
+   "industrie": 8,
+   "aeronautique": 2,
+   "commerce/vente": 1
+  },
+  "kw_full": {
+   "btp": 18,
+   "travaux": 4,
+   "industrie": 22,
+   "aeronautique": 2,
+   "tech/IT": 51,
+   "commerce/vente": 2
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.habeo-recrutement.fr/",
+   "https://www.habeo-recrutement.fr/feed/",
+   "https://www.habeo-recrutement.fr/comments/feed/",
+   "https://www.habeo-recrutement.fr/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.habeo-recrutement.fr%2F",
+   "https://www.habeo-recrutement.fr/wp-json/",
+   "https://www.habeo-recrutement.fr/wp-json/wp/v2/pages/12"
+  ]
+ },
+ "513361402": {
+  "site_ok": true,
+  "url": "https://www.skillink.com/",
+  "title": "Cabinet de recrutement Digital - Tech - Innovation",
+  "meta": "",
+  "tel": [
+   "0183818620"
+  ],
+  "kw_home": {
+   "industrie": 1,
+   "tech/IT": 28,
+   "sante": 2,
+   "commerce/vente": 2
+  },
+  "kw_full": {
+   "industrie": 3,
+   "ingenierie": 1,
+   "tech/IT": 99,
+   "sante": 2,
+   "commerce/vente": 18,
+   "logistique": 1
+  },
+  "hiring_snips": [
+   "sition formation en recrutement jobs exclusifs people first ressources articles rejoignez-nous contact en fr cabinet de recrutement digital recruter durablement les meilleurs",
+   "es candidats recrutes en cas de non-confirmation en periode dessai. specialiste nous recrutons les talents de lindustrie tech & digitale depuis plus de 10 ans ! cabinet de re",
+   "tement jobs exclusifs people first ressources articles glossaire fiches metiers rejoignez nous contact fr en recrutement dexperts et managers soyez plus confiants, assurez vo",
+   " 3 mois nos specialisations en tant que cabinet de recrutement tech et digital, nous recrutons les meilleurs talents dont vous avez besoin a toutes les etapes du cycle de vie"
+  ],
+  "pages": [
+   "https://www.skillink.com/",
+   "https://www.skillink.com/services/recrutement-tech-digital",
+   "https://www.skillink.com/services/recrutement-international",
+   "https://www.skillink.com/services/formation-recrutement",
+   "https://www.skillink.com/contact",
+   "https://www.skillink.com/blog/cabinet-de-recrutement-vs-rpo"
+  ]
+ },
+ "533868477": {
+  "site_ok": true,
+  "url": "https://www.phi-rh.fr/",
+  "title": "Cabinet de recrutement Bordeaux : PHI RH - cabinet de recrutement multi-spécialiste",
+  "meta": "Vous êtes à la recherche de talents pour rejoindre votre équipe ? Ou vous souhaitez trouver un emploi ? Comptez sur notre cabinet de recrutement à Bordeaux !",
+  "tel": [
+   "0557990177"
+  ],
+  "kw_home": {
+   "btp": 5,
+   "industrie": 9,
+   "ingenierie": 11,
+   "maintenance": 3,
+   "tech/IT": 5,
+   "sante": 2,
+   "finance/compta": 8,
+   "commerce/vente": 11,
+   "logistique": 29
+  },
+  "kw_full": {
+   "btp": 11,
+   "industrie": 15,
+   "ingenierie": 17,
+   "maintenance": 5,
+   "energie": 1,
+   "tech/IT": 22,
+   "sante": 3,
+   "finance/compta": 14,
+   "commerce/vente": 20,
+   "logistique": 105
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.phi-rh.fr/",
+   "https://www.phi-rh.fr/le-cabinet/",
+   "https://www.phi-rh.fr/contact/",
+   "https://www.phi-rh.fr/actualites/la-mobilite-horizontale-le-guide-des-professionnels-pour-reussir-une-transition-de-carriere-sans-changer-de-secteur-ni-dentreprise/",
+   "https://www.phi-rh.fr/actualites/limpacte-de-lia-et-de-lautomatisation-sur-les-carrieres-en-logistique/",
+   "https://www.phi-rh.fr/actualites/logistique-de-demain-les-metiers-et-competences-cles-pour-anticiper-les-besoins-futurs/"
+  ]
+ },
+ "109803544": {
+  "site_ok": true,
+  "url": "https://www.earlybirdtalent.com/",
+  "title": "Prochainement disponible",
+  "meta": "",
+  "tel": [],
+  "kw_home": {
+   "construction": 1
+  },
+  "kw_full": {
+   "construction": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.earlybirdtalent.com/"
+  ]
+ },
+ "901822403": {
+  "site_ok": true,
+  "url": "https://cmrecrutement.fr/",
+  "title": "Cabinet de recrutement à Lille pour TPE/PME — CM Recrutement",
+  "meta": "Cabinet de recrutement à Lille pour TPE/PME : chasse ciblée, sélection et intégration garantie 90 jours par Caroline Malyga. Diagnostic offert.",
+  "tel": [],
+  "kw_home": {
+   "industrie": 1,
+   "energie": 1,
+   "commerce/vente": 1,
+   "logistique": 1
+  },
+  "kw_full": {
+   "industrie": 1,
+   "energie": 1,
+   "tech/IT": 445,
+   "commerce/vente": 1,
+   "logistique": 40
+  },
+  "hiring_snips": [
+   "11. faq vos questions, mes reponses je suis tpe/pme, ai-je vraiment besoin d'un consultant en recrutement ? absolument. le recrutement est chronophage et l'erreur de casting coute souve"
+  ],
+  "pages": [
+   "https://cmrecrutement.fr/",
+   "https://cmrecrutement.fr/assets/styles-Dh9TdwDQ.css",
+   "https://cmrecrutement.fr/assets/index-DiySEGd-.js",
+   "https://cmrecrutement.fr/assets/useSelector-1jNw1YRL.js",
+   "https://cmrecrutement.fr/assets/link-DJlBzhEB.js",
+   "https://cmrecrutement.fr/assets/matchContext-CItvn764.js",
+   "https://cmrecrutement.fr/assets/createServerFn-5zcXtKFv.js"
+  ]
+ },
+ "897735288": {
+  "site_ok": true,
+  "url": "https://www.connity.fr/",
+  "title": "Connity : Cabinet de Recrutement de l'Écosystème Digital",
+  "meta": "Votre Futur se conjugue au Présent - Bienvenue chez Connity où nous alignerons ensemble les planètes du recrutement !",
+  "tel": [],
+  "kw_home": {
+   "tech/IT": 1
+  },
+  "kw_full": {
+   "tech/IT": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.connity.fr/",
+   "https://www.connity.fr/contact/"
+  ]
+ },
+ "938596210": {
+  "site_ok": true,
+  "url": "https://www.highring.fr/",
+  "title": "HighRing | Cabinet de recrutement cadres, experts et profils techniques",
+  "meta": "HighRing accompagne les entreprises et les candidats sur le recrutement de cadres, profils techniques et experts métiers en France.",
+  "tel": [
+   "0687631997"
+  ],
+  "kw_home": {
+   "btp": 1,
+   "construction": 4,
+   "travaux": 3,
+   "genie civil": 1,
+   "ingenierie": 2,
+   "energie": 1
+  },
+  "kw_full": {
+   "btp": 1,
+   "construction": 4,
+   "travaux": 3,
+   "genie civil": 1,
+   "ingenierie": 2,
+   "energie": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.highring.fr/",
+   "https://www.highring.fr/contact"
+  ]
+ },
+ "928485374": {
+  "site_ok": true,
+  "url": "https://raretalents.fr/",
+  "title": "",
+  "meta": "",
+  "tel": [],
+  "kw_home": {},
+  "kw_full": {},
+  "hiring_snips": [],
+  "pages": [
+   "https://raretalents.fr/"
+  ]
+ },
+ "988173308": {
+  "site_ok": true,
+  "url": "https://recrutis-rh.com/",
+  "title": "Recrutis RH - Cabinet de Recrutement Personnel Soignant à Bordeaux",
+  "meta": "Recrutis RH, cabinet de recrutement spécialisé dans le personnel soignant. Recrutement CDD et CDI d'infirmiers, aides-soignants, médecins et autres professionnels de santé partout en France.",
+  "tel": [],
+  "kw_home": {},
+  "kw_full": {},
+  "hiring_snips": [],
+  "pages": [
+   "https://recrutis-rh.com/",
+   "https://recrutis-rh.com/favicon.svg",
+   "https://recrutis-rh.com/assets/index-CQWWNGXb.css"
+  ]
+ },
+ "106932684": {
+  "site_ok": true,
+  "url": "https://valtonrecrutement.fr/",
+  "title": "Valton Recrutement — Cabinet de recrutement | Le sens du choix",
+  "meta": "Valton Recrutement, cabinet de recrutement à Bordeaux, accompagne entreprises et candidats avec exigence et proximité pour des recrutements en CDI, CDD, mission de transition et RPO.",
+  "tel": [
+   "0667460879"
+  ],
+  "kw_home": {},
+  "kw_full": {
+   "btp": 2,
+   "travaux": 1,
+   "industrie": 3,
+   "tech/IT": 108,
+   "finance/compta": 5,
+   "logistique": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://valtonrecrutement.fr/",
+   "https://valtonrecrutement.fr/favicon.svg",
+   "https://valtonrecrutement.fr/_astro/Footer.B1djNKSA.css",
+   "https://valtonrecrutement.fr/_astro/index.8arcwINX.css",
+   "https://valtonrecrutement.fr/notre-approche/",
+   "https://valtonrecrutement.fr/entreprises/"
+  ]
+ },
+ "898102751": {
+  "site_ok": true,
+  "url": "https://maerajanin.fr/",
+  "title": "Accueil - Maëra Janin | Bilan de compétences et Sophrologue à Bordeaux",
+  "meta": "",
+  "tel": [
+   "0756862688"
+  ],
+  "kw_home": {
+   "finance/compta": 1
+  },
+  "kw_full": {
+   "finance/compta": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://maerajanin.fr/",
+   "https://maerajanin.fr/a-propos/",
+   "https://maerajanin.fr/contact-maera-janin-sophrologue-doula/"
+  ]
+ },
+ "100796929": {
+  "site_ok": true,
+  "url": "https://www.cristalconseils.fr/",
+  "title": "Management de transition PME & ETI | CristalConseils",
+  "meta": "",
+  "tel": [
+   "0770053040"
+  ],
+  "kw_home": {
+   "tech/IT": 10,
+   "finance/compta": 2,
+   "commerce/vente": 9,
+   "logistique": 1
+  },
+  "kw_full": {
+   "tech/IT": 11,
+   "finance/compta": 3,
+   "commerce/vente": 10,
+   "logistique": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.cristalconseils.fr/",
+   "https://www.cristalconseils.fr/a-propos/"
+  ]
+ },
+ "930376538": {
+  "site_ok": true,
+  "url": "https://www.mahay-consulting.fr/",
+  "title": "Mahay Consulting | cabinet de recrutement",
+  "meta": "Mahay Consulting: Votre partenaire recrutement sur-mesure.\n\nAvec 10 ans d'expérience, je vous accompagne dans tous vos projets de recrutement, de l'industrie aux services.\n\nMes services :\n\nSourcing de profils qualifiés\nÉlaboration de votre stratégie de recrutement\nCoaching en recrutement\nPrestations à la carte, en fonction de votre budget\n\nMon approche : Personnalisée, basée sur le respect, la transparence et la confiance.\n\nEnsemble, trouvons les talents qui feront grandir votre entreprise.",
+  "tel": [],
+  "kw_home": {},
+  "kw_full": {},
+  "hiring_snips": [],
+  "pages": [
+   "https://www.mahay-consulting.fr/"
+  ]
+ },
+ "988585279": {
+  "site_ok": true,
+  "url": "https://www.bm-conseil.com/",
+  "title": "MB Conseil",
+  "meta": "",
+  "tel": [],
+  "kw_home": {},
+  "kw_full": {},
+  "hiring_snips": [],
+  "pages": [
+   "https://www.bm-conseil.com/"
+  ]
+ },
+ "984848796": {
+  "site_ok": true,
+  "url": "https://www.kunz.fr/",
+  "title": "Accueil | KUNZ Pressing",
+  "meta": "Depuis 1925, KUNZ PRESSING prend soin de votre linge en utilisant les dernières innovations technologiques pour un résultat à la hauteur de vos exigences.",
+  "tel": [],
+  "kw_home": {
+   "energie": 1,
+   "tech/IT": 1
+  },
+  "kw_full": {
+   "energie": 1,
+   "tech/IT": 1,
+   "commerce/vente": 3
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.kunz.fr/",
+   "https://www.kunz.fr/qui-sommes-nous-pressing/",
+   "https://www.kunz.fr/contact/",
+   "https://www.kunz.fr/recrutement/"
+  ]
+ },
+ "988375853": {
+  "site_ok": true,
+  "url": "https://skillcore-industrie.fr/",
+  "title": "Skillcore Industrie - Recrutement industriel",
+  "meta": "",
+  "tel": [],
+  "kw_home": {
+   "industrie": 19,
+   "ingenierie": 1,
+   "maintenance": 1,
+   "aeronautique": 3,
+   "energie": 1,
+   "sante": 2,
+   "logistique": 1
+  },
+  "kw_full": {
+   "industrie": 19,
+   "ingenierie": 1,
+   "maintenance": 1,
+   "aeronautique": 3,
+   "energie": 1,
+   "sante": 2,
+   "logistique": 1
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://skillcore-industrie.fr/"
+  ]
+ },
+ "343463063": {
+  "site_ok": true,
+  "url": "https://www.grandest-recrutement.com/",
+  "title": "Grand Est Recrutement à Molsheim | Processus de recrutement",
+  "meta": "Le cabinet Grand Est Recrutement est à vos côtés pour vous trouver le Talent H/F qui répondra à vos attentes et à vos valeurs.",
+  "tel": [
+   "0786563486",
+   "0369613493"
+  ],
+  "kw_home": {
+   "btp": 1,
+   "industrie": 1,
+   "commerce/vente": 1,
+   "logistique": 2
+  },
+  "kw_full": {
+   "btp": 1,
+   "industrie": 1,
+   "tech/IT": 13,
+   "commerce/vente": 1,
+   "logistique": 2
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.grandest-recrutement.com/",
+   "https://www.grandest-recrutement.com/wp-content/uploads/2023/06/Grand-Est-Recrutement_Molsheim_Valerie.png.webp",
+   "https://www.grandest-recrutement.com/feed/",
+   "https://www.grandest-recrutement.com/comments/feed/",
+   "https://www.grandest-recrutement.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.grandest-recrutement.com%2F",
+   "https://www.grandest-recrutement.com/wp-json/"
+  ]
+ },
+ "880208590": {
+  "site_ok": true,
+  "url": "https://www.bonne-recrue.com/",
+  "title": "Bonne recrue | Conseil en recrutement",
+  "meta": "",
+  "tel": [],
+  "kw_home": {
+   "industrie": 2,
+   "energie": 1,
+   "tech/IT": 4,
+   "finance/compta": 3,
+   "vin/spiritueux": 6,
+   "commerce/vente": 3,
+   "logistique": 1
+  },
+  "kw_full": {
+   "industrie": 3,
+   "energie": 1,
+   "tech/IT": 7,
+   "finance/compta": 6,
+   "vin/spiritueux": 11,
+   "commerce/vente": 5,
+   "logistique": 2
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.bonne-recrue.com/",
+   "https://www.bonne-recrue.com/qui-sommes-nous/",
+   "https://www.bonne-recrue.com/lexpertise/",
+   "https://www.bonne-recrue.com/votre-carriere/",
+   "https://www.bonne-recrue.com/contact/"
+  ]
+ },
+ "977872571": {
+  "site_ok": true,
+  "url": "https://cb-consulting.fr/",
+  "title": "CB Consulting, organisme de formation à Nancy",
+  "meta": "Bilans de compétences à Nancy, prise en charge CPF possible. Formations en management, communication et RH, coaching, accompagnement des entrepreneurs.",
+  "tel": [
+   "0761150321"
+  ],
+  "kw_home": {
+   "finance/compta": 16,
+   "commerce/vente": 1
+  },
+  "kw_full": {
+   "construction": 1,
+   "finance/compta": 18,
+   "commerce/vente": 5
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://cb-consulting.fr/",
+   "https://cb-consulting.fr/approche-disc/recruter-avec-le-disc/",
+   "https://cb-consulting.fr/approche-disc/lequipe-en-couleurs/",
+   "https://cb-consulting.fr/contact/",
+   "https://cb-consulting.fr/rejoindre-cb-consulting/"
+  ]
+ },
+ "880483037": {
+  "site_ok": true,
+  "url": "https://duo-venandi.fr/",
+  "title": "DUO VENANDI",
+  "meta": "DUO VENANDI est un cabinet de recrutement spécialisé dans les métiers de l'Expertise Comptable et de l'Audit. Nous vous accompagnons dans toutes vos démarches professionnelles.",
+  "tel": [
+   "0625018574"
+  ],
+  "kw_home": {
+   "finance/compta": 1
+  },
+  "kw_full": {
+   "finance/compta": 5
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://duo-venandi.fr/",
+   "https://duo-venandi.fr/le-cabinet/",
+   "https://duo-venandi.fr/contact/"
+  ]
+ },
+ "879464725": {
+  "site_ok": true,
+  "url": "https://maherecrutement.fr/",
+  "title": "Cabinet de recrutement & chasseur de tête à Bordeaux et Paris | MAHE",
+  "meta": "Cabinet de recrutement et chasseur de tête à Bordeaux et Paris, nous accompagnons les entreprises dans la recherche de leurs talents.",
+  "tel": [
+   "0556912677"
+  ],
+  "kw_home": {
+   "btp": 4,
+   "construction": 4,
+   "travaux": 1,
+   "industrie": 5,
+   "ingenierie": 3,
+   "tech/IT": 6,
+   "finance/compta": 1,
+   "commerce/vente": 5,
+   "logistique": 4
+  },
+  "kw_full": {
+   "btp": 4,
+   "construction": 4,
+   "travaux": 1,
+   "industrie": 5,
+   "ingenierie": 3,
+   "tech/IT": 6,
+   "finance/compta": 1,
+   "commerce/vente": 5,
+   "logistique": 4
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://maherecrutement.fr/",
+   "https://maherecrutement.fr/feed/",
+   "https://maherecrutement.fr/comments/feed/",
+   "https://maherecrutement.fr/wp-content/themes/mahe/assets/images/favicon.svg?v=0.99.92",
+   "https://maherecrutement.fr/wp-content/themes/mahe/assets/images/favicon-32.png?v=0.99.92",
+   "https://maherecrutement.fr/wp-content/themes/mahe/assets/images/favicon-180.png?v=0.99.92"
+  ]
+ },
+ "939159166": {
+  "site_ok": true,
+  "url": "https://www.keypoints-recrutement.fr/",
+  "title": "Key Points Recrutement - Cabinet expert en recrutement",
+  "meta": "",
+  "tel": [],
+  "kw_home": {
+   "tech/IT": 5,
+   "finance/compta": 5,
+   "commerce/vente": 5
+  },
+  "kw_full": {
+   "ingenierie": 2,
+   "tech/IT": 50,
+   "finance/compta": 30,
+   "commerce/vente": 27
+  },
+  "hiring_snips": [
+   "ique et a l innovation des entreprises. dans un secteur en constante evolution, nous recrutons les professionnels qui concoivent , developpent et maintiennent vos solutions t",
+   "nologiques. digital le digital est au cur des transformations des entreprises . nous recrutons les talents capables de concevoir et deployer des strategies numeriques perform",
+   "ique et a l innovation des entreprises. dans un secteur en constante evolution, nous recrutons les professionnels qui concoivent , developpent et maintiennent vos solutions t",
+   "nologiques. digital le digital est au cur des transformations des entreprises . nous recrutons les talents capables de concevoir et deployer des strategies numeriques perform"
+  ],
+  "pages": [
+   "https://www.keypoints-recrutement.fr/",
+   "https://www.keypoints-recrutement.fr/nos-key-expertises",
+   "https://www.keypoints-recrutement.fr/qui-sommes-nous",
+   "https://www.keypoints-recrutement.fr/recruteurs",
+   "https://www.keypoints-recrutement.fr/candidats",
+   "https://www.keypoints-recrutement.fr/nos-offres-d-emploi"
+  ]
+ },
+ "990681686": {
+  "site_ok": true,
+  "url": "https://odas-conseil.fr/",
+  "title": "ODAS Conseil | Recrutement spécialisé & chasse de talents",
+  "meta": "ODAS Conseil, cabinet de recrutement spécialisé en France. Chasse de talents, profils rares, approche humaine et solutions RH sur mesure.",
+  "tel": [
+   "0626458957"
+  ],
+  "kw_home": {},
+  "kw_full": {
+   "industrie": 1,
+   "tech/IT": 5,
+   "finance/compta": 30,
+   "commerce/vente": 2
+  },
+  "hiring_snips": [
+   "ent du sport et administration des entreprises, julien debute sa carriere comme consultant en recrutement au sein dun cabinet leader sur la scene internationale. il se forme, evolue et ",
+   "strie et commerce. sur les deux dernieres annees, il prend en charge un role de business manager et formateur interne pour lensemble des collaborateurs. a titre personnel, juli",
+   "es. tertiaire & services le capital humain est au cur des metiers du tertiaire. nous recrutons des profils administratifs, commerciaux et de support qui conjuguent savoir-fai"
+  ],
+  "pages": [
+   "https://odas-conseil.fr/",
+   "https://odas-conseil.fr/qui-sommes-nous/",
+   "https://odas-conseil.fr/nos-expertises/",
+   "https://odas-conseil.fr/je-recrute/",
+   "https://odas-conseil.fr/perspectives-de-carriere/"
+  ]
+ },
+ "750288797": {
+  "site_ok": true,
+  "url": "https://www.valentin.fr/fr/",
+  "title": "VALENTIN",
+  "meta": "Valentin, expert sanitaire depuis 1944. Retrouvez nos produits chez les grossistes et magasins de bricolage partout en France.",
+  "tel": [
+   "0322603400"
+  ],
+  "kw_home": {
+   "industrie": 1,
+   "commerce/vente": 5
+  },
+  "kw_full": {
+   "industrie": 1,
+   "commerce/vente": 22
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://www.valentin.fr/fr/",
+   "https://www.valentin.fr/fr/content/15-nous-rejoindre",
+   "https://www.valentin.fr/fr/nous-contacter",
+   "https://www.valentin.fr/fr/la-douche/283-colonne-de-douche-equipee-totmy-too-mitigeur-mecanique-aluminium-3364549282875.html"
+  ]
+ },
+ "478077233": {
+  "site_ok": true,
+  "url": "https://macanders.eu/",
+  "title": "Macanders - cabinet de recrutement",
+  "meta": "MacAnders est un cabinet de recrutement par approche directe qui accompagne votre entreprise dans le recrutement de cadres, experts et dirigeants.",
+  "tel": [],
+  "kw_home": {
+   "construction": 4,
+   "industrie": 4,
+   "ingenierie": 4,
+   "immobilier": 4,
+   "tech/IT": 4,
+   "sante": 4
+  },
+  "kw_full": {
+   "construction": 13,
+   "industrie": 13,
+   "ingenierie": 13,
+   "immobilier": 13,
+   "tech/IT": 14,
+   "sante": 13
+  },
+  "hiring_snips": [],
+  "pages": [
+   "https://macanders.eu/",
+   "https://macanders.eu/qui-sommes-nous/",
+   "https://macanders.eu/nous-contacter/",
+   "https://macanders.eu/le-premier-contact-candidat-est-determinant-pour-assurer-le-succes-dun-recrutement/"
+  ]
+ },
+ "514085430": {
+  "site_ok": true,
+  "url": "https://www.decorgnoletagnes.fr/",
+  "title": "Accueil - de Corgnol & Agnès",
+  "meta": "",
+  "tel": [
+   "0535542782"
+  ],
+  "kw_home": {
+   "construction": 1,
+   "industrie": 1,
+   "immobilier": 1,
+   "vin/spiritueux": 6,
+   "commerce/vente": 8,
+   "logistique": 3
+  },
+  "kw_full": {
+   "construction": 1,
+   "industrie": 8,
+   "ingenierie": 4,
+   "immobilier": 1,
+   "tech/IT": 3,
+   "finance/compta": 11,
+   "vin/spiritueux": 39,
+   "commerce/vente": 20,
+   "logistique": 7
+  },
+  "hiring_snips": [
+   "r des candidats de grande qualite, motives par le projet construit ensemble. la consultante en recrutement nous preparait contentieusement chacun des entretiens et n'hesitait pas a reven",
+   "n developpement. elodie visit our linkedin psychologue de formation, elodie est consultante en recrutement au sein du cabinet depuis 2008. recruteuse generaliste et adaptable, elle accom",
+   "vice de la reussite des entreprises quelle accompagne. stacy visit our linkedin consultante en recrutement, stacy intervient dans le recrutement et levaluation de profils dexperts, de mi"
+  ],
+  "pages": [
+   "https://www.decorgnoletagnes.fr/",
+   "https://www.decorgnoletagnes.fr/recrutement/",
+   "https://www.decorgnoletagnes.fr/cabinet/",
+   "https://www.decorgnoletagnes.fr/cabinet-de-recrutement-bordeaux/",
+   "https://www.decorgnoletagnes.fr/cabinet-de-recrutement-bordeaux-vin-et-spiritueux/"
+  ]
+ },
+ "898196969": {
+  "site_ok": true,
+  "url": "https://www.tech-way.com/",
+  "title": "Home - Tech-Way",
+  "meta": "Home",
+  "tel": [
+   "0170833600"
+  ],
+  "kw_home": {
+   "travaux": 11,
+   "maintenance": 9,
+   "immobilier": 2,
+   "tech/IT": 10
+  },
+  "kw_full": {
+   "travaux": 21,
+   "maintenance": 22,
+   "immobilier": 2,
+   "tech/IT": 51
+  },
+  "hiring_snips": [
+   "es punaises de lit conseils punaises de lit , punaises de lit tech-way recrute, rejoignez-nous ! tech-way recrute, rejoignez-nous ! tech-way recrute, rejoignez-nous ! tech-wa",
+   "y recrute, rejoignez-nous ! tech-way recrute, rejoignez-nous ! besoin de plus dinformations ou dun devis ? nos experts se tiennent a votre d"
+  ],
+  "pages": [
+   "https://www.tech-way.com/",
+   "https://www.tech-way.com/qui-sommes-nous/",
+   "https://www.tech-way.com/nous-contacter/"
+  ]
+ }
+}

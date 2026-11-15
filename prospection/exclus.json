@@ -1,0 +1,242 @@
+[
+ {
+  "nom": "ASSOCIATION POUR L'EMPLOI DES CADRES (APEC)",
+  "siren": "775672231",
+  "date_creation": "1975-01-01",
+  "tranche_effectif": "1000-1999",
+  "ville": "BORDEAUX",
+  "adresse": "IMMEUBLE PLAZA 1 3 EME ETAGE 1 PL RAVEZIES 33000 BORDEAUX",
+  "dirigeants": "",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "HARRY HOPE",
+  "siren": "844622738",
+  "date_creation": "2019-01-15",
+  "tranche_effectif": "200-249",
+  "ville": "BORDEAUX",
+  "adresse": "51 QUAI LAWTON 33300 BORDEAUX",
+  "dirigeants": "Nicolas Domingo Mathias PUZIN (Directeur Général) ; MENTOR (Président de SAS) ; CABINET SECEF (Commissaire aux comptes titulaire)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "LHH RECRUITMENT SOLUTIONS (LHH RECRUITMENT SOLUTIONS, BADENOCH & CLARK, RH SANTE)",
+  "siren": "612027557",
+  "date_creation": "1961-01-01",
+  "tranche_effectif": "50-99",
+  "ville": "BORDEAUX",
+  "adresse": "22-26 22 QUAI DE BACALAN 33300 BORDEAUX",
+  "dirigeants": "Julien Thibault FANON-RIVIÈRE (Président de SAS) ; PRICEWATERHOUSECOOPERS AUDIT (Commissaire aux comptes titulaire)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "MICHAEL PAGE INTERNATIONAL FRANCE",
+  "siren": "338338700",
+  "date_creation": "1986-07-15",
+  "tranche_effectif": "50-99",
+  "ville": "BORDEAUX",
+  "adresse": "45 RUE D'ARMAGNAC 33800 BORDEAUX",
+  "dirigeants": "Isabelle LEBAUPAIN (BASTIDE) (Président de SAS) ; Kelvin STAGG (Directeur Général) ; ERNST & YOUNG AUDIT (Commissaire aux comptes titulaire)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "WINSEARCH",
+  "siren": "399625912",
+  "date_creation": "1995-01-16",
+  "tranche_effectif": "50-99",
+  "ville": "BORDEAUX",
+  "adresse": "4 RUE CROZILHAC 33000 BORDEAUX",
+  "dirigeants": "Roland Dominique Lucien GOMEZ (Président de SAS) ; Roland Joseph GOMEZ (Directeur Général) ; Romain Christian Roland GOMEZ (Directeur général délégué) ; Evelyne Marlene Claudine GOMEZ (GROSSI) (Directeur général délégué) ; EXPERTEA ET ASSOCIES (Commissaire aux comptes titulaire)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "ADOMO SERVICES (ADOMO SERVICES)",
+  "siren": "448502294",
+  "date_creation": "2003-05-17",
+  "tranche_effectif": "100-199",
+  "ville": "LE HAILLAN",
+  "adresse": "12 AVENUE DES SATELLITES 33185 LE HAILLAN",
+  "dirigeants": "G5 DEVELOPPEMENT (Président de SAS) ; HELYSEE (Directeur Général)",
+  "raison_exclusion": "intérim / services"
+ },
+ {
+  "nom": "PROFIL (AGENCE PROFIL)",
+  "siren": "378869846",
+  "date_creation": "1990-07-01",
+  "tranche_effectif": "250-499",
+  "ville": "BORDEAUX",
+  "adresse": "50 COURS DE VERDUN 33000 BORDEAUX",
+  "dirigeants": "Delphine DEMICHEL (Gérant) ; MAZARS (Commissaire aux comptes titulaire) ; CBA (Commissaire aux comptes suppléant)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "APPARENCE (APPARENCE)",
+  "siren": "752361147",
+  "date_creation": "2012-01-01",
+  "tranche_effectif": "6-9",
+  "ville": "BORDEAUX",
+  "adresse": "129 RUE DU PALAIS GALLIEN 33000 BORDEAUX",
+  "dirigeants": "Frederique Christiane BERTHELOT (PICOT) (Gérant)",
+  "raison_exclusion": "agence d'hôtesses/mannequins"
+ },
+ {
+  "nom": "MERCURI URVAL",
+  "siren": "319416681",
+  "date_creation": "1980-07-01",
+  "tranche_effectif": "6-9",
+  "ville": "BORDEAUX",
+  "adresse": "BUREAU CLUB BORDEAUX QUINCONCES 9 RUE DE CONDE 33000 BORDEAUX",
+  "dirigeants": "Oscar KARLESTEDT (Administrateur) ; Anna Maria Ulrika NERGARD (Président de SAS)",
+  "raison_exclusion": "grand réseau / groupe"
+ },
+ {
+  "nom": "ADEQUAT 013",
+  "siren": "443752654",
+  "date_creation": "2002-11-01",
+  "tranche_effectif": "6-9",
+  "ville": "BORDEAUX",
+  "adresse": "21 RUE ESPRIT-DES-LOIS 33000 BORDEAUX",
+  "dirigeants": "Pascal MANU (Commissaire aux comptes titulaire) ; MB ASSOCIES (Commissaire aux comptes suppléant) ; GROUPE ADEQUAT (Président de SAS)",
+  "raison_exclusion": "intérim / services"
+ },
+ {
+  "nom": "AGENCY ATTITUDE (AGENCY GROUP)",
+  "siren": "819054586",
+  "date_creation": "2016-03-14",
+  "tranche_effectif": "3-5",
+  "ville": "LE HAILLAN",
+  "adresse": "10-12 IMMEUBLE PEGASE BORDEAUX METROPOLE 10-12 AVENUE DES SATELLITES 33185 LE HAILLAN",
+  "dirigeants": "Maria GIULIANA (Gérant)",
+  "raison_exclusion": "agence d'hôtesses événementielles"
+ },
+ {
+  "nom": "PLANETT ATLANTIQUE",
+  "siren": "399806496",
+  "date_creation": "1995-02-01",
+  "tranche_effectif": "0 salarié",
+  "ville": "PESSAC",
+  "adresse": "207 AVENUE PASTEUR 33600 PESSAC",
+  "dirigeants": "MAZARS (Commissaire aux comptes titulaire) ; PLANETT GROUP (Président de SAS)",
+  "raison_exclusion": "intérim / services"
+ },
+ {
+  "nom": "GROUPEMENT D EMPLOYEUR LES MORLEAUX",
+  "siren": "493524763",
+  "date_creation": "2007-01-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "LES LEVES-ET-THOUMEYRAGUES",
+  "adresse": "CZ MR DIDIER FARGE 1 LD COUSTUT 33220 LES LEVES-ET-THOUMEYRAGUES",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs"
+ },
+ {
+  "nom": "GE D'AQUITAINE",
+  "siren": "880742424",
+  "date_creation": "2019-11-06",
+  "tranche_effectif": "50-99",
+  "ville": "MERIGNAC",
+  "adresse": "CENTRE D'AFFAIRES REGUS - BAT. C AVENUE NEIL ARMSTRONG 33700 MERIGNAC",
+  "dirigeants": "",
+  "raison_exclusion": "> 50 salariés"
+ },
+ {
+  "nom": "ASS GPT EMPLOYEURS VILLAGE NOTRE DAME",
+  "siren": "348946468",
+  "date_creation": "1988-10-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "61 RUE NOTRE DAME 33000 BORDEAUX",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs"
+ },
+ {
+  "nom": "TENDANCE HOTESSES (TENDANCE HOTESSES)",
+  "siren": "481861094",
+  "date_creation": "2005-03-11",
+  "tranche_effectif": "3-5",
+  "ville": "BORDEAUX",
+  "adresse": "9 RUE DE CONDE 33000 BORDEAUX",
+  "dirigeants": "STRATOMEO (Président de SAS)",
+  "raison_exclusion": "agence d'hôtesses"
+ },
+ {
+  "nom": "GROUPEMENT D EMPLOYEURS VITI PRUNE",
+  "siren": "497840587",
+  "date_creation": "2007-04-04",
+  "tranche_effectif": "6-9",
+  "ville": "SAINT-QUENTIN-DE-CAPLONG",
+  "adresse": "MME IMPERIALE LAURENCE 4 BARBOT EST 33220 SAINT-QUENTIN-DE-CAPLONG",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs viticole"
+ },
+ {
+  "nom": "GROUPEMENT D EMPLOYEURS VINI VARIUS",
+  "siren": "497840629",
+  "date_creation": "2007-03-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "SAUTERNES",
+  "adresse": "MR ET MME DESQUEYROUX 2 PLACE DE LA MAIRIE 33210 SAUTERNES",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs viticole"
+ },
+ {
+  "nom": "RELAIS POUR EMPLOI LOCAL INFO INSERTION",
+  "siren": "348114349",
+  "date_creation": "1988-09-01",
+  "tranche_effectif": "1-2",
+  "ville": "SAINT-ANDRE-DE-CUBZAC",
+  "adresse": "83 RUE DANTAGNAN 33240 SAINT-ANDRE-DE-CUBZAC",
+  "dirigeants": "",
+  "raison_exclusion": "association d'insertion"
+ },
+ {
+  "nom": "GROUPEMENT D'EMPLOYEUR DE MERIGOT (ASSOCIATION)",
+  "siren": "500526322",
+  "date_creation": "2007-03-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "MONTUSSAN",
+  "adresse": "CHEZ M. PEREZ HUBERT 44 ROUTE DE MERIGOT 33450 MONTUSSAN",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs"
+ },
+ {
+  "nom": "GROUPEMENT D'EMPLOYEUR LE CARBON",
+  "siren": "441001443",
+  "date_creation": "2001-10-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "FLAUJAGUES",
+  "adresse": "CHEZ MR MAGNE CLAUDE 2 LE CARBON 33350 FLAUJAGUES",
+  "dirigeants": "",
+  "raison_exclusion": "groupement d'employeurs"
+ },
+ {
+  "nom": "PIER IMPORT DISTRIBUTION",
+  "siren": "383666377",
+  "date_creation": "1991-10-25",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "IMPASSE DOCTEUR JEAN VINCENT 33300 BORDEAUX",
+  "dirigeants": "Francois CAUBRIERE (Commissaire aux comptes suppléant) ; Gerard DEMARET (Gérant) ; KPMG S.A (Commissaire aux comptes titulaire)",
+  "raison_exclusion": "Pier Import - distribution (NAF erroné)"
+ },
+ {
+  "nom": "R.E.C. (OPTEAMAN)",
+  "siren": "389379736",
+  "date_creation": "1992-11-27",
+  "tranche_effectif": "non renseigné",
+  "ville": "LE BOUSCAT",
+  "adresse": "81 BOULEVARD PIERRE 1ER 33110 LE BOUSCAT",
+  "dirigeants": "",
+  "raison_exclusion": "intérim / services"
+ },
+ {
+  "nom": "JOB INTER 75",
+  "siren": "488312406",
+  "date_creation": "2006-02-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "RUE FOURTEAU 4 QUAI DES QUEYRIES 33100 BORDEAUX",
+  "dirigeants": "",
+  "raison_exclusion": "intérim / services"
+ }
+]

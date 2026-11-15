@@ -1,0 +1,785 @@
+[
+ {
+  "nom": "MACANDERS GROUP (MACANDERS)",
+  "siren": "478077233",
+  "date_creation": "2004-07-27",
+  "tranche_effectif": "20-49",
+  "ville": "BORDEAUX",
+  "adresse": "171 RUE LUCIEN FAURE 33300 BORDEAUX",
+  "dirigeants": "MENWAY HOLDING (Président de SAS) ; KPMG S.A (Commissaire aux comptes titulaire) ; AL CONSEIL (Directeur général délégué) ; NOLAND CONSEIL (Directeur général délégué)"
+ },
+ {
+  "nom": "RH PLUS (RH PLUS)",
+  "siren": "502373657",
+  "date_creation": "2008-03-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "PAVILLON NORD PVS LOUIS ARMAND CS21912 GARE SAINT JEAN 33000 BORDEAUX",
+  "dirigeants": "Peter Serge LUCAS (Président de SAS)"
+ },
+ {
+  "nom": "DE CORGNOL & AGNES (DE CORGNOL & AGNES)",
+  "siren": "514085430",
+  "date_creation": "2009-09-01",
+  "tranche_effectif": "3-5",
+  "ville": "BORDEAUX",
+  "adresse": "IMMEUBLE LA FABRIQUE 11 RUE DE GIRONDE 33300 BORDEAUX",
+  "dirigeants": "FINANCIERE AGNES (Directeur Général) ; FINANCIERE DE CORGNOL (Président de SAS)"
+ },
+ {
+  "nom": "HABEO RECRUTEMENT",
+  "siren": "979403524",
+  "date_creation": "2023-09-07",
+  "tranche_effectif": "1-2",
+  "ville": "BORDEAUX",
+  "adresse": "7 PLACE DES CITERNES 33800 BORDEAUX",
+  "dirigeants": "Hugo Alexandre BONNACIE (Gérant) ; Arnaud Clément SIGNORE (Gérant)"
+ },
+ {
+  "nom": "SKILLINK",
+  "siren": "513361402",
+  "date_creation": "2009-07-01",
+  "tranche_effectif": "10-19",
+  "ville": "BORDEAUX",
+  "adresse": "BUREAU 3 9 RUE DE CONDE 33000 BORDEAUX",
+  "dirigeants": "Johann GUEGAN (Gérant)"
+ },
+ {
+  "nom": "PHI-RH (PHI-RH)",
+  "siren": "533868477",
+  "date_creation": "2011-08-01",
+  "tranche_effectif": "10-19",
+  "ville": "BORDEAUX",
+  "adresse": "IMM LE FUGON RUE CARDINAL RICHAUD 33300 BORDEAUX",
+  "dirigeants": "PHI CONSEILS HOLDING GROUPE (Président de SAS) ; OC GROUP (Directeur Général)"
+ },
+ {
+  "nom": "EARLY BIRD TALENT",
+  "siren": "109803544",
+  "date_creation": "2026-09-04",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "58 RUE GEORGES MANDEL 33000 BORDEAUX",
+  "dirigeants": "Nicolas Harold REESE (Gérant)"
+ },
+ {
+  "nom": "MOOVE RECRUTEMENT (MOOVE RECRUTEMENT)",
+  "siren": "894733070",
+  "date_creation": "2021-02-22",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "2 COURS DU XXX JUILLET 33000 BORDEAUX",
+  "dirigeants": "Sylvain Vincent PIEDBOIS (Président de SAS)"
+ },
+ {
+  "nom": "CM RECRUTEMENT",
+  "siren": "901822403",
+  "date_creation": "2021-07-20",
+  "tranche_effectif": "1-2",
+  "ville": "LE BOUSCAT",
+  "adresse": "155 AVENUE D'EYSINES 33110 LE BOUSCAT",
+  "dirigeants": "Christelle Anne MARTINEZ (PERESSIN) (Président de SAS)"
+ },
+ {
+  "nom": "CONNITY",
+  "siren": "897735288",
+  "date_creation": "2021-03-25",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "43 RUE TURENNE 33000 BORDEAUX",
+  "dirigeants": "Alexandre MIKOL (Président de SAS)"
+ },
+ {
+  "nom": "MURIEL CRICHTON (DECROCQ)",
+  "siren": "481034858",
+  "date_creation": "2005-03-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "PESSAC",
+  "adresse": "CLAIRBOIS 34 RUE DE LA GARENNE 33600 PESSAC",
+  "dirigeants": "Muriel Germaine CRICHTON (DECROCQ) (n.c.)"
+ },
+ {
+  "nom": "HIGHRING (HIGHRING)",
+  "siren": "938596210",
+  "date_creation": "2024-12-16",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "17 RUE PROFESSEUR DEMONS 33000 BORDEAUX",
+  "dirigeants": "Thomas LANGRONIER (Gérant) ; Youcef Mourad TAYEBI (Gérant)"
+ },
+ {
+  "nom": "VIRGINIE DUGAUGUEZ CONSEIL",
+  "siren": "819380510",
+  "date_creation": "2016-04-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "LE BOUSCAT",
+  "adresse": "2 RUE LAMARTINE 33110 LE BOUSCAT",
+  "dirigeants": "Virginie DUGAUGUEZ (LAMY) (Gérant)"
+ },
+ {
+  "nom": "GECO RECRUTEMENT",
+  "siren": "817899339",
+  "date_creation": "2016-01-15",
+  "tranche_effectif": "3-5",
+  "ville": "BORDEAUX",
+  "adresse": "101 COURS D'ALSACE ET LORRAINE 33000 BORDEAUX",
+  "dirigeants": "Chloe Celine GUYONNAUD (Gérant) ; Eva Pauline GUYONNAUD (Gérant)"
+ },
+ {
+  "nom": "PIOTR KONOPKA (KONOPKA TALENT SOLUTIONS)",
+  "siren": "930266879",
+  "date_creation": "2024-03-08",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "68 RUE LECOCQ 33000 BORDEAUX",
+  "dirigeants": "Piotr KONOPKA (n.c.)"
+ },
+ {
+  "nom": "JAROSLAW GAWINSKI (GAWINSKI SELECTION)",
+  "siren": "930414511",
+  "date_creation": "2024-03-12",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "28 RUE JUDAIQUE 33000 BORDEAUX",
+  "dirigeants": "Jaroslaw GAWINSKI (n.c.)"
+ },
+ {
+  "nom": "RARE TALENTS (RARE TALENTS)",
+  "siren": "928485374",
+  "date_creation": "2024-06-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "263 COURS BALGUERIE STUTTENBERG 33300 BORDEAUX",
+  "dirigeants": "Jennifer LOPES (Gérant)"
+ },
+ {
+  "nom": "THE WILL",
+  "siren": "811412568",
+  "date_creation": "2015-05-11",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "APP 02 11 RUE FLECHE 33300 BORDEAUX",
+  "dirigeants": ""
+ },
+ {
+  "nom": "KEVIN DAUPHIN",
+  "siren": "915385504",
+  "date_creation": "2022-06-28",
+  "tranche_effectif": "non renseigné",
+  "ville": "TALENCE",
+  "adresse": "RESIDENCE SCHOELCHER, BAT C, APPT 323 20 RUE PIERRE CURIE 33400 TALENCE",
+  "dirigeants": "Kevin Sofiane DAUPHIN (n.c.)"
+ },
+ {
+  "nom": "MARIE GOUZE (MARIE GOUZE)",
+  "siren": "951246842",
+  "date_creation": "2023-04-11",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "24 RUE BASTE 33300 BORDEAUX",
+  "dirigeants": "Marie GOUZE (n.c.)"
+ },
+ {
+  "nom": "LAURE DEHEULLE",
+  "siren": "829758473",
+  "date_creation": "2017-05-02",
+  "tranche_effectif": "non renseigné",
+  "ville": "LA TESTE-DE-BUCH",
+  "adresse": "33 RUE DU PORT 33260 LA TESTE-DE-BUCH",
+  "dirigeants": "Laure Christiane Lucienne DEHEULLE (n.c.)"
+ },
+ {
+  "nom": "MYPC",
+  "siren": "840960371",
+  "date_creation": "2018-06-12",
+  "tranche_effectif": "10-19",
+  "ville": "BORDEAUX",
+  "adresse": "5 ALLEE DE TOURNY 33000 BORDEAUX",
+  "dirigeants": "CANDICE IMMO (Directeur Général) ; RIVA INVEST (Président de SAS)"
+ },
+ {
+  "nom": "NGOUILLE NDIAYE (NDIAYE)",
+  "siren": "993102615",
+  "date_creation": "2025-10-03",
+  "tranche_effectif": "non renseigné",
+  "ville": "ARCACHON",
+  "adresse": "69 COURS DESBIEY 33120 ARCACHON",
+  "dirigeants": "Ngouille NDIAYE (NDIAYE) (n.c.)"
+ },
+ {
+  "nom": "AURAE (AURAE)",
+  "siren": "993270032",
+  "date_creation": "2025-10-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "203 RUE DE PESSAC 33000 BORDEAUX",
+  "dirigeants": "Constance Sibylle Virginie Marie LANDOWSKI (BEAUVISAGE) (Président de SAS)"
+ },
+ {
+  "nom": "LE TRAIT D'UNION",
+  "siren": "989387865",
+  "date_creation": "2025-07-08",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "46 T RUE DE LEYBARDIE 33300 BORDEAUX",
+  "dirigeants": "Claire DESBORDES (Président de SAS)"
+ },
+ {
+  "nom": "RECRUTIS RH",
+  "siren": "988173308",
+  "date_creation": "2025-06-17",
+  "tranche_effectif": "non renseigné",
+  "ville": "BEGLES",
+  "adresse": "25 RUE MARCEL SEMBAT 33130 BEGLES",
+  "dirigeants": "Myriam DJEBAILI (SOUAKRI) (Président de SAS)"
+ },
+ {
+  "nom": "BONPROFIL - JULIETTE CORNE",
+  "siren": "840697692",
+  "date_creation": "2018-06-26",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "8 COURS DE LUZE 33300 BORDEAUX",
+  "dirigeants": "Juliette CORNE (LUFIACRE) (Gérant)"
+ },
+ {
+  "nom": "LE BON CHEVAL",
+  "siren": "892153719",
+  "date_creation": "2020-12-10",
+  "tranche_effectif": "1-2",
+  "ville": "SAUCATS",
+  "adresse": "2 IMPASSE DE PONT DE BAUDES 33650 SAUCATS",
+  "dirigeants": "Fanny Colette Yvette BARUTEL (Président de SAS)"
+ },
+ {
+  "nom": "VALTON RECRUTEMENT",
+  "siren": "106932684",
+  "date_creation": "2026-07-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "92 COURS SAINT LOUIS 33300 BORDEAUX",
+  "dirigeants": "Etienne BEAUJEAULT (Président de SAS) ; Victor MECHAIN (Directeur Général)"
+ },
+ {
+  "nom": "A.M.G SOLUTIONS",
+  "siren": "887713865",
+  "date_creation": "2020-08-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "LE TEICH",
+  "adresse": "19 B ALLEE DU BURGAT 33470 LE TEICH",
+  "dirigeants": "Anne Marie GUIMARD ROUSSEAU (GUIMARD) (Président de SAS)"
+ },
+ {
+  "nom": "MAERA JANIN (MAERA JANIN)",
+  "siren": "898102751",
+  "date_creation": "2021-03-29",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "5 RUE DU PORT 33000 BORDEAUX",
+  "dirigeants": "Maera JANIN (n.c.)"
+ },
+ {
+  "nom": "AMARILLO SEARCH",
+  "siren": "100667542",
+  "date_creation": "2026-02-02",
+  "tranche_effectif": "non renseigné",
+  "ville": "BEGLES",
+  "adresse": "10 RUE DU 11 NOVEMBRE 33130 BEGLES",
+  "dirigeants": "Benjamin FETU (Président de SAS)"
+ },
+ {
+  "nom": "CRISTAL CONSEILS",
+  "siren": "100796929",
+  "date_creation": "2026-02-16",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "60 RUE DE LA ROUSSELLE 33000 BORDEAUX",
+  "dirigeants": "Antoine Pierre David BOULAIN (Président de SAS)"
+ },
+ {
+  "nom": "MEDINOPIA",
+  "siren": "790961494",
+  "date_creation": "2013-02-04",
+  "tranche_effectif": "1-2",
+  "ville": "LE PIAN-MEDOC",
+  "adresse": "220 ROUTE D'ARSAC 33290 LE PIAN-MEDOC",
+  "dirigeants": "William Jean Emmanuel SINEUS (Président de SAS)"
+ },
+ {
+  "nom": "SR RECRUTEMENT",
+  "siren": "933721029",
+  "date_creation": "2024-10-02",
+  "tranche_effectif": "1-2",
+  "ville": "PESSAC",
+  "adresse": "36 AVENUE PIERRE WIEHN 33600 PESSAC",
+  "dirigeants": "SR CONSEILS (Président de SAS)"
+ },
+ {
+  "nom": "STARTC",
+  "siren": "423992882",
+  "date_creation": "1999-09-01",
+  "tranche_effectif": "6-9",
+  "ville": "MERIGNAC",
+  "adresse": "IMMEUBLE PELUS 16 AVENUE PYTHAGORE 33700 MERIGNAC",
+  "dirigeants": "GEC CONSEIL (Commissaire aux comptes titulaire) ; ALTERNATIVE (Président de SAS)"
+ },
+ {
+  "nom": "PRO HUMAN CONSEIL",
+  "siren": "928698463",
+  "date_creation": "2024-04-23",
+  "tranche_effectif": "non renseigné",
+  "ville": "MIOS",
+  "adresse": "81 ROUTE DE CRASTALIS 33380 MIOS",
+  "dirigeants": "Christian CARLIER (Président de SAS)"
+ },
+ {
+  "nom": "THOMAS DUSSAILLANT",
+  "siren": "804119329",
+  "date_creation": "2014-09-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "BUREAU 3 9 RUE DE CONDE 33000 BORDEAUX",
+  "dirigeants": "Thomas DUSSAILLANT (n.c.)"
+ },
+ {
+  "nom": "ELVIRAMINSK (ELVIRAMINSK) (SARL)",
+  "siren": "977619949",
+  "date_creation": "2023-09-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "PREFACE C601 41 AVENUE DE LAROQUE 33300 BORDEAUX",
+  "dirigeants": "Elvira GRAKHOVSKI (GAINOUTDINOVA) (Gérant)"
+ },
+ {
+  "nom": "MAHAY CONSULTING",
+  "siren": "930376538",
+  "date_creation": "2024-07-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BRUGES",
+  "adresse": "APT 201 34 CHEMIN DE LA HUTTE 33520 BRUGES",
+  "dirigeants": "Andrianina RAJOHANESA (Gérant)"
+ },
+ {
+  "nom": "FRED HAIDMA (HAIDMA RECRUITMENT EXPERTS)",
+  "siren": "930391651",
+  "date_creation": "2024-03-19",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "29 RUE NAUJAC 33000 BORDEAUX",
+  "dirigeants": "Fred HAIDMA (n.c.)"
+ },
+ {
+  "nom": "REACTIFS",
+  "siren": "843095118",
+  "date_creation": "2018-02-02",
+  "tranche_effectif": "non renseigné",
+  "ville": "MIOS",
+  "adresse": "ZA DE MASQUET 6 C RUE GUSTAVE EIFFEL 33380 MIOS",
+  "dirigeants": ""
+ },
+ {
+  "nom": "BM CONSEIL",
+  "siren": "988585279",
+  "date_creation": "2025-07-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "PESSAC",
+  "adresse": "28 RUE DE L'ENTENTE 33600 PESSAC",
+  "dirigeants": "Benoît MACHENAUD (Gérant)"
+ },
+ {
+  "nom": "L'APPROCHE (L'APPROCHE)",
+  "siren": "981643240",
+  "date_creation": "2023-11-15",
+  "tranche_effectif": "non renseigné",
+  "ville": "MIOS",
+  "adresse": "23 B ROUTE DE CLOCHE 33380 MIOS",
+  "dirigeants": "Elisa PELLEGATTA (Gérant)"
+ },
+ {
+  "nom": "GROUPE KUNZ (YAM WITH LAETITIA  /CRAFTS IN THE CITY /COSY WOODEN HOUSE)",
+  "siren": "984848796",
+  "date_creation": "2024-02-21",
+  "tranche_effectif": "non renseigné",
+  "ville": "BELIN-BELIET",
+  "adresse": "14 CHEMIN DES FOURS 33830 BELIN-BELIET",
+  "dirigeants": "Laëtitia Noémie KUNZ (Président de SAS)"
+ },
+ {
+  "nom": "GRZEGORZ WICHARY",
+  "siren": "988120788",
+  "date_creation": "2025-01-06",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "25 RUE MALBEC 33800 BORDEAUX",
+  "dirigeants": "Grzegorz Stefan WICHARY (n.c.)"
+ },
+ {
+  "nom": "SKILLCORE INDUSTRIE",
+  "siren": "988375853",
+  "date_creation": "2025-06-13",
+  "tranche_effectif": "non renseigné",
+  "ville": "ARCACHON",
+  "adresse": "F APPARTEMENT N15 BAT B 26 BOULEVARD DEGANNE 33120 ARCACHON",
+  "dirigeants": "Steven CLOS (Président de SAS)"
+ },
+ {
+  "nom": "NC RH",
+  "siren": "989128012",
+  "date_creation": "2025-07-07",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "17 RUE CAMILLE SAINT-SAENS 33200 BORDEAUX",
+  "dirigeants": "Marina MIREMONT (Président de SAS)"
+ },
+ {
+  "nom": "MARION DAVIN (MADA)",
+  "siren": "102079985",
+  "date_creation": "2026-03-06",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "26 CITE CONRAD 33300 BORDEAUX",
+  "dirigeants": "Marion DAVIN (n.c.)"
+ },
+ {
+  "nom": "ANALOGIAS (ANALOGIAS)",
+  "siren": "533293387",
+  "date_creation": "2011-07-25",
+  "tranche_effectif": "non renseigné",
+  "ville": "BEGLES",
+  "adresse": "388 BOULEVARD JEAN-JACQUES BOSC 33130 BEGLES",
+  "dirigeants": "Sylvain Pierre ARMAND (Président de SAS)"
+ },
+ {
+  "nom": "LIFE SCIENCE HIRES",
+  "siren": "130409790",
+  "date_creation": "2026-09-10",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "DRIVE AFFAIRES - PARC INNOLIN CS 60073 3 RUE DU GOLF 33700 MERIGNAC",
+  "dirigeants": "Amélie Sophie MICHELIN (Directeur Général) ; TECHNICAL HIRES GROUP LTD (Président de SAS)"
+ },
+ {
+  "nom": "PULP ADVISORY",
+  "siren": "106108152",
+  "date_creation": "2026-07-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "CASTILLON-LA-BATAILLE",
+  "adresse": "16 RUE ROUGET DE LISLE 33350 CASTILLON-LA-BATAILLE",
+  "dirigeants": "Jean-Laurent BOCQUILLON (Président de SAS)"
+ },
+ {
+  "nom": "LMT RECRUTEMENT",
+  "siren": "132575408",
+  "date_creation": "2026-11-06",
+  "tranche_effectif": "non renseigné",
+  "ville": "SAINT-ANDRE-DE-CUBZAC",
+  "adresse": "10 T RUE JEAN JAURES 33240 SAINT-ANDRE-DE-CUBZAC",
+  "dirigeants": "Laure Noëlle Joséphine MAZOYER (Président de SAS)"
+ },
+ {
+  "nom": "MH CONNECT (MH CONNECT / MANUFACTURE ; MH CONNECT / HOSTING)",
+  "siren": "130190002",
+  "date_creation": "2026-09-14",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "39 RUE FRANC SANSON 33100 BORDEAUX",
+  "dirigeants": "Muriel HARISTOY (Président de SAS)"
+ },
+ {
+  "nom": "MANOHA DE SONNEVILLE (DE SONNEVILLE) (RECRUTIS)",
+  "siren": "106560188",
+  "date_creation": "2026-06-29",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "11 RUE DES MARGUERITES 33700 MERIGNAC",
+  "dirigeants": "Manoha Oceanne DE SONNEVILLE (DE SONNEVILLE) (n.c.)"
+ },
+ {
+  "nom": "MARION RONCHINI",
+  "siren": "933741985",
+  "date_creation": "2024-10-07",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "5 RUE DE LA MERCI 33000 BORDEAUX",
+  "dirigeants": "Marion RONCHINI (n.c.)"
+ },
+ {
+  "nom": "PATRICK PATRICK JONCOUR (JONCOUR) (GRAND EST RECRUTEMENT)",
+  "siren": "343463063",
+  "date_creation": "1988-01-14",
+  "tranche_effectif": "non renseigné",
+  "ville": "BELIN-BELIET",
+  "adresse": "QUARTIER LE HOUDIN 33830 BELIN-BELIET",
+  "dirigeants": "Patrick PATRICK JONCOUR (JONCOUR) (n.c.)"
+ },
+ {
+  "nom": "BONNE RECRUE (BONNE RECRUE)",
+  "siren": "880208590",
+  "date_creation": "2020-01-06",
+  "tranche_effectif": "1-2",
+  "ville": "BORDEAUX",
+  "adresse": "RESIDENCE ANTARES BAT 2 PORTE 214 65 RUE D'AUPERIE 33800 BORDEAUX",
+  "dirigeants": "Nicolas JULLIEN (Président de SAS)"
+ },
+ {
+  "nom": "LAETITIA LEJEUNE (LESSENE) (LL RH & CONSULTING)",
+  "siren": "789383940",
+  "date_creation": "2012-09-24",
+  "tranche_effectif": "non renseigné",
+  "ville": "GUJAN-MESTRAS",
+  "adresse": "19 B ALLEE DES COQUELICOTS 33470 GUJAN-MESTRAS",
+  "dirigeants": "Laetitia Céline LEJEUNE (LESSENE) (n.c.)"
+ },
+ {
+  "nom": "JULIETTE MOFFROID (ENR SEARCH)",
+  "siren": "797993110",
+  "date_creation": "2013-10-14",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "91 RUE HORTENSE 33100 BORDEAUX",
+  "dirigeants": "Juliette Catherine Muriel MOFFROID (n.c.)"
+ },
+ {
+  "nom": "ANGELOS",
+  "siren": "909897092",
+  "date_creation": "2022-01-17",
+  "tranche_effectif": "1-2",
+  "ville": "MERIGNAC",
+  "adresse": "6 AVENUE NEIL ARMSTRONG 33700 MERIGNAC",
+  "dirigeants": "Pierre ANGHELIDI (Président de SAS)"
+ },
+ {
+  "nom": "NINA ALTUKMACHI",
+  "siren": "984660225",
+  "date_creation": "2024-02-15",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "74 BOULEVARD DU PRESIDENT FRANKLIN ROOSEVELT 33800 BORDEAUX",
+  "dirigeants": "Nina ALTUKMACHI (n.c.)"
+ },
+ {
+  "nom": "PERRINE WEIL (PCT)",
+  "siren": "995127875",
+  "date_creation": "2025-12-24",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "BAT B SUD ETG 2 APP 2206 11 RUE POURMANN 33300 BORDEAUX",
+  "dirigeants": "Perrine Cécile Tilly WEIL (n.c.)"
+ },
+ {
+  "nom": "SYLWESTER ZAK",
+  "siren": "945294213",
+  "date_creation": "2025-01-19",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "98 RUE NAUJAC 33000 BORDEAUX",
+  "dirigeants": "Sylwester Leszek ZAK (n.c.)"
+ },
+ {
+  "nom": "MEDICALL RECRUTEMENT & SERVICES (MRS)",
+  "siren": "940038052",
+  "date_creation": "2025-01-24",
+  "tranche_effectif": "non renseigné",
+  "ville": "VILLENAVE-D'ORNON",
+  "adresse": "APPARTEMENT 07 23 AVENUE DE LA REPUBLIQUE 33140 VILLENAVE-D'ORNON",
+  "dirigeants": "Mouhamadou Saliou GUEYE (Gérant)"
+ },
+ {
+  "nom": "PAULINA URBAN (AGENCE DE RECRUTEMENT PAULINA)",
+  "siren": "930210430",
+  "date_creation": "2024-03-27",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "63 RUE NAUJAC 33000 BORDEAUX",
+  "dirigeants": "Paulina URBAN (n.c.)"
+ },
+ {
+  "nom": "RONAN JAFFRE",
+  "siren": "829680669",
+  "date_creation": "2017-05-20",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "39 AVENUE DE MERIGNAC 33200 BORDEAUX",
+  "dirigeants": "Ronan Michel Benjamin JAFFRE (n.c.)"
+ },
+ {
+  "nom": "ANDY CRICHTON (KARISMA EUROPE)",
+  "siren": "951160449",
+  "date_creation": "2023-04-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "PESSAC",
+  "adresse": "34 RUE DE LA GARENNE 33600 PESSAC",
+  "dirigeants": "Andy CRICHTON (n.c.)"
+ },
+ {
+  "nom": "ETIENNE BOUTINAUD (BOUT DE TALENT)",
+  "siren": "944785419",
+  "date_creation": "2025-05-22",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "49 RUE POYENNE 33300 BORDEAUX",
+  "dirigeants": "Etienne BOUTINAUD (n.c.)"
+ },
+ {
+  "nom": "CB CONSULTING",
+  "siren": "977872571",
+  "date_creation": "2023-07-17",
+  "tranche_effectif": "1-2",
+  "ville": "SAUCATS",
+  "adresse": "30 ROUTE DU MEDOC 33650 SAUCATS",
+  "dirigeants": "Clémence Marie BIENDEL (Gérant)"
+ },
+ {
+  "nom": "TECH A WAY S.A.S (TECH A WAY) (TAW)",
+  "siren": "898196969",
+  "date_creation": "2021-04-12",
+  "tranche_effectif": "3-5",
+  "ville": "SOULAC-SUR-MER",
+  "adresse": "5 RUE PASTEUR 33780 SOULAC-SUR-MER",
+  "dirigeants": "DELAR HOLDING (Président de SAS) ; ADAM & DEV (Directeur Général)"
+ },
+ {
+  "nom": "DUO VENANDI",
+  "siren": "880483037",
+  "date_creation": "2020-01-07",
+  "tranche_effectif": "1-2",
+  "ville": "BORDEAUX",
+  "adresse": "SQU PEY BERLAND HALL 3 APT 321 6 RUE DE BELFORT 33000 BORDEAUX",
+  "dirigeants": "Eva LAFFONT (Gérant)"
+ },
+ {
+  "nom": "MAHE RECRUTEMENT",
+  "siren": "879464725",
+  "date_creation": "2019-11-26",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "APPT 23 50 RUE DE BEL ORME 33000 BORDEAUX",
+  "dirigeants": "Marion CARLES (Gérant) ; Helene LAGARDE (DEQUEKER) (Gérant)"
+ },
+ {
+  "nom": "HUGO HAMZA",
+  "siren": "910323732",
+  "date_creation": "2022-01-22",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "15 RUE DE L'ILE 33200 BORDEAUX",
+  "dirigeants": "Hugo HAMZA (n.c.)"
+ },
+ {
+  "nom": "EMILIE LAGRAVE (BOUTON) (CONSULTANTE EN RECRUTEMENT AU MERCATO DE L'EMPLOI)",
+  "siren": "921177952",
+  "date_creation": "2022-10-26",
+  "tranche_effectif": "non renseigné",
+  "ville": "LIBOURNE",
+  "adresse": "36 COURS TOURNY 33500 LIBOURNE",
+  "dirigeants": "Emilie Sandrine LAGRAVE (BOUTON) (n.c.)"
+ },
+ {
+  "nom": "STEPHANIE GENEVAUX",
+  "siren": "924810286",
+  "date_creation": "2024-03-25",
+  "tranche_effectif": "non renseigné",
+  "ville": "CARBON-BLANC",
+  "adresse": "BAT I PORTE 14 15 RUE DES FLANDRES 33560 CARBON-BLANC",
+  "dirigeants": "Stéphanie GENEVAUX (n.c.)"
+ },
+ {
+  "nom": "KEY POINTS RECRUTEMENT",
+  "siren": "939159166",
+  "date_creation": "2025-01-03",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "7 RUE POURMANN 33300 BORDEAUX",
+  "dirigeants": "Sigolène Florie Marie DUBOIS (Directeur Général) ; Baptiste Jacques Lucien PETIT (Président de SAS) ; Paul Alexandre SAMOUILLAN (Directeur Général) ; Manon TORTERAT (Directeur Général)"
+ },
+ {
+  "nom": "SAGES CONSEIL (SAGES CONSEIL)",
+  "siren": "828012013",
+  "date_creation": "2017-03-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "BOULIAC",
+  "adresse": "39 ROUTE DE LATRESNE 33270 BOULIAC",
+  "dirigeants": "Sabrina Helene GERARD-SHINE (SHINE) (Gérant)"
+ },
+ {
+  "nom": "CM DRH & MANAGEMENT",
+  "siren": "944369446",
+  "date_creation": "2025-05-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "12 RUE GEORGES MELIES 33700 MERIGNAC",
+  "dirigeants": "Cédric MAULARD (Président de SAS)"
+ },
+ {
+  "nom": "ŌDAS CONSEIL",
+  "siren": "990681686",
+  "date_creation": "2025-08-27",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "30 ALLEE DE TOURNY 33000 BORDEAUX",
+  "dirigeants": "Mathieu Julien CHAUVIN (Directeur Général) ; Adrien Jacques LABROUSSE (Directeur Général) ; Julien LEDRU (Président de SAS)"
+ },
+ {
+  "nom": "AWCOMPETENCES",
+  "siren": "984072561",
+  "date_creation": "2024-01-22",
+  "tranche_effectif": "non renseigné",
+  "ville": "SAINT-GENES-DE-FRONSAC",
+  "adresse": "RUE DU GRAND BARRAIL 4 CLOS LA LAGUNE 33240 SAINT-GENES-DE-FRONSAC",
+  "dirigeants": "Adeline Anne-Marie Denise Elisabeth WEBER (TELLIER) (Président de SAS)"
+ },
+ {
+  "nom": "ALFRED CORE",
+  "siren": "999322043",
+  "date_creation": "2025-12-29",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "30 B RUE MONDENARD 33000 BORDEAUX",
+  "dirigeants": "Melody GUTIERREZ (Gérant)"
+ },
+ {
+  "nom": "TRIANGLE MEDICAL SOLUTIONS (TRIANGLE MEDICAL SOLUTIONS) (TMS)",
+  "siren": "952707651",
+  "date_creation": "2023-05-03",
+  "tranche_effectif": "non renseigné",
+  "ville": "BORDEAUX",
+  "adresse": "2 PLACE DE LA BOURSE 33000 BORDEAUX",
+  "dirigeants": "Oumar Amadou DIALLO (Président de SAS)"
+ },
+ {
+  "nom": "ALL IN RECRUTEMENT",
+  "siren": "790744239",
+  "date_creation": "2013-02-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "DRIVE AFFAIRES, PARC INNOLIN 3 RUE DU GOLF 33700 MERIGNAC",
+  "dirigeants": "Jeremy CONDRET (Gérant)"
+ },
+ {
+  "nom": "SARL VALENTIN",
+  "siren": "750288797",
+  "date_creation": "2012-03-22",
+  "tranche_effectif": "non renseigné",
+  "ville": "SAINTE-FOY-LA-GRANDE",
+  "adresse": "65 RUE CHANZY 33220 SAINTE-FOY-LA-GRANDE",
+  "dirigeants": ""
+ },
+ {
+  "nom": "BUREAU MOCCA",
+  "siren": "921801924",
+  "date_creation": "2022-12-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "6 AVENUE ARIANE 33700 MERIGNAC",
+  "dirigeants": "Cecile SOLEILLET (Liquidateur)"
+ },
+ {
+  "nom": "CORECOM SEARCH",
+  "siren": "350743688",
+  "date_creation": "1989-05-01",
+  "tranche_effectif": "non renseigné",
+  "ville": "MERIGNAC",
+  "adresse": "IMMEUBLE LE LAFAYETTE AVENUE PRESIDENT J.F. KENNEDY 33700 MERIGNAC",
+  "dirigeants": ""
+ }
+]
