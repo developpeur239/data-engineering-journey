@@ -92,10 +92,16 @@ if __name__ == "__main__":
 
     manual = {r["siren"]: r for r in csv.DictReader(open("../cabinets_bordeaux.csv", encoding="utf-8-sig"), delimiter=";")}
     todo = [x for x in keep if x["siren"] not in manual]
-    with cf.ThreadPoolExecutor(16) as ex:
-        sites = dict(ex.map(guess_site, todo))
-    with cf.ThreadPoolExecutor(12) as ex:
-        scraped = dict(ex.map(lambda kv: (kv[0], scrape(kv) if kv[1] else {"site_ok": False}), sites.items()))
+    import os
+    if os.path.exists("sites_scraped_multi.json"):
+        scraped = json.load(open("sites_scraped_multi.json"))
+    else:
+        with cf.ThreadPoolExecutor(16) as ex:
+            sites = dict(ex.map(guess_site, todo))
+        json.dump(sites, open("sites_guess_multi.json", "w"))
+        with cf.ThreadPoolExecutor(12) as ex:
+            scraped = dict(ex.map(lambda kv: (kv[0], scrape(kv)[1] if kv[1] else {"site_ok": False}), sites.items()))
+        json.dump(scraped, open("sites_scraped_multi.json", "w"), ensure_ascii=False)
     out = []
     for x in keep:
         if x["siren"] in manual:
@@ -109,7 +115,6 @@ if __name__ == "__main__":
                    "notes": ("site détecté automatiquement (à vérifier)" if s.get("site_ok") else "") +
                             (" ; NAF 70.22Z (conseil) : vérifier qu'il s'agit bien de recrutement" if x["naf"] == "70.22Z" else "")}
         out.append({k: v for k, v in row.items() if not k.startswith("_")})
-    json.dump(scraped, open("sites_scraped_multi.json", "w"), ensure_ascii=False)
     out.sort(key=lambda r: (-int(r["score_btp_industrie"]), -int(r["date_creation"].replace("-", ""))))
     with open("candidates_multi.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=list(out[0]), delimiter=";"); w.writeheader(); w.writerows(out)
