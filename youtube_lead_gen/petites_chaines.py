@@ -76,6 +76,10 @@ KEYWORDS = {
         "Sales Navigator prospection", "prospection multicanale B2B",
         "comment trouver des clients agence", "business developer externalisé",
         "prospection cold email résultats", "SMMA français clients",
+        # jargon de l'écosystème "agence high ticket" FR (setting, value asset...)
+        "scaler son agence", "agence high ticket", "setter closer agence",
+        "value asset", "setting Instagram agence", "offre high ticket agence",
+        "Mathis Clouet",
     ],
 }
 LANG_PARAMS = {"EN": {"relevanceLanguage": "en"},
@@ -90,7 +94,8 @@ AGENCY = re.compile(
     r"\bagency\b|\bagence\b|we help|nous aidons|j'aide|i help|founder|fondateur|"
     r"\bceo\b|co-?founder|cofondateur|my clients|mes clients|done.for.you|clé en main|"
     r"book (a|your) call|réserve[rz]? (un|ton|votre) appel|work with (me|us)|"
-    r"travailler avec (moi|nous)|accompagne", re.I)
+    r"travailler avec (moi|nous)|accompagne|high.?ticket|scal(er|ing) (ton|votre|son) |"
+    r"appel (de consulting |découverte )?offert|session .{0,20}offerte|setter|closer", re.I)
 BOOKING = re.compile(r"calendly\.com|cal\.com|tidycal|hubspot\.com/meetings|"
                      r"zcal|savvycal|oncehub|iclosed|leadconnector", re.I)
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
@@ -242,6 +247,8 @@ def evaluate(ids, found):
             booking = sorted({u for u in urls if BOOKING.search(u)})
             if sites:
                 score += 1; sig.append("site web")
+            if re.search(r"skool\.com", all_text, re.I):
+                score += 1; sig.append("communauté Skool")
             nq = len(found.get(ch["id"], {}).get("queries", ()))
             if nq > 1:
                 score += min(nq, 4); sig.append(f"trouvée par {nq} requêtes")
