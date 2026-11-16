@@ -35,6 +35,8 @@ GRANDS_GROUPES = re.compile(r"safran|dassault|thales|airbus|vinci|eiffage|bouygu
                             r"axians|omexom|actemis|santerne|citeos|getelec|entreprise petit|campenon|gtm|dodin|"
                             r"vallourec|arkema|lafarge|holcim|saint.gobain|schneider|legrand|siemens|alstom|naval group|mbda|"
                             r"cofely|idex|engie|imerys|smurfit|ds smith|lisi|aubert|groupe etchart|etchart|ortec|endel|ponticelli", re.I)
+# Activités cohérentes : industrie (10-33), énergie/eau (35-39), construction (41-43), ingénierie (71), réparation/maintenance
+NAF_OK = re.compile(r"^(?:1\d|2\d|3[0-9]|4[1-3]|71|95|28|52\.2)")
 TR = {"11": "10-19", "12": "20-49", "21": "50-99", "22": "100-199", "31": "200-249"}
 
 
@@ -131,11 +133,14 @@ def describe(r, dept):
 
 
 if __name__ == "__main__":
-    recent = sweep(True)
-    print("offres CDI < 14 j :", len(recent))
-    alls = sweep(False)
-    print("offres CDI toutes dates :", len(alls))
-    json.dump({"recent": recent, "all": alls}, open("preuve_ft_raw.json", "w"), ensure_ascii=False)
+    import os
+    if os.path.exists("preuve_ft_raw.json"):
+        alls = json.load(open("preuve_ft_raw.json"))["all"]
+    else:
+        alls = sweep(False)   # le filtre FT « publieeDepuis » n'est pas appliqué côté serveur : on filtre nous-mêmes
+        json.dump({"all": alls}, open("preuve_ft_raw.json", "w"), ensure_ascii=False)
+    recent = [o for o in alls if (age_days(o) is not None and age_days(o) <= 15)]
+    print("offres CDI en ligne :", len(alls), "| publiées depuis <= 15 j :", len(recent))
 
     keep = [o for o in recent if POSTE.search(o["titre"]) and "CDI" in o["contrat"]]
     excl = {"poste hors périmètre": len(recent) - len(keep)}
@@ -176,6 +181,8 @@ if __name__ == "__main__":
             why = f"effectif hors 10-250 ({i['tranche']})"
         elif any(GRANDS_GROUPES.search(pm) for pm in i["dirigeants_pm"]) or i["categorie"] == "GE":
             why = "filiale de grand groupe"
+        elif not NAF_OK.match(i["naf"] or ""):
+            why = f"activité incohérente avec le poste ({i['naf']}) : rapprochement douteux ou hors cible"
         if why:
             rej[why.split(" (")[0]] = rej.get(why.split(" (")[0], 0) + 1
             continue
