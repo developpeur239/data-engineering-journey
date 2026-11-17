@@ -2,6 +2,7 @@
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const [deb = 0, fin = 20, pas = 1 / 30, out = 'frames', seq = 'proto'] = process.argv.slice(2).map((v, i) => i < 3 ? Number(v) : v);
+const ACCROCHE = /accroche=([\d.]+)/.test(seq) ? Number(seq.match(/accroche=([\d.]+)/)[1]) : null;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.woff2': 'font/woff2' };
 const srv = http.createServer((q, r) => {
   const f = path.join(__dirname, decodeURIComponent(q.url.split('?')[0]) === '/' ? 'index.html' : decodeURIComponent(q.url.split('?')[0]));
@@ -17,6 +18,8 @@ const srv = http.createServer((q, r) => {
   for (let i = 0; i <= n; i++) {
     const t = deb + i * pas;
     await p.evaluate(t => window.frame(t), t);
+    // Shorts (&accroche=T) : avant T, ni compteur ni sous-titre (une seule phrase d'accroche est incrustée au montage)
+    if (ACCROCHE !== null) await p.evaluate(cache => { for (const id of ['hud', 'sous', 'voileHaut']) { const e = document.getElementById(id); if (e) e.style.visibility = cache ? 'hidden' : 'visible'; } }, t < ACCROCHE);
     await p.screenshot({ path: `${out}/${String(i).padStart(5, '0')}.jpg`, type: 'jpeg', quality: 92 });
     if (i % 30 === 0) console.log(`image ${i}/${n}  t=${t.toFixed(2)}  ${((Date.now() - t0) / 1000 / (i + 1)).toFixed(2)} s/image`);
   }
