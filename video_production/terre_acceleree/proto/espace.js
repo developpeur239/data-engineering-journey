@@ -1,7 +1,7 @@
 // Décor « espace » : ouverture (flash-forward), séquence 3 (océans vers l'équateur), séquence 8 (l'anneau), cartons de fin.
 // ?scene=espace&seq=ouverture|espace|anneau|fin
 import * as THREE from 'three';
-import { PARAMS, alea, lerp, clamp, smooth, env, pchip, physique, fmtNombre, hud, sousTitres, carton, noir, moteur, exposer } from './commun.js';
+import { VERTICAL, PARAMS, alea, lerp, clamp, smooth, env, pchip, physique, fmtNombre, hud, sousTitres, carton, noir, moteur, exposer } from './commun.js';
 
 const rnd = alea(23);
 const SEQS = {
@@ -29,7 +29,7 @@ const D = SEQ.duree;
 const jourH = pchip(SEQ.jour);
 const val = (v, t) => (typeof v === 'number' ? v : env(v, t));
 
-const { renderer, scene, camera } = moteur({ exposition: 0.9, ombres: false, brume: null, fov: 34 });
+const { renderer, scene, camera } = moteur({ exposition: 0.9, ombres: false, brume: null, fov: VERTICAL ? 52 : 34 });
 scene.background = new THREE.Color(0x000000);
 
 // étoiles
