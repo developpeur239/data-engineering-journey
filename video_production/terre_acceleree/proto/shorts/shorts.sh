@@ -19,7 +19,7 @@ if [ "$act" = rendre ]; then
 else
   dur=$(python3 -c "print($f-$d)")
   ffmpeg -v error -y -framerate 30 -i "rendus_v/$nom/%05d.jpg" -ss "$d" -t "$dur" -i "son_$sq.wav" \
-    -filter_complex "[0:v]drawbox=x=0:y=1250:w=1080:h=330:color=black@0.55:t=fill:enable='gte(t,$dur-3.5)',drawtext=fontfile=$POLICE:text='LE FILM COMPLET':fontsize=104:fontcolor=0xffb347:x=(w-tw)/2:y=1290:enable='gte(t,$dur-3.5)',drawtext=fontfile=$POLICE:text='SUR LA CHAÎNE':fontsize=104:fontcolor=white:x=(w-tw)/2:y=1420:enable='gte(t,$dur-3.5)',fade=t=out:st=$(python3 -c "print($dur-0.4)"):d=0.4[v];[1:a]afade=t=in:d=0.03,afade=t=out:st=$(python3 -c "print($dur-0.6)"):d=0.6,loudnorm=I=-14:TP=-1:LRA=11[a]" \
+    -filter_complex "[0:v]drawbox=x=0:y=820:w=1080:h=330:color=black@0.6:t=fill:enable='gte(t,$dur-3.5)',drawtext=fontfile=$POLICE:text='LE FILM COMPLET':fontsize=104:fontcolor=0xffb347:x=(w-tw)/2:y=860:enable='gte(t,$dur-3.5)',drawtext=fontfile=$POLICE:text='SUR LA CHAÎNE':fontsize=104:fontcolor=white:x=(w-tw)/2:y=990:enable='gte(t,$dur-3.5)',fade=t=out:st=$(python3 -c "print($dur-0.4)"):d=0.4[v];[1:a]afade=t=in:d=0.03,afade=t=out:st=$(python3 -c "print($dur-0.6)"):d=0.6,loudnorm=I=-14:TP=-1:LRA=11[a]" \
     -map "[v]" -map "[a]" -t "$dur" -c:v libx264 -preset medium -crf 19 -pix_fmt yuv420p -r 30 -c:a aac -b:a 192k -movflags +faststart "shorts/$nom.mp4"
   echo "ok shorts/$nom.mp4 $dur s"
 fi
