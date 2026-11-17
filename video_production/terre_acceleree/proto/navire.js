@@ -142,7 +142,14 @@ function frame(t) {
   const u = t / D;
   const sd = dirSoleil(lerp(SEQ.soleil[0][0], SEQ.soleil[1][0], u), lerp(SEQ.soleil[0][1], SEQ.soleil[1][1], u));
   camera.position.set(...chemin(SEQ.chemin, t, 1)); camera.lookAt(...chemin(SEQ.chemin, t, 2));
-  if (VERTICAL) camera.rotateY(-0.2);                                      // Short : la tour sort du coin du compteur
+  // Short (?elan=t0) : la caméra part au milieu des gens qui flottent et recule vite (mouvement dès la 1re image)
+  const elan = PARAMS.get('elan') !== null ? 1 - smooth((t - Number(PARAMS.get('elan'))) / 2.4) : 0;
+  if (elan > 0) {
+    const vise = new THREE.Vector3(...chemin(SEQ.chemin, t, 2));
+    camera.position.lerp(vise, 0.62 * elan); camera.position.y += 6 * elan;
+    camera.lookAt(vise.x, vise.y + 9 * elan, vise.z);
+  }
+  if (VERTICAL) camera.rotateY(-0.2 * (1 - elan));                         // Short : la tour sort du coin du compteur
   camera.updateMatrixWorld();
   sky.material.uniforms.sunDir.value.copy(sd); sky.material.uniforms.soir.value = smooth((u - 0.6) / 0.4) * (APES ? 1 : 0.8);
   sky.material.uniforms.temps.value = t; sky.position.copy(camera.position);

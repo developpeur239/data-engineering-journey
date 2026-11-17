@@ -6,7 +6,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 declare -A S=(
-  [s1_on_ne_pese_plus_rien]="navire:apesanteur:6:30:12"
+  [s1_on_ne_pese_plus_rien]="navire:apesanteur:6:30:12"   # ouverture 12–14,5 s re-rendue avec &elan=12 (recul de caméra)
   [s2_la_mer_quitte_nice]="scene:nice:18:58"
   [s3_paris_penche]="paris:paris:45:90"
   [s4_la_terre_devient_un_anneau]="espace:anneau:0:50"
