@@ -8,7 +8,7 @@ const srv = http.createServer((q, r) => {
   fs.readFile(f, (e, d) => { if (e) { r.writeHead(404); r.end(); return; } r.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' }); r.end(d); });
 }).listen(0, async () => {
   const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+  const p = await b.newPage({ viewport: seq.includes('vertical=1') ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 } });
   p.on('console', m => console.log('page:', m.text())); p.on('pageerror', e => console.log('ERREUR page:', e.message));
   await p.goto(`http://127.0.0.1:${srv.address().port}/?${seq.includes(':') ? `scene=${seq.split(':')[0]}&seq=${seq.split(':')[1]}${seq.split(':')[2] ? '&' + seq.split(':')[2] : ''}` : `seq=${seq}`}`);
   await p.waitForFunction(() => window.pret === true, null, { timeout: 180000 });

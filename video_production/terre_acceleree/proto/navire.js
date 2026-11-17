@@ -1,7 +1,7 @@
 // Décor « plateforme en pleine mer, sur l'équateur » (inspiré de Sea Launch) : séquences 5 (on devient léger) et 7 (1 h 24).
 // ?scene=navire&seq=equateur|apesanteur
 import * as THREE from 'three';
-import { PARAMS, alea, lerp, clamp, smooth, env, pchip, chemin, physique, fmtNombre, hud, sousTitres, noir, moteur, mer, ciel, dirSoleil, foule, exposer } from './commun.js';
+import { VERTICAL, PARAMS, alea, lerp, clamp, smooth, env, pchip, chemin, physique, fmtNombre, hud, sousTitres, noir, moteur, mer, ciel, dirSoleil, foule, exposer } from './commun.js';
 
 const rnd = alea(41);
 const SEQS = {
@@ -141,7 +141,9 @@ function frame(t) {
   const jour = jourH(t), g = gRel(t);
   const u = t / D;
   const sd = dirSoleil(lerp(SEQ.soleil[0][0], SEQ.soleil[1][0], u), lerp(SEQ.soleil[0][1], SEQ.soleil[1][1], u));
-  camera.position.set(...chemin(SEQ.chemin, t, 1)); camera.lookAt(...chemin(SEQ.chemin, t, 2)); camera.updateMatrixWorld();
+  camera.position.set(...chemin(SEQ.chemin, t, 1)); camera.lookAt(...chemin(SEQ.chemin, t, 2));
+  if (VERTICAL) camera.rotateY(-0.2);                                      // Short : la tour sort du coin du compteur
+  camera.updateMatrixWorld();
   sky.material.uniforms.sunDir.value.copy(sd); sky.material.uniforms.soir.value = smooth((u - 0.6) / 0.4) * (APES ? 1 : 0.8);
   sky.material.uniforms.temps.value = t; sky.position.copy(camera.position);
   eau.material.uniforms.sunDirection.value.copy(sd);
@@ -182,7 +184,7 @@ function frame(t) {
   // incrustations
   const v = physique.vitesseEquateur(jour);
   hud({ jour, poids: physique.poids(0, jour), lieu: 'SUR L’OCÉAN · ÉQUATEUR',
-        orange: v > 27500 ? `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H · VITESSE D’UN SATELLITE` : `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H` });
+        orange: v > 27500 ? `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H${VERTICAL ? '' : ' · VITESSE D’UN SATELLITE'}` : `L’ÉQUATEUR : ${fmtNombre(Math.round(v / 10) * 10)} KM/H` });
   sousTitres(t, SEQ.sous);
   noir(t, D, 0.6, 0.6);
   if (MINI) conteneurs.forEach(c => { c.b.visible = !toucheTexte(c.b); });

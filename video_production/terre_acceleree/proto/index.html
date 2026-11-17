@@ -29,6 +29,17 @@
             color: #fff; text-align: center; pointer-events: none; opacity: 0; }
   #carton .t1 { font: italic 400 64px Serif4; text-shadow: 0 2px 24px rgba(0,0,0,.7); max-width: 1400px; }
   #carton .t2 { font: 300 40px Serif4; margin-top: 34px; max-width: 1300px; line-height: 1.4; opacity: .92; }
+  /* Shorts (?vertical=1) : compteur plus grand en haut, sous-titres au-dessus de l'interface YouTube */
+  body.vertical, html.vertical { width: 1080px; height: 1920px; }
+  .vertical #voileHaut { width: 1080px; height: 980px; }
+  .vertical #hud { left: 70px; top: 150px; }
+  .vertical #hud .lab { font-size: 30px; }
+  .vertical #hud .big { font-size: 168px; margin: 8px 0 34px; }
+  .vertical #hud .ln { font-size: 28px; margin-top: 14px; }
+  .vertical #sous { bottom: 470px; font-size: 58px; padding: 0 40px; }
+  .vertical #sous span { padding: 40px 70px; max-width: 900px; }
+  .vertical #carton .t1 { font-size: 72px; max-width: 900px; }
+  .vertical #carton .t2 { font-size: 44px; max-width: 900px; }
   #noir { position: absolute; inset: 0; z-index: 4; background: #000; opacity: 0; pointer-events: none; }
 </style>
 <script type="importmap">
@@ -37,6 +48,7 @@
 </script>
 </head>
 <body>
+<script>if (new URLSearchParams(location.search).get('vertical') === '1') { document.documentElement.classList.add('vertical'); document.body.classList.add('vertical'); }</script>
 <div class="voile" id="voileHaut"></div>
 <div id="hud">
   <div class="lab">UNE JOURNÉE DURE</div>

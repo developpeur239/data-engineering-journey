@@ -3,8 +3,9 @@
 import * as THREE from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 
-export const W = 1920, H = 1080;
 export const PARAMS = new URLSearchParams(location.search);
+export const VERTICAL = PARAMS.get('vertical') === '1';           // Shorts : rendu natif 1080×1920
+export const W = VERTICAL ? 1080 : 1920, H = VERTICAL ? 1920 : 1080;
 
 // ---------- petits outils ----------
 export function alea(graine = 7) {
@@ -104,7 +105,7 @@ export function moteur({ exposition = 0.62, ombres = true, brume = [0x9fc2e0, 90
   document.body.prepend(renderer.domElement);
   const scene = new THREE.Scene();
   if (brume) scene.fog = new THREE.Fog(...brume);
-  const camera = new THREE.PerspectiveCamera(fov, W / H, 0.5, 30000);
+  const camera = new THREE.PerspectiveCamera(VERTICAL ? fov * 1.3 : fov, W / H, 0.5, 30000);
   return { renderer, scene, camera };
 }
 export function canvasTex(w, h, draw, repeat = [1, 1], srgb = true) {

@@ -9,7 +9,8 @@ import * as THREE from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 import { physique, alea } from './commun.js';
 
-const W = 1920, H = 1080;
+const VERT = new URLSearchParams(location.search).get('vertical') === '1';
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080;
 // ---------- aléa reproductible ----------
 let seed = 7;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -124,7 +125,7 @@ document.body.prepend(renderer.domElement);
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x9fc2e0, 900, 9000);
-const camera = new THREE.PerspectiveCamera(42, W / H, 0.5, 20000);
+const camera = new THREE.PerspectiveCamera(VERT ? 55 : 42, W / H, 0.5, 20000);
 
 // ---------- textures dessinées en code ----------
 function canvasTex(w, h, draw, repeat = [1, 1], srgb = true) {
