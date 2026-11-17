@@ -46,3 +46,29 @@ Constat : presque tout est en Shorts. Aucune chaîne francophone trouvée ne fai
 - Solarballs Français : https://www.youtube.com/channel/UCD5271ZnJRRHLbla1NegWbg
 - Le Petit Astronome : https://www.youtube.com/channel/UCyeoIdJHgQhOrct9mVJ2fTQ
 - INDIANA SPACE : https://www.youtube.com/channel/UCmXOSVVshbzd7KPNWfjdAIA
+
+## Vidéos qui ont percé sur de petites chaînes (relevé du 17/11/2026, vues ÷ abonnés)
+
+### Vidéos longues (notre format)
+| × abos | Vues | Abonnés | Durée | Vidéo |
+|---|---|---|---|---|
+| 669× | 321 952 | 481 | 12 min | [Abysses : Et si on vidait les océans… que trouverait-on au fond ?](https://youtu.be/DOYp69GylUI) (12/11/2026) |
+| 226× | 41 958 | 186 | 7 min | [ATTENDS… QUOI ? : Et si un astéroïde de 10 km frappait la Terre aujourd'hui ?](https://youtu.be/ilruvgwVWvM) |
+| 72× | 115 333 | 1 610 | 8 min | [Une Vie Impossible : Et si vous étiez le dernier homme sur Terre ?](https://youtu.be/pYE2V2_yeag) |
+| 44× | 66 404 | 1 500 | 28 min | [Vertige : Que se passerait-il si le Soleil disparaissait pendant une semaine ?](https://youtu.be/IW-UlsqxPqA) |
+| 44× | 100 708 | 2 300 | 6 min | [EtSiLab : Et si tu pouvais devenir invisible à l'infini ?](https://youtu.be/2u0Tmx5kytk) |
+| 88× | 570 053 | 6 510 | 9 min | [Lexo : Et si tu pouvais voir la future richesse de chacun ?](https://youtu.be/C8v9DD7f1aw) |
+| 68× | 172 441 | 2 540 | 9 min | [Ésiciné : Et si ton argent était multiplié par 10 chaque jour ?](https://youtu.be/vJBGGxTPR0E) |
+
+### Shorts science / espace
+| × abos | Vues | Abonnés | Vidéo |
+|---|---|---|---|
+| 646× | 3 202 996 | 4 960 | [Les aventures de Thib : Et si tu coupais une feuille 103 fois ?](https://youtu.be/288eE-JMAkA) (3D) |
+| 250× | 85 155 | 341 | [AstroX : Et si la lune explosait ce soir ?!](https://youtu.be/nDAECtzCO0I) |
+| 207× | 50 443 | 244 | [Petit Monde : Et si tu coulais jusqu'au fond de l'océan ?](https://youtu.be/vUZ_96nj8oU) |
+| 192× | 137 121 | 713 | [FindZone : Et si le Soleil s'éteignait… maintenant ?](https://youtu.be/Noh6yFlFOHI) |
+| 178× | 165 397 | 927 | [Pryx FR : Et si le Soleil disparaissait pendant 5 secondes ?](https://youtu.be/irWqGD8p4Ok) |
+| 94× | 376 965 | 4 020 | [Et si? : Et si tous les humains disparaissaient d'un coup ?](https://youtu.be/LD6_Lhb17Bw) |
+| 61× | 333 022 | 5 450 | [Et si… ? : Et si l'astéroïde des dinosaures tombait aujourd'hui ? (Saint-Malo)](https://youtu.be/8Stz_etGTx0) |
+| 54× | 244 920 | 4 500 | [Le Pourquoi : Et si une bille dévorait la Terre ?](https://youtu.be/GEWg7e7ghvc) |
+| 49× | 1 982 306 | 40 800 | [BioChokFr : Et si tu sautais dans un trou qui traverse la Terre ?](https://youtu.be/xB_PaFNlANI) |
