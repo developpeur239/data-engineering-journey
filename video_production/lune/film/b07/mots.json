@@ -1,0 +1,906 @@
+{
+ "v1": [
+  {
+   "w": "Six",
+   "start": 0.16,
+   "end": 0.32,
+   "ok": false
+  },
+  {
+   "w": "heures",
+   "start": 0.32,
+   "end": 0.48,
+   "ok": true
+  },
+  {
+   "w": "avant",
+   "start": 0.48,
+   "end": 0.62,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.62,
+   "end": 0.8,
+   "ok": true
+  },
+  {
+   "w": "collision,",
+   "start": 0.8,
+   "end": 1.18,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 1.68,
+   "end": 1.8,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 1.8,
+   "end": 1.98,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 1.98,
+   "end": 2.12,
+   "ok": true
+  },
+  {
+   "w": "environ",
+   "start": 2.12,
+   "end": 2.44,
+   "ok": true
+  },
+  {
+   "w": "quatre",
+   "start": 2.61,
+   "end": 2.78,
+   "ok": false
+  },
+  {
+   "w": "fois",
+   "start": 2.78,
+   "end": 3.08,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 3.08,
+   "end": 3.26,
+   "ok": true
+  },
+  {
+   "w": "proche",
+   "start": 3.26,
+   "end": 3.62,
+   "ok": true
+  },
+  {
+   "w": "qu’au",
+   "start": 3.62,
+   "end": 3.76,
+   "ok": true
+  },
+  {
+   "w": "début",
+   "start": 3.76,
+   "end": 3.96,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.96,
+   "end": 4.1,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 4.1,
+   "end": 4.22,
+   "ok": true
+  },
+  {
+   "w": "chute.",
+   "start": 4.22,
+   "end": 4.54,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 5.02,
+   "end": 5.16,
+   "ok": true
+  },
+  {
+   "w": "forces",
+   "start": 5.16,
+   "end": 5.36,
+   "ok": true
+  },
+  {
+   "w": "responsables",
+   "start": 5.36,
+   "end": 6.06,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 6.06,
+   "end": 6.56,
+   "ok": true
+  },
+  {
+   "w": "marées",
+   "start": 6.06,
+   "end": 6.56,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 6.56,
+   "end": 6.78,
+   "ok": true
+  },
+  {
+   "w": "devenues",
+   "start": 6.78,
+   "end": 7.18,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 7.18,
+   "end": 7.32,
+   "ok": true
+  },
+  {
+   "w": "dizaines",
+   "start": 7.32,
+   "end": 7.84,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 7.84,
+   "end": 8.02,
+   "ok": true
+  },
+  {
+   "w": "fois",
+   "start": 8.02,
+   "end": 8.18,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 8.18,
+   "end": 8.38,
+   "ok": true
+  },
+  {
+   "w": "puissantes.",
+   "start": 8.38,
+   "end": 8.92,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 9.34,
+   "end": 9.52,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 9.52,
+   "end": 9.66,
+   "ok": true
+  },
+  {
+   "w": "océans",
+   "start": 9.66,
+   "end": 10.02,
+   "ok": true
+  },
+  {
+   "w": "commencent",
+   "start": 10.02,
+   "end": 10.42,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 10.42,
+   "end": 10.52,
+   "ok": true
+  },
+  {
+   "w": "réagir",
+   "start": 10.52,
+   "end": 10.92,
+   "ok": true
+  },
+  {
+   "w": "d’une",
+   "start": 10.92,
+   "end": 11.12,
+   "ok": true
+  },
+  {
+   "w": "manière",
+   "start": 11.12,
+   "end": 11.42,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 11.42,
+   "end": 11.68,
+   "ok": true
+  },
+  {
+   "w": "personne",
+   "start": 11.68,
+   "end": 12.2,
+   "ok": true
+  },
+  {
+   "w": "n’a",
+   "start": 12.2,
+   "end": 12.5,
+   "ok": true
+  },
+  {
+   "w": "jamais",
+   "start": 12.5,
+   "end": 12.74,
+   "ok": true
+  },
+  {
+   "w": "observée.",
+   "start": 12.74,
+   "end": 13.36,
+   "ok": true
+  },
+  {
+   "w": "Certaines",
+   "start": 13.82,
+   "end": 14.28,
+   "ok": true
+  },
+  {
+   "w": "côtes",
+   "start": 14.28,
+   "end": 14.56,
+   "ok": true
+  },
+  {
+   "w": "voient",
+   "start": 14.56,
+   "end": 14.92,
+   "ok": true
+  },
+  {
+   "w": "l’eau",
+   "start": 14.92,
+   "end": 15.04,
+   "ok": true
+  },
+  {
+   "w": "avancer",
+   "start": 15.04,
+   "end": 15.5,
+   "ok": true
+  },
+  {
+   "w": "très",
+   "start": 15.52,
+   "end": 15.82,
+   "ok": true
+  },
+  {
+   "w": "loin",
+   "start": 15.82,
+   "end": 16.12,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 16.12,
+   "end": 16.36,
+   "ok": true
+  },
+  {
+   "w": "l’intérieur",
+   "start": 16.36,
+   "end": 16.7,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 16.7,
+   "end": 16.95,
+   "ok": true
+  },
+  {
+   "w": "terres.",
+   "start": 16.96,
+   "end": 17.35,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 17.78,
+   "end": 17.86,
+   "ok": true
+  },
+  {
+   "w": "routes",
+   "start": 17.86,
+   "end": 18.07,
+   "ok": true
+  },
+  {
+   "w": "disparaissent.",
+   "start": 18.1,
+   "end": 18.92,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 19.3,
+   "end": 19.36,
+   "ok": true
+  },
+  {
+   "w": "bâtiments",
+   "start": 19.36,
+   "end": 19.74,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 19.74,
+   "end": 19.96,
+   "ok": true
+  },
+  {
+   "w": "retrouvent",
+   "start": 19.96,
+   "end": 20.34,
+   "ok": true
+  },
+  {
+   "w": "isolés.",
+   "start": 20.34,
+   "end": 20.84,
+   "ok": true
+  },
+  {
+   "w": "Ailleurs,",
+   "start": 21.26,
+   "end": 21.64,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 22.08,
+   "end": 22.18,
+   "ok": true
+  },
+  {
+   "w": "mer",
+   "start": 22.18,
+   "end": 22.32,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 22.32,
+   "end": 22.54,
+   "ok": true
+  },
+  {
+   "w": "retire",
+   "start": 22.54,
+   "end": 22.82,
+   "ok": true
+  },
+  {
+   "w": "brutalement,",
+   "start": 22.82,
+   "end": 23.55,
+   "ok": true
+  },
+  {
+   "w": "laissant",
+   "start": 23.78,
+   "end": 24.04,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 24.04,
+   "end": 24.2,
+   "ok": true
+  },
+  {
+   "w": "bateaux",
+   "start": 24.2,
+   "end": 24.55,
+   "ok": true
+  },
+  {
+   "w": "couchés",
+   "start": 24.56,
+   "end": 24.94,
+   "ok": true
+  },
+  {
+   "w": "sur",
+   "start": 24.94,
+   "end": 25.12,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 25.12,
+   "end": 25.26,
+   "ok": true
+  },
+  {
+   "w": "vase.",
+   "start": 25.26,
+   "end": 25.54,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Il",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 0.16,
+   "end": 0.28,
+   "ok": true
+  },
+  {
+   "w": "s’agit",
+   "start": 0.28,
+   "end": 0.5,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 0.5,
+   "end": 0.7,
+   "ok": true
+  },
+  {
+   "w": "d’une",
+   "start": 0.7,
+   "end": 0.96,
+   "ok": true
+  },
+  {
+   "w": "seule",
+   "start": 0.96,
+   "end": 1.22,
+   "ok": true
+  },
+  {
+   "w": "vague",
+   "start": 1.22,
+   "end": 1.56,
+   "ok": true
+  },
+  {
+   "w": "traversant",
+   "start": 1.56,
+   "end": 2.08,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 2.08,
+   "end": 2.21,
+   "ok": true
+  },
+  {
+   "w": "planète.",
+   "start": 2.22,
+   "end": 2.64,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 3.1,
+   "end": 3.2,
+   "ok": true
+  },
+  {
+   "w": "océans",
+   "start": 3.2,
+   "end": 3.58,
+   "ok": true
+  },
+  {
+   "w": "réagissent",
+   "start": 3.58,
+   "end": 4.06,
+   "ok": true
+  },
+  {
+   "w": "différemment",
+   "start": 4.06,
+   "end": 4.76,
+   "ok": true
+  },
+  {
+   "w": "selon",
+   "start": 4.76,
+   "end": 4.98,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 4.98,
+   "end": 5.18,
+   "ok": true
+  },
+  {
+   "w": "régions,",
+   "start": 5.18,
+   "end": 5.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 5.88,
+   "end": 5.96,
+   "ok": true
+  },
+  {
+   "w": "forme",
+   "start": 5.96,
+   "end": 6.22,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 6.22,
+   "end": 6.4,
+   "ok": true
+  },
+  {
+   "w": "côtes",
+   "start": 6.4,
+   "end": 6.84,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 6.84,
+   "end": 7.0,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 7.0,
+   "end": 7.14,
+   "ok": true
+  },
+  {
+   "w": "mouvements",
+   "start": 7.14,
+   "end": 7.48,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 7.48,
+   "end": 7.62,
+   "ok": true
+  },
+  {
+   "w": "l’eau.",
+   "start": 7.62,
+   "end": 7.8,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 8.3,
+   "end": 8.42,
+   "ok": true
+  },
+  {
+   "w": "partout,",
+   "start": 8.42,
+   "end": 8.86,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 9.26,
+   "end": 9.36,
+   "ok": true
+  },
+  {
+   "w": "conditions",
+   "start": 9.36,
+   "end": 9.8,
+   "ok": true
+  },
+  {
+   "w": "deviennent",
+   "start": 9.8,
+   "end": 10.18,
+   "ok": true
+  },
+  {
+   "w": "imprévisibles.",
+   "start": 10.18,
+   "end": 10.96,
+   "ok": true
+  },
+  {
+   "w": "Sur",
+   "start": 11.82,
+   "end": 12.06,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 12.06,
+   "end": 12.2,
+   "ok": true
+  },
+  {
+   "w": "autoroute",
+   "start": 12.2,
+   "end": 12.6,
+   "ok": true
+  },
+  {
+   "w": "située",
+   "start": 12.6,
+   "end": 13.04,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 13.04,
+   "end": 13.14,
+   "ok": true
+  },
+  {
+   "w": "plusieurs",
+   "start": 13.14,
+   "end": 13.42,
+   "ok": true
+  },
+  {
+   "w": "kilomètres",
+   "start": 13.42,
+   "end": 14.0,
+   "ok": true
+  },
+  {
+   "w": "du",
+   "start": 14.0,
+   "end": 14.2,
+   "ok": true
+  },
+  {
+   "w": "littoral,",
+   "start": 14.2,
+   "end": 14.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 15.12,
+   "end": 15.18,
+   "ok": true
+  },
+  {
+   "w": "voiture",
+   "start": 15.18,
+   "end": 15.42,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 15.42,
+   "end": 15.6,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 15.6,
+   "end": 15.72,
+   "ok": true
+  },
+  {
+   "w": "mère",
+   "start": 15.72,
+   "end": 15.9,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 15.9,
+   "end": 16.04,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 16.04,
+   "end": 16.12,
+   "ok": true
+  },
+  {
+   "w": "son",
+   "start": 16.12,
+   "end": 16.26,
+   "ok": true
+  },
+  {
+   "w": "fils",
+   "start": 16.26,
+   "end": 16.56,
+   "ok": true
+  },
+  {
+   "w": "n’avance",
+   "start": 16.56,
+   "end": 16.99,
+   "ok": true
+  },
+  {
+   "w": "toujours",
+   "start": 17.02,
+   "end": 17.26,
+   "ok": true
+  },
+  {
+   "w": "pas.",
+   "start": 17.26,
+   "end": 17.58,
+   "ok": true
+  },
+  {
+   "w": "Au-delà",
+   "start": 18.16,
+   "end": 18.52,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 18.52,
+   "end": 18.7,
+   "ok": true
+  },
+  {
+   "w": "champs,",
+   "start": 18.7,
+   "end": 18.98,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 19.3,
+   "end": 19.44,
+   "ok": true
+  },
+  {
+   "w": "immense",
+   "start": 19.44,
+   "end": 19.8,
+   "ok": true
+  },
+  {
+   "w": "étendue",
+   "start": 19.8,
+   "end": 20.32,
+   "ok": true
+  },
+  {
+   "w": "d’eau",
+   "start": 20.32,
+   "end": 20.56,
+   "ok": true
+  },
+  {
+   "w": "reflète",
+   "start": 20.56,
+   "end": 20.96,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 21.0,
+   "end": 21.18,
+   "ok": true
+  },
+  {
+   "w": "ciel.",
+   "start": 21.18,
+   "end": 21.38,
+   "ok": true
+  },
+  {
+   "w": "Là",
+   "start": 21.94,
+   "end": 22.2,
+   "ok": true
+  },
+  {
+   "w": "où,",
+   "start": 22.2,
+   "end": 22.48,
+   "ok": true
+  },
+  {
+   "w": "quelques",
+   "start": 22.68,
+   "end": 22.8,
+   "ok": true
+  },
+  {
+   "w": "heures",
+   "start": 22.8,
+   "end": 23.1,
+   "ok": true
+  },
+  {
+   "w": "auparavant,",
+   "start": 23.1,
+   "end": 23.66,
+   "ok": true
+  },
+  {
+   "w": "il",
+   "start": 24.02,
+   "end": 24.1,
+   "ok": true
+  },
+  {
+   "w": "n’y",
+   "start": 24.1,
+   "end": 24.26,
+   "ok": true
+  },
+  {
+   "w": "avait",
+   "start": 24.26,
+   "end": 24.32,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 24.32,
+   "end": 24.5,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 24.5,
+   "end": 24.66,
+   "ok": true
+  },
+  {
+   "w": "terres.",
+   "start": 24.66,
+   "end": 25.01,
+   "ok": true
+  }
+ ]
+}

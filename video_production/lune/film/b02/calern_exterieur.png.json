@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Night exterior of the Calern astronomical observatory on a high limestone plateau in the south of France: two white telescope domes on the left half, the nearest one open with its slit facing the upper right, a low technical building, low Mediterranean scrub and pale rocks in the foreground, a clear deep-blue starry sky, a small normal-size full Moon high in the upper right, faint distant lights of the coast on the horizon, calm and quiet. No laser beam, no people, no text. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_calern_nuit.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "419ee4a90a0681ba2714127eb151e88e",
+ "credits": 12.0,
+ "seconds": 68
+}

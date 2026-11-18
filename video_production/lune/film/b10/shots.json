@@ -1,0 +1,331 @@
+{
+ "_doc": "Bloc 10 : voir plans_reste.py (source du découpage).",
+ "look": "nuit",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "l1",
+   "at": "v1.end+1.6"
+  },
+  {
+   "id": "v2",
+   "at": "l1.end+1.2"
+  },
+  {
+   "id": "v3",
+   "at": "v2.end+2.4"
+  },
+  {
+   "id": "v4",
+   "at": "v3.end+1.0"
+  }
+ ],
+ "fin": "v4.end+1.8",
+ "lea": {
+  "frappe": [
+   [
+    "v4:léa",
+    "v4:mesure.end"
+   ]
+  ],
+  "regard_ecran": [
+   [
+    "v4:léa-1",
+    "v4:mesure+2"
+   ]
+  ]
+ },
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "scenes.Porte",
+   "texte": "À Calern, les lumières vacillent. Une alarme retentit dans le bâtiment. Léa n'a plus beaucoup de temps.",
+   "intention": "la salle clignote ; Léa seule",
+   "camera": [
+    [
+     "#A",
+     1700,
+     860,
+     1.2
+    ],
+    [
+     "#B",
+     2100,
+     980,
+     1.6
+    ]
+   ],
+   "reglages": {
+    "lea": true,
+    "vacille": "v1:vacillent",
+    "alarme": "v1:alarme"
+   },
+   "secousses": [
+    {
+     "a": "v1:vacillent",
+     "force": 5
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "debut": "v1:elle-0.1",
+   "set": "scenes.Ecran2",
+   "texte": "Elle enregistre un message vocal. « Je suis désolée. Je t'aime. » Elle l'envoie. Quelques secondes passent.",
+   "intention": "le message vocal, puis « Écouté », puis le silence",
+   "camera": [
+    [
+     "#B",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#C",
+     960,
+     540,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "mode": "vocal",
+    "rec": "l1-0.3",
+    "envoi": "v2:l’envoie",
+    "ecoute": "v2.end+0.6"
+   }
+  },
+  {
+   "id": "C",
+   "debut": "v3-0.3",
+   "set": "astres.Ciel",
+   "texte": "Elle retourne vers le laser. Contre toute attente… le système fonctionne encore. Le réflecteur lunaire est toujours accessible.",
+   "intention": "l'observatoire sous la Lune immense, le laser repart",
+   "camera": [
+    [
+     "#C",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#D",
+     1500,
+     600,
+     1.12
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     1900,
+     380,
+     620
+    ],
+    "fract": 0.8,
+    "laser": "v3:fonctionne",
+    "coupole": [
+     985,
+     470
+    ],
+    "lueur": 0.5
+   }
+  },
+  {
+   "id": "D",
+   "debut": "v3:léa-0.1",
+   "set": "schemas.Laser",
+   "texte": "Léa lance une dernière impulsion. 0,06 seconde. Il y a cinq jours… deux secondes et demie. À présent… neuf mille kilomètres…",
+   "intention": "0,06 s : la Lune est presque là",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     960,
+     540,
+     1.04
+    ]
+   ],
+   "reglages": {
+    "distance": "v3:impulsion",
+    "depart": "v3:impulsion",
+    "reflecteur": "v3:impulsion",
+    "arrivee": "v3:impulsion+0.6",
+    "retour": "v3:006",
+    "aller_retour": "v3:neuf",
+    "duree": 0.06,
+    "distance_txt": "environ 9 000 km",
+    "final_txt": "aller-retour : 0,06 seconde",
+    "lune_r": 260
+   }
+  },
+  {
+   "id": "E",
+   "debut": "v4-0.3",
+   "set": "calern.Poste",
+   "texte": "D'après les calculs, il reste une vingtaine de minutes avant le contact des deux astres. Léa sauvegarde la mesure.",
+   "intention": "elle sauvegarde",
+   "camera": [
+    [
+     "#E",
+     820,
+     900,
+     1.8
+    ],
+    [
+     "#F",
+     850,
+     880,
+     2.0
+    ]
+   ]
+  },
+  {
+   "id": "F",
+   "debut": "v4:les#2-0.1",
+   "set": "astres.Ciel",
+   "texte": "Les immenses fractures sont désormais visibles à l'œil nu. Une partie du bord lunaire change de forme.",
+   "intention": "la Lune fracturée, le bord qui s'étire",
+   "camera": [
+    [
+     "#F",
+     1700,
+     560,
+     1.4
+    ],
+    [
+     "#F.end",
+     1800,
+     520,
+     1.6
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     1900,
+     380,
+     640
+    ],
+    "fract": 1.0,
+    "deform": 0.8,
+    "lueur": 0.55
+   }
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v4.end+1.8"
+  },
+  {
+   "texte": "19 min avant l'impact",
+   "de": "v4-0.2",
+   "a": "v4:sauvegarde",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    900
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 46,
+   "couleur": [
+    236,
+    240,
+    245
+   ],
+   "fond": true
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 1140,
+   "de": "v4-0.2",
+   "a": "v4:sauvegarde",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    980
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 40,
+   "couleur": [
+    255,
+    226,
+    170
+   ],
+   "fond": true
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../sons/sfx_real/alarme.wav",
+   "a": "v1:alarme-0.2",
+   "boucle": true,
+   "jusqua": "#C",
+   "rms": -30,
+   "fondu_entree": 0.2,
+   "fondu_sortie": 0.6
+  },
+  {
+   "petit": "bip",
+   "a": "l1-0.3",
+   "gain": -16
+  },
+  {
+   "petit": "bip",
+   "a": "v2:l’envoie",
+   "gain": -15
+  },
+  {
+   "petit": "laser",
+   "a": "v3:impulsion",
+   "gain": -13
+  },
+  {
+   "petit": "bip",
+   "a": "v3:006",
+   "gain": -11
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_nuit.wav",
+   "a": "#C",
+   "boucle": true,
+   "jusqua": "v4.end+1.8",
+   "rms": -34,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  }
+ ],
+ "silences": [
+  {
+   "de": "l1-0.4",
+   "a": "l1.end+0.2"
+  },
+  {
+   "de": "v2.end+0.4",
+   "a": "v3-0.3"
+  }
+ ]
+}

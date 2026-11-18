@@ -1,0 +1,13 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A calm sunny beach in late morning, wide shot: soft sand in the foreground with a few footprints, gentle irregular waves with white foam, a low dune with beach grass on the left, rocks on the right, a wooden boardwalk far behind, light haze on the horizon, bright and peaceful. No people. Flat 2D vector illustration for an animated documentary, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, subtle depth of field on far objects, no text, no letters, no logos",
+  "image_input": [],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "18ea5aa442c457d621a01f6acc652a11",
+ "credits": 12.0,
+ "seconds": 75
+}

@@ -1,0 +1,13 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Outer space, the Earth and the Moon touching: the Moon is breaking apart against the Earth with a huge blinding white-orange flash of light at the contact point, glowing debris, black starry background, dramatic but simple, seen from far away. Flat 2D vector illustration for an animated documentary, soft gradients, cinematic atmospheric lighting, muted desaturated palette, clean shapes, subtle depth of field on far objects, no text, no letters, no logos",
+  "image_input": [],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "985f31b9bff33914c998d54f2ab3d261",
+ "credits": 12.0,
+ "seconds": 51
+}

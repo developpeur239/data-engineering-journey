@@ -1,0 +1,80 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#081615;overflow:hidden}</style></head>
+<body>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+<script type="module">
+// Ville de nuit procédurale : « la lumière brille, mais les données ne passent plus ».
+// window.renderAt(t) dessine l'image au temps t (secondes) : rendu image par image, déterministe.
+import * as THREE from "three";
+const W = +new URLSearchParams(location.search).get("w") || 1280, H = Math.round(W * 9 / 16);
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); document.body.appendChild(renderer.domElement);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x081615);
+scene.fog = new THREE.FogExp2(0x0b1f1e, 0.012);
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.5, 600);
+
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+// texture de façade : fenêtres allumées / éteintes
+function facade(litRatio) {
+  const c = document.createElement("canvas"); c.width = 64; c.height = 128;
+  const g = c.getContext("2d"); g.fillStyle = "#0d1a1a"; g.fillRect(0, 0, 64, 128);
+  for (let y = 4; y < 124; y += 8) for (let x = 4; x < 60; x += 8) {
+    const lit = rnd() < litRatio;
+    g.fillStyle = lit ? (rnd() < 0.8 ? "#ffcf8a" : "#cfe8ff") : "#122222";
+    g.fillRect(x, y, 4, 5);
+  }
+  const t = new THREE.CanvasTexture(c); t.magFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const litTex = [facade(0.55), facade(0.4), facade(0.65)];
+const darkTex = facade(0.0);
+
+const buildings = [];
+const geo = new THREE.BoxGeometry(1, 1, 1);
+for (let gx = -12; gx <= 12; gx++) for (let gz = -40; gz <= 6; gz++) {
+  if (Math.abs(gx) < 2) continue;            // avenue centrale
+  if (rnd() < 0.15) continue;
+  const h = 4 + Math.pow(rnd(), 2.2) * 38, w = 2.2 + rnd() * 1.6, d = 2.2 + rnd() * 1.6;
+  const tex = litTex[Math.floor(rnd() * 3)].clone(); tex.needsUpdate = true;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 6)));
+  const mat = new THREE.MeshStandardMaterial({ color: 0x1a2b2a, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 1.6, roughness: 0.9 });
+  const m = new THREE.Mesh(geo, mat);
+  m.scale.set(w, h, d); m.position.set(gx * 4.2 + (rnd() - 0.5), h / 2, gz * 4.2 + (rnd() - 0.5));
+  scene.add(m); buildings.push({ m, mat, off: rnd(), dist: Math.hypot(gx, gz) });
+}
+// sol et avenue
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: 0x0c1716, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+// lampadaires (ils restent allumés : l'électricité fonctionne)
+const lampMat = new THREE.MeshBasicMaterial({ color: 0xffb84d });
+for (let z = -170; z <= 30; z += 9) for (const x of [-3.2, 3.2]) {
+  const l = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), lampMat); l.position.set(x, 4.2, z); scene.add(l);
+  const pl = new THREE.PointLight(0xffb84d, 6, 14, 2); pl.position.set(x, 4, z); scene.add(pl);
+}
+scene.add(new THREE.HemisphereLight(0x3a5a60, 0x050a0a, 0.5));
+// écrans publicitaires : passent au rouge « erreur » pendant la panne
+const screens = [];
+for (let i = 0; i < 6; i++) {
+  const mat = new THREE.MeshBasicMaterial({ color: 0x5ee6b0 });
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.8), mat);
+  const side = i % 2 ? 1 : -1; s.position.set(side * 6.1, 6 + (i % 3), -20 - i * 22); s.rotation.y = -side * Math.PI / 2;
+  scene.add(s); screens.push({ mat, at: 0.15 + i * 0.07 });
+}
+
+window.renderAt = (t, dur) => {
+  const k = Math.min(1, t / dur);
+  camera.position.set(0, 7 - k * 2.5, 28 - k * 60);
+  camera.lookAt(0, 6 - k * 1.5, -60 - k * 60);
+  for (const b of buildings) {            // extinction progressive des fenêtres (pas des lampadaires)
+    const offAt = 0.1 + b.off * 0.8;
+    b.mat.emissiveMap = k > offAt ? darkTex : b.mat.emissiveMap;
+    b.mat.emissiveIntensity = k > offAt ? 0.0 : 1.6;
+  }
+  for (const s of screens) s.mat.color.setHex(k > s.at ? ((Math.floor(t * 2) % 2) ? 0xff5a36 : 0x7a2a1a) : 0x5ee6b0);
+  renderer.render(scene, camera);
+  return true;
+};
+window.ready = true;
+</script></body></html>

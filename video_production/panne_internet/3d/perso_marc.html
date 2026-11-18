@@ -1,0 +1,192 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Essai : Marc en formes simples (3D au rendu plat). Émotion par les sourcils, les yeux, la bouche et la posture.
+     Signe distinctif : l'écharpe ambre de la chaîne. Rendu : node render3d.js perso_marc.html out.mp4 6 1280 24
+     Planche des expressions : perso_marc.html?mode=sheet -->
+<style>html,body{margin:0;background:#0b1220;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from "three";
+const Q = new URLSearchParams(location.search);
+const W = +(Q.get("w") || 1280), H = Math.round(W * 9 / 16), MODE = Q.get("mode") || "scene";
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, W / H, 0.05, 50);
+
+// ---------- rendu plat : 3 tons ----------
+const grad = new THREE.DataTexture(new Uint8Array([70, 70, 70, 255, 150, 150, 150, 255, 255, 255, 255, 255]), 3, 1);
+grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+const toon = (c, e = 0) => new THREE.MeshToonMaterial({ color: c, gradientMap: grad, emissive: e ? new THREE.Color(c) : 0x000000, emissiveIntensity: e });
+const ease = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+const lerp = (a, b, k) => a + (b - a) * k;
+
+// ---------- expressions ----------
+// Visage noir profond : l'émotion passe par la FORME des yeux blancs (les paupières noires les découpent).
+// top : paupière du haut (0 ouverte … 1 fermée) ; slant : inclinaison (+ = coins extérieurs tombants, inquiet/triste ;
+// − = coins intérieurs bas, colère) ; low : paupière du bas qui remonte (yeux qui sourient) ; eye : taille ; pupil : pupille
+// tilt : tête penchée ; slump : épaules tombées
+const EXPR = {
+  normal:  { top: 0.04, slant: 0.0,  low: 0.0,  eye: 1.0,  pupil: 1.0,  tilt: 0.0,   slump: 0 },
+  inquiet: { top: 0.36, slant: 0.55,  low: 0.0,  eye: 1.02, pupil: 0.9,  tilt: 0.08,  slump: 0.3 },
+  panique: { top: 0.0,  slant: 0.15, low: 0.0,  eye: 1.32, pupil: 0.55, tilt: -0.05, slump: 0.1 },
+  soulage: { top: 0.02, slant: 0.0,  low: 0.62, eye: 0.95, pupil: 1.0,  tilt: -0.1,  slump: 0 },
+};
+const mixE = (a, b, k) => Object.fromEntries(Object.keys(a).map((n) => [n, lerp(a[n], b[n], k)]));
+
+// ---------- personnage ----------
+function makeMarc() {
+  const BODY = 0x0b0c10, SKIN = 0x0b0c10, AMBER = 0xffb020;   // noir profond
+  const g = new THREE.Group();
+  const m = (geo, mat) => { const o = new THREE.Mesh(geo, mat); o.castShadow = true; return o; };
+  const body = m(new THREE.CapsuleGeometry(0.27, 0.42, 8, 24), toon(BODY)); body.position.y = 0.88; g.add(body);
+  for (const sx of [-1, 1]) { const leg = m(new THREE.CapsuleGeometry(0.075, 0.38, 6, 12), toon(BODY)); leg.position.set(sx * 0.11, 0.27, 0); g.add(leg);
+    const shoe = m(new THREE.SphereGeometry(0.09, 16, 10), toon(0x050607)); shoe.scale.set(1, 0.55, 1.5); shoe.position.set(sx * 0.11, 0.05, 0.05); g.add(shoe); }
+  // écharpe ambre : le signe distinctif
+  const scarf = m(new THREE.TorusGeometry(0.2, 0.065, 12, 32), toon(AMBER)); scarf.rotation.x = Math.PI / 2; scarf.position.y = 1.27; g.add(scarf);
+  const tail = m(new THREE.BoxGeometry(0.1, 0.32, 0.05), toon(AMBER)); tail.position.set(0.1, 1.08, 0.24); tail.rotation.z = 0.12; g.add(tail);
+  // tête
+  const head = new THREE.Group(); head.position.y = 1.56; g.add(head);
+  const skull = m(new THREE.SphereGeometry(0.31, 32, 24), toon(SKIN)); skull.scale.set(1, 1.04, 0.96); head.add(skull);
+  const hair = m(new THREE.SphereGeometry(0.318, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.3), toon(0x050607)); hair.rotation.x = -0.42; head.add(hair);
+  const F = {};
+  F.eyes = [-1, 1].map((sx) => {
+    // chaque œil est une petite image 2D redessinée à chaque instant : le blanc, la pupille, et les paupières
+    // qui « effacent » le blanc (on voit alors le visage noir derrière). Rien ne dépasse de la tête.
+    const cv = document.createElement("canvas"); cv.width = cv.height = 256; const ctx = cv.getContext("2d");
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+    const e = new THREE.Mesh(new THREE.PlaneGeometry(0.19, 0.19), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+    e.position.set(sx * 0.11, 0.02, 0.284); e.rotation.y = sx * 0.36; head.add(e);
+    return { e, ctx, tex, sx };
+  });
+  F.brows = [-1, 1].map((sx) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.032, 0.03), new THREE.MeshBasicMaterial({ color: 0x0b0f17 })); b.position.set(sx * 0.105, 0.135, 0.285); b.visible = false; head.add(b); return { b, sx }; });
+  const mouthMat = new THREE.MeshBasicMaterial({ color: 0x0b0f17 });
+  F.smile = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.009, 8, 24, Math.PI), mouthMat); F.smile.rotation.z = Math.PI; head.add(F.smile);
+  F.frown = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.009, 8, 24, Math.PI), mouthMat); head.add(F.frown);
+  F.flat = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.016, 0.01), mouthMat); head.add(F.flat);
+  F.open = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 12), mouthMat); F.open.scale.set(1, 1.3, 0.4); head.add(F.open);
+  for (const o of [F.smile, F.frown, F.flat, F.open]) { o.position.set(0, -0.13, 0.285); o.visible = false; }
+  // bras : pivot à l'épaule, bras vers le bas
+  const arm = (sx) => { const p = new THREE.Group(); p.position.set(sx * 0.31, 1.12, 0); g.add(p);
+    const a = m(new THREE.CapsuleGeometry(0.06, 0.36, 6, 12), toon(BODY)); a.position.y = -0.22; p.add(a);
+    const h = m(new THREE.SphereGeometry(0.07, 16, 12), toon(SKIN)); h.position.y = -0.46; p.add(h); return { p, h }; };
+  F.armR = arm(-1); F.armL = arm(1);
+  const card = m(new THREE.BoxGeometry(0.12, 0.004, 0.08), toon(0xe8edf2)); card.position.set(0, -0.5, 0.05); card.rotation.x = 0.4; F.armR.p.add(card);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.006, 0.015), toon(AMBER)); stripe.position.set(0, -0.5, 0.06); stripe.rotation.x = 0.4; F.armR.p.add(stripe);
+  F.card = card; F.stripe = stripe; F.head = head; F.body = body; F.g = g;
+  return F;
+}
+const _q = new THREE.Quaternion(), _p = new THREE.Vector3(), DOWN = new THREE.Vector3(0, -1, 0);
+function aim(pivot, target, k) {
+  pivot.quaternion.identity(); pivot.updateWorldMatrix(true, false);
+  const d = target.clone().sub(pivot.getWorldPosition(_p)).normalize();
+  d.applyQuaternion(pivot.parent.getWorldQuaternion(_q).invert());
+  pivot.quaternion.slerpQuaternions(new THREE.Quaternion(), new THREE.Quaternion().setFromUnitVectors(DOWN, d), k);
+}
+function pose(F, E, blink = 0) {
+  const k = blink;
+  for (const { ctx, tex, sx } of F.eyes) {
+    const ry = Math.min(124, 100 * E.eye), rx = Math.min(100, 80 * (0.85 + 0.15 * E.eye));
+    ctx.clearRect(0, 0, 256, 256); ctx.save();
+    ctx.beginPath(); ctx.ellipse(128, 128, rx, ry, 0, 0, Math.PI * 2); ctx.fillStyle = "#f4f1ea"; ctx.fill();
+    ctx.beginPath(); ctx.arc(128 + sx * 4, 128 + 14 * E.slant - 10 * E.low, 36 * E.pupil, 0, Math.PI * 2); ctx.fillStyle = "#050607"; ctx.fill();
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.translate(128, 128); ctx.rotate(sx * E.slant * 0.7); ctx.translate(-128, -128);
+    const top = Math.max(k, E.top), R = 260;
+    ctx.beginPath(); ctx.arc(128, 128 - ry - R + top * (2 * ry + 10), R, 0, Math.PI * 2); ctx.fill();          // paupière du haut
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (E.low * (1 - k) > 0.01) { ctx.beginPath(); ctx.arc(128, 128 + ry + 150 - E.low * (1 - k) * 2 * ry, 150, 0, Math.PI * 2); ctx.fill(); }   // paupière du bas (yeux qui sourient)
+    ctx.restore(); tex.needsUpdate = true;
+  }
+  F.head.rotation.z = E.tilt; F.head.position.y = 1.56 - E.slump * 0.04;
+  F.armL.p.position.y = F.armR.p.position.y = 1.12 - E.slump * 0.04;
+}
+
+// ---------- décor : station de métro, automate ----------
+function station() {
+  scene.background = new THREE.Color(0x8d9aa8); scene.fog = new THREE.Fog(0x8d9aa8, 5, 14);
+  const tiles = document.createElement("canvas"); tiles.width = tiles.height = 256; const c = tiles.getContext("2d");
+  c.fillStyle = "#c9d4de"; c.fillRect(0, 0, 256, 256); c.strokeStyle = "#a9b6c2"; c.lineWidth = 4;
+  for (let i = 0; i <= 256; i += 32) { c.beginPath(); c.moveTo(0, i); c.lineTo(256, i); c.stroke(); c.beginPath(); c.moveTo(i, 0); c.lineTo(i, 256); c.stroke(); }
+  const tt = new THREE.CanvasTexture(tiles); tt.wrapS = tt.wrapT = THREE.RepeatWrapping; tt.repeat.set(4, 2); tt.colorSpace = THREE.SRGBColorSpace;
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(10, 4), new THREE.MeshToonMaterial({ map: tt, gradientMap: grad })); wall.position.set(0, 2, -0.9); wall.receiveShadow = true; scene.add(wall);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), toon(0x6c7682)); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+  const band = new THREE.Mesh(new THREE.BoxGeometry(10, 0.12, 0.02), toon(0x3a6fb0)); band.position.set(0, 2.3, -0.88); scene.add(band);
+  // automate
+  const M = new THREE.Group(); M.position.set(0.5, 0, -0.15); M.rotation.y = -0.35; scene.add(M);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.7, 0.5), toon(0x3a4658)); box.position.y = 0.85; box.castShadow = box.receiveShadow = true; M.add(box);
+  const cv = document.createElement("canvas"); cv.width = 512; cv.height = 340; const sg = cv.getContext("2d");
+  const st = new THREE.CanvasTexture(cv); st.colorSpace = THREE.SRGBColorSpace;
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.37), new THREE.MeshBasicMaterial({ map: st })); screen.position.set(0, 1.25, 0.252); M.add(screen);
+  const reader = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.16), toon(0x1a2230)); reader.position.set(0, 0.92, 0.3); M.add(reader);
+  const glow = new THREE.PointLight(0xff4040, 0, 2.2, 1.6); glow.position.set(0, 1.25, 0.6); M.add(glow);
+  const draw = (state, t) => {
+    sg.fillStyle = state === "ko" ? "#4a0d10" : "#0d2233"; sg.fillRect(0, 0, 512, 340);
+    sg.textAlign = "center"; sg.fillStyle = "#cfd8e3"; sg.font = "600 28px sans-serif"; sg.fillText("Achat de titre", 256, 60);
+    if (state === "ko") { sg.fillStyle = "#ff6b6b"; sg.font = "800 54px sans-serif"; sg.fillText("Carte refusée", 256, 180); sg.fillStyle = "#ffb3b3"; sg.font = "500 26px sans-serif"; sg.fillText("Autorisation impossible", 256, 230); }
+    else if (state === "wait") { sg.fillStyle = "#9fd8ff"; sg.font = "600 40px sans-serif"; sg.fillText("Connexion" + ".".repeat(1 + Math.floor(t * 4) % 3), 256, 190); }
+    else { sg.fillStyle = "#ffffff"; sg.font = "700 44px sans-serif"; sg.fillText("Présentez votre carte", 256, 190); }
+    st.needsUpdate = true;
+  };
+  return { M, draw, glow, reader };
+}
+
+// ---------- lumière ----------
+scene.add(new THREE.HemisphereLight(0x9fb8ff, 0x1a1410, 0.9));
+const key = new THREE.DirectionalLight(0xfff1dd, 1.6); key.position.set(-2.5, 4, 3); key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024); key.shadow.camera.left = key.shadow.camera.bottom = -3; key.shadow.camera.right = key.shadow.camera.top = 3; key.shadow.radius = 4; scene.add(key);
+const rim = new THREE.DirectionalLight(0x5fd4dc, 0.8); rim.position.set(2, 2.5, -2); scene.add(rim);
+
+let renderAt;
+if (MODE === "sheet") {
+  // planche : 4 expressions, gros plan
+  scene.background = new THREE.Color(0xc9d4de);
+  const names = ["normal", "inquiet", "panique", "soulage"];
+  const Ms = names.map((n, i) => { const F = makeMarc(); F.g.position.x = (i - 1.5) * 0.95; scene.add(F.g); pose(F, EXPR[n]); return F; });
+  Ms[2].g.updateWorldMatrix(true, true); aim(Ms[2].armR.p, Ms[2].head.localToWorld(new THREE.Vector3(-0.34, 0.16, 0.1)), 1);   // main sur le front
+  Ms[3].armL.p.rotation.set(0, 0, 0.15);
+  for (const F of Ms) F.card.visible = F.stripe.visible = false;
+  const fl = new THREE.Mesh(new THREE.PlaneGeometry(10, 6), toon(0xaeb9c4)); fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+  camera.position.set(0, 1.45, 4.3); camera.lookAt(0, 1.2, 0);
+  renderAt = () => renderer.render(scene, camera);
+} else {
+  const S = station();
+  const F = makeMarc(); F.g.position.set(-0.28, 0, 0.32); F.g.rotation.y = 1.05; scene.add(F.g);
+  const readerW = () => S.reader.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.05, 0));
+  renderAt = (t) => {
+    const reach1 = ease((t - 0.4) / 0.6) * (1 - ease((t - 2.2) / 0.4));
+    const reach2 = ease((t - 2.7) / 0.35) * (1 - ease((t - 3.6) / 0.3));
+    const state = t < 1.05 ? "idle" : t < 1.5 ? "wait" : (t > 2.4 && t < 2.95) ? "idle" : (t >= 2.95 && t < 3.25) ? "wait" : "ko";
+    S.draw(state, t);
+    const flash = (x) => Math.max(0, 1 - Math.abs(x) / 0.25);
+    S.glow.intensity = state === "ko" ? 1.2 + 1.5 * (flash(t - 1.55) + flash(t - 3.3)) : 0;
+    let E = EXPR.normal;
+    if (t > 1.6) E = mixE(EXPR.normal, EXPR.inquiet, ease((t - 1.6) / 0.35));
+    if (t > 3.35) E = mixE(EXPR.inquiet, EXPR.panique, ease((t - 3.35) / 0.3));
+    const blink = (Math.abs(t - 0.9) < 0.07 || Math.abs(t - 2.5) < 0.07 || Math.abs(t - 5.1) < 0.07) ? 1 : 0;
+    pose(F, E, blink);
+    const panic = ease((t - 3.7) / 0.45);
+    // regard : l'écran au refus, puis vers nous, perdu
+    F.head.rotation.y = lerp(0, 0.45, ease((t - 1.55) / 0.3)) * (1 - panic) + lerp(0, -0.55, panic);
+    F.head.rotation.x = 0.04 * Math.sin(t * 1.1) + 0.12 * panic;
+    F.body.rotation.x = 0.02 * Math.sin(t * 1.4) + 0.05 * panic;
+    F.g.updateWorldMatrix(true, true);
+    // bras droit : la carte vers le lecteur, puis la main au front
+    const forehead = F.head.localToWorld(new THREE.Vector3(-0.34, 0.16, 0.1));
+    if (panic > 0) aim(F.armR.p, forehead, panic);
+    else aim(F.armR.p, readerW(), Math.max(reach1, reach2) * 0.92);
+    F.card.visible = F.stripe.visible = panic < 0.5;
+    aim(F.armL.p, F.g.localToWorld(new THREE.Vector3(0.45, 0.3, 0.05)), 0.12 + 0.05 * Math.sin(t * 1.3));
+    // caméra : lente poussée vers le visage, puis tenue
+    const k = ease(t / 6);
+    camera.position.set(lerp(0.0, -0.2, k), lerp(1.5, 1.58, k), lerp(3.3, 2.3, k));
+    camera.lookAt(lerp(-0.05, -0.3, k), lerp(1.25, 1.45, k), 0);
+    renderer.render(scene, camera);
+  };
+}
+window.renderAt = renderAt; renderAt(0); window.ready = true;
+</script></body></html>

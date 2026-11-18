@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The woman from the reference (long chestnut hair, cream coat, black body) walking calmly to the left, seen from the side, gentle smiling eyes. Pure flat magenta background (#FF00FF) filling the whole image, no floor, no shadow on the background, the character only, fully visible, centered, flat 2D vector style exactly like the reference character: pure black head and body without any shading, small white oval eyes, simple rounded limbs.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_mere.png"
+  ],
+  "aspect_ratio": "3:4",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "d89b223fbea957af84dd8f89c1f2ef9b",
+ "credits": 12.0,
+ "seconds": 76
+}

@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A grassy hilltop at night above the countryside of the south of France, a single isolated tree on the left of the hilltop, a footpath, a parked family car near the top, below a vast dark plain with a few scattered lights and the coast far away, an immense night sky filling the upper two thirds of the image, empty of any Moon, cold blue moonlight coming from the upper right. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image. No people, no Moon, no text, no letters, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/rue_lune.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "c4389a1f6353f9ba40f375a0a26f4b72",
+ "credits": 12.0,
+ "seconds": 75
+}

@@ -1,0 +1,17 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Character sheet on a plain flat light grey background: four separate full-body figures standing side by side with wide space between them, same minimalist character design, proportions and thin discreet outline as the reference image of the children: 1) a young mother with long straight hair to the middle of her back, simple long coat, seen in three-quarter back view, standing, legs slightly apart; 2) the same mother crouching down on her heels, seen from the side facing right, one hand forward as if speaking gently to a child; 3) her son, about 6 years old, short tousled hair, seen in three-quarter back view, standing, legs slightly apart, holding a small RED plastic beach bucket by its handle in his right hand; 4) the same boy seen from the side facing right, standing, looking straight ahead, holding the red bucket. Matte colors, soft daylight, no shadow on the ground, no text.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/enfants.png",
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_mere.png",
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_garcon.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "3b30fd79c07c2c792d75be219baf8484",
+ "credits": 12.0,
+ "seconds": 75
+}

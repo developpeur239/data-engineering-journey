@@ -1,0 +1,758 @@
+{
+ "v1": [
+  {
+   "w": "Au",
+   "start": 0.0,
+   "end": 0.18,
+   "ok": true
+  },
+  {
+   "w": "quatrième",
+   "start": 0.18,
+   "end": 0.56,
+   "ok": true
+  },
+  {
+   "w": "jour,",
+   "start": 0.56,
+   "end": 0.84,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 1.26,
+   "end": 1.34,
+   "ok": true
+  },
+  {
+   "w": "changement",
+   "start": 1.34,
+   "end": 1.78,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 1.78,
+   "end": 1.88,
+   "ok": true
+  },
+  {
+   "w": "impossible",
+   "start": 1.92,
+   "end": 2.42,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 2.42,
+   "end": 2.68,
+   "ok": true
+  },
+  {
+   "w": "ignorer.",
+   "start": 2.68,
+   "end": 3.12,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 3.5,
+   "end": 3.62,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 3.62,
+   "end": 3.7,
+   "ok": true
+  },
+  {
+   "w": "vitesse",
+   "start": 3.7,
+   "end": 3.92,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.92,
+   "end": 4.12,
+   "ok": true
+  },
+  {
+   "w": "rapprochement",
+   "start": 4.12,
+   "end": 4.62,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 4.62,
+   "end": 4.76,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 4.76,
+   "end": 4.9,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 4.9,
+   "end": 5.12,
+   "ok": true
+  },
+  {
+   "w": "augmente.",
+   "start": 5.12,
+   "end": 5.72,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 6.24,
+   "end": 6.36,
+   "ok": true
+  },
+  {
+   "w": "scientifiques",
+   "start": 6.36,
+   "end": 6.82,
+   "ok": true
+  },
+  {
+   "w": "envisagent",
+   "start": 6.82,
+   "end": 7.34,
+   "ok": true
+  },
+  {
+   "w": "toutes",
+   "start": 7.4,
+   "end": 7.56,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 7.56,
+   "end": 7.74,
+   "ok": true
+  },
+  {
+   "w": "possibilités.",
+   "start": 7.74,
+   "end": 8.42,
+   "ok": true
+  },
+  {
+   "w": "Pourrait-on",
+   "start": 8.86,
+   "end": 9.24,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 9.24,
+   "end": 9.36,
+   "ok": true
+  },
+  {
+   "w": "dévier",
+   "start": 9.36,
+   "end": 9.72,
+   "ok": true
+  },
+  {
+   "w": "Lui",
+   "start": 10.08,
+   "end": 10.24,
+   "ok": true
+  },
+  {
+   "w": "envoyer",
+   "start": 10.24,
+   "end": 10.58,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 10.58,
+   "end": 10.66,
+   "ok": true
+  },
+  {
+   "w": "missiles",
+   "start": 10.66,
+   "end": 11.0,
+   "ok": true
+  },
+  {
+   "w": "Utiliser",
+   "start": 11.42,
+   "end": 11.88,
+   "ok": true
+  },
+  {
+   "w": "l’ensemble",
+   "start": 11.88,
+   "end": 12.44,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 12.44,
+   "end": 12.64,
+   "ok": true
+  },
+  {
+   "w": "notre",
+   "start": 12.64,
+   "end": 12.78,
+   "ok": true
+  },
+  {
+   "w": "arsenal",
+   "start": 12.78,
+   "end": 13.14,
+   "ok": true
+  },
+  {
+   "w": "nucléaire",
+   "start": 13.14,
+   "end": 13.82,
+   "ok": true
+  },
+  {
+   "w": "Non.",
+   "start": 14.28,
+   "end": 14.6,
+   "ok": true
+  },
+  {
+   "w": "Même",
+   "start": 15.04,
+   "end": 15.32,
+   "ok": true
+  },
+  {
+   "w": "réunies,",
+   "start": 15.32,
+   "end": 15.86,
+   "ok": true
+  },
+  {
+   "w": "nos",
+   "start": 16.06,
+   "end": 16.12,
+   "ok": true
+  },
+  {
+   "w": "capacités",
+   "start": 16.12,
+   "end": 16.64,
+   "ok": true
+  },
+  {
+   "w": "actuelles",
+   "start": 16.64,
+   "end": 17.16,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 17.16,
+   "end": 17.3,
+   "ok": true
+  },
+  {
+   "w": "dérisoires",
+   "start": 17.3,
+   "end": 18.04,
+   "ok": true
+  },
+  {
+   "w": "face",
+   "start": 18.04,
+   "end": 18.26,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 18.26,
+   "end": 18.46,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 18.46,
+   "end": 18.54,
+   "ok": true
+  },
+  {
+   "w": "masse",
+   "start": 18.54,
+   "end": 18.94,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 18.94,
+   "end": 19.12,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 19.12,
+   "end": 19.2,
+   "ok": true
+  },
+  {
+   "w": "l’énergie",
+   "start": 19.2,
+   "end": 19.62,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 19.62,
+   "end": 19.82,
+   "ok": true
+  },
+  {
+   "w": "mouvement",
+   "start": 19.82,
+   "end": 20.06,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 20.06,
+   "end": 20.28,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 20.28,
+   "end": 20.4,
+   "ok": true
+  },
+  {
+   "w": "Lune.",
+   "start": 20.4,
+   "end": 20.7,
+   "ok": true
+  },
+  {
+   "w": "Il",
+   "start": 21.12,
+   "end": 21.24,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 21.24,
+   "end": 21.36,
+   "ok": true
+  },
+  {
+   "w": "reste",
+   "start": 21.36,
+   "end": 21.6,
+   "ok": true
+  },
+  {
+   "w": "qu’une",
+   "start": 21.6,
+   "end": 21.96,
+   "ok": true
+  },
+  {
+   "w": "certitude.",
+   "start": 21.96,
+   "end": 22.48,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 23.04,
+   "end": 23.14,
+   "ok": true
+  },
+  {
+   "w": "collision",
+   "start": 23.14,
+   "end": 23.6,
+   "ok": true
+  },
+  {
+   "w": "aura",
+   "start": 23.6,
+   "end": 24.1,
+   "ok": true
+  },
+  {
+   "w": "lieu.",
+   "start": 24.1,
+   "end": 24.34,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "À",
+   "start": 0.0,
+   "end": 0.12,
+   "ok": true
+  },
+  {
+   "w": "Calern,",
+   "start": 0.12,
+   "end": 0.56,
+   "ok": true
+  },
+  {
+   "w": "l’observatoire",
+   "start": 0.86,
+   "end": 1.52,
+   "ok": true
+  },
+  {
+   "w": "reçoit",
+   "start": 1.52,
+   "end": 2.0,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 2.0,
+   "end": 2.1,
+   "ok": true
+  },
+  {
+   "w": "ordre",
+   "start": 2.1,
+   "end": 2.44,
+   "ok": true
+  },
+  {
+   "w": "d’évacuation.",
+   "start": 2.44,
+   "end": 3.08,
+   "ok": true
+  }
+ ],
+ "c1": [
+  {
+   "w": "On",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "doit",
+   "start": 0.16,
+   "end": 0.28,
+   "ok": true
+  },
+  {
+   "w": "partir.",
+   "start": 0.28,
+   "end": 0.62,
+   "ok": true
+  }
+ ],
+ "c2": [
+  {
+   "w": "Tu",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 0.16,
+   "end": 0.28,
+   "ok": true
+  },
+  {
+   "w": "peux",
+   "start": 0.28,
+   "end": 0.44,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 0.44,
+   "end": 0.72,
+   "ok": true
+  },
+  {
+   "w": "rien",
+   "start": 0.72,
+   "end": 1.04,
+   "ok": true
+  },
+  {
+   "w": "changer.",
+   "start": 1.04,
+   "end": 1.36,
+   "ok": true
+  }
+ ],
+ "l1": [
+  {
+   "w": "Je",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "sais.",
+   "start": 0.16,
+   "end": 0.4,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 0.92,
+   "end": 1.26,
+   "ok": true
+  },
+  {
+   "w": "on",
+   "start": 1.26,
+   "end": 1.4,
+   "ok": true
+  },
+  {
+   "w": "peut",
+   "start": 1.4,
+   "end": 1.54,
+   "ok": true
+  },
+  {
+   "w": "encore",
+   "start": 1.54,
+   "end": 1.74,
+   "ok": true
+  },
+  {
+   "w": "comprendre",
+   "start": 1.74,
+   "end": 2.24,
+   "ok": true
+  },
+  {
+   "w": "ce",
+   "start": 2.24,
+   "end": 2.5,
+   "ok": true
+  },
+  {
+   "w": "qui",
+   "start": 2.52,
+   "end": 2.64,
+   "ok": true
+  },
+  {
+   "w": "nous",
+   "start": 2.64,
+   "end": 2.76,
+   "ok": true
+  },
+  {
+   "w": "arrive.",
+   "start": 2.76,
+   "end": 3.09,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Son",
+   "start": 0.0,
+   "end": 0.2,
+   "ok": true
+  },
+  {
+   "w": "collègue",
+   "start": 0.2,
+   "end": 0.6,
+   "ok": true
+  },
+  {
+   "w": "hésite.",
+   "start": 0.6,
+   "end": 1.0,
+   "ok": true
+  },
+  {
+   "w": "Puis",
+   "start": 1.5,
+   "end": 1.7,
+   "ok": true
+  },
+  {
+   "w": "il",
+   "start": 1.7,
+   "end": 1.86,
+   "ok": true
+  },
+  {
+   "w": "s’en",
+   "start": 1.86,
+   "end": 2.06,
+   "ok": true
+  },
+  {
+   "w": "va.",
+   "start": 2.06,
+   "end": 2.24,
+   "ok": true
+  },
+  {
+   "w": "Léa",
+   "start": 2.84,
+   "end": 3.1,
+   "ok": true
+  },
+  {
+   "w": "reste",
+   "start": 3.1,
+   "end": 3.34,
+   "ok": true
+  },
+  {
+   "w": "seule.",
+   "start": 3.36,
+   "end": 3.74,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 4.46,
+   "end": 4.58,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 4.58,
+   "end": 4.78,
+   "ok": true
+  },
+  {
+   "w": "restera",
+   "start": 4.78,
+   "end": 5.16,
+   "ok": true
+  },
+  {
+   "w": "visible",
+   "start": 5.16,
+   "end": 5.5,
+   "ok": true
+  },
+  {
+   "w": "depuis",
+   "start": 5.5,
+   "end": 5.84,
+   "ok": true
+  },
+  {
+   "w": "Calern",
+   "start": 5.84,
+   "end": 6.34,
+   "ok": true
+  },
+  {
+   "w": "jusqu’aux",
+   "start": 6.34,
+   "end": 6.76,
+   "ok": true
+  },
+  {
+   "w": "derniers",
+   "start": 6.76,
+   "end": 7.18,
+   "ok": true
+  },
+  {
+   "w": "instants.",
+   "start": 7.18,
+   "end": 7.6,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 8.08,
+   "end": 8.12,
+   "ok": true
+  },
+  {
+   "w": "Léa",
+   "start": 8.12,
+   "end": 8.46,
+   "ok": true
+  },
+  {
+   "w": "vient",
+   "start": 8.46,
+   "end": 8.76,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 8.76,
+   "end": 8.92,
+   "ok": true
+  },
+  {
+   "w": "décider",
+   "start": 8.92,
+   "end": 9.32,
+   "ok": true
+  },
+  {
+   "w": "d’enregistrer",
+   "start": 9.32,
+   "end": 9.94,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 9.94,
+   "end": 10.06,
+   "ok": true
+  },
+  {
+   "w": "dernières",
+   "start": 10.06,
+   "end": 10.46,
+   "ok": true
+  },
+  {
+   "w": "mesures",
+   "start": 10.46,
+   "end": 10.72,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 10.72,
+   "end": 10.9,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 10.9,
+   "end": 11.04,
+   "ok": true
+  },
+  {
+   "w": "chute.",
+   "start": 11.04,
+   "end": 11.38,
+   "ok": true
+  }
+ ]
+}

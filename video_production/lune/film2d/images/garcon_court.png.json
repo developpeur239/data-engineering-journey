@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The boy from the reference (brown hair, turquoise top, black body) running happily to the left, seen from the side, holding a small red bucket in one hand. Pure flat magenta background (#FF00FF) filling the whole image, no floor, no shadow on the background, the character only, fully visible, centered, flat 2D vector style exactly like the reference character: pure black head and body without any shading, small white oval eyes, simple rounded limbs.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/ref_garcon.png"
+  ],
+  "aspect_ratio": "3:4",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "9fa3730cec7a544cc8821ec0b5e486de",
+ "credits": 12.0,
+ "seconds": 25
+}

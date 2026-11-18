@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The same motorway traffic jam as the reference image, later in the evening: beyond the fields on the left, an immense flat sheet of water now covers the land up to the horizon and reflects the violet sky, a few isolated trees and electricity pylons stand in the water, the cars are still stuck, the whole upper half of the image is empty sky. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image. No people, no Moon, no text, no letters, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/embouteillage.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "6592dd30f1e4a4886a397af4f47e4302",
+ "credits": 12.0,
+ "seconds": 132
+}

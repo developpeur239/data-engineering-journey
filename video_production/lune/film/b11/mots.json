@@ -1,0 +1,962 @@
+{
+ "v1": [
+  {
+   "w": "Au",
+   "start": 0.0,
+   "end": 0.14,
+   "ok": true
+  },
+  {
+   "w": "début,",
+   "start": 0.14,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "cela",
+   "start": 0.68,
+   "end": 0.9,
+   "ok": true
+  },
+  {
+   "w": "ressemble",
+   "start": 0.9,
+   "end": 1.36,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 1.36,
+   "end": 1.46,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 1.46,
+   "end": 1.6,
+   "ok": true
+  },
+  {
+   "w": "ombre.",
+   "start": 1.6,
+   "end": 1.94,
+   "ok": true
+  },
+  {
+   "w": "Puis",
+   "start": 2.4,
+   "end": 2.6,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 2.6,
+   "end": 2.88,
+   "ok": true
+  },
+  {
+   "w": "immense",
+   "start": 2.88,
+   "end": 3.3,
+   "ok": true
+  },
+  {
+   "w": "bloc",
+   "start": 3.3,
+   "end": 3.8,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 3.8,
+   "end": 3.92,
+   "ok": true
+  },
+  {
+   "w": "détache.",
+   "start": 3.92,
+   "end": 4.46,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 4.68,
+   "end": 4.92,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 4.92,
+   "end": 5.08,
+   "ok": true
+  },
+  {
+   "w": "autre.",
+   "start": 5.08,
+   "end": 5.34,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 5.9,
+   "end": 6.02,
+   "ok": true
+  },
+  {
+   "w": "contraintes",
+   "start": 6.02,
+   "end": 6.54,
+   "ok": true
+  },
+  {
+   "w": "deviennent",
+   "start": 6.54,
+   "end": 6.86,
+   "ok": true
+  },
+  {
+   "w": "suffisamment",
+   "start": 6.86,
+   "end": 7.42,
+   "ok": true
+  },
+  {
+   "w": "fortes",
+   "start": 7.42,
+   "end": 7.9,
+   "ok": true
+  },
+  {
+   "w": "pour",
+   "start": 7.96,
+   "end": 8.04,
+   "ok": true
+  },
+  {
+   "w": "provoquer",
+   "start": 8.04,
+   "end": 8.48,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 8.48,
+   "end": 8.62,
+   "ok": true
+  },
+  {
+   "w": "fragmentation",
+   "start": 8.62,
+   "end": 9.24,
+   "ok": true
+  },
+  {
+   "w": "majeure",
+   "start": 9.24,
+   "end": 9.86,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 9.86,
+   "end": 9.98,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 9.98,
+   "end": 10.12,
+   "ok": true
+  },
+  {
+   "w": "Lune.",
+   "start": 10.12,
+   "end": 10.38,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 10.86,
+   "end": 10.94,
+   "ok": true
+  },
+  {
+   "w": "morceaux",
+   "start": 10.94,
+   "end": 11.28,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 11.28,
+   "end": 11.38,
+   "ok": true
+  },
+  {
+   "w": "croûte",
+   "start": 11.38,
+   "end": 11.76,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 11.76,
+   "end": 11.84,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 11.84,
+   "end": 11.98,
+   "ok": true
+  },
+  {
+   "w": "roche",
+   "start": 11.98,
+   "end": 12.28,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 12.28,
+   "end": 12.48,
+   "ok": true
+  },
+  {
+   "w": "séparent",
+   "start": 12.48,
+   "end": 12.9,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 12.9,
+   "end": 13.08,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 13.08,
+   "end": 13.18,
+   "ok": true
+  },
+  {
+   "w": "masse",
+   "start": 13.18,
+   "end": 13.36,
+   "ok": true
+  },
+  {
+   "w": "principale.",
+   "start": 13.36,
+   "end": 13.98,
+   "ok": true
+  },
+  {
+   "w": "Certains,",
+   "start": 14.58,
+   "end": 15.06,
+   "ok": true
+  },
+  {
+   "w": "arrachés",
+   "start": 15.08,
+   "end": 15.46,
+   "ok": true
+  },
+  {
+   "w": "du",
+   "start": 15.46,
+   "end": 15.56,
+   "ok": true
+  },
+  {
+   "w": "côté",
+   "start": 15.56,
+   "end": 15.8,
+   "ok": true
+  },
+  {
+   "w": "faisant",
+   "start": 15.8,
+   "end": 16.14,
+   "ok": true
+  },
+  {
+   "w": "face",
+   "start": 16.14,
+   "end": 16.3,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 16.3,
+   "end": 16.46,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 16.46,
+   "end": 16.59,
+   "ok": true
+  },
+  {
+   "w": "Terre,",
+   "start": 16.6,
+   "end": 16.84,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 17.22,
+   "end": 17.3,
+   "ok": true
+  },
+  {
+   "w": "trouvent",
+   "start": 17.3,
+   "end": 17.54,
+   "ok": true
+  },
+  {
+   "w": "déjà",
+   "start": 17.54,
+   "end": 17.74,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 17.74,
+   "end": 18.0,
+   "ok": true
+  },
+  {
+   "w": "près",
+   "start": 18.0,
+   "end": 18.26,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 18.26,
+   "end": 18.4,
+   "ok": true
+  },
+  {
+   "w": "notre",
+   "start": 18.4,
+   "end": 18.56,
+   "ok": true
+  },
+  {
+   "w": "planète.",
+   "start": 18.56,
+   "end": 19.1,
+   "ok": true
+  },
+  {
+   "w": "Selon",
+   "start": 19.56,
+   "end": 19.82,
+   "ok": true
+  },
+  {
+   "w": "leurs",
+   "start": 19.82,
+   "end": 19.94,
+   "ok": true
+  },
+  {
+   "w": "trajectoires,",
+   "start": 19.94,
+   "end": 20.64,
+   "ok": true
+  },
+  {
+   "w": "ils",
+   "start": 20.84,
+   "end": 20.92,
+   "ok": true
+  },
+  {
+   "w": "peuvent",
+   "start": 20.92,
+   "end": 21.08,
+   "ok": true
+  },
+  {
+   "w": "arriver",
+   "start": 21.08,
+   "end": 21.44,
+   "ok": true
+  },
+  {
+   "w": "avant",
+   "start": 21.44,
+   "end": 21.8,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 21.8,
+   "end": 21.98,
+   "ok": true
+  },
+  {
+   "w": "reste.",
+   "start": 21.98,
+   "end": 22.26,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Depuis",
+   "start": 0.0,
+   "end": 0.34,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 0.34,
+   "end": 0.46,
+   "ok": true
+  },
+  {
+   "w": "sol,",
+   "start": 0.46,
+   "end": 0.72,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 1.1,
+   "end": 1.18,
+   "ok": true
+  },
+  {
+   "w": "spectacle",
+   "start": 1.18,
+   "end": 1.6,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 1.6,
+   "end": 1.72,
+   "ok": true
+  },
+  {
+   "w": "impossible",
+   "start": 1.72,
+   "end": 2.24,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 2.24,
+   "end": 2.5,
+   "ok": true
+  },
+  {
+   "w": "confondre",
+   "start": 2.5,
+   "end": 2.98,
+   "ok": true
+  },
+  {
+   "w": "avec",
+   "start": 2.98,
+   "end": 3.12,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 3.12,
+   "end": 3.32,
+   "ok": true
+  },
+  {
+   "w": "pluie",
+   "start": 3.32,
+   "end": 3.6,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.6,
+   "end": 3.68,
+   "ok": true
+  },
+  {
+   "w": "météores",
+   "start": 3.68,
+   "end": 4.04,
+   "ok": true
+  },
+  {
+   "w": "ordinaire.",
+   "start": 4.04,
+   "end": 4.54,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 5.22,
+   "end": 5.3,
+   "ok": true
+  },
+  {
+   "w": "fragments",
+   "start": 5.3,
+   "end": 5.58,
+   "ok": true
+  },
+  {
+   "w": "gigantesques",
+   "start": 5.58,
+   "end": 6.56,
+   "ok": true
+  },
+  {
+   "w": "apparaissent",
+   "start": 6.56,
+   "end": 7.0,
+   "ok": true
+  },
+  {
+   "w": "dans",
+   "start": 7.0,
+   "end": 7.1,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 7.1,
+   "end": 7.24,
+   "ok": true
+  },
+  {
+   "w": "ciel.",
+   "start": 7.24,
+   "end": 7.46,
+   "ok": true
+  },
+  {
+   "w": "Certains",
+   "start": 8.06,
+   "end": 8.44,
+   "ok": true
+  },
+  {
+   "w": "deviennent",
+   "start": 8.44,
+   "end": 8.76,
+   "ok": true
+  },
+  {
+   "w": "incandescents",
+   "start": 8.76,
+   "end": 9.54,
+   "ok": true
+  },
+  {
+   "w": "en",
+   "start": 9.54,
+   "end": 9.65,
+   "ok": true
+  },
+  {
+   "w": "traversant",
+   "start": 9.66,
+   "end": 10.08,
+   "ok": true
+  },
+  {
+   "w": "l’atmosphère.",
+   "start": 10.08,
+   "end": 10.72,
+   "ok": true
+  },
+  {
+   "w": "D’autres",
+   "start": 11.26,
+   "end": 11.5,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 11.5,
+   "end": 11.78,
+   "ok": true
+  },
+  {
+   "w": "si",
+   "start": 11.78,
+   "end": 12.06,
+   "ok": true
+  },
+  {
+   "w": "massifs",
+   "start": 12.06,
+   "end": 12.56,
+   "ok": true
+  },
+  {
+   "w": "qu’ils",
+   "start": 12.56,
+   "end": 12.96,
+   "ok": true
+  },
+  {
+   "w": "poursuivent",
+   "start": 12.96,
+   "end": 13.4,
+   "ok": true
+  },
+  {
+   "w": "leur",
+   "start": 13.4,
+   "end": 13.52,
+   "ok": true
+  },
+  {
+   "w": "chute",
+   "start": 13.52,
+   "end": 13.8,
+   "ok": true
+  },
+  {
+   "w": "presque",
+   "start": 13.8,
+   "end": 14.12,
+   "ok": true
+  },
+  {
+   "w": "sans",
+   "start": 14.12,
+   "end": 14.46,
+   "ok": true
+  },
+  {
+   "w": "ralentir.",
+   "start": 14.46,
+   "end": 15.11,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 15.7,
+   "end": 15.78,
+   "ok": true
+  },
+  {
+   "w": "premières",
+   "start": 15.78,
+   "end": 16.09,
+   "ok": true
+  },
+  {
+   "w": "collisions",
+   "start": 16.1,
+   "end": 16.44,
+   "ok": true
+  },
+  {
+   "w": "projettent",
+   "start": 16.44,
+   "end": 17.0,
+   "ok": true
+  },
+  {
+   "w": "d’immenses",
+   "start": 17.0,
+   "end": 17.54,
+   "ok": true
+  },
+  {
+   "w": "quantités",
+   "start": 17.54,
+   "end": 17.96,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 17.96,
+   "end": 18.1,
+   "ok": true
+  },
+  {
+   "w": "matière.",
+   "start": 18.1,
+   "end": 18.42,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 19.04,
+   "end": 19.14,
+   "ok": true
+  },
+  {
+   "w": "ondes",
+   "start": 19.14,
+   "end": 19.44,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 19.44,
+   "end": 19.54,
+   "ok": true
+  },
+  {
+   "w": "choc",
+   "start": 19.54,
+   "end": 20.02,
+   "ok": true
+  },
+  {
+   "w": "traversent",
+   "start": 20.02,
+   "end": 20.44,
+   "ok": true
+  },
+  {
+   "w": "l’atmosphère.",
+   "start": 20.44,
+   "end": 21.0,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Sur",
+   "start": 0.0,
+   "end": 0.22,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 0.22,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "hauteur,",
+   "start": 0.38,
+   "end": 0.9,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 1.22,
+   "end": 1.34,
+   "ok": true
+  },
+  {
+   "w": "mère",
+   "start": 1.34,
+   "end": 1.52,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 1.52,
+   "end": 1.66,
+   "ok": true
+  },
+  {
+   "w": "son",
+   "start": 1.66,
+   "end": 1.8,
+   "ok": true
+  },
+  {
+   "w": "fils",
+   "start": 1.8,
+   "end": 2.12,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 2.12,
+   "end": 2.4,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 2.4,
+   "end": 2.58,
+   "ok": true
+  },
+  {
+   "w": "arrêtés.",
+   "start": 2.58,
+   "end": 3.04,
+   "ok": true
+  }
+ ],
+ "g1": [
+  {
+   "w": "Est-ce",
+   "start": 0.0,
+   "end": 0.42,
+   "ok": true
+  },
+  {
+   "w": "qu’on",
+   "start": 0.42,
+   "end": 0.56,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 0.56,
+   "end": 0.66,
+   "ok": true
+  },
+  {
+   "w": "assez",
+   "start": 0.66,
+   "end": 0.86,
+   "ok": true
+  },
+  {
+   "w": "loin",
+   "start": 0.86,
+   "end": 1.12,
+   "ok": true
+  }
+ ],
+ "m1": [
+  {
+   "w": "Je",
+   "start": 0.0,
+   "end": 0.2,
+   "ok": true
+  },
+  {
+   "w": "suis",
+   "start": 0.2,
+   "end": 0.4,
+   "ok": true
+  },
+  {
+   "w": "là.",
+   "start": 0.4,
+   "end": 0.6,
+   "ok": true
+  }
+ ],
+ "v4": [
+  {
+   "w": "Mais",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.16,
+   "end": 0.28,
+   "ok": true
+  },
+  {
+   "w": "masse",
+   "start": 0.28,
+   "end": 0.46,
+   "ok": true
+  },
+  {
+   "w": "principale",
+   "start": 0.46,
+   "end": 1.08,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.08,
+   "end": 1.16,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 1.16,
+   "end": 1.32,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 1.32,
+   "end": 1.6,
+   "ok": true
+  },
+  {
+   "w": "approche",
+   "start": 1.6,
+   "end": 2.01,
+   "ok": true
+  },
+  {
+   "w": "toujours.",
+   "start": 2.04,
+   "end": 2.44,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 2.7,
+   "end": 3.12,
+   "ok": true
+  },
+  {
+   "w": "désormais,",
+   "start": 3.12,
+   "end": 3.74,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 4.04,
+   "end": 4.16,
+   "ok": true
+  },
+  {
+   "w": "rien",
+   "start": 4.16,
+   "end": 4.5,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 4.5,
+   "end": 4.66,
+   "ok": true
+  },
+  {
+   "w": "sépare",
+   "start": 4.66,
+   "end": 5.02,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 4.82,
+   "end": 5.02,
+   "ok": true
+  },
+  {
+   "w": "deux",
+   "start": 5.02,
+   "end": 5.24,
+   "ok": true
+  },
+  {
+   "w": "mondes.",
+   "start": 5.24,
+   "end": 5.44,
+   "ok": true
+  }
+ ]
+}

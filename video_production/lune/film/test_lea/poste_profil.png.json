@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Side view (90 degrees) of a scientist's workstation desk inside an astronomical observatory at night: a long light-grey desk seen exactly from the side at mid height across the lower part of the image, a flat dark keyboard on the desk in the left half, a computer monitor on the right half of the desk seen from the side and slightly from the front, its glowing blue screen facing left; empty space on the left of the desk for a seated person; NO chair, NO people, NO phone, nothing on the floor on the left. Behind, the dark observatory interior with racks, tiny status lights and soft blue screen light, softly blurred (depth of field). Flat 2D vector illustration, same drawing style, line quality and palette as the reference image, no text.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_calern_nuit.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "856e3c30db67d3dbce190de45212aa3b",
+ "credits": 12.0,
+ "seconds": 126
+}

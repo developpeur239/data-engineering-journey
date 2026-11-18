@@ -1,0 +1,12 @@
+{
+  "_comment": "Thèmes de classement des commentaires : expressions régulières (minuscules). Un commentaire peut avoir plusieurs thèmes. « provoque » = déclenché par un choix ou une erreur du créateur.",
+  "Erreur de la voix IA":      {"provoque": true,  "regex": "sunday|one thousand nine hundred|pronounc|mispronoun|1,945|nineteen forty|read the number"},
+  "Faute dans le titre":       {"provoque": true,  "regex": "\\bagains\\b|spell|typo|proof ?read"},
+  "IA / slop (général)":       {"provoque": true,  "regex": "\\bai\\b|a\\.i\\.?|slop|robot|\\btts\\b|generated|narrator|voice"},
+  "Fin : Nouvelle-Zélande":    {"provoque": true,  "regex": "zealand|kiwi|\\bnz\\b"},
+  "Débat politique":           {"provoque": false, "regex": "putin|nato|zelensk|trump|biden|hypocri|propaganda|genocide|zion|warmonger|the west|western"},
+  "Contestation des faits":    {"provoque": false, "regex": "wrong|inaccurate|unrealistic|nonsense|\\bbs\\b|fake|bias|incorrect|not how|doesn't work"},
+  "Peur / fin du monde":       {"provoque": false, "regex": "scary|terrif|afraid|fear|anxiety|chills|nightmare|doomed|ground zero|envy the dead"},
+  "Référence culturelle":      {"provoque": false, "regex": "war ?games|joshua|strange game|threads|the day after|oppenheimer|fallout|terminator|dr\\.? strangelove"},
+  "Compliment":                {"provoque": false, "regex": "great video|well done|amazing|excellent|brilliant|thank|love this|good video|well made|quality|underrated|subscribed|great job"}
+}

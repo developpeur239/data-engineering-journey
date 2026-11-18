@@ -1,0 +1,213 @@
+{
+ "_doc": "Bloc 13 : voir plans_reste.py (source du découpage).",
+ "look": "jour",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 10.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.6"
+  },
+  {
+   "id": "v3",
+   "at": "v2.end+1.0"
+  }
+ ],
+ "fin": "v3.end+2.6",
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "scenes.Porte",
+   "texte": "[Calern en plein jour, Léa au travail]",
+   "intention": "coupe franche : la vie normale",
+   "camera": [
+    [
+     "#A",
+     1700,
+     900,
+     1.3
+    ],
+    [
+     "#B",
+     1800,
+     920,
+     1.4
+    ]
+   ],
+   "reglages": {
+    "image": "film2d/images/decor_calern_jour.png",
+    "lea": true,
+    "lea_xy": [
+     2200,
+     1440,
+     0.4
+    ]
+   }
+  },
+  {
+   "id": "B",
+   "debut": 4.0,
+   "set": "scenes.Porte",
+   "texte": "[le collègue passe et sourit]",
+   "intention": "le collègue, une tasse à la main",
+   "camera": [
+    [
+     "#B",
+     1500,
+     950,
+     1.5
+    ],
+    [
+     "#C",
+     1450,
+     950,
+     1.55
+    ]
+   ],
+   "reglages": {
+    "image": "film2d/images/decor_calern_jour.png",
+    "lea": true,
+    "lea_xy": [
+     2200,
+     1440,
+     0.4
+    ],
+    "collegue": true,
+    "collegue_xy": [
+     1450,
+     1420,
+     0.3
+    ]
+   }
+  },
+  {
+   "id": "C",
+   "debut": 7.0,
+   "set": "littoral.PlageFin",
+   "texte": "[la plage ensoleillée ; le garçon court vers l'eau avec son seau, sa mère le rejoint] Heureusement… tout cela n'était qu'une simulation.",
+   "intention": "le soulagement",
+   "camera": [
+    [
+     "#C",
+     1376,
+     900,
+     1.25
+    ],
+    [
+     "#D",
+     1376,
+     800,
+     1.0
+    ]
+   ],
+   "reglages": {
+    "course": 8.0,
+    "mere": 10.0
+   }
+  },
+  {
+   "id": "D",
+   "debut": "v2-0.3",
+   "set": "schemas.Laser",
+   "texte": "Aujourd'hui, la Lune est toujours là… La lumière part de la Terre. Puis elle revient. Deux secondes et demie.",
+   "intention": "le laser, comme au bloc 2",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     960,
+     540,
+     1.04
+    ]
+   ],
+   "reglages": {
+    "distance": "v2:distance",
+    "depart": "v2:part",
+    "reflecteur": "v2:impulsions",
+    "arrivee": "v2:puis",
+    "retour": "v2:demie",
+    "aller_retour": "v2:demie+0.4"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "E",
+   "debut": "v3-0.2",
+   "set": "scenes.Recul",
+   "texte": "Et chaque année, elle s'éloigne de nous d'environ 3,8 centimètres. La Lune ne tombe pas vers la Terre. Elle s'en éloigne.",
+   "intention": "+ 3,8 cm par an",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E.end",
+     1000,
+     540,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "eloigne": "v3:éloigne",
+    "fin": "v3:éloigne#2"
+   },
+   "look": "nuit",
+   "filtres": [
+    {
+     "type": "fondu_noir",
+     "de": "v3.end+1.0",
+     "a": "v3.end+2.6"
+    }
+   ]
+  }
+ ],
+ "textes": [],
+ "son": [
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_jour.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": 7.0,
+   "rms": -32,
+   "fondu_entree": 0.0,
+   "fondu_sortie": 0.3
+  },
+  {
+   "petit": "clic",
+   "a": 1.2,
+   "repete": 14,
+   "intervalle": 0.19,
+   "gain": -20
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_plage.wav",
+   "a": 7.0,
+   "boucle": true,
+   "jusqua": "#D",
+   "rms": -28,
+   "fondu_entree": 0.0,
+   "fondu_sortie": 1.0
+  },
+  {
+   "petit": "laser",
+   "a": "v2:part",
+   "gain": -14
+  },
+  {
+   "petit": "bip",
+   "a": "v2:demie",
+   "gain": -12
+  }
+ ]
+}

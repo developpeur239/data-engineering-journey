@@ -1,0 +1,245 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Direction artistique V4 : « personnages minimalistes, anatomie crédible, décors atmosphériques, éclairage
+     cinématographique ». Deux images de validation : atmos.html?shot=A (Léa dans l'observatoire) et ?shot=B (la mère et
+     son fils sur la plage). Personnages : environ 5 têtes de haut, silhouette sombre, petits yeux, sourcils fins, 2 ou 3
+     formes de cheveux, un vêtement d'une couleur, mains avec un pouce. L'effort va à la lumière, la brume et la profondeur.
+     Fichier généré par build_atmos.py à partir de atmos_src.html (les interfaces d'écran viennent de refs.html). -->
+<style>
+@font-face{font-family:"Instrument Sans";src:url(fonts/InstrumentSans-Regular.ttf);font-weight:400}
+@font-face{font-family:"Instrument Sans";src:url(fonts/InstrumentSans-Bold.ttf);font-weight:700}
+html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}
+#tag{position:absolute;left:3.0%;top:4.2%;font:600 1.3vw/1 "Instrument Sans",sans-serif;letter-spacing:.2em;color:rgba(242,244,245,.78);
+  text-transform:uppercase;padding:.45vw .7vw;background:rgba(8,10,14,.42);border-radius:.35vw}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+</head><body>
+<div id="tag">Simulation hypothétique</div>
+<script type="module">
+import * as THREE from "three";
+const Q = new URLSearchParams(location.search);
+const W = +(Q.get("w") || 1920), H = Math.round(W * 9 / 16), SHOT = Q.get("shot") || "A";
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+const camera = new THREE.PerspectiveCamera(36, W / H, 0.01, 400);
+const S = new THREE.Scene();
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const mk = (geo, mat) => new THREE.Mesh(geo, mat);
+const add = (p, o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; p.add(o); return o; };
+const std = (c, r = 0.8, m = 0, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m, ...o });
+const basic = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, ...o });
+function canvasTex(w, h, draw) { const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const g = cv.getContext("2d");
+  draw && draw(g, w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.g = g; return t; }
+let _s = 7; const rnd = () => (_s = (_s * 16807) % 2147483647) / 2147483647;
+const FONT = "'Instrument Sans', sans-serif", MONO = "'DejaVu Sans Mono', monospace";
+// halo lumineux (remplace le « bloom ») : les sources se lisent comme de vraies lumières
+const halo = (() => { const t = canvasTex(128, 128, (g) => { const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.25, "rgba(255,255,255,.45)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 128, 128); }); return t; })();
+function glow(parent, color, size, x, y, z, op = 0.8) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, color, transparent: true, opacity: op,
+  blending: THREE.AdditiveBlending, depthWrite: false })); sp.position.set(x, y, z); sp.scale.set(size, size, 1); parent.add(sp); return sp; }
+
+// ---------- personnages minimalistes ----------
+const SK = 0x1d2026;
+const skin = () => std(SK, 0.85);
+// o : top (couleur du haut), bottom, hair, hairCol, scale, accent (écharpe), badge, dress (robe/manteau long)
+function person(o) {
+  const g = new THREE.Group(), r = new THREE.Group(); g.add(r); r.scale.setScalar(o.scale || 1); const P = { g, r };
+  P.legs = [-1, 1].map((sx) => { const hip = new THREE.Group(); hip.position.set(sx * 0.085, 0.86, 0); r.add(hip);
+    add(hip, mk(new THREE.CapsuleGeometry(0.062, 0.32, 6, 12), std(o.bottom || 0x23262c, 0.9)), 0, -0.21, 0);
+    const knee = new THREE.Group(); knee.position.y = -0.42; hip.add(knee);
+    add(knee, mk(new THREE.CapsuleGeometry(0.055, 0.3, 6, 12), std(o.bottom || 0x23262c, 0.9)), 0, -0.19, 0);
+    const shoe = add(knee, mk(new THREE.SphereGeometry(0.065, 14, 10), std(0x111214, 0.7)), 0, -0.4, 0.04); shoe.scale.set(1, 0.6, 1.7);
+    return { hip, knee }; });
+  const torso = add(r, mk(new THREE.CapsuleGeometry(0.17, 0.32, 8, 20), std(o.top, 0.85)), 0, 1.12, 0); torso.scale.set(1.08, 1, 0.82);
+  if (o.dress) { const d = add(r, mk(new THREE.CylinderGeometry(0.17, 0.26, 0.5, 24), std(o.top, 0.85)), 0, 0.76, 0); d.scale.z = 0.82; }
+  add(r, mk(new THREE.CylinderGeometry(0.05, 0.06, 0.12, 12), skin()), 0, 1.5, 0);
+  if (o.accent) { const s = add(r, mk(new THREE.TorusGeometry(0.115, 0.04, 10, 28), std(o.accent, 0.75)), 0, 1.45, 0); s.rotation.x = Math.PI / 2;
+    add(r, mk(new THREE.BoxGeometry(0.07, 0.24, 0.03), std(o.accent, 0.75)), 0.07, 1.3, 0.15).rotation.z = 0.1; }
+  if (o.badge) { add(r, mk(new THREE.BoxGeometry(0.06, 0.085, 0.006), std(0xeef1f4, 0.5)), -0.07, 1.22, 0.145); add(r, mk(new THREE.BoxGeometry(0.06, 0.02, 0.007), std(0x2f6fd0, 0.5)), -0.07, 1.255, 0.146); }
+  const head = new THREE.Group(); head.position.y = 1.7; r.add(head); P.head = head;
+  const sk = add(head, mk(new THREE.SphereGeometry(0.19, 32, 24), skin())); sk.scale.set(0.96, 1.06, 0.98);
+  const hm = (d = 0) => std(new THREE.Color(o.hairCol).offsetHSL(0, 0, d).getHex(), 0.75);
+  const blob = (x, y, z, sx, sy, sz, rx = 0, rz = 0, d = 0) => { const b = add(head, mk(new THREE.SphereGeometry(0.1, 24, 16), hm(d)), x, y, z); b.scale.set(sx, sy, sz); b.rotation.set(rx, 0, rz); return b; };
+  if (o.hair === "bob") { blob(0, 0.06, -0.02, 2.0, 1.6, 2.0, 0, 0, 0); blob(0, -0.02, -0.07, 2.05, 1.5, 1.6, 0, 0, -0.03); blob(-0.04, 0.14, 0.12, 1.6, 0.5, 0.7, -0.5, 0.35, 0.05); }
+  if (o.hair === "long") { blob(0, 0.07, -0.02, 1.95, 1.55, 1.95); blob(0, -0.16, -0.1, 1.9, 2.6, 1.2, 0.1, 0, -0.03); for (const sx of [-1, 1]) blob(sx * 0.16, -0.08, 0.05, 0.45, 1.6, 0.6, 0, sx * 0.08, 0.03); }
+  if (o.hair === "kid") { blob(0, 0.08, -0.02, 1.95, 1.45, 1.95); blob(0.03, 0.18, 0.1, 0.9, 0.35, 0.5, -0.6, -0.3, 0.05); }
+  if (o.hair === "short") { blob(0, 0.09, -0.03, 1.92, 1.35, 1.92); }
+  // yeux discrets et sourcils fins
+  P.eyes = [-1, 1].map((sx) => { const e = add(head, mk(new THREE.SphereGeometry(0.026, 16, 12), basic(0xf2efe8)), sx * 0.066, 0.0, 0.172); e.scale.set(0.8, 1.15, 0.4);
+    const p = add(head, mk(new THREE.SphereGeometry(0.012, 10, 8), basic(0x050506)), sx * 0.064, -0.004, 0.182); return { e, p, sx }; });
+  P.brows = [-1, 1].map((sx) => { const b = new THREE.Mesh(new THREE.BufferGeometry(), basic(o.browCol || 0xb98d63)); head.add(b); return { b, sx }; });
+  // bras et mains (paume, pouce, doigts groupés)
+  P.arms = [-1, 1].map((sx) => { const p = new THREE.Group(); p.position.set(sx * 0.2, 1.37, 0); r.add(p);
+    add(p, mk(new THREE.CapsuleGeometry(0.045, 0.5, 6, 12), std(o.sleeve || o.top, 0.85)), 0, -0.29, 0);
+    const hand = new THREE.Group(); hand.position.y = -0.6; p.add(hand);
+    const palm = add(hand, mk(new THREE.SphereGeometry(0.045, 14, 10), skin())); palm.scale.set(0.75, 1.1, 0.45);
+    const fing = add(hand, mk(new THREE.CapsuleGeometry(0.022, 0.05, 4, 8), skin()), 0, -0.06, 0.005); fing.scale.set(1.5, 1, 0.8);
+    const th = add(hand, mk(new THREE.CapsuleGeometry(0.012, 0.035, 4, 8), skin()), sx * -0.035, -0.015, 0.02); th.rotation.z = sx * 0.6;
+    return { p, hand }; });
+  return P;
+}
+function brows(P, ang = 0, lift = 0) { for (const { b, sx } of P.brows) {
+  const inner = V(sx * 0.03, 0.06 + lift + ang * 0.012, 0.18), outer = V(sx * 0.1, 0.055 + lift - ang * 0.008, 0.155), mid = inner.clone().lerp(outer, 0.5).add(V(0, 0.01, 0.006));
+  b.geometry.dispose(); b.geometry = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(inner, mid, outer), 12, 0.0055, 6); } }
+const _q = new THREE.Quaternion(), _p = V(0, 0, 0), DOWN = V(0, -1, 0);
+function aim(pivot, target, k = 1) { pivot.quaternion.identity(); pivot.updateWorldMatrix(true, false);
+  const d = target.clone().sub(pivot.getWorldPosition(_p)).normalize(); d.applyQuaternion(pivot.parent.getWorldQuaternion(_q).invert());
+  pivot.quaternion.slerpQuaternions(new THREE.Quaternion(), new THREE.Quaternion().setFromUnitVectors(DOWN, d), k); }
+function sit(P) { for (const l of P.legs) { l.hip.rotation.x = -1.55; l.knee.rotation.x = 1.55; } P.r.position.y = -0.4; }
+const look = (p, t, fov) => { camera.position.copy(p); camera.fov = fov; camera.updateProjectionMatrix(); camera.lookAt(t); };
+
+function drawLLR(g) {   // écran 1 : temps d'aller-retour de l'écho laser (jour 4 : 1,18 s)
+  g.fillStyle = "#07131b"; g.fillRect(0, 0, 1280, 800);
+  g.fillStyle = "#0e2230"; g.fillRect(0, 0, 1280, 86); g.fillStyle = "#cfe9f2"; g.font = `700 40px ${FONT}`; g.fillText("Télémétrie laser · Calern", 34, 58);
+  g.fillStyle = "#ff6b6b"; g.font = `700 34px ${FONT}`; g.textAlign = "right"; g.fillText("● Évacuation demandée", 1246, 58); g.textAlign = "left";
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Temps d'aller-retour de l'écho", 40, 150);
+  g.fillStyle = "#ffffff"; g.font = `700 150px ${MONO}`; g.fillText("1,183 s", 40, 320);
+  g.fillStyle = "#5fd3a0"; g.font = `600 34px ${MONO}`; g.fillText("normal : 2,51 s", 44, 380);
+  g.strokeStyle = "#2a4656"; g.lineWidth = 2; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(40, 440 + i * 80); g.lineTo(1240, 440 + i * 80); g.stroke(); }
+  g.strokeStyle = "#7fe7ff"; g.lineWidth = 6; g.beginPath(); for (let x = 0; x <= 1200; x += 10) { const t = x / 1200, y = 450 + 300 * (1 - Math.cos(t * Math.PI / 2) ** 1.6); x ? g.lineTo(40 + x, y) : g.moveTo(40 + x, y); } g.stroke();
+  g.fillStyle = "#7fe7ff"; for (let i = 0; i < 14; i++) { const t = i / 13, y = 450 + 300 * (1 - Math.cos(t * Math.PI / 2) ** 1.6); g.beginPath(); g.arc(40 + t * 1200, y, 9, 0, 7); g.fill(); }
+  g.fillStyle = "#8fb3c4"; g.font = `500 26px ${FONT}`; g.fillText("Jour 0", 40, 785); g.fillText("Jour 4", 1150, 785);
+}
+function drawOrbit(g) {  // écran 2 : distance Terre-Lune et trajectoire de chute
+  g.fillStyle = "#07131b"; g.fillRect(0, 0, 1280, 800);
+  g.fillStyle = "#0e2230"; g.fillRect(0, 0, 1280, 86); g.fillStyle = "#cfe9f2"; g.font = `700 40px ${FONT}`; g.fillText("Trajectoire · distance", 34, 58);
+  g.strokeStyle = "#2a4656"; g.setLineDash([14, 12]); g.lineWidth = 3; g.beginPath(); g.arc(380, 450, 290, 0, 7); g.stroke(); g.setLineDash([]);
+  g.fillStyle = "#3d8fd1"; g.beginPath(); g.arc(380, 450, 70, 0, 7); g.fill(); g.fillStyle = "#cfd2d6"; g.beginPath(); g.arc(380 + 140, 450 - 30, 26, 0, 7); g.fill();
+  g.strokeStyle = "#ff6b6b"; g.lineWidth = 5; g.beginPath(); g.moveTo(670, 450); g.quadraticCurveTo(620, 430, 546, 422); g.stroke();
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Distance Terre–Lune", 760, 210);
+  g.fillStyle = "#ffffff"; g.font = `700 88px ${MONO}`; g.fillText("185 400", 760, 320); g.font = `600 40px ${MONO}`; g.fillText("km", 1150, 320);
+  g.fillStyle = "#8fb3c4"; g.font = `500 30px ${FONT}`; g.fillText("Contact dans", 760, 440); g.fillStyle = "#ff6b6b"; g.font = `700 76px ${MONO}`; g.fillText("19 h 36", 760, 530);
+  g.fillStyle = "#5fd3a0"; g.font = `600 30px ${MONO}`; g.fillText("Écart mesuré : confirmé ×3", 760, 640);
+}
+
+
+if (SHOT === "A") {
+  // ---------- A : Léa dans l'observatoire, de nuit ----------
+  S.background = new THREE.Color(0x07080c); S.fog = new THREE.FogExp2(0x0e1016, 0.045); renderer.toneMappingExposure = 1.35;
+  const fl = add(S, mk(new THREE.CircleGeometry(7, 64), std(0x2a2a2e, 0.42, 0.1))); fl.rotation.x = -Math.PI / 2;   // sol légèrement réfléchissant
+  const wall = add(S, mk(new THREE.CylinderGeometry(6.5, 6.5, 3.2, 64, 1, true), std(0x4a4440, 0.9, 0, { side: THREE.BackSide })), 0, 1.6, 0);
+  const dome = add(S, mk(new THREE.SphereGeometry(6.5, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2), std(0x2e2b2a, 0.9, 0, { side: THREE.BackSide })), 0, 3.2, 0);
+  for (let i = 0; i < 20; i++) { const a = i / 20 * Math.PI * 2; add(S, mk(new THREE.BoxGeometry(0.1, 3.2, 0.1), std(0x24211f, 0.8)), Math.cos(a) * 6.4, 1.6, Math.sin(a) * 6.4); }
+  // fente ouverte : la lune (déjà un peu trop grosse) découpe un cône de lumière froide dans la brume
+  const sky = canvasTex(256, 1024, (g) => { const gr = g.createLinearGradient(0, 0, 0, 1024); gr.addColorStop(0, "#03060f"); gr.addColorStop(1, "#122244");
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 1024); _s = 3; for (let i = 0; i < 80; i++) { g.fillStyle = `rgba(255,255,255,${0.3 + rnd() * 0.6})`; g.fillRect(rnd() * 256, rnd() * 1024, 2, 2); } });
+  const slit = mk(new THREE.PlaneGeometry(1.8, 8), basic(0xffffff, { map: sky, fog: false })); slit.position.set(0, 5.4, -5.6); slit.rotation.x = 0.62; S.add(slit);
+  const moon = mk(new THREE.CircleGeometry(0.42, 40), basic(0xe9e6dc, { fog: false })); moon.position.set(0.15, 6.6, -6.2); moon.lookAt(0, 0, 0); S.add(moon); glow(S, 0x9fb8ff, 3.2, 0.15, 6.6, -6.1, 0.35);
+  const beam = mk(new THREE.CylinderGeometry(0.7, 1.6, 7, 32, 1, true), basic(0x8fa8d8, { transparent: true, opacity: 0.085, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  beam.position.set(0, 3.0, -3.6); beam.rotation.x = 0.62; S.add(beam);
+  const moonL = new THREE.SpotLight(0x9fb8ff, 70, 16, 0.36, 0.8, 1.1); moonL.position.set(0, 7.6, -7.0); moonL.target.position.set(0, 0, -1.2); moonL.castShadow = true; S.add(moonL, moonL.target);
+  // télescope en contre-jour, laser vert
+  add(S, mk(new THREE.CylinderGeometry(0.55, 0.75, 1.3, 32), std(0x2b2d33, 0.6, 0.3)), 0, 0.65, -2.9);
+  add(S, mk(new THREE.BoxGeometry(1.5, 0.9, 0.3), std(0x34373e, 0.6, 0.3)), 0, 1.7, -2.9);
+  const tube = add(S, mk(new THREE.CylinderGeometry(0.45, 0.45, 3.4, 40), std(0xcfd3d8, 0.45, 0.2)), 0, 2.85, -3.4); tube.rotation.x = -0.55;
+  const laser = mk(new THREE.CylinderGeometry(0.018, 0.018, 9, 8), basic(0x5dff7a, { transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending })); laser.position.set(0, 6.4, -5.7); laser.rotation.x = -0.55; S.add(laser);
+  // baies techniques au fond : voyants et halos
+  _s = 4; for (let b = 0; b < 4; b++) { const a = 0.15 + b * 0.2, x = Math.cos(a) * 5.4, z = Math.sin(a) * 5.4 - 1.6;
+    const rack = add(S, mk(new THREE.BoxGeometry(0.62, 2.0, 0.7), std(0x1b1d22, 0.55, 0.3)), x, 1.0, z); rack.lookAt(0, 1, 0);
+    for (let i = 0; i < 15; i++) { const c = [0x46ff7a, 0xffb020, 0x46ff7a, 0xff4a3a][Math.floor(rnd() * 4)], lx = -0.2 + (i % 3) * 0.2, ly = -0.8 + Math.floor(i / 3) * 0.3;
+      add(rack, mk(new THREE.SphereGeometry(0.012, 8, 6), basic(c)), lx, ly, 0.36); glow(rack, c, 0.09, lx, ly, 0.37, 0.7); } }
+  // appliques de service le long du mur : elles révèlent la courbure de la coupole et la profondeur
+  for (const a of [-0.55, 0.0, 0.55, 1.1]) { const x = Math.cos(a) * 6.3, z = Math.sin(a) * 6.3;
+    const L = new THREE.PointLight(0xffc488, 3.2, 3.2, 1.5); L.position.set(x * 0.97, 2.3, z * 0.97); S.add(L); glow(S, 0xffc488, 0.5, x * 0.98, 2.3, z * 0.98, 0.85);
+    add(S, mk(new THREE.BoxGeometry(0.16, 0.08, 0.06), std(0x2a2622, 0.6)), x * 0.99, 2.3, z * 0.99).lookAt(0, 2.3, 0); }
+  const warn = new THREE.PointLight(0xff5a3a, 3, 5, 1.6); warn.position.set(-3.2, 2.6, -3.0); S.add(warn); glow(S, 0xff5a3a, 0.6, -3.2, 2.6, -3.0, 0.8);   // feu d'alerte rouge, discret
+  add(S, mk(new THREE.BoxGeometry(0.2, 0.12, 0.1), std(0x2a1414, 0.6)), -3.2, 2.6, -3.08);
+  // poste de travail : bureau réfléchissant, deux écrans (source principale), lampe basse, clavier et souris
+  const desk = new THREE.Group(); desk.position.set(1.85, 0, 0.5); desk.rotation.y = -Math.PI / 2; S.add(desk);
+  add(desk, mk(new THREE.BoxGeometry(1.8, 0.04, 0.78), std(0x4b4038, 0.32, 0.05)), 0, 0.75, 0);
+  for (const sx of [-0.86, 0.86]) add(desk, mk(new THREE.BoxGeometry(0.04, 0.73, 0.7), std(0x1e2025, 0.5, 0.4)), sx, 0.365, 0);
+  const kbT = canvasTex(1024, 360, (g) => { g.fillStyle = "#16181d"; g.fillRect(0, 0, 1024, 360);
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 15; c++) { g.fillStyle = "#3a3f48"; g.beginPath(); g.roundRect(14 + c * 67, 14 + r * 68, 58, 58, 8); g.fill(); } });
+  add(desk, mk(new THREE.BoxGeometry(0.44, 0.02, 0.15), std(0xffffff, 0.6, 0, { map: kbT })), 0.03, 0.78, 0.12);
+  add(desk, mk(new THREE.BoxGeometry(0.22, 0.004, 0.19), std(0x1d2a3c, 0.9)), 0.4, 0.772, 0.12);
+  const mouse = add(desk, mk(new THREE.CapsuleGeometry(0.022, 0.035, 6, 10), std(0x2b2f36, 0.4)), 0.4, 0.788, 0.12); mouse.rotation.x = Math.PI / 2; mouse.scale.set(1.1, 1, 0.6);
+  add(desk, mk(new THREE.CylinderGeometry(0.032, 0.028, 0.09, 16), std(0xd9d4c9, 0.5)), -0.42, 0.815, 0.24);
+  const screens = [];
+  for (const [i, x] of [[0, -0.27], [1, 0.37]]) { const st = canvasTex(1280, 800); screens.push(st);
+    const fr = add(desk, mk(new THREE.BoxGeometry(0.6, 0.38, 0.025), std(0x0d0e11, 0.4, 0.4)), x, 1.1, -0.22); fr.rotation.y = i ? -0.18 : 0.12;
+    const sc = mk(new THREE.PlaneGeometry(0.57, 0.35), basic(0xffffff, { map: st })); sc.position.z = 0.0135; fr.add(sc);
+    add(desk, mk(new THREE.BoxGeometry(0.04, 0.28, 0.04), std(0x0d0e11, 0.4, 0.4)), x, 0.91, -0.25); }
+  drawLLR(screens[0].g); drawOrbit(screens[1].g); screens.forEach((s) => (s.needsUpdate = true));
+  const sl = new THREE.PointLight(0x8fd0ff, 9, 3.2, 1.5); sl.position.set(1.55, 1.12, 0.5); S.add(sl);          // la lumière des écrans sur Léa
+  const lampL = new THREE.SpotLight(0xffc98a, 6, 2, 0.7, 0.7, 1.4); lampL.position.set(1.75, 1.15, -0.25); lampL.target.position.set(1.72, 0.78, 0.5); lampL.castShadow = true; S.add(lampL, lampL.target);
+  add(S, mk(new THREE.ConeGeometry(0.07, 0.1, 16, 1, true), std(0x1e2025, 0.5, 0.4, { side: THREE.DoubleSide })), 1.75, 1.18, -0.25).rotation.x = 0.5;
+  add(S, mk(new THREE.CylinderGeometry(0.01, 0.01, 0.4, 8), std(0x1e2025, 0.5, 0.4)), 1.78, 0.97, -0.3); glow(S, 0xffc98a, 0.18, 1.75, 1.14, -0.23, 0.9);
+  // chaise ergonomique (assise à 0,46 m) et Léa assise, les mains sur le clavier
+  const C = new THREE.Group(); C.position.set(1.16, 0, 0.55); C.rotation.y = Math.PI / 2; S.add(C);
+  const cm = std(0x1a1c21, 0.6, 0.2), cf = std(0x262b33, 0.95), cmet = std(0x7d848c, 0.35, 0.8);
+  for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2 + 0.3; add(C, mk(new THREE.BoxGeometry(0.035, 0.03, 0.32), cmet), Math.sin(a) * 0.16, 0.07, Math.cos(a) * 0.16).rotation.y = a;
+    add(C, mk(new THREE.SphereGeometry(0.03, 10, 8), cm), Math.sin(a) * 0.31, 0.03, Math.cos(a) * 0.31); }
+  add(C, mk(new THREE.CylinderGeometry(0.028, 0.028, 0.3, 12), cmet), 0, 0.24, 0);
+  add(C, mk(new THREE.BoxGeometry(0.48, 0.07, 0.46), cf), 0, 0.43, 0.03);
+  add(C, mk(new THREE.BoxGeometry(0.06, 0.4, 0.03), cm), 0, 0.62, -0.23).rotation.x = -0.1;
+  const back = add(C, mk(new THREE.CylinderGeometry(0.32, 0.32, 0.46, 24, 1, true, Math.PI - 0.6, 1.2), std(0x262b33, 0.95, 0, { side: THREE.DoubleSide })), 0, 0.92, 0.04); back.rotation.x = -0.08;
+  for (const sx of [-1, 1]) { add(C, mk(new THREE.BoxGeometry(0.03, 0.2, 0.04), cm), sx * 0.27, 0.56, 0.0); add(C, mk(new THREE.BoxGeometry(0.055, 0.03, 0.24), cm), sx * 0.27, 0.67, 0.05); }
+  const lea = person({ top: 0x22505e, bottom: 0x1f232a, hair: "bob", hairCol: 0x8a4a2a, accent: 0xe0a21e, browCol: 0xc99a6c });
+  lea.g.position.set(1.16, 0, 0.57); lea.g.rotation.y = Math.PI / 2; S.add(lea.g); sit(lea); brows(lea, 0.35, 0.0);
+  lea.head.rotation.set(0.1, -0.12, 0); lea.g.updateWorldMatrix(true, true);
+  aim(lea.arms[1].p, V(1.72, 0.79, 0.45), 1); aim(lea.arms[0].p, V(1.72, 0.79, 0.66), 1);
+  // le collègue au fond, à contre-jour dans la porte
+  const door = mk(new THREE.PlaneGeometry(1.0, 2.1), basic(0xffe8c4)); door.position.set(Math.cos(2.5) * 6.45, 1.05, Math.sin(2.5) * 6.45); door.lookAt(0, 1.05, 0); S.add(door);
+  glow(S, 0xffe0b0, 3.0, door.position.x * 0.98, 1.1, door.position.z * 0.98, 0.25);
+  const dl = new THREE.SpotLight(0xffe0b0, 12, 9, 0.5, 0.7, 1.3); dl.position.copy(door.position).multiplyScalar(0.98); dl.position.y = 1.9; dl.target.position.set(0, 0, 0); S.add(dl, dl.target);
+  const col = person({ top: 0x5d646c, bottom: 0x2a2d33, hair: "short", hairCol: 0x2a221c, badge: true, scale: 1.05 });
+  col.g.position.set(Math.cos(2.5) * 5.7, 0, Math.sin(2.5) * 5.7); col.g.lookAt(1.16, 0, 0.55); S.add(col.g); brows(col, 0.25, 0);
+  S.add(new THREE.HemisphereLight(0x6a7488, 0x141212, 0.6));
+  const rimL = new THREE.SpotLight(0xffb878, 14, 6, 0.5, 0.8, 1.3); rimL.position.set(0.2, 2.4, -0.6); rimL.target.position.set(1.16, 1.2, 0.57); S.add(rimL, rimL.target);   // contre-jour chaud : détache les cheveux et les épaules
+  look(V(Q.has("cx") ? +Q.get("cx") : 0.05, 1.42, 2.55), V(1.45, 0.95, 0.25), 38);
+} else {
+  // ---------- B : la mère et son fils sur la plage, fin d'après-midi ----------
+  document.getElementById("tag").style.display = "none";
+  const skyT = canvasTex(16, 512, (g) => { const gr = g.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, "#4f86c2"); gr.addColorStop(0.55, "#a9c9e4"); gr.addColorStop(0.82, "#f1d9b4"); gr.addColorStop(1, "#f6e4c6"); g.fillStyle = gr; g.fillRect(0, 0, 16, 512); });
+  S.background = skyT; S.fog = new THREE.Fog(0xe9dcc6, 18, 85);
+  // sable en relief, bande mouillée brillante
+  const noise = (x, z) => Math.sin(x * 0.9 + z * 0.3) * 0.5 + Math.sin(x * 2.3 - z * 1.7) * 0.25 + Math.sin(x * 5.1 + z * 4.3) * 0.12;
+  const sg = new THREE.PlaneGeometry(90, 40, 200, 90); sg.rotateX(-Math.PI / 2);
+  const sp = sg.attributes.position; for (let i = 0; i < sp.count; i++) { const x = sp.getX(i), z = sp.getZ(i) + 10; sp.setY(i, (z > -1.6 ? 0.03 * noise(x, z) + 0.01 * Math.sin(x * 9 + z * 2) : -0.02) + Math.max(0, z - 5) * 0.03); }
+  sg.computeVertexNormals(); add(S, mk(sg, std(0xe3cb9c, 0.95)), 0, 0, 10);
+  const wet = new THREE.PlaneGeometry(90, 3.4, 120, 2); wet.rotateX(-Math.PI / 2);
+  const wp = wet.attributes.position; for (let i = 0; i < wp.count; i++) if (wp.getZ(i) < 0) wp.setZ(i, wp.getZ(i) + 0.4 * Math.sin(wp.getX(i) * 0.4) + 0.15 * Math.sin(wp.getX(i) * 1.3));
+  add(S, mk(wet, std(0xa8916a, 0.18, 0.05)), 0, 0.012, -2.5);
+  _s = 31; for (let i = 0; i < 18; i++) { const z = 2.6 - i * 0.3, x = -0.55 + Math.sin(i * 0.4) * 0.12 + (i % 2 ? 0.06 : -0.06);
+    const fp = mk(new THREE.CircleGeometry(0.04, 12), basic(0x000000, { transparent: true, opacity: 0.12 })); fp.rotation.x = -Math.PI / 2; fp.scale.set(0.7, 1.5, 1); fp.position.set(x, 0.04, z); S.add(fp); }
+  // mer : houle irrégulière, reflet du soleil
+  const seg = new THREE.PlaneGeometry(160, 80, 220, 110); seg.rotateX(-Math.PI / 2);
+  const qp = seg.attributes.position; for (let i = 0; i < qp.count; i++) { const x = qp.getX(i), z = qp.getZ(i);
+    qp.setY(i, 0.07 * Math.sin(x * 0.6 + z * 1.7) + 0.05 * Math.sin(x * 1.7 - z * 1.0 + 1) + 0.03 * Math.sin(x * 3.1 + z * 2.9) + 0.02 * Math.sin(x * 7.3 - z * 5.1)); }
+  seg.computeVertexNormals(); add(S, mk(seg, std(0x2a6f9e, 0.22, 0.1)), 0, 0.0, -42.5);
+  for (const [z, w, o] of [[-4.2, 0.2, 0.95], [-5.5, 0.12, 0.7], [-7.6, 0.08, 0.45]]) { _s = Math.round(-z * 100);
+    for (let x0 = -45; x0 < 45; x0 += 1.5 + rnd() * 2.5) { const len = 1.2 + rnd() * 3.5, pts = [];
+      for (let x = x0; x <= x0 + len; x += 0.35) pts.push(V(x, 0.09, z + Math.sin(x * 0.45 + z) * 0.32 + Math.sin(x * 1.7) * 0.08 + (rnd() - 0.5) * 0.05));
+      if (pts.length > 2) { const m = add(S, mk(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, w * (0.3 + rnd() * 0.45), 5), basic(0xfbf8f1, { transparent: true, opacity: o * 0.8 }))); m.scale.y = 0.15; m.castShadow = false; } } }
+  // dune, oyats, rochers, promenade et ses lampadaires, côte dans la brume
+  const dune = add(S, mk(new THREE.SphereGeometry(6, 32, 16), std(0xd7bd8c, 0.95)), -11, -3.2, 5); dune.scale.set(1.7, 0.9, 1);
+  _s = 12; for (let i = 0; i < 60; i++) { const a = rnd() * Math.PI, rr = 4 + rnd() * 4;
+    add(S, mk(new THREE.ConeGeometry(0.025, 0.5 + rnd() * 0.3, 4), std(0x7e8f55, 0.9)), -11 + Math.cos(a) * rr * 1.4, 0.95 + rnd() * 1.1, 5 - Math.sin(a) * rr * 0.6).rotation.z = (rnd() - 0.5) * 0.6; }
+  for (const [x, z, s] of [[6.5, -3.4, 1.1], [8, -2.8, 0.7], [7.3, -4.3, 0.55], [10, -3.6, 1.3]]) add(S, mk(new THREE.DodecahedronGeometry(s, 1), std(0x5e5a57, 0.8)), x, s * 0.3, z).rotation.set(rnd(), rnd(), rnd());
+  const prom = new THREE.Group(); prom.position.set(4, 0, 14); S.add(prom);
+  add(prom, mk(new THREE.BoxGeometry(44, 0.25, 2.4), std(0x8f6f4f, 0.85)), 0, 1.1, 0);
+  for (let x = -22; x <= 22; x += 2.4) add(prom, mk(new THREE.BoxGeometry(0.14, 1.1, 0.14), std(0x6d5338, 0.85)), x, 0.55, 1.1);
+  for (let x = -18; x <= 18; x += 7.5) { add(prom, mk(new THREE.CylinderGeometry(0.05, 0.06, 3.2, 8), std(0x3a4047, 0.5, 0.6)), x, 2.8, -0.9); add(prom, mk(new THREE.SphereGeometry(0.16, 12, 8), basic(0xfff0d0)), x, 4.4, -0.9); glow(prom, 0xffd9a0, 1.4, x, 4.4, -0.9, 0.5); }
+  for (const [x, s, c] of [[-40, 9, 0xb8c3cc], [32, 7, 0xc2cbd2], [10, 5, 0xcdd3d6]]) { const hl = add(S, mk(new THREE.SphereGeometry(s, 24, 12), basic(c)), x, -s * 0.8, -66); hl.scale.set(2.6, 1, 1); }
+  // soleil bas, en contre-jour léger : longues ombres, reflets sur la mer et le sable mouillé
+  S.add(new THREE.HemisphereLight(0xcfe0f2, 0xb89a6a, 0.55));
+  const sun = new THREE.DirectionalLight(0xffd8a8, 3.2); sun.position.set(-9, 5, -10); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.02;
+  Object.assign(sun.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 }); S.add(sun);
+  const fill = new THREE.DirectionalLight(0x9fc0e0, 0.8); fill.position.set(6, 4, 8); S.add(fill);
+  glow(S, 0xffe2b0, 18, -58, 9, -70, 0.5);
+  // la mère et son fils, main dans la main, au bord de l'eau
+  const mom = person({ top: 0xcfc6b5, sleeve: 0xcfc6b5, bottom: 0x3b3f46, hair: "long", hairCol: 0x6b4128, dress: true, browCol: 0xc29a70 });
+  const kid = person({ top: 0x1aa6a3, bottom: 0x2b4466, hair: "kid", hairCol: 0x5a3a22, scale: 0.6, browCol: 0xc29a70 });
+  mom.g.position.set(0.35, 0, -0.8); mom.g.rotation.y = -0.35; kid.g.position.set(-0.3, 0, -0.65); kid.g.rotation.y = 0.55; S.add(mom.g, kid.g);
+  brows(mom, 0.15, 0); brows(kid, -0.1, 0.01); mom.head.rotation.set(0.22, 0.5, 0); kid.head.rotation.set(-0.3, -0.25, 0);
+  mom.g.updateWorldMatrix(true, true); kid.g.updateWorldMatrix(true, true);
+  const meet = V(0.02, 0.56, -0.72); aim(mom.arms[0].p, meet, 1); aim(kid.arms[1].p, meet.clone().add(V(-0.025, -0.01, 0.0)), 1);
+  const bk = new THREE.Group(); kid.arms[0].hand.add(bk); bk.position.set(0, -0.13, 0.02);   // le seau rouge
+  add(bk, mk(new THREE.CylinderGeometry(0.12, 0.09, 0.17, 24), std(0xd2262a, 0.45))); add(bk, mk(new THREE.TorusGeometry(0.11, 0.007, 6, 24, Math.PI), std(0x222428, 0.5)), 0, 0.1, 0);
+  aim(kid.arms[0].p, kid.g.localToWorld(V(-0.25, 0.25, 0.08)), 0.35);
+  look(V(1.6, 1.0, 3.2), V(0.0, 0.85, -0.8), 34);
+}
+document.fonts.ready.then(() => { renderer.render(S, camera); window.ready = true; });
+</script></body></html>

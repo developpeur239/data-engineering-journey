@@ -1,0 +1,998 @@
+{
+ "v1": [
+  {
+   "w": "Un",
+   "start": 0.0,
+   "end": 0.18,
+   "ok": true
+  },
+  {
+   "w": "événement",
+   "start": 0.18,
+   "end": 0.54,
+   "ok": true
+  },
+  {
+   "w": "inconnu",
+   "start": 0.54,
+   "end": 1.12,
+   "ok": true
+  },
+  {
+   "w": "vient",
+   "start": 1.12,
+   "end": 1.4,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.4,
+   "end": 1.56,
+   "ok": true
+  },
+  {
+   "w": "supprimer",
+   "start": 1.56,
+   "end": 2.04,
+   "ok": true
+  },
+  {
+   "w": "brutalement",
+   "start": 2.04,
+   "end": 2.72,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 2.72,
+   "end": 2.84,
+   "ok": true
+  },
+  {
+   "w": "vitesse",
+   "start": 2.84,
+   "end": 3.08,
+   "ok": true
+  },
+  {
+   "w": "orbitale",
+   "start": 3.08,
+   "end": 3.68,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.68,
+   "end": 3.78,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 3.78,
+   "end": 3.92,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 3.92,
+   "end": 4.2,
+   "ok": true
+  },
+  {
+   "w": "par",
+   "start": 4.2,
+   "end": 4.4,
+   "ok": true
+  },
+  {
+   "w": "rapport",
+   "start": 4.4,
+   "end": 4.64,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 4.64,
+   "end": 4.8,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 4.8,
+   "end": 4.88,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 4.9,
+   "end": 5.14,
+   "ok": true
+  },
+  {
+   "w": "Normalement,",
+   "start": 5.82,
+   "end": 6.3,
+   "ok": true
+  },
+  {
+   "w": "cette",
+   "start": 6.54,
+   "end": 6.66,
+   "ok": true
+  },
+  {
+   "w": "vitesse",
+   "start": 6.66,
+   "end": 6.92,
+   "ok": true
+  },
+  {
+   "w": "lui",
+   "start": 6.92,
+   "end": 7.16,
+   "ok": true
+  },
+  {
+   "w": "permet",
+   "start": 7.16,
+   "end": 7.36,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 7.36,
+   "end": 7.54,
+   "ok": true
+  },
+  {
+   "w": "tomber",
+   "start": 7.54,
+   "end": 7.84,
+   "ok": true
+  },
+  {
+   "w": "continuellement",
+   "start": 7.84,
+   "end": 8.62,
+   "ok": true
+  },
+  {
+   "w": "autour",
+   "start": 8.62,
+   "end": 8.84,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 8.84,
+   "end": 9.02,
+   "ok": true
+  },
+  {
+   "w": "notre",
+   "start": 9.02,
+   "end": 9.14,
+   "ok": true
+  },
+  {
+   "w": "planète",
+   "start": 9.14,
+   "end": 9.7,
+   "ok": true
+  },
+  {
+   "w": "sans",
+   "start": 9.7,
+   "end": 9.94,
+   "ok": true
+  },
+  {
+   "w": "jamais",
+   "start": 9.94,
+   "end": 10.34,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 10.34,
+   "end": 10.48,
+   "ok": true
+  },
+  {
+   "w": "toucher.",
+   "start": 10.48,
+   "end": 10.86,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 11.34,
+   "end": 11.54,
+   "ok": true
+  },
+  {
+   "w": "sans",
+   "start": 11.54,
+   "end": 11.82,
+   "ok": true
+  },
+  {
+   "w": "ce",
+   "start": 11.82,
+   "end": 12.0,
+   "ok": true
+  },
+  {
+   "w": "mouvement",
+   "start": 12.0,
+   "end": 12.2,
+   "ok": true
+  },
+  {
+   "w": "latéral,",
+   "start": 12.2,
+   "end": 12.8,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 13.2,
+   "end": 13.3,
+   "ok": true
+  },
+  {
+   "w": "rien",
+   "start": 13.3,
+   "end": 13.66,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 13.66,
+   "end": 13.8,
+   "ok": true
+  },
+  {
+   "w": "l’empêche",
+   "start": 13.8,
+   "end": 14.2,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 14.2,
+   "end": 14.3,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 14.3,
+   "end": 14.42,
+   "ok": true
+  },
+  {
+   "w": "rapprocher",
+   "start": 14.42,
+   "end": 14.86,
+   "ok": true
+  },
+  {
+   "w": "directement",
+   "start": 14.86,
+   "end": 15.42,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 15.42,
+   "end": 15.74,
+   "ok": true
+  },
+  {
+   "w": "nous.",
+   "start": 15.74,
+   "end": 15.9,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 16.44,
+   "end": 16.52,
+   "ok": true
+  },
+  {
+   "w": "calculs",
+   "start": 16.52,
+   "end": 17.1,
+   "ok": true
+  },
+  {
+   "w": "donnent",
+   "start": 17.1,
+   "end": 17.28,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 17.28,
+   "end": 17.36,
+   "ok": true
+  },
+  {
+   "w": "résultat",
+   "start": 17.36,
+   "end": 17.84,
+   "ok": true
+  },
+  {
+   "w": "terrifiant.",
+   "start": 17.86,
+   "end": 18.5,
+   "ok": true
+  },
+  {
+   "w": "Quatre",
+   "start": 18.98,
+   "end": 19.16,
+   "ok": false
+  },
+  {
+   "w": "jours",
+   "start": 19.16,
+   "end": 19.56,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 19.56,
+   "end": 19.92,
+   "ok": true
+  },
+  {
+   "w": "vingt",
+   "start": 20.04,
+   "end": 20.16,
+   "ok": false
+  },
+  {
+   "w": "heures.",
+   "start": 20.16,
+   "end": 20.48,
+   "ok": true
+  },
+  {
+   "w": "C’est",
+   "start": 20.96,
+   "end": 21.1,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 21.1,
+   "end": 21.2,
+   "ok": true
+  },
+  {
+   "w": "durée",
+   "start": 21.2,
+   "end": 21.44,
+   "ok": true
+  },
+  {
+   "w": "totale",
+   "start": 21.44,
+   "end": 21.88,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 21.88,
+   "end": 22.0,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 22.0,
+   "end": 22.14,
+   "ok": true
+  },
+  {
+   "w": "chute,",
+   "start": 22.14,
+   "end": 22.5,
+   "ok": true
+  },
+  {
+   "w": "jusqu’à",
+   "start": 22.72,
+   "end": 23.1,
+   "ok": true
+  },
+  {
+   "w": "l’impact.",
+   "start": 23.1,
+   "end": 23.47,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "Moins",
+   "start": 0.0,
+   "end": 0.22,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 0.22,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "cinq",
+   "start": 0.52,
+   "end": 0.66,
+   "ok": false
+  },
+  {
+   "w": "jours",
+   "start": 0.66,
+   "end": 0.96,
+   "ok": true
+  },
+  {
+   "w": "pour",
+   "start": 0.96,
+   "end": 1.26,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 1.26,
+   "end": 1.44,
+   "ok": true
+  },
+  {
+   "w": "monde",
+   "start": 1.44,
+   "end": 1.62,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.62,
+   "end": 1.8,
+   "ok": true
+  },
+  {
+   "w": "huit",
+   "start": 1.94,
+   "end": 2.08,
+   "ok": false
+  },
+  {
+   "w": "milliards",
+   "start": 2.08,
+   "end": 2.36,
+   "ok": true
+  },
+  {
+   "w": "d’habitants.",
+   "start": 2.36,
+   "end": 2.94,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 3.38,
+   "end": 3.54,
+   "ok": true
+  },
+  {
+   "w": "pourtant,",
+   "start": 3.54,
+   "end": 3.9,
+   "ok": true
+  },
+  {
+   "w": "dehors,",
+   "start": 4.28,
+   "end": 4.74,
+   "ok": true
+  },
+  {
+   "w": "rien",
+   "start": 4.96,
+   "end": 5.18,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 5.18,
+   "end": 5.34,
+   "ok": true
+  },
+  {
+   "w": "semble",
+   "start": 5.34,
+   "end": 5.54,
+   "ok": true
+  },
+  {
+   "w": "avoir",
+   "start": 5.54,
+   "end": 5.72,
+   "ok": true
+  },
+  {
+   "w": "changé.",
+   "start": 5.72,
+   "end": 6.22,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 6.66,
+   "end": 6.78,
+   "ok": true
+  },
+  {
+   "w": "avions",
+   "start": 6.78,
+   "end": 7.06,
+   "ok": true
+  },
+  {
+   "w": "décollent.",
+   "start": 7.06,
+   "end": 7.44,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 7.92,
+   "end": 8.04,
+   "ok": true
+  },
+  {
+   "w": "enfants",
+   "start": 8.04,
+   "end": 8.36,
+   "ok": true
+  },
+  {
+   "w": "vont",
+   "start": 8.36,
+   "end": 8.52,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 8.52,
+   "end": 8.72,
+   "ok": true
+  },
+  {
+   "w": "l’école.",
+   "start": 8.72,
+   "end": 9.02,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 9.48,
+   "end": 9.54,
+   "ok": true
+  },
+  {
+   "w": "restaurants",
+   "start": 9.54,
+   "end": 9.88,
+   "ok": true
+  },
+  {
+   "w": "ouvrent.",
+   "start": 9.88,
+   "end": 10.38,
+   "ok": true
+  },
+  {
+   "w": "Dans",
+   "start": 10.78,
+   "end": 10.96,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 10.96,
+   "end": 11.08,
+   "ok": true
+  },
+  {
+   "w": "ciel,",
+   "start": 11.08,
+   "end": 11.32,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 11.76,
+   "end": 11.88,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 11.88,
+   "end": 12.1,
+   "ok": true
+  },
+  {
+   "w": "paraît",
+   "start": 12.1,
+   "end": 12.41,
+   "ok": true
+  },
+  {
+   "w": "toujours",
+   "start": 12.46,
+   "end": 12.7,
+   "ok": true
+  },
+  {
+   "w": "aussi",
+   "start": 12.7,
+   "end": 12.98,
+   "ok": true
+  },
+  {
+   "w": "paisible.",
+   "start": 12.98,
+   "end": 13.56,
+   "ok": true
+  }
+ ],
+ "v3": [
+  {
+   "w": "Mais",
+   "start": 0.0,
+   "end": 0.16,
+   "ok": true
+  },
+  {
+   "w": "ce",
+   "start": 0.16,
+   "end": 0.28,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 0.28,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "personne",
+   "start": 0.38,
+   "end": 0.74,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 0.74,
+   "end": 1.02,
+   "ok": true
+  },
+  {
+   "w": "voit",
+   "start": 1.02,
+   "end": 1.16,
+   "ok": true
+  },
+  {
+   "w": "encore,",
+   "start": 1.16,
+   "end": 1.52,
+   "ok": true
+  },
+  {
+   "w": "c’est",
+   "start": 1.94,
+   "end": 2.12,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 2.12,
+   "end": 2.22,
+   "ok": true
+  },
+  {
+   "w": "le",
+   "start": 2.22,
+   "end": 2.34,
+   "ok": true
+  },
+  {
+   "w": "compte",
+   "start": 2.34,
+   "end": 2.56,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 2.56,
+   "end": 3.07,
+   "ok": true
+  },
+  {
+   "w": "rebours",
+   "start": 2.56,
+   "end": 3.07,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "start": 3.1,
+   "end": 3.22,
+   "ok": true
+  },
+  {
+   "w": "déjà",
+   "start": 3.22,
+   "end": 3.52,
+   "ok": true
+  },
+  {
+   "w": "commencé.",
+   "start": 3.52,
+   "end": 4.06,
+   "ok": true
+  },
+  {
+   "w": "Dans",
+   "start": 4.56,
+   "end": 4.72,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 4.72,
+   "end": 4.84,
+   "ok": true
+  },
+  {
+   "w": "observatoires,",
+   "start": 4.84,
+   "end": 5.66,
+   "ok": true
+  },
+  {
+   "w": "chaque",
+   "start": 5.96,
+   "end": 6.11,
+   "ok": true
+  },
+  {
+   "w": "nouvelle",
+   "start": 6.12,
+   "end": 6.38,
+   "ok": true
+  },
+  {
+   "w": "mesure",
+   "start": 6.38,
+   "end": 6.84,
+   "ok": true
+  },
+  {
+   "w": "confirme",
+   "start": 6.84,
+   "end": 7.4,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 7.4,
+   "end": 7.5,
+   "ok": true
+  },
+  {
+   "w": "sa",
+   "start": 7.5,
+   "end": 7.66,
+   "ok": true
+  },
+  {
+   "w": "chute",
+   "start": 7.66,
+   "end": 7.87,
+   "ok": true
+  },
+  {
+   "w": "s’accélère.",
+   "start": 7.88,
+   "end": 8.54,
+   "ok": true
+  },
+  {
+   "w": "Et",
+   "start": 8.98,
+   "end": 9.04,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 9.04,
+   "end": 9.14,
+   "ok": true
+  },
+  {
+   "w": "scientifiques",
+   "start": 9.14,
+   "end": 9.72,
+   "ok": true
+  },
+  {
+   "w": "commencent",
+   "start": 9.72,
+   "end": 10.2,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 10.2,
+   "end": 10.28,
+   "ok": true
+  },
+  {
+   "w": "recalculer",
+   "start": 10.28,
+   "end": 10.96,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 10.96,
+   "end": 11.06,
+   "ok": true
+  },
+  {
+   "w": "prévisions",
+   "start": 11.06,
+   "end": 11.5,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 11.5,
+   "end": 11.64,
+   "ok": true
+  },
+  {
+   "w": "marée.",
+   "start": 11.64,
+   "end": 11.97,
+   "ok": true
+  },
+  {
+   "w": "Car",
+   "start": 12.34,
+   "end": 12.5,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 12.5,
+   "end": 12.64,
+   "ok": true
+  },
+  {
+   "w": "premiers",
+   "start": 12.64,
+   "end": 12.9,
+   "ok": true
+  },
+  {
+   "w": "changements",
+   "start": 12.9,
+   "end": 13.44,
+   "ok": true
+  },
+  {
+   "w": "apparaîtront",
+   "start": 13.44,
+   "end": 14.12,
+   "ok": true
+  },
+  {
+   "w": "là",
+   "start": 14.12,
+   "end": 14.32,
+   "ok": true
+  },
+  {
+   "w": "où",
+   "start": 14.32,
+   "end": 14.44,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 14.44,
+   "end": 14.56,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 14.56,
+   "end": 14.78,
+   "ok": true
+  },
+  {
+   "w": "exerce",
+   "start": 14.78,
+   "end": 15.24,
+   "ok": true
+  },
+  {
+   "w": "déjà",
+   "start": 15.24,
+   "end": 15.58,
+   "ok": true
+  },
+  {
+   "w": "son",
+   "start": 15.58,
+   "end": 15.84,
+   "ok": true
+  },
+  {
+   "w": "influence",
+   "start": 15.84,
+   "end": 16.32,
+   "ok": true
+  },
+  {
+   "w": "depuis",
+   "start": 16.32,
+   "end": 16.64,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 16.64,
+   "end": 16.84,
+   "ok": true
+  },
+  {
+   "w": "milliards",
+   "start": 16.84,
+   "end": 17.22,
+   "ok": true
+  },
+  {
+   "w": "d’années.",
+   "start": 17.22,
+   "end": 17.7,
+   "ok": true
+  },
+  {
+   "w": "Dans",
+   "start": 18.12,
+   "end": 18.34,
+   "ok": true
+  },
+  {
+   "w": "les",
+   "start": 18.34,
+   "end": 18.5,
+   "ok": true
+  },
+  {
+   "w": "océans.",
+   "start": 18.5,
+   "end": 19.0,
+   "ok": true
+  }
+ ]
+}

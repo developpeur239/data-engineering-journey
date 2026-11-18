@@ -1,0 +1,475 @@
+{
+ "_doc": "Bloc 4 « Le premier jour » (03:00–04:00). J0 matin (plage, port), puis J1 (24 h après le début de la chute). Temps = secondes ou ancres. Caméra : [temps, x, y, zoom].",
+ "look": "nuit",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.3"
+  },
+  {
+   "id": "v3",
+   "at": "v2.end+1.6"
+  },
+  {
+   "id": "g1",
+   "at": "v3.end+0.9"
+  },
+  {
+   "id": "v4",
+   "at": "g1.end+2.2"
+  }
+ ],
+ "fin": "v4.end+2.6",
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "littoral.Plage",
+   "texte": "Au début, rien ne ressemble à une catastrophe.",
+   "intention": "le premier matin : la plage est paisible",
+   "camera": [
+    [
+     "#A",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#B",
+     1330,
+     760,
+     1.07
+    ]
+   ],
+   "look": "jour"
+  },
+  {
+   "id": "B",
+   "debut": "v1:les-0.1",
+   "set": "littoral.Plage",
+   "texte": "Les vagues arrivent sur le sable.",
+   "intention": "l'écume va et vient, comme toujours",
+   "camera": [
+    [
+     "#B",
+     1500,
+     850,
+     1.9
+    ],
+    [
+     "#C",
+     1470,
+     860,
+     2.0
+    ]
+   ],
+   "look": "jour"
+  },
+  {
+   "id": "C",
+   "debut": "v1:les#2-0.1",
+   "set": "littoral.Port",
+   "texte": "Les bateaux quittent les ports.",
+   "intention": "deux bateaux sortent par le chenal",
+   "camera": [
+    [
+     "#C",
+     1376,
+     820,
+     1.15
+    ],
+    [
+     "#D",
+     1420,
+     840,
+     1.25
+    ]
+   ],
+   "look": "jour"
+  },
+  {
+   "id": "D",
+   "debut": "v1:les#4-0.1",
+   "set": "maree.Maregraphe",
+   "texte": "Les marées suivent encore un rythme familier. Mais les instruments commencent à détecter de faibles écarts par rapport aux prévisions.",
+   "intention": "la mesure suit la prévision… puis un faible écart en rouge",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     1040,
+     560,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "ecart": "v1:faibles"
+   }
+  },
+  {
+   "id": "E",
+   "debut": "v1:car-0.1",
+   "set": "compte.Influence",
+   "texte": "Car en se rapprochant de la Terre, la Lune perturbe progressivement les marées.",
+   "intention": "la Lune tire sur les océans",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#F",
+     920,
+     550,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "influence": "v1:rapprochant",
+    "oceans": "v1:perturbe",
+    "milliards": "v1:marées#2",
+    "texte": "en se rapprochant, la Lune perturbe les marées"
+   }
+  },
+  {
+   "id": "F",
+   "debut": "v1:son-0.1",
+   "set": "maree.Differentiel",
+   "texte": "Son attraction n'est pas identique sur toute notre planète. C'est cette différence qui contribue à faire monter et descendre les océans.",
+   "intention": "comprendre : trois flèches inégales, puis les océans étirés",
+   "camera": [
+    [
+     "#F",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#G",
+     980,
+     545,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "fleches": "v1:identique",
+    "oceans": "v1:différence"
+   }
+  },
+  {
+   "id": "G",
+   "debut": "v1:et-0.1",
+   "set": "maree.Rapproche",
+   "texte": "Et plus la Lune se rapproche, plus cet effet devient puissant.",
+   "intention": "la Lune avance, les bourrelets grossissent",
+   "camera": [
+    [
+     "#G",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#H",
+     900,
+     550,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "rapproche": "v1:rapproche",
+    "puissant": "v1:puissant"
+   }
+  },
+  {
+   "id": "H",
+   "debut": "v2-0.3",
+   "set": "littoral.Plage",
+   "texte": "Après vingt-quatre heures, le changement reste relativement faible. Pas de mur d'eau géant. Pas de tsunami mondial.",
+   "intention": "le deuxième matin, la mer est toujours calme",
+   "camera": [
+    [
+     "#H",
+     2000,
+     640,
+     1.7
+    ],
+    [
+     "#I",
+     1880,
+     660,
+     1.85
+    ]
+   ],
+   "look": "jour"
+  },
+  {
+   "id": "I",
+   "debut": "v2:seulement-0.1",
+   "set": "fixe.Image",
+   "texte": "Seulement des anomalies que les chercheurs prennent de plus en plus au sérieux.",
+   "intention": "à Calern, de jour : les écrans restent allumés",
+   "camera": [
+    [
+     "#I",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#J",
+     1700,
+     800,
+     1.3
+    ]
+   ],
+   "reglages": {
+    "image": "film2d/images/decor_calern_jour.png"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "J",
+   "debut": "v2:puis-0.1",
+   "set": "littoral.Barriere",
+   "texte": "Puis les autorités commencent à fermer certaines zones côtières.",
+   "intention": "la même plage, barrée",
+   "camera": [
+    [
+     "#J",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#K",
+     1440,
+     800,
+     1.12
+    ]
+   ],
+   "look": "jour"
+  },
+  {
+   "id": "K",
+   "debut": "v3-0.3",
+   "set": "littoral.Barriere",
+   "texte": "Sur une plage, un petit garçon s'arrête devant une barrière.",
+   "intention": "la mère et le garçon arrivent ; il s'arrête net devant la barrière",
+   "camera": [
+    [
+     "#K",
+     980,
+     1050,
+     1.55
+    ],
+    [
+     "#L",
+     930,
+     1000,
+     1.75
+    ]
+   ],
+   "reglages": {
+    "scene": "arrivee",
+    "arret": "v3:barrière-0.3",
+    "duree": 3.4
+   },
+   "look": "jour"
+  },
+  {
+   "id": "L",
+   "debut": "v3:sa-0.1",
+   "set": "littoral.Barriere",
+   "texte": "Sa mère lui explique qu'ils doivent partir.",
+   "intention": "elle s'accroupit à sa hauteur",
+   "camera": [
+    [
+     "#L",
+     900,
+     980,
+     2.5
+    ],
+    [
+     "#M",
+     890,
+     990,
+     2.6
+    ]
+   ],
+   "reglages": {
+    "scene": "accroupie"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "M",
+   "debut": "g1-0.4",
+   "set": "littoral.Barriere",
+   "texte": "« Mais elle est comme d'habitude. »",
+   "intention": "lui, de dos, regarde la mer ; le seau rouge ; un silence après",
+   "camera": [
+    [
+     "#M",
+     960,
+     990,
+     3.0
+    ],
+    [
+     "#N",
+     975,
+     985,
+     3.2
+    ]
+   ],
+   "reglages": {
+    "scene": "accroupie"
+   },
+   "look": "jour"
+  },
+  {
+   "id": "N",
+   "debut": "v4-0.6",
+   "set": "littoral.Barriere",
+   "texte": "Le danger est déjà là. Mais personne ne peut encore le voir.",
+   "intention": "on recule : la mer immense et calme, eux tout petits",
+   "camera": [
+    [
+     "#N",
+     1150,
+     900,
+     1.9
+    ],
+    [
+     "#N.end",
+     1376,
+     790,
+     1.02
+    ]
+   ],
+   "reglages": {
+    "scene": "accroupie"
+   },
+   "look": "jour"
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "a": "v4.end+2.6",
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ]
+  },
+  {
+   "texte": "24 h après le début de la chute",
+   "de": "v2-0.1",
+   "a": "v2:pas-0.2",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    900
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 46,
+   "couleur": [
+    236,
+    240,
+    245
+   ],
+   "fond": true
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 329760,
+   "de": "v2-0.1",
+   "a": "v2:pas-0.2",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    980
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 40,
+   "couleur": [
+    255,
+    226,
+    170
+   ],
+   "fond": true
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_plage.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": "#C",
+   "rms": -30,
+   "fondu_entree": 0.8,
+   "fondu_sortie": 0.4
+  },
+  {
+   "fichier": "sfx_real/amb_port.wav",
+   "a": "#C",
+   "boucle": true,
+   "jusqua": "#D",
+   "rms": -30,
+   "fondu_entree": 0.3,
+   "fondu_sortie": 0.5
+  },
+  {
+   "petit": "bip",
+   "a": "v1:faibles",
+   "gain": -14
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_plage.wav",
+   "a": "#H",
+   "boucle": true,
+   "jusqua": "#I",
+   "rms": -30,
+   "fondu_entree": 0.4,
+   "fondu_sortie": 0.4
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_jour.wav",
+   "a": "#I",
+   "boucle": true,
+   "jusqua": "#J",
+   "rms": -34,
+   "fondu_entree": 0.3,
+   "fondu_sortie": 0.3
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_plage.wav",
+   "a": "#J",
+   "boucle": true,
+   "jusqua": "v4.end+2.6",
+   "rms": -30,
+   "fondu_entree": 0.4,
+   "fondu_sortie": 1.5
+  }
+ ],
+ "silences": []
+}

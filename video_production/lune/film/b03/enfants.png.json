@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Character sheet on a plain flat light grey background, five separate full-body figures standing side by side with space between them, seen in three-quarter back view, standing still and waiting: three school children (about 8 years old) wearing small backpacks, one holding a parent's hand, and one adult parent. Same minimalist character design, proportions and thin discreet outline as the reference image, matte colors, soft daylight, no shadow on the ground, no text.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/figurants_dos.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "e161e4fca79b22b817b4bcc65b438aee",
+ "credits": 12.0,
+ "seconds": 42
+}

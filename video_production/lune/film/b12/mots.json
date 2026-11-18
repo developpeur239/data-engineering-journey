@@ -1,0 +1,798 @@
+{
+ "v1": [
+  {
+   "w": "La",
+   "start": 0.0,
+   "end": 0.18,
+   "ok": true
+  },
+  {
+   "w": "Lune",
+   "start": 0.18,
+   "end": 0.42,
+   "ok": true
+  },
+  {
+   "w": "frappe",
+   "start": 0.42,
+   "end": 0.76,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 0.76,
+   "end": 0.86,
+   "ok": true
+  },
+  {
+   "w": "Terre",
+   "start": 0.86,
+   "end": 1.1,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 1.1,
+   "end": 1.25,
+   "ok": true
+  },
+  {
+   "w": "près",
+   "start": 1.28,
+   "end": 1.4,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.4,
+   "end": 1.58,
+   "ok": true
+  },
+  {
+   "w": "dix",
+   "start": 1.71,
+   "end": 1.84,
+   "ok": false
+  },
+  {
+   "w": "kilomètres",
+   "start": 1.84,
+   "end": 2.1,
+   "ok": true
+  },
+  {
+   "w": "par",
+   "start": 2.1,
+   "end": 2.5,
+   "ok": true
+  },
+  {
+   "w": "seconde.",
+   "start": 2.5,
+   "end": 3.03,
+   "ok": true
+  },
+  {
+   "w": "Ce",
+   "start": 3.4,
+   "end": 3.48,
+   "ok": true
+  },
+  {
+   "w": "n’est",
+   "start": 3.48,
+   "end": 3.62,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 3.62,
+   "end": 3.8,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 3.8,
+   "end": 3.98,
+   "ok": true
+  },
+  {
+   "w": "astéroïde.",
+   "start": 3.98,
+   "end": 4.57,
+   "ok": true
+  },
+  {
+   "w": "C’est",
+   "start": 4.94,
+   "end": 5.1,
+   "ok": true
+  },
+  {
+   "w": "un",
+   "start": 5.1,
+   "end": 5.28,
+   "ok": true
+  },
+  {
+   "w": "monde",
+   "start": 5.28,
+   "end": 5.56,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 5.56,
+   "end": 5.76,
+   "ok": true
+  },
+  {
+   "w": "plus",
+   "start": 5.76,
+   "end": 5.9,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 5.9,
+   "end": 6.04,
+   "ok": true
+  },
+  {
+   "w": "trois",
+   "start": 6.23,
+   "end": 6.42,
+   "ok": false
+  },
+  {
+   "w": "mille",
+   "start": 6.42,
+   "end": 6.92,
+   "ok": true
+  },
+  {
+   "w": "kilomètres",
+   "start": 6.92,
+   "end": 6.92,
+   "ok": false
+  },
+  {
+   "w": "de",
+   "start": 6.92,
+   "end": 7.18,
+   "ok": true
+  },
+  {
+   "w": "diamètre.",
+   "start": 7.18,
+   "end": 7.66,
+   "ok": true
+  },
+  {
+   "w": "Au",
+   "start": 8.16,
+   "end": 8.26,
+   "ok": true
+  },
+  {
+   "w": "point",
+   "start": 8.26,
+   "end": 8.44,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 8.44,
+   "end": 8.5,
+   "ok": true
+  },
+  {
+   "w": "contact,",
+   "start": 8.5,
+   "end": 8.86,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 9.22,
+   "end": 9.36,
+   "ok": true
+  },
+  {
+   "w": "surface",
+   "start": 9.36,
+   "end": 9.58,
+   "ok": true
+  },
+  {
+   "w": "terrestre",
+   "start": 9.58,
+   "end": 10.24,
+   "ok": true
+  },
+  {
+   "w": "s’écrase.",
+   "start": 10.24,
+   "end": 10.84,
+   "ok": true
+  },
+  {
+   "w": "Une",
+   "start": 11.26,
+   "end": 11.36,
+   "ok": true
+  },
+  {
+   "w": "région",
+   "start": 11.36,
+   "end": 11.66,
+   "ok": true
+  },
+  {
+   "w": "entière",
+   "start": 11.66,
+   "end": 12.3,
+   "ok": true
+  },
+  {
+   "w": "devient",
+   "start": 12.3,
+   "end": 12.6,
+   "ok": true
+  },
+  {
+   "w": "incandescente.",
+   "start": 12.6,
+   "end": 13.5,
+   "ok": true
+  },
+  {
+   "w": "Puis",
+   "start": 13.9,
+   "end": 14.08,
+   "ok": true
+  },
+  {
+   "w": "d’immenses",
+   "start": 14.08,
+   "end": 14.62,
+   "ok": true
+  },
+  {
+   "w": "panaches",
+   "start": 14.62,
+   "end": 15.04,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 15.04,
+   "end": 15.16,
+   "ok": true
+  },
+  {
+   "w": "roche",
+   "start": 15.16,
+   "end": 15.42,
+   "ok": true
+  },
+  {
+   "w": "fondue",
+   "start": 15.42,
+   "end": 15.88,
+   "ok": true
+  },
+  {
+   "w": "et",
+   "start": 15.88,
+   "end": 15.96,
+   "ok": true
+  },
+  {
+   "w": "vaporisée",
+   "start": 15.96,
+   "end": 16.61,
+   "ok": true
+  },
+  {
+   "w": "s’élèvent",
+   "start": 16.64,
+   "end": 17.3,
+   "ok": true
+  },
+  {
+   "w": "au-dessus",
+   "start": 17.3,
+   "end": 17.64,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 17.64,
+   "end": 17.78,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 17.78,
+   "end": 17.89,
+   "ok": true
+  },
+  {
+   "w": "planète.",
+   "start": 17.9,
+   "end": 18.3,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 18.76,
+   "end": 18.86,
+   "ok": true
+  },
+  {
+   "w": "collision",
+   "start": 18.86,
+   "end": 19.22,
+   "ok": true
+  },
+  {
+   "w": "projette",
+   "start": 19.22,
+   "end": 19.7,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 19.7,
+   "end": 19.82,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 19.82,
+   "end": 19.92,
+   "ok": true
+  },
+  {
+   "w": "matière",
+   "start": 19.92,
+   "end": 20.3,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 20.3,
+   "end": 20.54,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 20.54,
+   "end": 20.66,
+   "ok": true
+  },
+  {
+   "w": "milliers",
+   "start": 20.66,
+   "end": 21.2,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 21.2,
+   "end": 21.3,
+   "ok": true
+  },
+  {
+   "w": "kilomètres.",
+   "start": 21.3,
+   "end": 21.84,
+   "ok": true
+  }
+ ],
+ "v2": [
+  {
+   "w": "L’énergie",
+   "start": 0.0,
+   "end": 0.38,
+   "ok": true
+  },
+  {
+   "w": "libérée",
+   "start": 0.38,
+   "end": 0.94,
+   "ok": true
+  },
+  {
+   "w": "dépasse",
+   "start": 0.94,
+   "end": 1.36,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 1.36,
+   "end": 1.48,
+   "ok": true
+  },
+  {
+   "w": "plusieurs",
+   "start": 1.48,
+   "end": 2.0,
+   "ok": true
+  },
+  {
+   "w": "millions",
+   "start": 2.0,
+   "end": 2.38,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 2.38,
+   "end": 2.58,
+   "ok": true
+  },
+  {
+   "w": "fois",
+   "start": 2.58,
+   "end": 2.84,
+   "ok": true
+  },
+  {
+   "w": "celle",
+   "start": 2.84,
+   "end": 3.18,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 3.18,
+   "end": 3.26,
+   "ok": true
+  },
+  {
+   "w": "l’impact",
+   "start": 3.26,
+   "end": 3.69,
+   "ok": true
+  },
+  {
+   "w": "qui",
+   "start": 3.74,
+   "end": 3.94,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "start": 3.94,
+   "end": 4.04,
+   "ok": true
+  },
+  {
+   "w": "contribué",
+   "start": 4.04,
+   "end": 4.56,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 4.56,
+   "end": 4.68,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 4.68,
+   "end": 4.78,
+   "ok": true
+  },
+  {
+   "w": "disparition",
+   "start": 4.78,
+   "end": 5.4,
+   "ok": true
+  },
+  {
+   "w": "des",
+   "start": 5.4,
+   "end": 5.58,
+   "ok": true
+  },
+  {
+   "w": "dinosaures.",
+   "start": 5.58,
+   "end": 6.23,
+   "ok": true
+  },
+  {
+   "w": "Des",
+   "start": 6.66,
+   "end": 6.84,
+   "ok": true
+  },
+  {
+   "w": "ondes",
+   "start": 6.84,
+   "end": 7.1,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 7.1,
+   "end": 7.2,
+   "ok": true
+  },
+  {
+   "w": "choc",
+   "start": 7.2,
+   "end": 7.66,
+   "ok": true
+  },
+  {
+   "w": "traversent",
+   "start": 7.66,
+   "end": 8.02,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 8.02,
+   "end": 8.13,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 8.16,
+   "end": 8.36,
+   "ok": true
+  },
+  {
+   "w": "Les",
+   "start": 8.88,
+   "end": 8.98,
+   "ok": true
+  },
+  {
+   "w": "océans",
+   "start": 8.98,
+   "end": 9.38,
+   "ok": true
+  },
+  {
+   "w": "sont",
+   "start": 9.38,
+   "end": 9.58,
+   "ok": true
+  },
+  {
+   "w": "bouleversés",
+   "start": 9.58,
+   "end": 10.32,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 10.32,
+   "end": 10.46,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 10.46,
+   "end": 10.6,
+   "ok": true
+  },
+  {
+   "w": "échelle",
+   "start": 10.6,
+   "end": 10.9,
+   "ok": true
+  },
+  {
+   "w": "planétaire.",
+   "start": 10.9,
+   "end": 11.61,
+   "ok": true
+  },
+  {
+   "w": "La",
+   "start": 12.08,
+   "end": 12.28,
+   "ok": true
+  },
+  {
+   "w": "Terre",
+   "start": 12.28,
+   "end": 12.46,
+   "ok": true
+  },
+  {
+   "w": "ne",
+   "start": 12.46,
+   "end": 12.62,
+   "ok": true
+  },
+  {
+   "w": "se",
+   "start": 12.62,
+   "end": 12.78,
+   "ok": true
+  },
+  {
+   "w": "volatilise",
+   "start": 12.78,
+   "end": 13.36,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 13.36,
+   "end": 13.52,
+   "ok": true
+  },
+  {
+   "w": "nécessairement.",
+   "start": 13.52,
+   "end": 14.22,
+   "ok": true
+  },
+  {
+   "w": "Mais",
+   "start": 14.68,
+   "end": 14.82,
+   "ok": true
+  },
+  {
+   "w": "elle",
+   "start": 14.82,
+   "end": 14.94,
+   "ok": true
+  },
+  {
+   "w": "est",
+   "start": 14.94,
+   "end": 15.0,
+   "ok": true
+  },
+  {
+   "w": "transformée",
+   "start": 15.0,
+   "end": 15.62,
+   "ok": true
+  },
+  {
+   "w": "à",
+   "start": 15.62,
+   "end": 15.72,
+   "ok": true
+  },
+  {
+   "w": "une",
+   "start": 15.72,
+   "end": 15.86,
+   "ok": true
+  },
+  {
+   "w": "échelle",
+   "start": 15.86,
+   "end": 16.22,
+   "ok": true
+  },
+  {
+   "w": "que",
+   "start": 16.22,
+   "end": 16.36,
+   "ok": true
+  },
+  {
+   "w": "l’humanité",
+   "start": 16.36,
+   "end": 16.88,
+   "ok": true
+  },
+  {
+   "w": "n’a",
+   "start": 16.88,
+   "end": 17.1,
+   "ok": true
+  },
+  {
+   "w": "jamais",
+   "start": 17.1,
+   "end": 17.38,
+   "ok": true
+  },
+  {
+   "w": "connue.",
+   "start": 17.38,
+   "end": 17.86,
+   "ok": true
+  },
+  {
+   "w": "Ce",
+   "start": 18.36,
+   "end": 18.5,
+   "ok": true
+  },
+  {
+   "w": "n’est",
+   "start": 18.5,
+   "end": 18.64,
+   "ok": true
+  },
+  {
+   "w": "pas",
+   "start": 18.64,
+   "end": 18.74,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 18.74,
+   "end": 18.88,
+   "ok": true
+  },
+  {
+   "w": "fin",
+   "start": 18.88,
+   "end": 19.06,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 19.06,
+   "end": 19.18,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 19.18,
+   "end": 19.27,
+   "ok": true
+  },
+  {
+   "w": "Terre.",
+   "start": 19.3,
+   "end": 19.54,
+   "ok": true
+  },
+  {
+   "w": "C’est",
+   "start": 20.08,
+   "end": 20.26,
+   "ok": true
+  },
+  {
+   "w": "la",
+   "start": 20.26,
+   "end": 20.38,
+   "ok": true
+  },
+  {
+   "w": "fin",
+   "start": 20.38,
+   "end": 20.62,
+   "ok": true
+  },
+  {
+   "w": "de",
+   "start": 20.62,
+   "end": 20.76,
+   "ok": true
+  },
+  {
+   "w": "notre",
+   "start": 20.76,
+   "end": 20.92,
+   "ok": true
+  },
+  {
+   "w": "monde.",
+   "start": 20.92,
+   "end": 21.32,
+   "ok": true
+  }
+ ]
+}

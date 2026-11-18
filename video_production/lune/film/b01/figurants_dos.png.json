@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "Five people seen from behind, standing still side by side and looking up at the sky, frozen: a man in a long coat, a woman holding a bag, an old man with a cap, a teenager with a hoodie, a small girl holding her father's hand (counts as two). Same flat 2D style as the reference characters: pure black bodies and heads without shading, simple rounded limbs, only small touches of muted colour on clothes or hair, thin white outline. Pure flat magenta background (#FF00FF) filling the whole image, no floor, no shadow, all characters fully visible.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/reference_2d.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "b1d57f6660236594da71d67e1e49caf1",
+ "credits": 12.0,
+ "seconds": 25
+}

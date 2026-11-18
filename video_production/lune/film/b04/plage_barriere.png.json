@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "The same beach as the reference image, same viewpoint, same light, same dunes, rocks and wooden boardwalk, calm sea: across the sandy path in the middle ground, a row of grey metal crowd-control barriers blocks access to the water, with a blank white rectangular sign panel fixed on the middle barrier (the panel is completely blank). No people. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image. No text, no letters, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_plage.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "76b1338a4a63ce57c31d6d4313b51eb8",
+ "credits": 12.0,
+ "seconds": 85
+}

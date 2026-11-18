@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A small Mediterranean harbour in the French Riviera on a calm sunny morning, wide shot from the quay: moored sailing boats and small fishing boats along the quays on the left and right, a stone breakwater with a small white lighthouse on the right, an open calm channel of water in the centre leading out to the open sea and the horizon, plenty of empty water in the centre, pastel houses behind on the left, light haze. No people, no boats in the central channel. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image. No text, no letters, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/decor_plage.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "3e2f74890eb88743e54ae35e13679fdb",
+ "credits": 12.0,
+ "seconds": 42
+}

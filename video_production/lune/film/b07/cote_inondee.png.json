@@ -1,0 +1,15 @@
+{
+ "model": "nano-banana-2",
+ "input": {
+  "prompt": "A small coastal town in the south of France where the sea has advanced far inland: a coastal road disappearing under calm grey water, houses and a small building standing isolated in the water, street lamps and road signs half submerged, a stranded car with water up to its windows, debris floating, evening light under a heavy grey-violet sky, the upper third is empty sky. Flat 2D vector illustration, same drawing style, line quality and palette as the reference image. No people, no Moon, no text, no letters, no logos.",
+  "image_input": [
+   "https://tempfile.redpandaai.co/kieai/12263279/panne_internet/plage_barriere.png"
+  ],
+  "aspect_ratio": "16:9",
+  "resolution": "2K",
+  "output_format": "png"
+ },
+ "taskId": "37dc5e7661c664a8c9f5259e037c9899",
+ "credits": 12.0,
+ "seconds": 34
+}

@@ -1,0 +1,431 @@
+{
+ "_doc": "Bloc 05 : voir plans_reste.py (source du découpage).",
+ "look": "jour",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.2"
+  },
+  {
+   "id": "g1",
+   "at": "v2.end+0.9"
+  },
+  {
+   "id": "v3",
+   "at": "g1.end+1.8"
+  }
+ ],
+ "fin": "v3.end+1.8",
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "astres.Ciel",
+   "texte": "Quarante-huit heures après le début de la chute, la Lune paraît légèrement plus grande.",
+   "intention": "la même rue, la Lune un peu plus grande",
+   "camera": [
+    [
+     "#A",
+     1760,
+     720,
+     1.5
+    ],
+    [
+     "#B",
+     1900,
+     340,
+     2.4
+    ]
+   ],
+   "reglages": {
+    "image": "film/b03/rue_jour.png",
+    "horizon": 900,
+    "lune": [
+     1897,
+     193,
+     80
+    ],
+    "lueur": 0.2
+   }
+  },
+  {
+   "id": "B",
+   "debut": "v1:pas-0.1",
+   "set": "astres.Ciel",
+   "texte": "Pas assez pour provoquer la panique à elle seule.",
+   "intention": "la ville continue, calme",
+   "camera": [
+    [
+     "#B",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#C",
+     1376,
+     740,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "image": "film/b03/rue_jour.png",
+    "horizon": 900,
+    "lune": [
+     1897,
+     193,
+     80
+    ],
+    "lueur": 0.2
+   }
+  },
+  {
+   "id": "C",
+   "debut": "v1:mais-0.1",
+   "set": "astres.Photos",
+   "texte": "Mais suffisamment pour que des millions de personnes commencent à comparer leurs photographies.",
+   "intention": "deux photos : avant, ce soir",
+   "camera": [
+    [
+     "#C",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#D",
+     960,
+     540,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "mode": "telephones",
+    "comparer": "v1:comparer"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "D",
+   "debut": "v1:les-0.1",
+   "set": "scenes.Ecran2",
+   "texte": "Les gouvernements ont désormais reçu les mêmes conclusions. Il n'existe aucun moyen connu d'arrêter la collision.",
+   "intention": "le rapport, ligne après ligne",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     1000,
+     560,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "mode": "rapport",
+    "l0": "v1:gouvernements",
+    "l1": "v1:conclusions-0.4",
+    "l2": "v1:il-0.2",
+    "l3": "v1:aucun"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "E",
+   "debut": "v1:les#3-0.1",
+   "set": "scenes.Carte",
+   "texte": "Les évacuations s'étendent dans plusieurs régions côtières.",
+   "intention": "la côte se teinte de rouge",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#F",
+     1100,
+     560,
+     1.15
+    ]
+   ],
+   "reglages": {
+    "zones": "v1:évacuations"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "F",
+   "debut": "v1:les#4-0.1",
+   "set": "astres.Ciel",
+   "texte": "Les routes se remplissent.",
+   "intention": "l'embouteillage du soir",
+   "camera": [
+    [
+     "#F",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#G",
+     1376,
+     800,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "image": "film/b05/embouteillage.png",
+    "horizon": 760,
+    "lune": [
+     1950,
+     980,
+     40
+    ],
+    "lueur": 0.0
+   }
+  },
+  {
+   "id": "G",
+   "debut": "v2-0.3",
+   "set": "scenes.Voiture",
+   "texte": "Dans une voiture immobilisée au milieu d'un embouteillage, nous retrouvons le petit garçon de la plage. Au-dessus des voitures, la Lune commence à apparaître dans le ciel du soir.",
+   "intention": "le garçon à la vitre ; la Lune se lève",
+   "camera": [
+    [
+     "#G",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#H",
+     1300,
+     760,
+     1.08
+    ]
+   ],
+   "reglages": {
+    "vue": "garcon",
+    "lune": "v2:lune",
+    "lune_r": 44,
+    "lune_xy": [
+     1900,
+     330
+    ]
+   }
+  },
+  {
+   "id": "H",
+   "debut": "g1-0.3",
+   "set": "scenes.Voiture",
+   "texte": "« Maman… pourquoi elle grossit ? »",
+   "intention": "lui, de profil, les yeux sur la Lune",
+   "camera": [
+    [
+     "#H",
+     1150,
+     820,
+     1.5
+    ],
+    [
+     "#I",
+     1200,
+     800,
+     1.6
+    ]
+   ],
+   "reglages": {
+    "vue": "garcon",
+    "lune_r": 46,
+    "lune_xy": [
+     1900,
+     330
+    ]
+   }
+  },
+  {
+   "id": "I",
+   "debut": "v3-0.4",
+   "set": "scenes.Voiture",
+   "texte": "Sa mère connaît la réponse. Mais elle continue de chercher une manière de la lui dire.",
+   "intention": "elle, au volant, silencieuse",
+   "camera": [
+    [
+     "#I",
+     1100,
+     850,
+     1.6
+    ],
+    [
+     "#J",
+     1080,
+     860,
+     1.7
+    ]
+   ],
+   "reglages": {
+    "vue": "mere",
+    "lune_r": 46,
+    "lune_xy": [
+     1900,
+     330
+    ]
+   }
+  },
+  {
+   "id": "J",
+   "debut": "v3:et-0.1",
+   "set": "astres.Ciel",
+   "texte": "Et pendant que ces familles essaient de s'éloigner de la mer,",
+   "intention": "on recule : toute l'autoroute arrêtée sous la Lune",
+   "camera": [
+    [
+     "#J",
+     1500,
+     700,
+     1.4
+    ],
+    [
+     "#K",
+     1376,
+     768,
+     1.0
+    ]
+   ],
+   "reglages": {
+    "image": "film/b05/embouteillage.png",
+    "horizon": 760,
+    "lune": [
+     1900,
+     330,
+     46
+    ],
+    "lueur": 0.25
+   }
+  },
+  {
+   "id": "K",
+   "debut": "v3:les-0.1",
+   "set": "scenes.Porte",
+   "texte": "les astronomes comprennent que la partie la plus dangereuse de la chute n'a pas encore commencé.",
+   "intention": "Calern, la nuit : Léa devant ses écrans",
+   "camera": [
+    [
+     "#K",
+     1900,
+     900,
+     1.4
+    ],
+    [
+     "#K.end",
+     2150,
+     1000,
+     1.7
+    ]
+   ],
+   "reglages": {
+    "lea": true
+   },
+   "look": "nuit"
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v3.end+1.8"
+  },
+  {
+   "texte": "48 h après le début de la chute",
+   "de": "v1-0.2",
+   "a": "#B",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    900
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 46,
+   "couleur": [
+    236,
+    240,
+    245
+   ],
+   "fond": true
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 243360,
+   "de": "v1-0.2",
+   "a": "#B",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    980
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 40,
+   "couleur": [
+    255,
+    226,
+    170
+   ],
+   "fond": true
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_jour.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": "#C",
+   "rms": -36,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "fichier": "../sons/sfx_real/amb_embouteillage.wav",
+   "a": "#F",
+   "boucle": true,
+   "jusqua": "#K",
+   "rms": -30,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_nuit.wav",
+   "a": "#K",
+   "boucle": true,
+   "jusqua": "v3.end+1.8",
+   "rms": -34,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "petit": "bip",
+   "a": "v1:aucun",
+   "gain": -13
+  }
+ ]
+}

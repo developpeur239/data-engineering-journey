@@ -1,0 +1,519 @@
+{
+ "_doc": "Bloc 06 : voir plans_reste.py (source du découpage).",
+ "look": "jour",
+ "voix": [
+  {
+   "id": "v1",
+   "at": 0.6
+  },
+  {
+   "id": "v2",
+   "at": "v1.end+1.2"
+  },
+  {
+   "id": "c1",
+   "at": "v2.end+0.7"
+  },
+  {
+   "id": "c2",
+   "at": "c1.end+5.6"
+  },
+  {
+   "id": "l1",
+   "at": "c2.end+0.9"
+  },
+  {
+   "id": "v3",
+   "at": "l1.end+1.4"
+  }
+ ],
+ "fin": "v3.end+1.6",
+ "lea": {
+  "frappe": [
+   [
+    "v3:décider",
+    "v3.end+1.6"
+   ]
+  ],
+  "regard_ecran": [
+   [
+    "v3:enregistrer",
+    "v3.end+3"
+   ]
+  ]
+ },
+ "plans": [
+  {
+   "id": "A",
+   "debut": 0,
+   "set": "astres.Ciel",
+   "texte": "Au quatrième jour, le changement est impossible à ignorer.",
+   "intention": "la Lune, deux fois plus grande, au-dessus des toits",
+   "camera": [
+    [
+     "#A",
+     1760,
+     700,
+     1.5
+    ],
+    [
+     "#B",
+     1900,
+     360,
+     2.2
+    ]
+   ],
+   "reglages": {
+    "image": "film/b03/rue_jour.png",
+    "horizon": 900,
+    "lune": [
+     1897,
+     230,
+     150
+    ],
+    "lueur": 0.3
+   }
+  },
+  {
+   "id": "B",
+   "debut": "v1:et-0.1",
+   "set": "astres.Ciel",
+   "texte": "Et la vitesse de rapprochement de la Lune augmente.",
+   "intention": "on la voit grossir pendant le plan",
+   "camera": [
+    [
+     "#B",
+     1900,
+     360,
+     2.2
+    ],
+    [
+     "#C",
+     1900,
+     340,
+     2.3
+    ]
+   ],
+   "reglages": {
+    "image": "film/b03/rue_jour.png",
+    "horizon": 900,
+    "lune": [
+     1897,
+     230,
+     150
+    ],
+    "croissance": 0.025,
+    "lueur": 0.3
+   }
+  },
+  {
+   "id": "C",
+   "debut": "v1:les-0.1",
+   "set": "scenes.Energie",
+   "texte": "Les scientifiques envisagent toutes les possibilités… dérisoires face à la masse et à l'énergie de mouvement de la Lune.",
+   "intention": "nos moyens, minuscules, face à la Lune",
+   "camera": [
+    [
+     "#C",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#D",
+     980,
+     540,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "lanceurs": "v1:missiles",
+    "nucleaire": "v1:arsenal",
+    "lune": "v1:l’énergie",
+    "derisoire": "v1:dérisoires"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "D",
+   "debut": "v1:il-0.1",
+   "set": "astres.Espace",
+   "texte": "Il ne reste qu'une certitude. La collision aura lieu.",
+   "intention": "la Lune et la Terre, face à face",
+   "camera": [
+    [
+     "#D",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#E",
+     900,
+     540,
+     1.1
+    ]
+   ],
+   "reglages": {
+    "terre": [
+     700,
+     580,
+     300
+    ],
+    "lune": [
+     [
+      "#D",
+      1650,
+      360,
+      90
+     ],
+     [
+      "#E",
+      1500,
+      420,
+      110
+     ]
+    ]
+   },
+   "look": "espace"
+  },
+  {
+   "id": "E",
+   "debut": "v2-0.3",
+   "set": "scenes.Ecran2",
+   "texte": "À Calern, l'observatoire reçoit un ordre d'évacuation.",
+   "intention": "l'ordre clignote",
+   "camera": [
+    [
+     "#E",
+     960,
+     540,
+     1.0
+    ],
+    [
+     "#F",
+     960,
+     560,
+     1.06
+    ]
+   ],
+   "reglages": {
+    "mode": "evacuation"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "F",
+   "debut": "c1-0.6",
+   "set": "scenes.Porte",
+   "texte": "COLLÈGUE : « On doit partir. »",
+   "intention": "le collègue à la porte, Léa à ses écrans ; alarme",
+   "camera": [
+    [
+     "#F",
+     1376,
+     800,
+     1.0
+    ],
+    [
+     "#G",
+     1300,
+     820,
+     1.05
+    ]
+   ],
+   "reglages": {
+    "collegue": true,
+    "lea": true,
+    "alarme": "#F"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "G",
+   "debut": "c1.end+0.3",
+   "set": "noir",
+   "texte": "(insert : le SMS de Camille, Léa écrit puis efface)",
+   "intention": "le téléphone, en gros plan",
+   "calques": [
+    {
+     "type": "sequence",
+     "chemin": "insert/%05d.png",
+     "a": "#G"
+    }
+   ]
+  },
+  {
+   "id": "H",
+   "debut": "c2-0.4",
+   "set": "scenes.Porte",
+   "texte": "COLLÈGUE : « Tu ne peux plus rien changer. »",
+   "intention": "on reste sur Léa qui écoute",
+   "camera": [
+    [
+     "#H",
+     2300,
+     1060,
+     2.0
+    ],
+    [
+     "#I",
+     2300,
+     1060,
+     2.1
+    ]
+   ],
+   "reglages": {
+    "collegue": true,
+    "lea": true,
+    "alarme": "#F"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "I",
+   "debut": "l1-0.3",
+   "set": "scenes.Porte",
+   "texte": "LÉA : « Je sais. Mais on peut encore comprendre ce qui nous arrive. »",
+   "intention": "contrechamp : le collègue à la porte, qui l'écoute",
+   "camera": [
+    [
+     "#I",
+     420,
+     1100,
+     2.4
+    ],
+    [
+     "#J",
+     420,
+     1100,
+     2.5
+    ]
+   ],
+   "reglages": {
+    "collegue": true,
+    "lea": true,
+    "alarme": "#F"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "J",
+   "debut": "v3-0.3",
+   "set": "scenes.Porte",
+   "texte": "Son collègue hésite. Puis il s'en va.",
+   "intention": "il passe la porte",
+   "camera": [
+    [
+     "#J",
+     1376,
+     800,
+     1.0
+    ],
+    [
+     "#K",
+     1376,
+     800,
+     1.04
+    ]
+   ],
+   "reglages": {
+    "collegue": true,
+    "lea": true,
+    "alarme": "#F",
+    "part": "v3:puis"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "K",
+   "debut": "v3:léa-0.1",
+   "set": "scenes.Porte",
+   "texte": "Léa reste seule.",
+   "intention": "la salle vide autour d'elle",
+   "camera": [
+    [
+     "#K",
+     1800,
+     900,
+     1.3
+    ],
+    [
+     "#L",
+     2050,
+     980,
+     1.6
+    ]
+   ],
+   "reglages": {
+    "lea": true,
+    "alarme": "#F"
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "L",
+   "debut": "v3:la-0.2",
+   "set": "astres.Ciel",
+   "texte": "La Lune restera visible depuis Calern jusqu'aux derniers instants.",
+   "intention": "l'observatoire sous une Lune énorme",
+   "camera": [
+    [
+     "#L",
+     1376,
+     768,
+     1.0
+    ],
+    [
+     "#M",
+     1500,
+     700,
+     1.1
+    ]
+   ],
+   "reglages": {
+    "image": "film/b02/calern_exterieur.png",
+    "horizon": 900,
+    "lune": [
+     2150,
+     330,
+     245
+    ],
+    "lueur": 0.4
+   },
+   "look": "nuit"
+  },
+  {
+   "id": "M",
+   "debut": "v3:et-0.1",
+   "set": "calern.Poste",
+   "texte": "Et Léa vient de décider d'enregistrer les dernières mesures de sa chute.",
+   "intention": "elle se remet au clavier",
+   "camera": [
+    [
+     "#M",
+     820,
+     900,
+     1.8
+    ],
+    [
+     "#M.end",
+     840,
+     890,
+     1.95
+    ]
+   ],
+   "look": "nuit"
+  }
+ ],
+ "textes": [
+  {
+   "texte": "SIMULATION HYPOTHÉTIQUE",
+   "de": 0,
+   "pos": [
+    58,
+    60
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 24,
+   "couleur": [
+    214,
+    220,
+    226
+   ],
+   "a": "v3.end+1.6"
+  },
+  {
+   "texte": "Quatrième jour",
+   "de": "v1-0.2",
+   "a": "#B",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    900
+   ],
+   "police": "InstrumentSans-Bold.ttf",
+   "taille": 46,
+   "couleur": [
+    236,
+    240,
+    245
+   ],
+   "fond": true
+  },
+  {
+   "texte": "impact dans {}",
+   "reste": 70560,
+   "de": "v1-0.2",
+   "a": "#B",
+   "fondu": 0.4,
+   "pos": [
+    90,
+    980
+   ],
+   "police": "FragmentMono-Regular.ttf",
+   "taille": 40,
+   "couleur": [
+    255,
+    226,
+    170
+   ],
+   "fond": true
+  }
+ ],
+ "son": [
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_jour.wav",
+   "a": 0,
+   "boucle": true,
+   "jusqua": "#C",
+   "rms": -36,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  },
+  {
+   "synth": "riser",
+   "args": [
+    2.0
+   ],
+   "a": "v1:non-2.0",
+   "gain": -22,
+   "normalise": false
+  },
+  {
+   "petit": "bip",
+   "a": "v1:dérisoires",
+   "gain": -13
+  },
+  {
+   "fichier": "../sons/sfx_real/alarme.wav",
+   "a": "#E",
+   "boucle": true,
+   "jusqua": "#L",
+   "rms": -30,
+   "fondu_entree": 0.2,
+   "fondu_sortie": 0.8
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/notification.wav",
+   "a": "#G+0.4",
+   "gain": -12
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/phone_typing.wav",
+   "a": "#G+2.0",
+   "gain": -20,
+   "fondu_sortie": 0.4
+  },
+  {
+   "fichier": "../../prototype/son/sfx_real/amb_calern_nuit.wav",
+   "a": "#L",
+   "boucle": true,
+   "jusqua": "v3.end+1.6",
+   "rms": -34,
+   "fondu_entree": 0.5,
+   "fondu_sortie": 0.6
+  }
+ ],
+ "silences": []
+}

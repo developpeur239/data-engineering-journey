@@ -1,0 +1,288 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<style>
+@font-face{font-family:"JetBrains Mono";src:url(/assets/fonts/JetBrainsMono.woff2) format("woff2");font-weight:100 800}
+/* texte épuré (montage_guide.md, section 10) : cartes en EB Garamond, pensées en Comic Neue (polices libres OFL) */
+@font-face{font-family:"EB Garamond";src:url(/assets/fonts/EBGaramond.ttf);font-weight:400 800;font-style:normal}
+@font-face{font-family:"EB Garamond";src:url(/assets/fonts/EBGaramond-Italic.ttf);font-weight:400 800;font-style:italic}
+@font-face{font-family:"Comic Neue";src:url(/assets/fonts/ComicNeue-Bold.ttf);font-weight:700}
+/* thèmes typographiques : titres (--fh), texte et petites capitales (--fb), chiffres (--fm) */
+body{--fh:"Archivo";--fhs:72%;--fb:"Archivo";--fm:"IBM Plex Mono";--fhw:800;--fhl:-.005em}
+body[data-font="barlow"]{--fh:"Barlow Condensed";--fhs:100%;--fb:"Barlow";--fm:"IBM Plex Mono";--fhw:800;--fhl:.005em}
+body[data-font="bricolage"]{--fh:"Bricolage Grotesque";--fhs:100%;--fb:"Instrument Sans";--fm:"Fragment Mono";--fhw:800;--fhl:-.02em}
+body[data-font="shoulders"]{--fh:"Big Shoulders Display";--fhs:100%;--fb:"Barlow";--fm:"Space Mono";--fhw:800;--fhl:.01em}
+body[data-font="inter"]{--fh:"Inter";--fhs:100%;--fb:"Inter";--fm:"JetBrains Mono";--fhw:800;--fhl:-.015em}
+html,body{margin:0;background:#07090b;overflow:hidden}
+canvas{display:block}
+#stage{position:absolute;left:0;top:0;overflow:hidden}
+#g2d{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+#hud{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none;font-family:var(--fb),sans-serif;color:#f2f4f5;
+  font-feature-settings:"ss01","cv11","tnum";-webkit-font-smoothing:antialiased}
+.el{position:absolute;opacity:0;will-change:opacity,transform,filter}
+.mono{font-family:var(--fm),"DejaVu Sans Mono",monospace;letter-spacing:-.01em}
+.big,.btitle,.tbig,.sbig,.simline,.keyline .kl,.card .ct,.cite .cn,.citerow .cn{font-family:var(--fh),sans-serif!important;font-stretch:var(--fhs);font-weight:var(--fhw)!important;letter-spacing:var(--fhl)!important}
+.caps{text-transform:uppercase;letter-spacing:.16em;font-weight:600}
+.tag{left:58px;top:40px;border:1px solid;border-radius:6px;padding:6px 14px 6px 12px;font-size:16px;font-weight:600;letter-spacing:.2em;background:rgba(10,12,14,.5);display:flex;align-items:center;gap:10px}
+.tag i{width:10px;height:10px;border-radius:50%;display:block}
+.tag.sim{border-color:#ff5a5f}.tag.sim i{background:#ff5a5f;box-shadow:0 0 10px #ff5a5f}
+.tag.real{border-color:#5fd4dc}.tag.real i{background:#5fd4dc;box-shadow:0 0 10px #5fd4dc}
+.bigchip{left:150px;top:330px;font-size:30px;padding:10px 22px}
+.sect{left:60px;top:96px;font-size:15px;color:#9aa3a8}.sect b{color:#f5a524;font-weight:700;margin-right:10px}
+.title{left:104px;top:770px;max-width:1300px}
+.title .big{font-size:76px;font-weight:800;letter-spacing:-.015em;line-height:1.02;text-shadow:0 4px 30px rgba(0,0,0,.65)}
+.title .sub{font-size:20px;margin-top:12px;color:#c6ccd0;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.sub.o,.bsub.o{color:#f5a524}.sub.r,.bsub.r{color:#ff5a5f}.sub.c,.bsub.c{color:#5fd4dc}
+.maptitle{top:120px}
+.panel{right:96px;top:46px;min-width:300px;padding:14px 18px;border-left:2px solid #5fd4dc;background:linear-gradient(90deg,rgba(10,14,16,.7),rgba(10,14,16,.2))}
+.panel .row{display:flex;justify-content:space-between;gap:30px;font-size:15px;line-height:30px;color:#9aa3a8}.panel .row b{color:#f2f4f5;font-weight:700;font-size:17px}
+.coords{right:96px;bottom:60px;font-size:16px;color:#9aa3a8}
+.recon{right:96px;bottom:36px;font-size:13px;color:#7a848a}
+.pin{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:700;letter-spacing:.12em;white-space:nowrap}
+.pin i{width:11px;height:11px;border-radius:50%;display:block;box-shadow:0 0 12px currentColor}
+.pin.ok{color:#5fd4dc}.pin.ok i{background:#5fd4dc}.pin.bad{color:#ff5a5f}.pin.bad i{background:#ff5a5f}
+.pin span{text-shadow:0 2px 12px rgba(0,0,0,.85)}
+.clock{right:96px;top:60px;text-align:right}.clock .lbl{font-size:15px;color:#9aa3a8}
+.clock .v{font-size:84px;font-weight:700;color:#ff8a3d;text-shadow:0 0 26px rgba(255,120,40,.55)}
+.count{right:96px;bottom:84px;text-align:right}.count .lbl{font-size:15px;color:#9aa3a8}
+.count .v{font-size:48px;font-weight:700;color:#5fd4dc;text-shadow:0 0 18px rgba(80,210,220,.35)}
+.number{left:150px;top:330px;max-width:1100px}
+.numv{font-size:200px;font-weight:700;line-height:1;letter-spacing:-.04em;color:#f2f4f5}
+.numv.acc{color:#f5a524;text-shadow:0 0 40px rgba(245,165,36,.35)}.numv.acc2{color:#ff5a5f;text-shadow:0 0 40px rgba(255,90,95,.35)}
+.unit{font-size:30px;margin-top:18px;color:#f5a524}.nsub{font-size:17px;margin-top:14px;color:#9aa3a8;letter-spacing:.12em}
+.bars{left:150px;top:200px}.btitle{font-size:72px;font-weight:800;letter-spacing:-.015em}.bsub{font-size:17px;color:#9aa3a8;margin-bottom:12px}
+.brow{display:flex;justify-content:space-between;width:1280px}.blab{font-size:20px;color:#c6ccd0}.bval{font-size:40px;font-weight:700;margin-top:-14px}
+.clab{font-size:17px;color:#c6ccd0;text-shadow:0 2px 10px #000}
+.card{width:440px;padding:26px 28px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(14,18,20,.78)}
+.card.on{border-color:#5fd4dc;box-shadow:0 0 0 1px #5fd4dc inset,0 20px 60px rgba(0,0,0,.5)}
+.card .ck{font-size:15px;color:#f5a524}.card .ct{font-size:34px;font-weight:800;margin-top:8px;line-height:1.1}.card .cd{font-size:15px;color:#9aa3a8;margin-top:10px;letter-spacing:.1em}
+.rcard{width:340px;padding:22px 24px}.rcard.wide{width:720px}.rcard .ct{font-size:30px}.rcard.wide .ct{font-size:40px}
+.rk{font-size:13px;color:#5fd4dc;display:flex;gap:8px;align-items:center}.rk i{width:8px;height:8px;border-radius:50%;background:#5fd4dc;display:block}
+.simhead{left:150px;top:420px;font-size:16px;color:#9aa3a8}
+.simline{left:150px;font-size:48px;font-weight:800;letter-spacing:-.01em}.simline em{font-style:normal;color:#ff5a5f}
+.split{top:0;width:960px;height:1080px;display:flex;flex-direction:column;justify-content:center;padding-left:110px;box-sizing:border-box}
+.sbig{font-size:110px;font-weight:800;letter-spacing:-.02em}.sbig.c{color:#5fd4dc}.sbig.r{color:#ff5a5f}.split .cd{font-size:20px;color:#c6ccd0;margin-bottom:14px}
+.tcenter{left:0;width:1920px;top:400px;text-align:center}.tbig{font-size:120px;font-weight:800;letter-spacing:-.025em}.tsub{font-size:22px;color:#f5a524;margin-top:20px}
+.tcenter.q .tbig{font-size:96px}
+.cursor{left:1500px;top:440px;width:10px;height:100px;background:#f5a524}
+#logo{position:absolute;right:34px;top:30px;width:72px;height:72px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:.95}
+.panel{top:122px!important}.clock{top:120px!important}
+.cite{right:96px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:10px 14px 10px 18px;border-right:3px solid #5fd4dc;background:linear-gradient(270deg,rgba(10,14,16,.85),rgba(10,14,16,.15))}
+.cite .ck{font-size:12px;color:#5fd4dc;letter-spacing:.2em}.cite .cn{font-size:26px;font-weight:800;letter-spacing:.02em}.cite .cs{font-size:13px;color:#9aa3a8;letter-spacing:.12em}
+.citerow{left:0;width:1920px;top:860px;display:flex;justify-content:center;gap:28px}
+.citerow .c{padding:14px 26px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(10,14,16,.78);text-align:center;opacity:0}
+.citerow .cn{font-size:34px;font-weight:800;letter-spacing:.03em}.citerow .cs{font-size:13px;color:#9aa3a8;letter-spacing:.14em;margin-top:6px}
+.citerow .ck{font-size:11px;color:#5fd4dc;letter-spacing:.22em;margin-bottom:6px}
+.keyline{left:0;width:1920px;top:0;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;
+  background:radial-gradient(ellipse at 50% 50%,rgba(4,6,8,.78) 0%,rgba(4,6,8,.45) 55%,rgba(4,6,8,0) 80%)}
+.keyline .kl{display:flex;gap:26px;font-size:96px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.keyline .kw{opacity:0;display:inline-block;text-shadow:0 6px 40px rgba(0,0,0,.6)}.keyline .kw.acc{color:#f5a524}
+.tcenter .tbig{font-family:"EB Garamond",serif!important;font-weight:400!important;letter-spacing:.3em!important;text-transform:uppercase;font-size:104px}
+.tcenter .tsub{font-family:"EB Garamond",serif;font-style:italic;font-size:36px;color:#cdc8bf;letter-spacing:0;margin-top:28px}
+.tcenter.q .tbig{text-transform:none;letter-spacing:.01em!important;font-style:italic;font-size:110px}
+.keyline .kl{font-family:"EB Garamond",serif!important;font-style:italic;font-weight:500!important;letter-spacing:0!important;font-size:96px;gap:24px}
+.keyline .kw.acc{color:#f5c67a}
+.tcenter,.keyline,.thought{font-feature-settings:normal!important;font-variant:normal}
+.unit{letter-spacing:0}
+.thought{left:0;width:1920px;text-align:center;font-family:"Comic Neue",sans-serif;font-weight:700;font-size:46px;color:#fff;
+  text-shadow:0 0 2px #121318,0 0 2px #121318,0 2px 4px rgba(0,0,0,.7)}
+.thought span{display:inline-block;padding:34px 120px;background:radial-gradient(ellipse at center,rgba(0,0,0,.62) 0%,rgba(0,0,0,.4) 40%,rgba(0,0,0,0) 72%)}
+.thought.pensee{color:#dcaa78;font-size:42px}.thought.autre{color:#82c3ff}.thought.alerte{color:#ff8a72}
+#grade,#grain{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;transform-origin:0 0}
+#grade{mix-blend-mode:soft-light}#grain{mix-blend-mode:overlay;opacity:.07}
+</style></head>
+<body>
+<div id="stage">
+  <canvas id="g2d"></canvas>
+  <div id="grade"></div>
+  <canvas id="grain" width="480" height="270"></canvas>
+  <div id="hud"></div>
+  <img id="logo" src="/assets/logo.png" alt="">
+</div>
+<script type="importmap">{"imports":{"three":"/assets/vendor/three.module.min.js","three/addons/":"/assets/vendor/addons/"}}</script>
+<script type="module">
+import { THREE, renderer, scene, camera, W, H, place, shake, sstep, clamp, reseed, rnd } from "./core.js";
+import * as places from "./places.js";
+import * as dev from "./devices.js";
+import * as gfx from "./graphics.js";
+import { loadMixamo } from "./mixamo.js";
+import { PEOPLE } from "./people.js";
+
+const stage = document.getElementById("stage"); stage.style.width = W + "px"; stage.style.height = H + "px";
+stage.prepend(renderer.domElement);
+const sc = W / 1920;
+for (const id of ["g2d", "hud", "grade"]) document.getElementById(id).style.transform = `scale(${sc})`;
+{ const lg = document.getElementById("logo"); lg.style.transformOrigin = "100% 0"; lg.style.transform = `scale(${sc})`; lg.style.right = (34 * sc) + "px"; lg.style.top = (30 * sc) + "px"; }
+const grainC = document.getElementById("grain"); grainC.style.width = W + "px"; grainC.style.height = H + "px";
+const gctx = grainC.getContext("2d");
+
+// typographie française : espaces fines insécables avant ? ! : ; et entre les milliers
+const typo = (s) => String(s).replace(/\s([?!:;])/g, " $1").replace(/«\s?/g, "« ").replace(/\s?»/g, " »");
+
+// grade colorimétrique par temps du récit (froid → tension rouge → chaleur du retour)
+const GRADE = { 1: ["#3a5a7a", 0.10], 2: ["#202830", 0.0], 3: ["#3a6a8a", 0.10], 4: ["#6a5a3a", 0.06], 5: ["#2a4a7a", 0.16], 6: ["#7a2a2a", 0.14], 7: ["#3a4a5a", 0.06], 8: ["#ffa050", 0.22], 9: ["#2a3a4a", 0.06] };
+
+let S = null, upd3d = null, upd2d = null, H0 = null, extra = [];
+const FLAT = new Set(["number", "bars", "circles", "choice", "list", "title"]);
+window.init = async (scn) => {
+  S = scn; reseed(S.n * 101 + 7);
+  document.body.dataset.font = S.font || "bricolage";
+  if (S.clean) { document.getElementById("hud").style.display = "none"; document.getElementById("logo").style.display = "none"; }   // image propre (miniature)
+  S.p = S.p || {}; S.onscreen = typo(S.onscreen); if (S.p.status) S.p.status = typo(S.p.status);
+  const norm = (w) => w.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
+  // instant (en s, dans la scène) du premier mot qui correspond, sinon valeur de repli
+  S.at = (re, fb) => { const w = (S.words || []).find((x) => re.test(x.w) || re.test(norm(x.w))); return w ? w.a : fb; };
+  S.atEnd = (re, fb) => { const w = (S.words || []).find((x) => re.test(x.w) || re.test(norm(x.w))); return w ? w.b : fb; };
+  const n = S.n, k = S.kind, p = S.p;
+  // personnages Mixamo : chargés seulement si la scène en a (décors avec personnages)
+  if (S.mixamo !== false && ((k === "person") || (k === "device" && !["phone", "notebook", "radio"].includes(p.what)) || [1, 2, 20, 22, 32, 35, 36, 41, 54, 55, 7, 44, 45].includes(n)))
+    await loadMixamo();
+  // ---- décor 3D ----
+  const T = {
+    1: () => places.apartment(S, "morning"), 2: () => places.metro(S, "refuse"), 20: () => places.metro(S, "coins"), 22: () => places.metro(S, "stuck"),
+    32: () => places.pharmacy(S), 35: () => places.stairwell(S), 36: () => places.apartment(S, "neighbor"), 41: () => places.street(S),
+    54: () => places.apartment(S, "day3"), 55: () => places.apartment(S, "radio"), 63: () => places.apartment(S, "cash"),
+    5: () => dev.chrono(S), 6: () => dev.monitors(S), 7: () => dev.airport(S), 44: () => dev.warehouse(S), 45: () => dev.shelves(S),
+  }[n];
+  const byWhat = { phone: dev.phone, terminal: dev.terminal, atm: dev.atm, servers: dev.servers, computer: dev.computer, notebook: dev.notebook, ticket: (s) => places.metro(s, "refuse"), cash: (s) => places.apartment(s, "cash"), radio: (s) => places.apartment(s, "radio"),
+    board: dev.airport, warehouse: dev.warehouse, shelves: dev.shelves };
+  if (T) upd3d = await T();
+  else if (k === "globe") upd3d = await dev.globe(S);
+  else if (k === "device" && byWhat[p.what]) upd3d = await byWhat[p.what](S);
+  else upd3d = dev.backdrop(S);
+  // ---- couche graphique ----
+  H0 = gfx.commonHud(S);
+  const hudz = document.createElement("div"); hudz.id = "hudz"; hudz.style.cssText = "position:absolute;left:0;top:0;width:1920px;height:1080px";
+  document.getElementById("hud").insertBefore(hudz, H0.fade); gfx.setLayer(hudz);
+  if (k === "number") upd2d = gfx.numberKind(S);
+  else if (k === "bars") upd2d = gfx.barsKind(S);
+  else if (k === "circles") upd2d = gfx.circlesKind(S);
+  else if (k === "choice") upd2d = gfx.choiceKind(S);
+  else if (k === "list") upd2d = gfx.listKind(S);
+  else if (k === "title") upd2d = gfx.titleKind(S);
+  else if (k === "map") upd2d = gfx.mapKind(S, await gfx.loadGeo());
+  else {
+    // scènes 3D : titre en bas à gauche, apparition calée sur le mot qui le reprend
+    const big = S.onscreen.split(" · ").length > 1 && n !== 2 ? S.onscreen.split(" · ")[0] : S.onscreen;
+    const rest = S.onscreen.split(" · ").length > 1 && n !== 2 ? S.onscreen.split(" · ").slice(1).join(" · ") : "";
+    const sub = [rest, p.status && !S.onscreen.includes(p.status) ? p.status : ""].filter(Boolean).join(" · ");
+    const col = p.bad ? "r" : p.good ? "c" : "o";
+    const first = (S.onscreen.match(/[A-Za-zÀ-ÖØ-öø-ÿ]{4,}/) || [""])[0].toLowerCase();
+    const tIn = Math.max(0.35, (first ? S.at(new RegExp("^" + first.slice(0, 5)), null) : null) ?? (S.spans[0] || [0.3])[0] + 0.25);
+    if (n !== 1) { const lt = gfx.lowerTitle(S, big, sub, col); extra.push((t) => lt(t, tIn)); }
+  }
+  // ---- éléments propres à certaines scènes ----
+  if (n === 1) {
+    const tP = gfx.lowerTitle(S, "Paris", "Mardi · décembre · 48.86°N 2.35°E"), tM = gfx.lowerTitle(S, "Marc, 34 ans", "Paris 11e · un fils de deux ans", "");
+    const clock = gfx.el(`<div class="lbl caps">Heure locale · Paris</div><div class="v mono">07:45</div>`, "clock");
+    const cnt = gfx.el(`<div class="lbl caps">Crèche dans</div><div class="v mono">00:15:00</div>`, "count");
+    const sp = S.spans;
+    extra.push((t) => { tP(t, sp[0][0] + 0.2, sp[1][0]); tM(t, S.at(/^marc$/i, sp[1][0]), sp[3][0] - 0.1);
+      gfx.reveal(clock, t, S.at(/^sept$/i, sp[0][0] + 1.4), S.dur + 1); gfx.reveal(cnt, t, S.at(/^cr[eè]che$/i, sp[3][0]) - 0.1, S.dur + 1);
+      const left = Math.max(0, 15 * 60 - t); cnt.querySelector(".v").textContent = `00:${String(Math.floor(left / 60)).padStart(2, "0")}:${String(Math.floor(left % 60)).padStart(2, "0")}`; });
+  }
+  if (n === 2) {
+    const pw = gfx.pin3d("Électricité · OK", "ok"), da = gfx.pin3d("Données · 0", "bad");
+    extra.push((t, ctx) => { if (!ctx.project) return; const v1 = ctx.project.ceiling.clone().project(camera), v2 = ctx.project.screen.clone().project(camera);
+      pw(t, S.at(/lumi/i, S.spans[2][0]) + 0.1, S.dur + 1, (v1.x + 1) / 2 * 1920, (1 - v1.y) / 2 * 1080);
+      da(t, S.at(/donn/i, S.spans[2][0] + 1.3), S.dur + 1, (v2.x + 1) / 2 * 1920, (1 - v2.y) / 2 * 1080); });
+  }
+  if (k === "number" || k === "bars" || k === "list" || k === "title" || k === "choice" || k === "circles") {
+    // voile sombre : les chiffres et les titres restent lisibles sur le décor
+    const dim = gfx.el("", "", `left:0;top:0;width:1920px;height:1080px;background:linear-gradient(90deg,rgba(6,8,10,.88) 0%,rgba(6,8,10,${n === 6 ? 0.55 : 0.75}) 60%,rgba(6,8,10,.6) 100%)`);
+    document.getElementById("hud").prepend(dim); extra.push((t) => { dim.style.opacity = 1; });
+  }
+  // sources : sur le mot qui les nomme ; en ligne pour la scène 4 (les quatre pannes réelles), empilées ailleurs
+  const cites = S.cites || [];
+  if (n === 4 && cites.length) {
+    const row = gfx.el(cites.map(([, name, sub]) => `<div class="c"><div class="caps ck">Réel</div><div class="cn">${name}</div><div class="caps cs">${typo(sub)}</div></div>`).join(""), "citerow");
+    const cs = [...row.querySelectorAll(".c")];
+    extra.push((t) => { const kl = S.keyline ? S.keyline.lines[0][0][1] : S.dur; row.style.opacity = 1 - sstep(kl - 0.6, kl - 0.1, t);
+      cs.forEach((c, i) => { const v = sstep(cites[i][0], cites[i][0] + 0.35, t); c.style.opacity = v; c.style.transform = `translateY(${(1 - v) * 16}px)`; }); });
+  } else cites.forEach(([tc, name, sub], i) => {
+    const c = gfx.el(`<div class="caps ck">Source</div><div class="cn">${name}</div><div class="caps cs">${typo(sub)}</div>`, "cite", `bottom:${(k === "device" || k === "person" ? 300 : 120) + i * 96}px`);
+    extra.push((t) => gfx.reveal(c, t, tc, Math.min(S.dur + 1, tc + 4.5), 0.35, 0.4, 0));
+  });
+  // phrase clé : écrite en grand, mot à mot, exactement sur la voix
+  if (S.keyline) {
+    const box = gfx.el(S.keyline.lines.map((ln) => `<div class="kl">${ln.map(([w]) => `<span class="kw${/\d/.test(w) || /^heures/i.test(w) ? " acc" : ""}">${typo(w)}</span>`).join("")}</div>`).join(""), "keyline");
+    const ws = [...box.querySelectorAll(".kw")], times = S.keyline.lines.flat().map(([, tw]) => tw);
+    extra.push((t) => { box.style.opacity = sstep(times[0] - 0.25, times[0], t) * (1 - sstep(S.dur - 0.25, S.dur, t));
+      ws.forEach((w, i) => { const v = sstep(times[i] - 0.06, times[i] + 0.2, t); w.style.opacity = v; w.style.transform = `translateY(${(1 - v) * 22}px) scale(${1 + (1 - v) * 0.06})`; w.style.filter = v < 0.99 ? `blur(${(1 - v) * 8}px)` : "none"; }); });
+  }
+  (S.thoughts || []).forEach(([a, b, txt, who, pos]) => {
+    const st = pos ? `left:${pos[0] - 600}px;width:1200px;top:${pos[1] - 60}px` : "top:150px";
+    const e = gfx.el(`<span>${typo(txt)}</span>`, "thought " + (who || "marc"), st);
+    extra.push((t) => gfx.reveal(e, t, a, b, 0.35, 0.4, 10));
+  });
+  const [gc, ga] = S.warm ? ["#ffa050", 0.24] : GRADE[S.beat] || ["#000", 0];
+  document.getElementById("grade").style.background = gc; document.getElementById("grade").style.opacity = ga;
+  await document.fonts.ready;
+  return true;
+};
+
+window.renderAt = (t) => {
+  const ctx = upd3d(t) || {};
+  for (const p of PEOPLE) if (p.mx) {   // l'enfant Mixamo
+    p.play(p.idle || "Sitting_Idle", t);
+    const A = p.carriedBy;
+    if (A) {   // assis sur les avant-bras du père : ses hanches exactement entre les deux mains
+      A.g.updateWorldMatrix(true, true);
+      const hl = A.bones.LeftHand.getWorldPosition(new THREE.Vector3()), hr = A.bones.RightHand.getWorldPosition(new THREE.Vector3());
+      const mid = hl.clone().add(hr).multiplyScalar(0.5);
+      const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(A.g.getWorldQuaternion(new THREE.Quaternion()));
+      mid.add(fwd.multiplyScalar(-0.02)); mid.y -= 0.1;
+      p.g.rotation.set(0, A.g.rotation.y + Math.PI / 2, 0); p.g.position.set(0, 0, 0); p.g.updateWorldMatrix(true, true);
+      const h = p.bones.Hips.getWorldPosition(new THREE.Vector3());
+      p.g.position.copy(mid.sub(h)); p.g.updateWorldMatrix(true, true);
+    }
+  }
+  const [sh, roll] = shake(t, S.impacts || []);
+  place(ctx.pos.clone().add(sh), ctx.tgt, roll, ctx.fov || 38);
+  renderer.render(scene, camera);
+  if (upd2d) upd2d(t);
+  if (FLAT.has(S.kind)) {   // graphiques : poussée lente continue (jamais d'image figée), dérive légère
+    const z = 1 + 0.045 * t / S.dur, dx = Math.sin(t * 0.21) * 6, dy = Math.cos(t * 0.17) * 4;
+    const g = document.getElementById("g2d"); g.style.transformOrigin = "50% 50%";
+    g.style.transform = `translate(${(dx * sc).toFixed(2)}px, ${(dy * sc).toFixed(2)}px) translate(${(-960 * (1 - sc)).toFixed(1)}px, ${(-540 * (1 - sc)).toFixed(1)}px) scale(${(sc * z).toFixed(5)})`;
+    const hz = document.getElementById("hudz"); hz.style.transformOrigin = "50% 50%"; hz.style.transform = `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${z.toFixed(5)})`;
+  }
+  gfx.updateCommon(H0, S, t);
+  for (const f of extra) f(t, ctx);
+  // grain animé (déterministe : graine = numéro d'image)
+  reseed(Math.floor(t * 24) + 1); const img = gctx.createImageData(480, 270);
+  for (let i = 0; i < img.data.length; i += 4) { const v = rnd() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
+  gctx.putImageData(img, 0, 0);
+  // transitions « filé » entre deux plans d'un même temps : flou directionnel calé sur le souffle
+  const cv = renderer.domElement, d = S.dur, wi = S.whipIn ? 1 - sstep(0, 0.2, t) : 0, wo = S.whipOut ? sstep(d - 0.2, d, t) : 0, k2 = Math.max(wi, wo);
+  cv.style.filter = k2 > 0.01 ? `blur(${(k2 * 14).toFixed(1)}px)` : "none";
+  cv.style.transform = k2 > 0.01 ? `translateX(${((wo - wi) * -90 * sc).toFixed(1)}px) scale(${1 + k2 * 0.04})` : "none";
+};
+// contrôle de cohérence : personnage dans un meuble, personnages qui se chevauchent, caméra dans un objet
+window.audit = (t) => {
+  const ctx = upd3d(t) || {}; place(ctx.pos, ctx.tgt, 0, ctx.fov || 38); scene.updateMatrixWorld(true);
+  const isPersonPart = (o) => { while (o) { if (PEOPLE.some((p) => p.g === o)) return true; o = o.parent; } return false; };
+  const solids = [];
+  scene.traverse((o) => { if (!o.isMesh || !o.visible || isPersonPart(o)) return; const m = [].concat(o.material)[0];
+    if (m && (m.transparent && m.opacity < 0.5)) return; let vis = true, q = o; while (q) { if (!q.visible) vis = false; q = q.parent; } if (!vis) return;
+    const b = new THREE.Box3().setFromObject(o), s = b.getSize(new THREE.Vector3());
+    if (Math.max(s.x, s.y, s.z) > 3.2 || Math.min(s.x, s.y, s.z) < 0.004 || s.x * s.z < 0.002) return; solids.push(b); });
+  const out = [], bodies = [];
+  for (const p of PEOPLE) { if (p.g.parent && p.g.parent !== scene && PEOPLE.some((q) => q.P && q.P.body === p.g.parent)) continue;   // enfant porté
+    let vis = true, q = p.g; while (q) { if (!q.visible) vis = false; q = q.parent; } if (!vis) continue;
+    const c = p.g.getWorldPosition(new THREE.Vector3()); const r = p.kind === "child" ? 0.12 : 0.16;
+    const seated = (p.kind === "mx" || p.mx) ? /Sitting|Typing/.test(p.cur || "") : false;
+    const body = new THREE.Box3(new THREE.Vector3(c.x - r, c.y + (seated ? 0.75 : 0.25), c.z - r), new THREE.Vector3(c.x + r, c.y + 1.45, c.z + r));
+    bodies.push([p, body]);
+    for (const b of solids) if (b.intersectsBox(body)) { const i = b.clone().intersect(body).getSize(new THREE.Vector3()); if (i.x > 0.04 && i.z > 0.04 && i.y > 0.05) out.push(`personnage (${p.role || p.kind}) dans un objet ${b.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join("x")} à ${b.getCenter(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join(",")}`); }
+  }
+  for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) { const a = bodies[i][1], b = bodies[j][1];
+    if (a.intersectsBox(b)) { const s = a.clone().intersect(b).getSize(new THREE.Vector3()); if (s.x > 0.08 && s.z > 0.08) out.push(`deux personnages se chevauchent (${bodies[i][0].role || "?"} / ${bodies[j][0].role || "?"})`); } }
+  const cam = camera.position.clone();
+  for (const b of solids) if (b.containsPoint(cam)) out.push("caméra dans un objet " + b.getSize(new THREE.Vector3()).toArray().map((v) => v.toFixed(2)).join("x"));
+  for (const [p, body] of bodies) if (body.clone().expandByScalar(0.05).containsPoint(cam)) out.push(`caméra dans un personnage (${p.role || p.kind})`);
+  return [...new Set(out)];
+};
+window.ready = true;
+</script>
+</body></html>
