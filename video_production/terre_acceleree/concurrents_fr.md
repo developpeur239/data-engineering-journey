@@ -82,3 +82,13 @@ un nombre affiché au-dessus de chaque tête, et une question finale en commenta
 Il décline la formule qui marche : richesse (575 k), crush (138 k), QI (93 k), taille (23 k), pire secret (8 k).
 Son sujet de physique « Et si le temps accélérait sans jamais s'arrêter ? » n'a fait que 4 450 vues.
 Il vend un guide « comment je fais mes vidéos uniquement avec l'IA » : la chaîne sert aussi de vitrine.
+
+### Analyse de la vidéo « future richesse » (fichier fourni, 9 min 33)
+- 164 plans, soit un plan toutes les 3,5 s. Dessin animé 2D plat, personnages silhouettes à tête noire, rues parisiennes.
+- Voix off à la 2e personne, phrases de 2 à 4 s, quelques répliques jouées.
+- Accroche : 0:00 danger immédiat (voiture qui grille le feu), 0:42 le nombre apparaît, 1:20 le titre est énoncé.
+- Le nombre est un badge animé au-dessus des têtes (doré = riche, rouge = dettes, gris clignotant = zéro), qui monte ou descend en direct.
+- Structure : découverte → avantages (ticket gagnant, ami génie) → prix moral (la femme au manteau rose) → méchant qui revient
+  (le conducteur du début) → révélation (zéro = la vie s'arrête) → dilemme (donner l'adresse ou sauver Léo) →
+  cliffhanger (son propre nombre dans le rétroviseur) → « Toi, tu donnerais l'adresse ? » + « abonne-toi pour le prochain pouvoir ».
+- Tous les éléments plantés au début reviennent (le billet, le balayeur père de Hugo, le conducteur, la montre).
