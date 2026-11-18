@@ -1,0 +1,230 @@
+<title>Vérifs chauffagistes 33</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout : une colonne mobile, une fiche repliable par entreprise, barre de progression collante en haut. */
+:root {
+  --bg: #f3f5f7; --card: #ffffff; --ink: #18222d; --muted: #5b6875; --line: #dfe4e9;
+  --accent: #c2410c; --accent-soft: #fdeee4;
+  --ok: #157347; --ok-soft: #e3f4ea; --ko: #b42318; --ko-soft: #fde8e6; --unk: #8a6d00; --unk-soft: #fbf3d6;
+  --display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11171d; --card: #1a222b; --ink: #e8edf2; --muted: #9aa7b4; --line: #2b3641;
+  --accent: #fb923c; --accent-soft: #3a2416;
+  --ok: #4ade80; --ok-soft: #12301f; --ko: #f87171; --ko-soft: #3a1717; --unk: #facc15; --unk-soft: #332b0d; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11171d; --card: #1a222b; --ink: #e8edf2; --muted: #9aa7b4; --line: #2b3641;
+  --accent: #fb923c; --accent-soft: #3a2416;
+  --ok: #4ade80; --ok-soft: #12301f; --ko: #f87171; --ko-soft: #3a1717; --unk: #facc15; --unk-soft: #332b0d; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: .01em; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.7rem; line-height: 1.1; }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 14px 10px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--line); }
+.progress { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.progress > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+.meta { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .9rem; flex-wrap: wrap; }
+.filters { display: flex; gap: 6px; }
+.filters button { font: 600 .85rem var(--body); border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 6px 12px; border-radius: 99px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+details.guide { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+details.guide summary { font-weight: 600; cursor: pointer; }
+details.guide ol { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.card > summary { list-style: none; cursor: pointer; padding: 14px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.card > summary::-webkit-details-marker { display: none; }
+.rank { font: 700 1.1rem var(--display); width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.who { min-width: 0; }
+.who h2 { font-size: 1.2rem; line-height: 1.15; }
+.who p { margin: 2px 0 0; color: var(--muted); font-size: .88rem; }
+.count { font: 600 .82rem var(--body); color: var(--muted); white-space: nowrap; }
+.count.done { color: var(--ok); }
+.body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); }
+.links { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
+.links a { font: 600 .9rem var(--body); text-decoration: none; color: var(--accent); border: 1.5px solid var(--accent); padding: 7px 12px; border-radius: 8px; }
+.tel { font-size: .9rem; color: var(--muted); user-select: all; }
+.check { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.check h3 { font-size: 1.05rem; }
+.crit { margin: 0; font-size: .92rem; color: var(--muted); }
+.crit b { color: var(--ink); font-weight: 600; }
+.hint { font-size: .88rem; padding: 6px 10px; border-radius: 8px; }
+.hint.ok { background: var(--ok-soft); color: var(--ok); }
+.hint.ko { background: var(--ko-soft); color: var(--ko); }
+.hint.unk { background: var(--unk-soft); color: var(--unk); }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btns button { font: 600 1rem var(--body); padding: 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+.btns button.ok[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: var(--card); }
+.btns button.ko[aria-pressed="true"] { background: var(--ko); border-color: var(--ko); color: var(--card); }
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.test { background: var(--accent-soft); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.test h3 { font-size: 1.05rem; color: var(--accent); }
+.test p { margin: 0; font-size: .9rem; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+label { display: flex; flex-direction: column; gap: 3px; font-size: .85rem; color: var(--muted); min-width: 0; }
+input, textarea { font: 1rem var(--body); color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px; width: 100%; }
+textarea { min-height: 60px; resize: vertical; }
+.status { font-size: .82rem; color: var(--muted); min-height: 1.2em; }
+.empty { color: var(--muted); text-align: center; padding: 24px 0; }
+@media (prefers-reduced-motion: reduce) { .progress > i { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Vérifs chauffagistes 33</h1>
+    <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+    <div class="meta"><span id="prog">0 / 22 sites vérifiés</span><span id="save">Chargement…</span></div>
+    <div class="filters" role="group" aria-label="Filtrer">
+      <button id="f-all" aria-pressed="true">Tous</button>
+      <button id="f-todo" aria-pressed="false">À faire</button>
+      <button id="f-done" aria-pressed="false">Terminés</button>
+    </div>
+  </header>
+
+  <details class="guide">
+    <summary>Comment faire (2 min par site)</summary>
+    <ol>
+      <li>Ouvre le site <b>sur ce téléphone</b>, sans rien toucher : ce que tu vois avant de défiler, c'est le « 1er écran ».</li>
+      <li>Pour chaque point, lis le critère, regarde, puis touche <b>Bon</b> ou <b>Pas bon</b>.</li>
+      <li>Le cadre coloré, c'est ce que mon audit a cru voir. Tu confirmes ou tu corriges.</li>
+      <li>Pour les 6 premiers, fais aussi le test de demande de devis et note les dates.</li>
+      <li>Tout s'enregistre tout seul. Dis-moi « c'est fait » et je relis tes réponses.</li>
+    </ol>
+  </details>
+
+  <div id="list"></div>
+</div>
+
+<script>
+const DATA = [{"id": "energical", "rang": 1, "nom": "Energical", "ville": "Sainte-Eulalie", "note": "4.4", "avis": "202", "tel": "05 33 89 50 90", "pub": "Google Ads", "site": "https://energical.fr/", "devis": "https://energical.fr/contact/", "maps": "https://maps.google.com/?cid=3192325516359937065", "test": true, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ko", "Premier bouton « ETUDE ET DEVIS » à environ 5 écrans"], ["ko", "Environ 10 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ko", "Note 4.4/5 (202 avis) absente du site"]]}, {"id": "sun-green-energies", "rang": 2, "nom": "Sun Green Energies", "ville": "Merignac", "note": "4.7", "avis": "773", "tel": "05 56 02 10 10", "pub": "Meta", "site": "https://www.sungreen.fr/", "devis": "https://www.sungreen.fr/testez-votre-eligibilite-aux-differentes-aides-de-letat/", "maps": "https://maps.google.com/?cid=13979328391146123421", "test": true, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ok", "« Testez votre éligibilité » visible dès le haut de la page"], ["ko", "Environ 22 cases à remplir"], ["ok", "Chat ou prise de RDV trouvé"], ["ko", "Note 4.7/5 (773 avis) absente du site"]]}, {"id": "le-jeune-entreprise", "rang": 3, "nom": "LE JEUNE Entreprise", "ville": "Talence", "note": "4.5", "avis": "287", "tel": "05 56 80 08 00", "pub": "Google Ads", "site": "https://www.lejeuneentreprise.fr/", "devis": "", "maps": "https://maps.google.com/?cid=8750633529858445838", "test": true, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ko", "Premier bouton « contact@lejeuneentreprise.com » à environ 15 écrans"], ["?", "Formulaire non trouvé automatiquement"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "solution-energie", "rang": 4, "nom": "Solution Energie", "ville": "Montussan", "note": "4.6", "avis": "132", "tel": "05 56 85 00 63", "pub": "Google Ads", "site": "http://www.solutionenergie.eu/", "devis": "https://www.solutionenergie.eu/contact-geothermie-gironde", "maps": "https://maps.google.com/?cid=376393607207556972", "test": true, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ko", "Aucun bouton devis/contact trouvé"], ["ko", "Environ 9 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ko", "Note 4.6/5 (132 avis) absente du site"]]}, {"id": "la-boutique-du-feu", "rang": 5, "nom": "La Boutique du Feu", "ville": "Gujan-Mestras", "note": "4", "avis": "200", "tel": "05 57 15 10 37", "pub": "non détecté", "site": "https://laboutiquedufeu.com/", "devis": "https://lbdf.openfire.fr/page/contactus", "maps": "https://maps.google.com/?cid=15274969179236650302", "test": true, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ko", "Premier bouton « NOUS CONTACTER » à environ 7 écrans"], ["ok", "Environ 6 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["?", "Note Google sous 4,3 : peu utile à afficher"]]}, {"id": "k2-energies", "rang": 6, "nom": "K2 ENERGIES", "ville": "Le Bouscat", "note": "4.6", "avis": "101", "tel": "05 57 10 21 10", "pub": "Google Ads", "site": "https://www.k2energies.com/", "devis": "https://www.k2energies.com/estimez-votre-projet/", "maps": "https://maps.google.com/?cid=15065773301090718297", "test": true, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« ESTIMATION de votre projet » visible dès le haut de la page"], ["ko", "Environ 12 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ko", "Note 4.6/5 (101 avis) absente du site"]]}, {"id": "r-soconfort-thermogaz", "rang": 7, "nom": "Résoconfort Thermogaz", "ville": "Bordeaux", "note": "4.5", "avis": "547", "tel": "05 56 86 05 06", "pub": "non détecté", "site": "https://resoconfort.fr/agence/thermogaz-chauffagiste-bordeaux/", "devis": "https://resoconfort.fr/contact/", "maps": "https://maps.google.com/?cid=6496060650531516951", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ok", "« Contactez-nous » visible dès le haut de la page"], ["ko", "Environ 18 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "minoria-concept", "rang": 8, "nom": "MINORIA CONCEPT", "ville": "La Brede", "note": "4.5", "avis": "293", "tel": "05 56 94 94 58", "pub": "non détecté", "site": "https://minoria-concept.fr/", "devis": "https://minoria-concept.fr/contact/", "maps": "https://maps.google.com/?cid=13194697990072476940", "test": false, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ok", "« Devis » visible dès le haut de la page"], ["ko", "Environ 14 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "a-solaire-panneaux-solaires-climatisatio", "rang": 9, "nom": "A+Solaire", "ville": "Gujan-Mestras", "note": "5", "avis": "187", "tel": "05 57 15 34 04", "pub": "Google Ads", "site": "https://www.aplus-solaire.fr/", "devis": "https://www.aplus-solaire.fr/contact", "maps": "https://maps.google.com/?cid=12441980247393815441", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« Prendre rendez-vous » visible dès le haut de la page"], ["ko", "Environ 10 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "optim-home-energie", "rang": 10, "nom": "Optim'Home Energie", "ville": "Bruges", "note": "4.6", "avis": "155", "tel": "05 57 22 94 03", "pub": "Google Ads", "site": "https://optimhomeenergie.fr/", "devis": "https://www.optimhomeenergie.fr/estimation-projet/", "maps": "https://maps.google.com/?cid=14150237971229791763", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« Demandez un devis » visible dès le haut de la page"], ["ko", "Environ 12 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "technigaz", "rang": 11, "nom": "Technigaz", "ville": "Andernos-Les-Bains", "note": "4.4", "avis": "106", "tel": "05 56 82 06 82", "pub": "non détecté", "site": "https://www.axenergie.eu/agences/43-technigaz", "devis": "https://www.axenergie.eu/devis-chauffagiste", "maps": "https://maps.google.com/?cid=3714327104780312279", "test": false, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ko", "Premier bouton « NOUS CONTACTER » à environ 3 écrans"], ["?", "Formulaire non trouvé automatiquement"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "fonteyraud-sarl", "rang": 12, "nom": "Fonteyraud Sarl", "ville": "Cadillac-Sur-Garonne", "note": "4.1", "avis": "59", "tel": "05 56 62 66 09", "pub": "Google Ads", "site": "https://fonteyraud.fr/", "devis": "https://fonteyraud.fr/contact/", "maps": "https://maps.google.com/?cid=5466940879810086068", "test": false, "hints": [["ko", "Pas trouvé cliquable (texte simple ou caché dans le menu)"], ["ok", "« CONTACT » visible dès le haut de la page"], ["ok", "Environ 7 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "castets-maixent-ets", "rang": 13, "nom": "Castets Maixent Ets", "ville": "Le Haillan", "note": "4.3", "avis": "50", "tel": "05 56 34 25 35", "pub": "non détecté", "site": "http://castets-maixent.com/", "devis": "", "maps": "https://maps.google.com/?cid=1223689950382373920", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ko", "Premier bouton « Je laisse mes coordonnées pour être cont » à environ 2 écrans"], ["?", "Formulaire non trouvé automatiquement"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ko", "Note 4.3/5 (50 avis) absente du site"]]}, {"id": "france-habitat-enr", "rang": 14, "nom": "FRANCE HABITAT ENR", "ville": "Montussan", "note": "4.6", "avis": "324", "tel": "05 57 96 69 24", "pub": "Google Ads, Meta", "site": "https://francehabitatenr.fr/", "devis": "https://francehabitatenr.fr/contact/", "maps": "https://maps.google.com/?cid=6653110341401791769", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ok", "« Contact » visible dès le haut de la page"], ["ko", "Environ 9 cases à remplir"], ["ok", "Chat ou prise de RDV trouvé"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "habitat-rt-2020", "rang": 15, "nom": "Habitat RT 2020", "ville": "Merignac", "note": "4.9", "avis": "248", "tel": "05 56 56 86 86", "pub": "non détecté", "site": "http://www.habitatrt2020.fr/", "devis": "https://www.habitatrt2020.fr/contact", "maps": "https://maps.google.com/?cid=6696504792476721502", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« Contactez-nous » visible dès le haut de la page"], ["ok", "Environ 6 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "art-servigaz", "rang": 16, "nom": "ART-Servigaz", "ville": "Begles", "note": "4.2", "avis": "242", "tel": "05 56 75 71 00", "pub": "non détecté", "site": "http://www.art-servigaz.fr/", "devis": "https://form.jotform.com/243323609673358", "maps": "https://maps.google.com/?cid=12476222276832321134", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« DEVIS EN LIGNE » visible dès le haut de la page"], ["ko", "Environ 67 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "chauffe-vous", "rang": 17, "nom": "Chauffe & Vous", "ville": "Le Taillan-Medoc", "note": "4.7", "avis": "208", "tel": "05 35 54 18 33", "pub": "non détecté", "site": "http://www.chauffeetvous.fr/", "devis": "https://www.chauffeetvous.fr/contact", "maps": "https://maps.google.com/?cid=9803449462780428687", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ok", "« Contact » visible dès le haut de la page"], ["ok", "Environ 8 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ko", "Note 4.7/5 (208 avis) absente du site"]]}, {"id": "air-energie-pompe-chaleur-climatisation-", "rang": 18, "nom": "Air Energie Pompe à Chaleur Climatisation Photovoltaïque Gironde 33", "ville": "Beychac-Et-Caillau", "note": "4.8", "avis": "196", "tel": "05 64 52 00 07", "pub": "non détecté", "site": "https://airenergie.org/", "devis": "https://www.airenergie.org/contact.php", "maps": "https://maps.google.com/?cid=12198932778628510782", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« Votre étude offerte » visible dès le haut de la page"], ["ko", "Environ 10 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "maumon-maumon-chauffage-climatisation", "rang": 19, "nom": "Maumon & Maumon", "ville": "Gradignan", "note": "3.7", "avis": "134", "tel": "05 56 75 17 64", "pub": "non détecté", "site": "https://www.maumon.com/", "devis": "https://www.maumon.com/demande-de-devis/", "maps": "https://maps.google.com/?cid=2466460485095668348", "test": false, "hints": [["ko", "Cliquable, mais caché dans le menu ou plus bas"], ["ok", "« DEVIS GRATUIT* » visible dès le haut de la page"], ["ok", "Environ 6 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "help-confort-gradignan", "rang": 20, "nom": "HELP Confort Gradignan", "ville": "Gradignan", "note": "4.7", "avis": "123", "tel": "05 56 21 95 56", "pub": "non détecté", "site": "https://www.installationsenior.fr/", "devis": "https://www.installationsenior.fr/contact", "maps": "https://maps.google.com/?cid=1154170123294291446", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ok", "« mail CONTACT » visible dès le haut de la page"], ["ko", "Environ 11 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["ok", "Avis ou note affichés sur le site"]]}, {"id": "lectro-gaz", "rang": 21, "nom": "Électro Gaz", "ville": "Merignac", "note": "3.4", "avis": "74", "tel": "05 56 95 80 94", "pub": "non détecté", "site": "http://electro-gaz.fr/", "devis": "https://electro-gaz.fr/#devis", "maps": "https://maps.google.com/?cid=12094172580030281130", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ko", "Premier bouton « Je laisse mes coordonnées pour être cont » à environ 2 écrans"], ["ok", "Environ 7 cases à remplir"], ["ko", "Ni chat ni prise de RDV trouvés"], ["?", "Note Google sous 4,3 : peu utile à afficher"]]}, {"id": "sas-charriaut", "rang": 22, "nom": "SAS Charriaut", "ville": "Tresses", "note": "4.6", "avis": "113", "tel": "05 56 40 49 73", "pub": "non détecté", "site": "http://www.charriaut-chauffagiste.com/", "devis": "https://www.charriaut-chauffagiste.com/contact", "maps": "https://maps.google.com/?cid=4200400703924871873", "test": false, "hints": [["ok", "Vu cliquable dès le 1er écran"], ["ok", "« Contact » visible dès le haut de la page"], ["ok", "Environ 6 cases à remplir"], ["ok", "Chat ou prise de RDV trouvé"], ["ok", "Avis ou note affichés sur le site"]]}];
+const CHECKS = [
+  { t: "1. Numéro cliquable", c: "Touche le numéro visible <b>sans défiler</b>. <b>Pas bon</b> s'il faut défiler ou ouvrir le menu ☰, ou si rien ne se passe quand tu le touches." },
+  { t: "2. Bouton devis visible", c: "Cherche « Devis », « Étude offerte », « Être rappelé »… <b>Pas bon</b> s'il faut défiler plus de 2 fois, s'il est seulement dans le menu, ou s'il n'existe pas." },
+  { t: "3. Formulaire court", c: "Ouvre le formulaire de devis et compte les cases. <b>Pas bon</b> au-delà de 8 cases ou s'il y a plusieurs étapes." },
+  { t: "4. Chat ou prise de RDV", c: "Cherche une bulle de chat en bas, un bouton WhatsApp ou un calendrier. <b>Pas bon</b> s'il n'y a rien de tout ça." },
+  { t: "5. Note Google affichée", c: "Regarde la note sur Google, puis cherche-la sur le site (étoiles, « 4,7/5 », avis). <b>Pas bon</b> si la note est bonne mais absente du site." },
+];
+const HINT_ICON = { ok: "✅ Mon audit : ", ko: "❌ Mon audit : ", "?": "❓ Mon audit : " };
+let state = {};          // id -> { c: ["ok"|"ko"|""...], envoye, reponse, relances, note }
+let db = null, filter = "all", saveTimers = {};
+const LS = "verifs-chauffagistes-33";
+
+function blank() { return { c: ["", "", "", "", ""], envoye: "", reponse: "", relances: "", note: "" }; }
+function get(id) { return state[id] || (state[id] = blank()); }
+function doneCount(id) { return get(id).c.filter(Boolean).length; }
+function isDone(id) { return doneCount(id) === 5; }
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch])); }
+
+function render() {
+  const list = document.getElementById("list");
+  const open = new Set([...list.querySelectorAll("details.card[open]")].map(d => d.dataset.id));
+  const items = DATA.filter(d => filter === "all" || (filter === "done") === isDone(d.id));
+  list.innerHTML = items.length ? "" : '<p class="empty">Rien ici pour l\'instant.</p>';
+  for (const d of items) {
+    const s = get(d.id), n = doneCount(d.id);
+    const el = document.createElement("details");
+    el.className = "card"; el.dataset.id = d.id;
+    if (open.has(d.id)) el.open = true;
+    el.innerHTML = `
+      <summary>
+        <span class="rank">${d.rang}</span>
+        <span class="who"><h2>${esc(d.nom)}</h2><p>${esc(d.ville)} · ${esc(d.note)}/5 (${esc(d.avis)} avis)${d.pub !== "non détecté" ? " · pub " + esc(d.pub) : ""}</p></span>
+        <span class="count ${n === 5 ? "done" : ""}">${n === 5 ? "✓ Fait" : n + "/5"}</span>
+      </summary>
+      <div class="body">
+        <div class="links">
+          <a href="${esc(d.site)}" target="_blank" rel="noopener">Site</a>
+          ${d.devis ? `<a href="${esc(d.devis)}" target="_blank" rel="noopener">Page devis</a>` : ""}
+          <a href="${esc(d.maps)}" target="_blank" rel="noopener">Fiche Google</a>
+        </div>
+        <span class="tel">Tél. ${esc(d.tel)}</span>
+        ${CHECKS.map((ck, i) => {
+          const [k, txt] = d.hints[i];
+          return `<div class="check">
+            <h3>${ck.t}</h3>
+            <p class="crit">${ck.c}</p>
+            <div class="hint ${k === "?" ? "unk" : k}">${HINT_ICON[k]}${esc(txt)}</div>
+            <div class="btns">
+              <button class="ok" data-i="${i}" data-v="ok" aria-pressed="${s.c[i] === "ok"}">Bon</button>
+              <button class="ko" data-i="${i}" data-v="ko" aria-pressed="${s.c[i] === "ko"}">Pas bon</button>
+            </div></div>`;
+        }).join("")}
+        ${d.test ? `<div class="test">
+          <h3>6. Test de demande de devis</h3>
+          <p>Remplis leur formulaire avec un vrai besoin (ex. « pompe à chaleur, maison de 100 m² »). Note quand tu as envoyé, quand ils ont répondu, et combien de relances tu reçois en 2 semaines.</p>
+          <div class="row">
+            <label for="env-${d.id}">Envoyée le<input type="date" id="env-${d.id}" data-f="envoye" value="${esc(s.envoye)}"></label>
+            <label for="rep-${d.id}">1re réponse le<input type="date" id="rep-${d.id}" data-f="reponse" value="${esc(s.reponse)}"></label>
+          </div>
+          <label for="rel-${d.id}">Relances reçues<input type="number" min="0" inputmode="numeric" id="rel-${d.id}" data-f="relances" value="${esc(s.relances)}"></label>
+        </div>` : ""}
+        <label for="note-${d.id}">Note libre<textarea id="note-${d.id}" data-f="note" placeholder="Ce que tu as remarqué…">${esc(s.note)}</textarea></label>
+      </div>`;
+    el.addEventListener("click", ev => {
+      const b = ev.target.closest(".btns button"); if (!b) return;
+      const i = +b.dataset.i, v = b.dataset.v;
+      s.c[i] = s.c[i] === v ? "" : v;      // re-toucher annule
+      save(d.id); render();
+    });
+    el.addEventListener("input", ev => {
+      const f = ev.target.dataset.f; if (!f) return;
+      s[f] = ev.target.value; save(d.id, 800);
+    });
+    list.appendChild(el);
+  }
+  const done = DATA.filter(d => isDone(d.id)).length;
+  document.getElementById("prog").textContent = `${done} / ${DATA.length} sites vérifiés`;
+  document.getElementById("bar").style.width = (100 * done / DATA.length) + "%";
+}
+
+function setStatus(t) { document.getElementById("save").textContent = t; }
+function persistLocal() { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }
+
+function save(id, delay = 0) {
+  persistLocal();
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(async () => {
+    if (!db) { setStatus("Enregistré sur ce téléphone"); return; }
+    setStatus("Enregistrement…");
+    try { await db.doc("verifs/" + id).set({ ...get(id), maj: new Date().toISOString() }); setStatus("Enregistré"); }
+    catch (e) { setStatus("Pas enregistré en ligne (gardé sur ce téléphone)"); }
+  }, delay);
+}
+
+for (const [id, f] of [["f-all", "all"], ["f-todo", "todo"], ["f-done", "done"]]) {
+  document.getElementById(id).addEventListener("click", () => {
+    filter = f;
+    for (const b of document.querySelectorAll(".filters button")) b.setAttribute("aria-pressed", b.id === id);
+    render();
+  });
+}
+
+try { const s = JSON.parse(localStorage.getItem(LS) || "{}"); if (s && typeof s === "object") state = s; } catch (e) {}
+render();
+setStatus("Enregistré sur ce téléphone");
+
+(async () => {
+  try { db = await (window.claude?.use ? window.claude.use("db") : null); } catch (e) { db = null; }
+  if (!db) return;
+  setStatus("Synchronisation…");
+  const timer = setTimeout(() => setStatus("Connexion lente : tes réponses restent sur ce téléphone"), 10000);
+  db.collection("verifs").onSnapshot(snap => {
+    if (!snap.metadata.fromCache) clearTimeout(timer);
+    for (const doc of snap.docs) {
+      const v = doc.data(); if (!v) continue;
+      state[doc.id] = { ...blank(), ...v, c: Array.isArray(v.c) ? [...v.c] : blank().c };
+    }
+    persistLocal();
+    const focused = document.activeElement && document.activeElement.matches("input, textarea");
+    if (!focused) render();
+    if (!snap.metadata.fromCache) setStatus("Synchronisé");
+  }, () => { clearTimeout(timer); db = null; setStatus("Enregistré sur ce téléphone"); });
+})();
+</script>
