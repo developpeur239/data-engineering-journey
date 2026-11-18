@@ -72,3 +72,13 @@ Constat : presque tout est en Shorts. Aucune chaîne francophone trouvée ne fai
 | 61× | 333 022 | 5 450 | [Et si… ? : Et si l'astéroïde des dinosaures tombait aujourd'hui ? (Saint-Malo)](https://youtu.be/8Stz_etGTx0) |
 | 54× | 244 920 | 4 500 | [Le Pourquoi : Et si une bille dévorait la Terre ?](https://youtu.be/GEWg7e7ghvc) |
 | 49× | 1 982 306 | 40 800 | [BioChokFr : Et si tu sautais dans un trou qui traverse la Terre ?](https://youtu.be/xB_PaFNlANI) |
+
+## Étude de cas : Lexo (relevé du 18/11/2026)
+Chaîne : Lexo (, 6 620 abonnés, 30 vidéos, 2,95 M de vues au total, créée en 2024 mais active depuis fin octobre 2026).
+Vidéo phare : [Et si tu pouvais voir la future richesse de chacun ?](https://www.youtube.com/watch?v=C8v9DD7f1aw) : 575 335 vues, 9 min 33, 2 082 j'aime, 53 commentaires.
+
+Formule : une histoire à la 2e personne (« tu »), personnages animés faits à l'IA, un pouvoir impossible poussé jusqu'au bout,
+un nombre affiché au-dessus de chaque tête, et une question finale en commentaire. Une vidéo longue (8–12 min) + un Short par jour.
+Il décline la formule qui marche : richesse (575 k), crush (138 k), QI (93 k), taille (23 k), pire secret (8 k).
+Son sujet de physique « Et si le temps accélérait sans jamais s'arrêter ? » n'a fait que 4 450 vues.
+Il vend un guide « comment je fais mes vidéos uniquement avec l'IA » : la chaîne sert aussi de vitrine.
