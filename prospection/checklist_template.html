@@ -167,15 +167,22 @@ function render() {
         </div>` : ""}
         <label for="note-${d.id}">Note libre<textarea id="note-${d.id}" data-f="note" placeholder="Ce que tu as remarqué…">${esc(s.note)}</textarea></label>
       </div>`;
+    // Toujours relire l'état courant (get) : un objet capturé au rendu peut
+    // avoir été remplacé entre-temps, et on écrirait dans une copie périmée.
     el.addEventListener("click", ev => {
       const b = ev.target.closest(".btns button"); if (!b) return;
-      const i = +b.dataset.i, v = b.dataset.v;
-      s.c[i] = s.c[i] === v ? "" : v;      // re-toucher annule
+      const cur = get(d.id), i = +b.dataset.i, v = b.dataset.v;
+      cur.c[i] = cur.c[i] === v ? "" : v;      // re-toucher annule
       save(d.id); render();
     });
     el.addEventListener("input", ev => {
       const f = ev.target.dataset.f; if (!f) return;
-      s[f] = ev.target.value; save(d.id, 800);
+      get(d.id)[f] = ev.target.value; save(d.id, 800);
+    });
+    // Quand on quitte une case, on enregistre tout de suite.
+    el.addEventListener("change", ev => {
+      const f = ev.target.dataset.f; if (!f) return;
+      get(d.id)[f] = ev.target.value; save(d.id, 0);
     });
     list.appendChild(el);
   }
@@ -187,16 +194,39 @@ function render() {
 function setStatus(t) { document.getElementById("save").textContent = t; }
 function persistLocal() { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }
 
+// edits[id] compte les modifications locales ; tant qu'une modification n'est
+// pas confirmée par le serveur, la fiche est "en cours" et les versions qui
+// reviennent du serveur ne l'écrasent pas (sinon une note en cours de frappe
+// serait remplacée par un état plus ancien, donc tronquée).
+const edits = {}, confirmed = {}, writing = {};
+function busy(id) { return (edits[id] || 0) !== (confirmed[id] || 0) || !!saveTimers[id]; }
+
 function save(id, delay = 0) {
+  edits[id] = (edits[id] || 0) + 1;
   persistLocal();
   clearTimeout(saveTimers[id]);
-  saveTimers[id] = setTimeout(async () => {
-    if (!db) { setStatus("Enregistré sur ce téléphone"); return; }
-    setStatus("Enregistrement…");
-    try { await db.doc("verifs/" + id).set({ ...get(id), maj: new Date().toISOString() }); setStatus("Enregistré"); }
-    catch (e) { setStatus("Pas enregistré en ligne (gardé sur ce téléphone)"); }
-  }, delay);
+  saveTimers[id] = setTimeout(() => { saveTimers[id] = null; flush(id); }, delay);
 }
+
+async function flush(id) {
+  if (!db) { confirmed[id] = edits[id]; setStatus("Enregistré sur ce téléphone"); return; }
+  if (writing[id]) { writing[id].then(() => flush(id)); return; }   // une écriture à la fois par fiche
+  const n = edits[id];
+  setStatus("Enregistrement…");
+  writing[id] = db.doc("verifs/" + id).set({ ...get(id), maj: new Date().toISOString() })
+    .then(() => { confirmed[id] = Math.max(confirmed[id] || 0, n); setStatus(busy(id) ? "Enregistrement…" : "Enregistré"); },
+          () => { setStatus("Pas enregistré en ligne (gardé sur ce téléphone)"); })
+    .finally(() => { writing[id] = null; });
+  await writing[id];
+}
+
+function flushAll() {
+  for (const id of Object.keys(saveTimers)) {
+    if (saveTimers[id]) { clearTimeout(saveTimers[id]); saveTimers[id] = null; flush(id); }
+  }
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushAll(); });
+window.addEventListener("pagehide", flushAll);
 
 for (const [id, f] of [["f-all", "all"], ["f-todo", "todo"], ["f-done", "done"]]) {
   document.getElementById(id).addEventListener("click", () => {
@@ -219,6 +249,7 @@ setStatus("Enregistré sur ce téléphone");
     if (!snap.metadata.fromCache) clearTimeout(timer);
     for (const doc of snap.docs) {
       const v = doc.data(); if (!v) continue;
+      if (busy(doc.id)) continue;   // modification locale pas encore confirmée : on garde la nôtre
       state[doc.id] = { ...blank(), ...v, c: Array.isArray(v.c) ? [...v.c] : blank().c };
     }
     persistLocal();
